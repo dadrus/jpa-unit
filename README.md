@@ -155,5 +155,4 @@ public class MyTest {
 
 - Implement tests and examples
 - Enable usage with JPA 2.0
-- Enable Travis CI
 - Make the extension available in mavencentral
