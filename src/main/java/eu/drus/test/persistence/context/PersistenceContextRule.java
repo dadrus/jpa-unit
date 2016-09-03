@@ -39,6 +39,8 @@ public class PersistenceContextRule implements MethodRule {
                         // create EntityManager and inject it
                         entityManager = entityManagerFactory.createEntityManager();
                         persistenceField.set(target, entityManager);
+                    } else {
+                        throw new IllegalArgumentException("Unexpected field type: " + persistenceContextFieldType.getName());
                     }
                 } finally {
                     persistenceField.setAccessible(isAccessible);
