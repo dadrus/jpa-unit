@@ -62,7 +62,7 @@ public class TransactionStrategyProvider implements StrategyProvider<Transaction
             try {
                 statement.evaluate();
             } finally {
-                commitTransaction();
+                rollbackTransaction();
             }
         }
     }
@@ -75,7 +75,7 @@ public class TransactionStrategyProvider implements StrategyProvider<Transaction
             try {
                 statement.evaluate();
             } finally {
-                rollbackTransaction();
+                commitTransaction();
             }
         }
     }
