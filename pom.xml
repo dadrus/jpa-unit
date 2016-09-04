@@ -23,6 +23,7 @@
 		<version.dbunit>2.5.1</version.dbunit>
 		<version.hibernate-jpa-2.1-api>1.0.0.Final</version.hibernate-jpa-2.1-api>
 		<version.snakeyaml>1.10</version.snakeyaml>
+		<version.codemodel>2.6</version.codemodel>
 	</properties>
 
 	<build>
@@ -101,6 +102,12 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>${version.mockito}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.codemodel</groupId>
+			<artifactId>codemodel</artifactId>
+			<version>${version.codemodel}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
