@@ -2,6 +2,8 @@ package eu.drus.test.persistence.core.metadata;
 
 import java.lang.reflect.Method;
 
+import org.junit.runners.model.TestClass;
+
 import eu.drus.test.persistence.annotation.Cleanup;
 import eu.drus.test.persistence.annotation.CleanupPhase;
 import eu.drus.test.persistence.annotation.CleanupStrategy;
@@ -11,14 +13,14 @@ import eu.drus.test.persistence.annotation.InitialDataSets;
 import eu.drus.test.persistence.annotation.TransactionMode;
 import eu.drus.test.persistence.annotation.Transactional;
 
-public class PersistenceTestFeatureResolver {
+public class FeatureResolver {
 
     private final MetadataExtractor metadataExtractor;
 
     private final Method testMethod;
 
-    public PersistenceTestFeatureResolver(final Method testMethod, final MetadataExtractor metadataExtractor) {
-        this.metadataExtractor = metadataExtractor;
+    FeatureResolver(final Method testMethod, final Class<?> clazz) {
+        metadataExtractor = new MetadataExtractor(new TestClass(clazz));
         this.testMethod = testMethod;
     }
 

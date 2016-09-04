@@ -7,20 +7,25 @@ import javax.persistence.EntityManager;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestClass;
 
-import eu.drus.test.persistence.core.metadata.MetadataExtractor;
-import eu.drus.test.persistence.core.metadata.PersistenceTestFeatureResolver;
+import eu.drus.test.persistence.core.metadata.FeatureResolver;
+import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
 
 public class TransactionalRule implements MethodRule {
+
+    private FeatureResolverFactory featureResolverFactory;
+    private Field persistenceField;
+
+    public TransactionalRule(final FeatureResolverFactory featureResolverFactory, final Field persistenceField) {
+        this.featureResolverFactory = featureResolverFactory;
+        this.persistenceField = persistenceField;
+    }
 
     @Override
     public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
         return new Statement() {
-            private final MetadataExtractor extractor = new MetadataExtractor(new TestClass(target.getClass()));
-            private final PersistenceTestFeatureResolver featureResolver = new PersistenceTestFeatureResolver(method.getMethod(),
-                    extractor);
-            private final Field persistenceField = extractor.persistenceContext().getAnnotatedFields().get(0);
+            private final FeatureResolver featureResolver = featureResolverFactory.createFeatureResolver(method.getMethod(),
+                    target.getClass());
 
             @Override
             public void evaluate() throws Throwable {

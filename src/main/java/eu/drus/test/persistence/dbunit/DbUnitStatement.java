@@ -28,8 +28,9 @@ import eu.drus.test.persistence.annotation.CustomColumnFilter;
 import eu.drus.test.persistence.annotation.ExpectedDataSets;
 import eu.drus.test.persistence.annotation.InitialDataSets;
 import eu.drus.test.persistence.core.AssertionErrorCollector;
+import eu.drus.test.persistence.core.metadata.FeatureResolver;
+import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
 import eu.drus.test.persistence.core.metadata.MetadataExtractor;
-import eu.drus.test.persistence.core.metadata.PersistenceTestFeatureResolver;
 import eu.drus.test.persistence.core.sql.AnsiSqlStatementSplitter;
 import eu.drus.test.persistence.dbunit.cleanup.CleanupStrategyExecutor;
 import eu.drus.test.persistence.dbunit.cleanup.CleanupStrategyProvider;
@@ -42,7 +43,7 @@ public class DbUnitStatement extends Statement {
     private final Map<String, Object> properties;
     private final Statement base;
     private final List<IDataSet> initialDataSets;
-    private final PersistenceTestFeatureResolver featureResolver;
+    private final FeatureResolver featureResolver;
 
     DbUnitStatement(final Map<String, Object> properties, final Class<?> clazz, final Method testMethod, final Statement base) {
         this.testMethod = testMethod;
@@ -50,7 +51,7 @@ public class DbUnitStatement extends Statement {
         this.base = base;
 
         extractor = new MetadataExtractor(new TestClass(clazz));
-        featureResolver = new PersistenceTestFeatureResolver(testMethod, extractor);
+        featureResolver = new FeatureResolverFactory().createFeatureResolver(testMethod, clazz);
         initialDataSets = createInitialDataSets();
     }
 

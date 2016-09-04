@@ -18,6 +18,7 @@ import org.junit.runners.model.InitializationError;
 
 import eu.drus.test.persistence.context.PersistenceContextRule;
 import eu.drus.test.persistence.core.metadata.AnnotationInspector;
+import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
 import eu.drus.test.persistence.core.metadata.MetadataExtractor;
 import eu.drus.test.persistence.dbunit.DbUnitRule;
 import eu.drus.test.persistence.transaction.TransactionalRule;
@@ -34,7 +35,7 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
     @Override
     protected List<MethodRule> rules(final Object target) {
         final List<MethodRule> rules = super.rules(target);
-        rules.add(new TransactionalRule());
+        rules.add(new TransactionalRule(new FeatureResolverFactory(), persistenceField));
         rules.add(new DbUnitRule(entityManagerFactory));
         rules.add(new PersistenceContextRule(entityManagerFactory, persistenceField));
         return rules;

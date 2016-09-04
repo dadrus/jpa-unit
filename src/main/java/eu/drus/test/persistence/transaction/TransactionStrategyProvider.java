@@ -11,7 +11,7 @@ public class TransactionStrategyProvider implements StrategyProvider<Transaction
 
     private final EntityTransaction tx;
 
-    public TransactionStrategyProvider(final EntityTransaction tx) {
+    TransactionStrategyProvider(final EntityTransaction tx) {
         this.tx = tx;
     }
 
