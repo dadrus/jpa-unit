@@ -24,6 +24,21 @@ public class FeatureResolver {
         this.testMethod = testMethod;
     }
 
+    public CleanupStrategy getCleanupStrategy() {
+        final Cleanup cleanup = metadataExtractor.cleanup().fetchUsingFirst(testMethod);
+        return cleanup == null ? CleanupStrategy.STRICT : cleanup.strategy();
+    }
+
+    public DataSeedStrategy getDataSeedStrategy() {
+        final InitialDataSets initialDataSet = metadataExtractor.initialDataSets().fetchUsingFirst(testMethod);
+        return initialDataSet == null ? DataSeedStrategy.INSERT : initialDataSet.seedStrategy();
+    }
+
+    public TransactionMode getTransactionMode() {
+        final Transactional transactional = metadataExtractor.transactional().fetchUsingFirst(testMethod);
+        return transactional == null ? TransactionMode.COMMIT : transactional.value();
+    }
+
     public boolean shouldSeedData() {
         return metadataExtractor.initialDataSets().isDefinedOnClassLevel()
                 || metadataExtractor.initialDataSets().isDefinedOnMethod(testMethod);
@@ -44,36 +59,6 @@ public class FeatureResolver {
                 || metadataExtractor.expectedDataSets().isDefinedOnMethod(testMethod);
     }
 
-    public CleanupPhase getCleanupPhase() {
-        final Cleanup cleanup = metadataExtractor.cleanup().fetchUsingFirst(testMethod);
-        return cleanup == null ? CleanupPhase.AFTER : cleanup.phase();
-    }
-
-    public CleanupStrategy getCleanupStrategy() {
-        final Cleanup cleanup = metadataExtractor.cleanup().fetchUsingFirst(testMethod);
-        return cleanup == null ? CleanupStrategy.STRICT : cleanup.strategy();
-    }
-
-    public CleanupPhase getCleanupUsingScriptPhase() {
-        final CleanupUsingScripts cleanupUsingScript = metadataExtractor.cleanupUsingScripts().fetchUsingFirst(testMethod);
-        return cleanupUsingScript == null ? CleanupPhase.AFTER : cleanupUsingScript.phase();
-    }
-
-    public DataSeedStrategy getDataSeedStrategy() {
-        final InitialDataSets initialDataSet = metadataExtractor.initialDataSets().fetchUsingFirst(testMethod);
-        return initialDataSet == null ? DataSeedStrategy.INSERT : initialDataSet.seedStrategy();
-    }
-
-    public TransactionMode getTransactionMode() {
-        final Transactional transactional = metadataExtractor.transactional().fetchUsingFirst(testMethod);
-        return transactional == null ? TransactionMode.COMMIT : transactional.value();
-    }
-
-    public boolean shouldCleanup() {
-        final Cleanup cleanup = metadataExtractor.cleanup().fetchUsingFirst(testMethod);
-        return cleanup == null || cleanup.phase() == CleanupPhase.NONE;
-    }
-
     public boolean shouldCleanupBefore() {
         return shouldCleanup() && getCleanupPhase() == CleanupPhase.BEFORE;
     }
@@ -82,9 +67,14 @@ public class FeatureResolver {
         return shouldCleanup() && getCleanupPhase() == CleanupPhase.AFTER;
     }
 
-    public boolean shouldCleanupUsingScript() {
-        final CleanupUsingScripts cleanupUsingScript = metadataExtractor.cleanupUsingScripts().fetchUsingFirst(testMethod);
-        return cleanupUsingScript == null ? false : cleanupUsingScript.phase() != CleanupPhase.NONE;
+    private boolean shouldCleanup() {
+        final Cleanup cleanup = metadataExtractor.cleanup().fetchUsingFirst(testMethod);
+        return cleanup == null || cleanup.phase() != CleanupPhase.NONE;
+    }
+
+    private CleanupPhase getCleanupPhase() {
+        final Cleanup cleanup = metadataExtractor.cleanup().fetchUsingFirst(testMethod);
+        return cleanup == null ? CleanupPhase.AFTER : cleanup.phase();
     }
 
     public boolean shouldCleanupUsingScriptBefore() {
@@ -93,5 +83,15 @@ public class FeatureResolver {
 
     public boolean shouldCleanupUsingScriptAfter() {
         return shouldCleanupUsingScript() && getCleanupUsingScriptPhase() == CleanupPhase.AFTER;
+    }
+
+    private boolean shouldCleanupUsingScript() {
+        final CleanupUsingScripts cleanupUsingScript = metadataExtractor.cleanupUsingScripts().fetchUsingFirst(testMethod);
+        return cleanupUsingScript == null ? false : cleanupUsingScript.phase() != CleanupPhase.NONE;
+    }
+
+    private CleanupPhase getCleanupUsingScriptPhase() {
+        final CleanupUsingScripts cleanupUsingScript = metadataExtractor.cleanupUsingScripts().fetchUsingFirst(testMethod);
+        return cleanupUsingScript == null ? CleanupPhase.AFTER : cleanupUsingScript.phase();
     }
 }
