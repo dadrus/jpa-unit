@@ -20,14 +20,14 @@ import eu.drus.test.persistence.annotation.Transactional;
 public class MetadataExtractor {
     private final TestClass testClass;
 
-    private final Map<Class<?>, AnnotationInspector<?>> inspectors = new HashMap<Class<?>, AnnotationInspector<?>>();
+    private final Map<Class<?>, AnnotationInspector<?>> inspectors = new HashMap<>();
 
     public MetadataExtractor(final TestClass testClass) {
         this.testClass = testClass;
     }
 
     public <K extends Annotation> void register(final TestClass testClass, final Class<K> annotation) {
-        inspectors.put(annotation, new AnnotationInspector<K>(testClass, annotation));
+        inspectors.put(annotation, new AnnotationInspector<>(testClass, annotation));
     }
 
     @SuppressWarnings("unchecked")

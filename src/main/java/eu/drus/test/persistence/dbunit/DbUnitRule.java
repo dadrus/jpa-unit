@@ -10,11 +10,16 @@ import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+import eu.drus.test.persistence.core.metadata.FeatureResolver;
+import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
+
 public class DbUnitRule implements MethodRule {
 
     private final Map<String, Object> properties;
+    private FeatureResolverFactory featureResolverFactory;
 
-    public DbUnitRule(final EntityManagerFactory entityManagerFactory) {
+    public DbUnitRule(final FeatureResolverFactory featureResolverFactory, final EntityManagerFactory entityManagerFactory) {
+        this.featureResolverFactory = featureResolverFactory;
         final EntityManager tmp = entityManagerFactory.createEntityManager();
         properties = new HashMap<>();
         properties.putAll(tmp.getProperties());
@@ -23,6 +28,7 @@ public class DbUnitRule implements MethodRule {
 
     @Override
     public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-        return new DbUnitStatement(properties, target.getClass(), method.getMethod(), base);
+        final FeatureResolver featureResolver = featureResolverFactory.createFeatureResolver(method.getMethod(), target.getClass());
+        return new DbUnitStatement(properties, featureResolver, base);
     }
 }

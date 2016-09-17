@@ -2,35 +2,22 @@ package eu.drus.test.persistence.dbunit;
 
 import static eu.drus.test.persistence.dbunit.DataSetUtils.mergeDataSets;
 
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.filter.IColumnFilter;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestClass;
 
-import eu.drus.test.persistence.annotation.ApplyScriptsAfter;
-import eu.drus.test.persistence.annotation.ApplyScriptsBefore;
-import eu.drus.test.persistence.annotation.CleanupUsingScripts;
-import eu.drus.test.persistence.annotation.CustomColumnFilter;
 import eu.drus.test.persistence.annotation.ExpectedDataSets;
-import eu.drus.test.persistence.annotation.InitialDataSets;
 import eu.drus.test.persistence.core.AssertionErrorCollector;
 import eu.drus.test.persistence.core.metadata.FeatureResolver;
-import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
-import eu.drus.test.persistence.core.metadata.MetadataExtractor;
 import eu.drus.test.persistence.core.sql.AnsiSqlStatementSplitter;
 import eu.drus.test.persistence.dbunit.cleanup.CleanupStrategyExecutor;
 import eu.drus.test.persistence.dbunit.cleanup.CleanupStrategyProvider;
@@ -38,21 +25,17 @@ import eu.drus.test.persistence.dbunit.dataset.DataSetBuilder;
 
 public class DbUnitStatement extends Statement {
 
-    private final MetadataExtractor extractor;
-    private final Method testMethod;
     private final Map<String, Object> properties;
     private final Statement base;
     private final List<IDataSet> initialDataSets;
     private final FeatureResolver featureResolver;
 
-    DbUnitStatement(final Map<String, Object> properties, final Class<?> clazz, final Method testMethod, final Statement base) {
-        this.testMethod = testMethod;
+    DbUnitStatement(final Map<String, Object> properties, final FeatureResolver featureResolver, final Statement base) {
         this.properties = properties;
+        this.featureResolver = featureResolver;
         this.base = base;
 
-        extractor = new MetadataExtractor(new TestClass(clazz));
-        featureResolver = new FeatureResolverFactory().createFeatureResolver(testMethod, clazz);
-        initialDataSets = createInitialDataSets();
+        initialDataSets = loadDataSets(featureResolver.getSeedData());
     }
 
     @Override
@@ -65,13 +48,11 @@ public class DbUnitStatement extends Statement {
             }
 
             if (featureResolver.shouldCleanupUsingScriptBefore()) {
-                final CleanupUsingScripts cleanupUsingScript = extractor.cleanupUsingScripts().fetchUsingFirst(testMethod);
-                applyScripts(true, cleanupUsingScript.value(), connection);
+                applyScripts(true, featureResolver.getCleanupScripts(), connection);
             }
 
             if (featureResolver.shouldApplyCustomScriptBefore()) {
-                final ApplyScriptsBefore applyScriptBefore = extractor.applyScriptsBefore().fetchUsingFirst(testMethod);
-                applyScripts(true, applyScriptBefore.value(), connection);
+                applyScripts(true, featureResolver.getPostExecutionScripts(), connection);
             }
 
             if (featureResolver.shouldSeedData()) {
@@ -94,19 +75,17 @@ public class DbUnitStatement extends Statement {
                 }
 
                 if (featureResolver.shouldCleanupUsingScriptAfter()) {
-                    final CleanupUsingScripts cleanupUsingScript = extractor.cleanupUsingScripts().fetchUsingFirst(testMethod);
-                    applyScripts(isComplete, cleanupUsingScript.value(), connection);
+                    applyScripts(isComplete, featureResolver.getCleanupScripts(), connection);
                 }
 
                 if (featureResolver.shouldApplyCustomScriptAfter()) {
-                    final ApplyScriptsAfter applyScriptAfter = extractor.applyScriptsAfter().fetchUsingFirst(testMethod);
-                    applyScripts(isComplete, applyScriptAfter.value(), connection);
+                    applyScripts(isComplete, featureResolver.getPostExecutionScripts(), connection);
                 }
             }
         }
     }
 
-    private void applyScripts(final boolean propageExceptions, final String[] scriptPaths, final DatabaseConnection connection)
+    private void applyScripts(final boolean propageExceptions, final List<String> scriptPaths, final DatabaseConnection connection)
             throws Exception {
         try {
             for (final String script : scriptPaths) {
@@ -135,18 +114,13 @@ public class DbUnitStatement extends Statement {
     }
 
     private void verifyDatabase(final DatabaseConnection connection) throws Throwable {
-        final ExpectedDataSets dataSetsToVerify = extractor.expectedDataSets().fetchUsingFirst(testMethod);
-        final CustomColumnFilter customColumnFilter = extractor.using(CustomColumnFilter.class).fetchUsingFirst(testMethod);
-        final Set<Class<? extends IColumnFilter>> filter = new HashSet<>();
-        if (customColumnFilter != null) {
-            filter.addAll(Arrays.asList(customColumnFilter.value()));
-        }
+        final ExpectedDataSets dataSetsToVerify = featureResolver.getExpectedDataSets();
 
         final IDataSet currentDataSet = connection.createDataSet();
-        final IDataSet expectedDataSet = mergeDataSets(loadDataSets(dataSetsToVerify.value()));
+        final IDataSet expectedDataSet = mergeDataSets(loadDataSets(Arrays.asList(dataSetsToVerify.value())));
 
         final DataSetComparator dataSetComparator = new DataSetComparator(dataSetsToVerify.orderBy(), dataSetsToVerify.excludeColumns(),
-                filter);
+                featureResolver.getCustomColumnFilter());
 
         final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         dataSetComparator.compare(currentDataSet, expectedDataSet, errorCollector);
@@ -154,12 +128,7 @@ public class DbUnitStatement extends Statement {
         errorCollector.report();
     }
 
-    private List<IDataSet> createInitialDataSets() {
-        final InitialDataSets dataSet = extractor.initialDataSets().fetchUsingFirst(testMethod);
-        return dataSet == null ? Collections.emptyList() : loadDataSets(dataSet.value());
-    }
-
-    private List<IDataSet> loadDataSets(final String[] paths) {
+    private List<IDataSet> loadDataSets(final List<String> paths) {
         final List<IDataSet> dataSets = new ArrayList<>();
         for (final String path : paths) {
             final DataSetBuilder builder = DataSetBuilder.builderFor(DataSetFormat.inferFromFile(path));

@@ -34,9 +34,10 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected List<MethodRule> rules(final Object target) {
+        final FeatureResolverFactory featureResolverFactory = new FeatureResolverFactory();
         final List<MethodRule> rules = super.rules(target);
-        rules.add(new TransactionalRule(new FeatureResolverFactory(), persistenceField));
-        rules.add(new DbUnitRule(entityManagerFactory));
+        rules.add(new TransactionalRule(featureResolverFactory, persistenceField));
+        rules.add(new DbUnitRule(featureResolverFactory, entityManagerFactory));
         rules.add(new PersistenceContextRule(entityManagerFactory, persistenceField));
         return rules;
     }

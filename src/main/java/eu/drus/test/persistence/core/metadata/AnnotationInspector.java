@@ -31,7 +31,7 @@ public class AnnotationInspector<T extends Annotation> {
     }
 
     public Collection<T> fetchAll() {
-        final Set<T> all = new HashSet<T>();
+        final Set<T> all = new HashSet<>();
         all.addAll(annotatedMethods.values());
         all.addAll(annotatedFields.values());
         final T annotationOnClassLevel = getAnnotationOnClassLevel();
@@ -97,7 +97,7 @@ public class AnnotationInspector<T extends Annotation> {
     }
 
     private Map<Method, T> fetchMethods(final Class<T> annotation) {
-        final Map<Method, T> map = new HashMap<Method, T>();
+        final Map<Method, T> map = new HashMap<>();
 
         for (final FrameworkMethod testMethod : testClass.getAnnotatedMethods(annotation)) {
             map.put(testMethod.getMethod(), testMethod.getAnnotation(annotation));
@@ -107,7 +107,7 @@ public class AnnotationInspector<T extends Annotation> {
     }
 
     private Map<Field, T> fetchFields(final Class<T> annotation) {
-        final Map<Field, T> map = new HashMap<Field, T>();
+        final Map<Field, T> map = new HashMap<>();
 
         for (final FrameworkField testField : testClass.getAnnotatedFields(annotation)) {
             map.put(testField.getField(), testField.getAnnotation(annotation));
