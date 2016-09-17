@@ -1,7 +1,9 @@
 package eu.drus.test.persistence.core.metadata;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -10,12 +12,16 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
+import java.util.Set;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.dbunit.dataset.Column;
+import org.dbunit.dataset.filter.IColumnFilter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -23,6 +29,7 @@ import org.junit.rules.TemporaryFolder;
 import com.sun.codemodel.JAnnotationUse;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
@@ -31,7 +38,10 @@ import eu.drus.test.persistence.annotation.ApplyScriptsAfter;
 import eu.drus.test.persistence.annotation.ApplyScriptsBefore;
 import eu.drus.test.persistence.annotation.Cleanup;
 import eu.drus.test.persistence.annotation.CleanupPhase;
+import eu.drus.test.persistence.annotation.CleanupStrategy;
 import eu.drus.test.persistence.annotation.CleanupUsingScripts;
+import eu.drus.test.persistence.annotation.CustomColumnFilter;
+import eu.drus.test.persistence.annotation.DataSeedStrategy;
 import eu.drus.test.persistence.annotation.ExpectedDataSets;
 import eu.drus.test.persistence.annotation.InitialDataSets;
 
@@ -41,7 +51,7 @@ public class FeatureResolverTest {
     public TemporaryFolder testFolder = new TemporaryFolder();
 
     @Test
-    public void testSeedDataIsDisabledForClassWithoutInitialDataSetDefinition() throws Exception {
+    public void testSeedDataIsDisabledForClassWithoutInitialDataSetAnnotationn() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
@@ -59,17 +69,20 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldSeedData(), is(Boolean.FALSE));
+        assertThat(resolver.shouldSeedData(), equalTo(Boolean.FALSE));
+
+        final List<String> seedScripts = resolver.getSeedData();
+        assertThat(seedScripts.isEmpty(), equalTo(Boolean.TRUE));
     }
 
     @Test
-    public void testSeedDataIsEnabledForClassWithClassLevelInitialDataSetDefinition() throws Exception {
+    public void testSeedDataIsEnabledForClassWithClassLevelInitialDataSetAnnotationWithDefaultDataSeedStrategy() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(InitialDataSets.class);
-        jAnnotationUse.param("value", "TestDataSet.file");
+        jAnnotationUse.param("value", "Script.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
         jCodeModel.build(testFolder.getRoot());
@@ -83,18 +96,124 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldSeedData(), is(Boolean.TRUE));
+        assertThat(resolver.shouldSeedData(), equalTo(Boolean.TRUE));
+
+        final List<String> seedScripts = resolver.getSeedData();
+        assertThat(seedScripts.size(), equalTo(1));
+        assertThat(seedScripts, hasItem("Script.file"));
+
+        final DataSeedStrategy dataSeedStrategy = resolver.getDataSeedStrategy();
+        assertThat(dataSeedStrategy, equalTo(DataSeedStrategy.INSERT));
     }
 
     @Test
-    public void testSeedDataIsEnabledForClassWithMethodLevelInitialDataSetDefinition() throws Exception {
+    public void testSeedDataIsEnabledForClassWithClassLevelInitialDataSetAnnotationWithSpecifiedDataSeedStrategy() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JAnnotationUse jAnnotationUse = jClass.annotate(InitialDataSets.class);
+        jAnnotationUse.param("value", "Script.file");
+        jAnnotationUse.param("seedStrategy", DataSeedStrategy.UPDATE);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        jCodeModel.build(testFolder.getRoot());
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldSeedData(), equalTo(Boolean.TRUE));
+
+        final List<String> seedScripts = resolver.getSeedData();
+        assertThat(seedScripts.size(), equalTo(1));
+        assertThat(seedScripts, hasItem("Script.file"));
+
+        final DataSeedStrategy dataSeedStrategy = resolver.getDataSeedStrategy();
+        assertThat(dataSeedStrategy, equalTo(DataSeedStrategy.UPDATE));
+    }
+
+    @Test
+    public void testSeedDataIsEnabledForClassWithClassAndMethodLevelInitialDataSetAnnotationWithDefaultDataSeedStrategy() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(InitialDataSets.class);
+        jAnnotationUse.param("value", "ClassScript.file");
+        jAnnotationUse.param("seedStrategy", DataSeedStrategy.UPDATE);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+        jAnnotationUse = jMethod.annotate(InitialDataSets.class);
+        jAnnotationUse.param("value", "MethodScript.file");
+
+        jCodeModel.build(testFolder.getRoot());
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldSeedData(), equalTo(Boolean.TRUE));
+
+        final List<String> seedScripts = resolver.getSeedData();
+        assertThat(seedScripts.size(), equalTo(1));
+        assertThat(seedScripts, hasItem("MethodScript.file"));
+
+        final DataSeedStrategy dataSeedStrategy = resolver.getDataSeedStrategy();
+        assertThat(dataSeedStrategy, equalTo(DataSeedStrategy.INSERT));
+    }
+
+    @Test
+    public void testSeedDataIsEnabledForClassWithClassAndMethodLevelInitialDataSetAnnotaitonWithSpecifiedDataSeedStrategy()
+            throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(InitialDataSets.class);
+        jAnnotationUse.param("value", "ClassScript.file");
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+        jAnnotationUse = jMethod.annotate(InitialDataSets.class);
+        jAnnotationUse.param("value", "MethodScript.file");
+        jAnnotationUse.param("seedStrategy", DataSeedStrategy.UPDATE);
+
+        jCodeModel.build(testFolder.getRoot());
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldSeedData(), equalTo(Boolean.TRUE));
+
+        final List<String> seedScripts = resolver.getSeedData();
+        assertThat(seedScripts.size(), equalTo(1));
+        assertThat(seedScripts, hasItem("MethodScript.file"));
+
+        final DataSeedStrategy dataSeedStrategy = resolver.getDataSeedStrategy();
+        assertThat(dataSeedStrategy, equalTo(DataSeedStrategy.UPDATE));
+    }
+
+    @Test
+    public void testApplyingCustomScriptBeforeTestIsDisabledForClassWithoutCorrespondingAnnotation() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(InitialDataSets.class);
-        jAnnotationUse.param("value", "TestDataSet.file");
 
         jCodeModel.build(testFolder.getRoot());
 
@@ -107,29 +226,10 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldSeedData(), is(Boolean.TRUE));
-    }
+        assertThat(resolver.shouldApplyCustomScriptBefore(), equalTo(Boolean.FALSE));
 
-    @Test
-    public void testApplyingCustomScriptBeforeTestIsDisabledForClassWithoutCorrespondingAnnotations() throws Exception {
-        // GIVEN
-        final JCodeModel jCodeModel = new JCodeModel();
-        final JPackage jp = jCodeModel.rootPackage();
-        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-
-        jCodeModel.build(testFolder.getRoot());
-
-        compileModel(testFolder.getRoot());
-
-        final Class<?> cut = loadClass(jClass.name());
-        final Method method = cut.getDeclaredMethod(jMethod.name());
-
-        // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
-
-        // THEN
-        assertThat(resolver.shouldApplyCustomScriptBefore(), is(Boolean.FALSE));
+        final List<String> preExecutionScripts = resolver.getPreExecutionScripts();
+        assertThat(preExecutionScripts.isEmpty(), equalTo(Boolean.TRUE));
     }
 
     @Test
@@ -153,18 +253,24 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldApplyCustomScriptBefore(), is(Boolean.TRUE));
+        assertThat(resolver.shouldApplyCustomScriptBefore(), equalTo(Boolean.TRUE));
+
+        final List<String> preExecutionScripts = resolver.getPreExecutionScripts();
+        assertThat(preExecutionScripts.size(), equalTo(1));
+        assertThat(preExecutionScripts, hasItem("Script.file"));
     }
 
     @Test
-    public void testApplyingCustomScriptBeforeTestIsEnabledForClassWithCorrespondingMethodLevelAnnotation() throws Exception {
+    public void testApplyingCustomScriptBeforeTestIsEnabledForClassWithCorrespondingClassAndMethodLevelAnnotation() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(ApplyScriptsBefore.class);
+        jAnnotationUse.param("value", "ClassScript.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(ApplyScriptsBefore.class);
-        jAnnotationUse.param("value", "Script.file");
+        jAnnotationUse = jMethod.annotate(ApplyScriptsBefore.class);
+        jAnnotationUse.param("value", "MethodScript.file");
 
         jCodeModel.build(testFolder.getRoot());
 
@@ -177,7 +283,11 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldApplyCustomScriptBefore(), is(Boolean.TRUE));
+        assertThat(resolver.shouldApplyCustomScriptBefore(), equalTo(Boolean.TRUE));
+
+        final List<String> preExecutionScripts = resolver.getPreExecutionScripts();
+        assertThat(preExecutionScripts.size(), equalTo(1));
+        assertThat(preExecutionScripts, hasItem("MethodScript.file"));
     }
 
     @Test
@@ -199,7 +309,10 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldApplyCustomScriptAfter(), is(Boolean.FALSE));
+        assertThat(resolver.shouldApplyCustomScriptAfter(), equalTo(Boolean.FALSE));
+
+        final List<String> postExecutionScripts = resolver.getPostExecutionScripts();
+        assertThat(postExecutionScripts.isEmpty(), equalTo(Boolean.TRUE));
     }
 
     @Test
@@ -223,18 +336,24 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldApplyCustomScriptAfter(), is(Boolean.TRUE));
+        assertThat(resolver.shouldApplyCustomScriptAfter(), equalTo(Boolean.TRUE));
+
+        final List<String> postExecutionScripts = resolver.getPostExecutionScripts();
+        assertThat(postExecutionScripts.size(), equalTo(1));
+        assertThat(postExecutionScripts, hasItem("Script.file"));
     }
 
     @Test
-    public void testApplyingCustomScriptAfterTestIsEnabledForClassWithCorrespondingMethodLevelAnnotation() throws Exception {
+    public void testApplyingCustomScriptAfterTestIsEnabledForClassWithCorrespondingClassAndMethodLevelAnnotation() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(ApplyScriptsAfter.class);
+        jAnnotationUse.param("value", "ClassScript.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(ApplyScriptsAfter.class);
-        jAnnotationUse.param("value", "Script.file");
+        jAnnotationUse = jMethod.annotate(ApplyScriptsAfter.class);
+        jAnnotationUse.param("value", "MethodScript.file");
 
         jCodeModel.build(testFolder.getRoot());
 
@@ -247,7 +366,11 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldApplyCustomScriptAfter(), is(Boolean.TRUE));
+        assertThat(resolver.shouldApplyCustomScriptAfter(), equalTo(Boolean.TRUE));
+
+        final List<String> postExecutionScripts = resolver.getPostExecutionScripts();
+        assertThat(postExecutionScripts.size(), equalTo(1));
+        assertThat(postExecutionScripts, hasItem("MethodScript.file"));
     }
 
     @Test
@@ -269,7 +392,7 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldVerifyDataAfter(), is(Boolean.FALSE));
+        assertThat(resolver.shouldVerifyDataAfter(), equalTo(Boolean.FALSE));
     }
 
     @Test
@@ -279,7 +402,7 @@ public class FeatureResolverTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(ExpectedDataSets.class);
-        jAnnotationUse.param("value", "ExpectedDataSets.file");
+        jAnnotationUse.param("value", "ClassLevelScript.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
         jCodeModel.build(testFolder.getRoot());
@@ -293,18 +416,25 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldVerifyDataAfter(), is(Boolean.TRUE));
+        assertThat(resolver.shouldVerifyDataAfter(), equalTo(Boolean.TRUE));
+
+        final ExpectedDataSets expectedDataSets = resolver.getExpectedDataSets();
+        assertThat(expectedDataSets.value(), equalTo(new String[] {
+                "ClassLevelScript.file"
+        }));
     }
 
     @Test
-    public void testVerificationDataAfterTestIsEnabledForClassWithCorrespondingMethodLevelAnnotation() throws Exception {
+    public void testVerificationDataAfterTestIsEnabledForClassWithCorrespondingClassAndMethodLevelAnnotation() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(ExpectedDataSets.class);
+        jAnnotationUse.param("value", "ClassLevelScript.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(ExpectedDataSets.class);
-        jAnnotationUse.param("value", "ExpectedDataSets.file");
+        jAnnotationUse = jMethod.annotate(ExpectedDataSets.class);
+        jAnnotationUse.param("value", "MethodLevelScript.file");
 
         jCodeModel.build(testFolder.getRoot());
 
@@ -317,7 +447,111 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldVerifyDataAfter(), is(Boolean.TRUE));
+        assertThat(resolver.shouldVerifyDataAfter(), equalTo(Boolean.TRUE));
+
+        final ExpectedDataSets expectedDataSets = resolver.getExpectedDataSets();
+        assertThat(expectedDataSets.value(), equalTo(new String[] {
+                "MethodLevelScript.file"
+        }));
+    }
+
+    @Test
+    public void testCustomColumnFilterIsNotAllowedWithoutExpectedDataSetsAnnotationUsage() throws Exception {
+
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ColumnFilterImpl");
+        jClass._implements(IColumnFilter.class);
+        JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.BOOLEAN, "accept");
+        jMethod.param(String.class, "tableName");
+        jMethod.param(Column.class, "column");
+        jMethod.body()._return(JExpr.TRUE);
+        final JDefinedClass jTestClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JAnnotationUse jAnnotationUse = jTestClass.annotate(CustomColumnFilter.class);
+        jAnnotationUse.param("value", jClass);
+        jMethod = jTestClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        jCodeModel.build(testFolder.getRoot());
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(jTestClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        try {
+            resolver.getCustomColumnFilter();
+            fail("Exception expected");
+        } catch (final Exception e) {
+
+        }
+    }
+
+    @Test
+    public void testCustomColumnFilterEnabledOnClassLevel() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jFilterClass = jp._class(JMod.PUBLIC, "ColumnFilterImpl");
+        jFilterClass._implements(IColumnFilter.class);
+        JMethod jMethod = jFilterClass.method(JMod.PUBLIC, jCodeModel.BOOLEAN, "accept");
+        jMethod.param(String.class, "tableName");
+        jMethod.param(Column.class, "column");
+        jMethod.body()._return(JExpr.TRUE);
+        final JDefinedClass jTestClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jTestClass.annotate(ExpectedDataSets.class);
+        jAnnotationUse.param("value", "MethodLevelScript.file");
+        jAnnotationUse = jTestClass.annotate(CustomColumnFilter.class);
+        jAnnotationUse.param("value", jFilterClass);
+        jMethod = jTestClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        jCodeModel.build(testFolder.getRoot());
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(jTestClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        final Set<Class<? extends IColumnFilter>> filterSet = resolver.getCustomColumnFilter();
+        assertThat(filterSet.size(), equalTo(1));
+    }
+
+    @Test
+    public void testCustomColumnFilterEnabledOnMethodLevel() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jFilterClass = jp._class(JMod.PUBLIC, "ColumnFilterImpl");
+        jFilterClass._implements(IColumnFilter.class);
+        JMethod jMethod = jFilterClass.method(JMod.PUBLIC, jCodeModel.BOOLEAN, "accept");
+        jMethod.param(String.class, "tableName");
+        jMethod.param(Column.class, "column");
+        jMethod.body()._return(JExpr.TRUE);
+        final JDefinedClass jTestClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        jMethod = jTestClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+        JAnnotationUse jAnnotationUse = jMethod.annotate(ExpectedDataSets.class);
+        jAnnotationUse.param("value", "MethodLevelScript.file");
+        jAnnotationUse = jMethod.annotate(CustomColumnFilter.class);
+        jAnnotationUse.param("value", jFilterClass);
+
+        jCodeModel.build(testFolder.getRoot());
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(jTestClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        final Set<Class<? extends IColumnFilter>> filterSet = resolver.getCustomColumnFilter();
+        assertThat(filterSet.size(), equalTo(1));
     }
 
     @Test
@@ -339,17 +573,44 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupAfter(), is(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupAfter(), equalTo(Boolean.TRUE));
+        assertThat(resolver.getCleanupStrategy(), equalTo(CleanupStrategy.STRICT));
     }
 
     @Test
-    public void testCleanupAfterTestIsEnabledForClassWithCorrespondingClassLevelAnnotation() throws Exception {
+    public void testCleanupAfterTestIsEnabledForClassWithCorrespondingClassLevelAnnotationWithDefaultCleanupStrategy() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        jClass.annotate(Cleanup.class);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        jCodeModel.build(testFolder.getRoot());
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupAfter(), equalTo(Boolean.TRUE));
+        assertThat(resolver.getCleanupStrategy(), equalTo(CleanupStrategy.STRICT));
+    }
+
+    @Test
+    public void testCleanupAfterTestIsEnabledForClassWithCorrespondingClassLevelAnnotationAndNotDefaultCleanupStrategy() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
-        jAnnotationUse.param("phase", CleanupPhase.AFTER);
+        jAnnotationUse.param("strategy", CleanupStrategy.USED_ROWS_ONLY);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
         jCodeModel.build(testFolder.getRoot());
@@ -363,18 +624,21 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupAfter(), is(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupAfter(), equalTo(Boolean.TRUE));
+        assertThat(resolver.getCleanupStrategy(), equalTo(CleanupStrategy.USED_ROWS_ONLY));
     }
 
     @Test
-    public void testCleanupAfterTestIsEnabledForClassWithCorrespondingMethodLevelAnnotation() throws Exception {
+    public void testCleanupAfterTestIsEnabledForClassWithCorrespondingClassAndMethodLevelAnnotation() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
+        jAnnotationUse.param("strategy", CleanupStrategy.USED_ROWS_ONLY);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(Cleanup.class);
-        jAnnotationUse.param("phase", CleanupPhase.AFTER);
+        jAnnotationUse = jMethod.annotate(Cleanup.class);
 
         jCodeModel.build(testFolder.getRoot());
 
@@ -387,7 +651,60 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupAfter(), is(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupAfter(), equalTo(Boolean.TRUE));
+        assertThat(resolver.getCleanupStrategy(), equalTo(CleanupStrategy.STRICT));
+    }
+
+    @Test
+    public void testCleanupIsDisabledUsingCorrespondingClassLevelAnnotation() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
+        jAnnotationUse.param("phase", CleanupPhase.NONE);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        jCodeModel.build(testFolder.getRoot());
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupAfter(), equalTo(Boolean.FALSE));
+    }
+
+    @Test
+    public void testCleanupIsDisabledUsingCorrespondingMethodLevelAnnotation() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+        jAnnotationUse = jMethod.annotate(Cleanup.class);
+        jAnnotationUse.param("phase", CleanupPhase.NONE);
+
+        jCodeModel.build(testFolder.getRoot());
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupAfter(), equalTo(Boolean.FALSE));
     }
 
     @Test
@@ -409,7 +726,7 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupBefore(), is(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
     }
 
     @Test
@@ -433,17 +750,19 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupBefore(), is(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupAfter(), equalTo(Boolean.FALSE));
     }
 
     @Test
-    public void testCleanupBeforeTestIsEnabledForClassWithCorrespondingMethodLevelAnnotation() throws Exception {
+    public void testCleanupBeforeTestIsEnabledForClassWithCorrespondingClassAndMethodLevelAnnotation() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(Cleanup.class);
+        jAnnotationUse = jMethod.annotate(Cleanup.class);
         jAnnotationUse.param("phase", CleanupPhase.BEFORE);
 
         jCodeModel.build(testFolder.getRoot());
@@ -457,7 +776,8 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupBefore(), is(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupAfter(), equalTo(Boolean.FALSE));
     }
 
     @Test
@@ -479,7 +799,7 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupUsingScriptBefore(), is(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupUsingScriptBefore(), equalTo(Boolean.FALSE));
     }
 
     @Test
@@ -489,7 +809,7 @@ public class FeatureResolverTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(CleanupUsingScripts.class);
-        jAnnotationUse.param("value", "CleanupUsingScripts.file");
+        jAnnotationUse.param("value", "Script.file");
         jAnnotationUse.param("phase", CleanupPhase.BEFORE);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
@@ -504,18 +824,25 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupUsingScriptBefore(), is(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupUsingScriptBefore(), equalTo(Boolean.TRUE));
+
+        final List<String> cleanupScripts = resolver.getCleanupScripts();
+        assertThat(cleanupScripts.size(), equalTo(1));
+        assertThat(cleanupScripts, hasItem("Script.file"));
+
     }
 
     @Test
-    public void testCleanupUsingScriptBeforeTestIsEnabledForClassWithCorrespondingMethodLevelAnnotation() throws Exception {
+    public void testCleanupUsingScriptBeforeTestIsEnabledForClassWithCorrespondingClassAndMethodLevelAnnotation() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(CleanupUsingScripts.class);
+        jAnnotationUse.param("value", "ClassScripts.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(CleanupUsingScripts.class);
-        jAnnotationUse.param("value", "CleanupUsingScripts.file");
+        jAnnotationUse = jMethod.annotate(CleanupUsingScripts.class);
+        jAnnotationUse.param("value", "MethodScripts.file");
         jAnnotationUse.param("phase", CleanupPhase.BEFORE);
 
         jCodeModel.build(testFolder.getRoot());
@@ -529,7 +856,10 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupUsingScriptBefore(), is(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupUsingScriptBefore(), equalTo(Boolean.TRUE));
+        final List<String> cleanupScripts = resolver.getCleanupScripts();
+        assertThat(cleanupScripts.size(), equalTo(1));
+        assertThat(cleanupScripts, hasItem("MethodScripts.file"));
     }
 
     @Test
@@ -551,7 +881,7 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupUsingScriptAfter(), is(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupUsingScriptAfter(), equalTo(Boolean.FALSE));
     }
 
     @Test
@@ -562,7 +892,7 @@ public class FeatureResolverTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(CleanupUsingScripts.class);
-        jAnnotationUse.param("value", "CleanupUsingScripts.file");
+        jAnnotationUse.param("value", "Script.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
         jCodeModel.build(testFolder.getRoot());
@@ -576,7 +906,11 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupUsingScriptAfter(), is(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupUsingScriptAfter(), equalTo(Boolean.TRUE));
+
+        final List<String> cleanupScripts = resolver.getCleanupScripts();
+        assertThat(cleanupScripts.size(), equalTo(1));
+        assertThat(cleanupScripts, hasItem("Script.file"));
     }
 
     @Test
@@ -587,7 +921,7 @@ public class FeatureResolverTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(CleanupUsingScripts.class);
-        jAnnotationUse.param("value", "CleanupUsingScripts.file");
+        jAnnotationUse.param("value", "Script.file");
         jAnnotationUse.param("phase", CleanupPhase.AFTER);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
@@ -602,7 +936,11 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupUsingScriptAfter(), is(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupUsingScriptAfter(), equalTo(Boolean.TRUE));
+
+        final List<String> cleanupScripts = resolver.getCleanupScripts();
+        assertThat(cleanupScripts.size(), equalTo(1));
+        assertThat(cleanupScripts, hasItem("Script.file"));
     }
 
     @Test
@@ -612,9 +950,12 @@ public class FeatureResolverTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(CleanupUsingScripts.class);
+        jAnnotationUse.param("value", "ClassScript.file");
+        jAnnotationUse.param("phase", CleanupPhase.BEFORE);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(CleanupUsingScripts.class);
-        jAnnotationUse.param("value", "CleanupUsingScripts.file");
+        jAnnotationUse = jMethod.annotate(CleanupUsingScripts.class);
+        jAnnotationUse.param("value", "MethodScript.file");
 
         jCodeModel.build(testFolder.getRoot());
 
@@ -627,7 +968,11 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupUsingScriptAfter(), is(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupUsingScriptAfter(), equalTo(Boolean.TRUE));
+
+        final List<String> cleanupScripts = resolver.getCleanupScripts();
+        assertThat(cleanupScripts.size(), equalTo(1));
+        assertThat(cleanupScripts, hasItem("MethodScript.file"));
     }
 
     @Test
@@ -639,7 +984,7 @@ public class FeatureResolverTest {
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
         final JAnnotationUse jAnnotationUse = jMethod.annotate(CleanupUsingScripts.class);
-        jAnnotationUse.param("value", "CleanupUsingScripts.file");
+        jAnnotationUse.param("value", "Script.file");
         jAnnotationUse.param("phase", CleanupPhase.AFTER);
 
         jCodeModel.build(testFolder.getRoot());
@@ -653,7 +998,11 @@ public class FeatureResolverTest {
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
         // THEN
-        assertThat(resolver.shouldCleanupUsingScriptAfter(), is(Boolean.TRUE));
+        assertThat(resolver.shouldCleanupUsingScriptAfter(), equalTo(Boolean.TRUE));
+
+        final List<String> cleanupScripts = resolver.getCleanupScripts();
+        assertThat(cleanupScripts.size(), equalTo(1));
+        assertThat(cleanupScripts, hasItem("Script.file"));
     }
 
     private void compileModel(final File destinationFolder) throws IOException {
