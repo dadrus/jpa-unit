@@ -16,12 +16,12 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
-import eu.drus.test.persistence.context.PersistenceContextRule;
 import eu.drus.test.persistence.core.metadata.AnnotationInspector;
 import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
 import eu.drus.test.persistence.core.metadata.MetadataExtractor;
-import eu.drus.test.persistence.dbunit.DbUnitRule;
-import eu.drus.test.persistence.transaction.TransactionalRule;
+import eu.drus.test.persistence.rule.context.PersistenceContextRule;
+import eu.drus.test.persistence.rule.evaluation.EvaluationRule;
+import eu.drus.test.persistence.rule.transaction.TransactionalRule;
 
 public class JpaTestRunner extends BlockJUnit4ClassRunner {
 
@@ -37,7 +37,7 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
         final FeatureResolverFactory featureResolverFactory = new FeatureResolverFactory();
         final List<MethodRule> rules = super.rules(target);
         rules.add(new TransactionalRule(featureResolverFactory, persistenceField));
-        rules.add(new DbUnitRule(featureResolverFactory, entityManagerFactory));
+        rules.add(new EvaluationRule(featureResolverFactory, entityManagerFactory));
         rules.add(new PersistenceContextRule(entityManagerFactory, persistenceField));
         return rules;
     }
