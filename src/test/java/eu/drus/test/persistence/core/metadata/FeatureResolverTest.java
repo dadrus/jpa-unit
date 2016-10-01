@@ -1,24 +1,15 @@
 package eu.drus.test.persistence.core.metadata;
 
+import static eu.drus.test.persistence.core.metadata.TestCodeUtils.compileModel;
+import static eu.drus.test.persistence.core.metadata.TestCodeUtils.loadClass;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Set;
-
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
 
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.filter.IColumnFilter;
@@ -62,7 +53,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -89,7 +80,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -121,7 +112,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -155,7 +146,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -190,7 +181,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -219,7 +210,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -246,7 +237,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -276,7 +267,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -302,7 +293,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -329,7 +320,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -359,7 +350,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -385,7 +376,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -409,7 +400,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -440,7 +431,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -476,7 +467,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jTestClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jTestClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -512,7 +503,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jTestClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jTestClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -544,7 +535,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jTestClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jTestClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -566,7 +557,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -591,7 +582,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -617,7 +608,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -644,7 +635,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -670,7 +661,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -696,7 +687,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -719,7 +710,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -743,7 +734,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -769,7 +760,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -792,7 +783,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -817,7 +808,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -849,7 +840,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -874,7 +865,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -899,7 +890,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -929,7 +920,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -961,7 +952,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -991,7 +982,7 @@ public class FeatureResolverTest {
 
         compileModel(testFolder.getRoot());
 
-        final Class<?> cut = loadClass(jClass.name());
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
@@ -1003,31 +994,5 @@ public class FeatureResolverTest {
         final List<String> cleanupScripts = resolver.getCleanupScripts();
         assertThat(cleanupScripts.size(), equalTo(1));
         assertThat(cleanupScripts, hasItem("Script.file"));
-    }
-
-    private void compileModel(final File destinationFolder) throws IOException {
-
-        final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        final StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
-
-        final File[] javaFiles = testFolder.getRoot().listFiles(new FilenameFilter() {
-
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.endsWith(".java");
-            }
-        });
-
-        final Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjects(javaFiles);
-        compiler.getTask(null, fileManager, null, null, null, compilationUnits).call();
-        fileManager.close();
-    }
-
-    private Class<?> loadClass(final String className) throws MalformedURLException, ClassNotFoundException {
-        final ClassLoader cl = new URLClassLoader(new URL[] {
-                testFolder.getRoot().toURI().toURL()
-        });
-
-        return Class.forName(className, false, cl);
     }
 }
