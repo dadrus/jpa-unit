@@ -26,12 +26,12 @@ public class MetadataExtractor {
         this.testClass = testClass;
     }
 
-    public <K extends Annotation> void register(final TestClass testClass, final Class<K> annotation) {
+    private <K extends Annotation> void register(final TestClass testClass, final Class<K> annotation) {
         inspectors.put(annotation, new AnnotationInspector<>(testClass, annotation));
     }
 
     @SuppressWarnings("unchecked")
-    public <K extends Annotation> AnnotationInspector<K> using(final Class<K> annotation) {
+    private <K extends Annotation> AnnotationInspector<K> using(final Class<K> annotation) {
         if (inspectors.get(annotation) == null) {
             register(testClass, annotation);
         }
