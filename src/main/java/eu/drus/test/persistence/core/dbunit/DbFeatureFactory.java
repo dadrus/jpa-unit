@@ -4,6 +4,7 @@ import static eu.drus.test.persistence.core.dbunit.DataSetUtils.mergeDataSets;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +24,7 @@ import eu.drus.test.persistence.core.dbunit.cleanup.CleanupStrategyExecutor;
 import eu.drus.test.persistence.core.dbunit.cleanup.CleanupStrategyProvider;
 import eu.drus.test.persistence.core.dbunit.dataset.DataSetBuilder;
 import eu.drus.test.persistence.core.metadata.FeatureResolver;
-import eu.drus.test.persistence.core.sql.AnsiSqlStatementSplitter;
+import eu.drus.test.persistence.core.sql.SqlScript;
 
 public class DbFeatureFactory {
 
@@ -70,11 +71,8 @@ public class DbFeatureFactory {
         }
 
         private void executeScript(final String script, final Connection connection) throws SQLException {
-            final AnsiSqlStatementSplitter splitter = new AnsiSqlStatementSplitter();
-            final List<String> statements = splitter.splitStatements(script);
-
-            for (final String sqlStatement : statements) {
-                try (java.sql.Statement statement = connection.createStatement()) {
+            for (final String sqlStatement : new SqlScript(script)) {
+                try (Statement statement = connection.createStatement()) {
                     statement.execute(sqlStatement);
                 }
             }
