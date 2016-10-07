@@ -20,6 +20,12 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
         return replacementDataSet;
     }
 
+    private void validateStream(final InputStream in, final String message) throws IOException {
+        if (in == null) {
+            throw new IOException(message);
+        }
+    }
+
     @Override
     public DataSetLoader xmlLoader() {
         return new DataSetLoader() {
@@ -27,6 +33,7 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
             @Override
             public IDataSet load(final String path) throws IOException {
                 try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
+                    validateStream(in, "Could not open file: " + path);
                     final FlatXmlDataSetBuilder flatXmlDataSetBuilder = new FlatXmlDataSetBuilder();
                     flatXmlDataSetBuilder.setColumnSensing(true);
                     return defineReplaceableExpressions(flatXmlDataSetBuilder.build(in));
@@ -44,6 +51,7 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
             @Override
             public IDataSet load(final String path) throws IOException {
                 try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
+                    validateStream(in, "Could not open file: " + path);
                     return defineReplaceableExpressions(new CachedDataSet(new YamlDataSetProducer(in), false));
                 } catch (final DataSetException e) {
                     throw new IOException(e);
@@ -59,6 +67,7 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
             @Override
             public IDataSet load(final String path) throws IOException {
                 try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
+                    validateStream(in, "Could not open file: " + path);
                     return defineReplaceableExpressions(new CachedDataSet(new JsonDataSetProducer(in), false));
                 } catch (final DataSetException e) {
                     throw new IOException(e);
