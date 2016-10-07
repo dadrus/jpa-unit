@@ -13,7 +13,8 @@ import java.lang.annotation.Target;
  * {@link CleanupPhase#AFTER}. If not specified otherwise the whole database is erased. You can
  * change this behavior by setting up {@link #strategy()} field.
  *
- * @see {@link CleanupPhase}, {@link CleanupStrategy}
+ * @see CleanupPhase
+ * @see CleanupStrategy
  */
 @Target({
         TYPE, METHOD

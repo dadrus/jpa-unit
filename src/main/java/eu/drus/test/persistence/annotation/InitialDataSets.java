@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * execution and the corresponding seeding strategy. Default seeding strategy is
  * {@link DataSeedStrategy#INSERT}.
  *
- * @see {@link DataSeedStrategy}
+ * @see DataSeedStrategy
  */
 @Target({
         TYPE, METHOD
@@ -25,7 +25,7 @@ public @interface InitialDataSets {
     /**
      * List of data set files used to seed the database.
      */
-    String[]value();
+    String[] value();
 
     /**
      * Seeding strategy to be used while seeding the database. Default strategy is

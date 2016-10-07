@@ -9,11 +9,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that test will be wrapped in the transaction. <br />
+ * Indicates that test will be wrapped in the transaction. <br>
  * It can be defined either on a class or a method level, where latter takes precedence if used. If
  * not defined at all the {@link TransactionMode#COMMIT} mode is aplied.
  *
- * @see {@link TransactionMode}
+ * @see TransactionMode
  */
 @Target({
         TYPE, METHOD

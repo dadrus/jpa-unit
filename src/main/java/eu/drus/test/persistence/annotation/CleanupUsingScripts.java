@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 /**
  * Defines SQL scripts used for cleaning test database.
  *
- * @see {@link CleanupPhase}
+ * @see CleanupPhase
  */
 @Target({
         TYPE, METHOD
@@ -23,7 +23,7 @@ public @interface CleanupUsingScripts {
     /**
      * SQL Scripts to apply
      */
-    String[]value();
+    String[] value();
 
     /**
      * Phase when the above scripts shall be executed. Default phase is {@link CleanupPhase#AFTER}.
