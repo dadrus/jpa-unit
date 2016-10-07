@@ -45,6 +45,7 @@ public abstract class DataSetProducer implements IDataSetProducer {
         for (final Map.Entry<String, List<Map<String, String>>> entry : dataset.entrySet()) {
             // an entry represents a table
             final List<Map<String, String>> rows = entry.getValue();
+            // each row represents a record in a table
             final Collection<String> columnNames = extractColumnNames(rows);
             final ITableMetaData tableMetaData = new DefaultTableMetaData(entry.getKey(), createColumns(columnNames));
 
