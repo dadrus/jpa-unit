@@ -127,21 +127,10 @@ public class JsonDataSetProducerTest {
         verify(consumer).endDataSet();
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testProduceDataSetUsingNullStream() throws DataSetException {
-        // GIVEN
-        final IDataSetConsumer consumer = mock(IDataSetConsumer.class);
-        final IDataSetProducer producer = new JsonDataSetProducer(null);
-        producer.setConsumer(consumer);
-
         // WHEN
-        try {
-            producer.produce();
-            fail("DataSetException expected");
-        } catch (final DataSetException e) {
-            // THEN
-            assertThat(e.getCause(), instanceOf(NullPointerException.class));
-        }
+        new JsonDataSetProducer(null);
     }
 
     @Test

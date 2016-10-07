@@ -1,5 +1,6 @@
 package eu.drus.test.persistence.core.dbunit.dataset;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -25,6 +26,7 @@ public abstract class DataSetProducer implements IDataSetProducer {
     protected final InputStream input;
 
     public DataSetProducer(final InputStream input) {
+        requireNonNull(input);
         this.input = input;
     }
 
