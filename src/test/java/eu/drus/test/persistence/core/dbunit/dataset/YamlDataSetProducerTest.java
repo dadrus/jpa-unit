@@ -86,7 +86,7 @@ public class YamlDataSetProducerTest {
 
         final Map<String, String> record1 = rebuildRecord(table1Columns, allRows.get(0));
         assertThat(record1.size(), equalTo(7));
-        assertThat(record1.get("id"), equalTo("Record 1"));
+        assertThat(record1.get("id"), equalTo("1"));
         assertThat(record1.get("version"), equalTo("Record 1 version"));
         assertThat(record1.get("value_1"), equalTo("Record 1 Value 1"));
         assertThat(record1.get("value_2"), equalTo("Record 1 Value 2"));
@@ -96,7 +96,7 @@ public class YamlDataSetProducerTest {
 
         final Map<String, String> record2 = rebuildRecord(table1Columns, allRows.get(1));
         assertThat(record2.size(), equalTo(7));
-        assertThat(record2.get("id"), equalTo("Record 2"));
+        assertThat(record2.get("id"), equalTo("2"));
         assertThat(record2.get("version"), equalTo("Record 2 version"));
         assertThat(record2.get("value_1"), equalTo("Record 2 Value 1"));
         assertThat(record2.get("value_2"), equalTo("Record 2 Value 2"));
@@ -106,7 +106,7 @@ public class YamlDataSetProducerTest {
 
         final Map<String, String> record3 = rebuildRecord(table1Columns, allRows.get(2));
         assertThat(record3.size(), equalTo(7));
-        assertThat(record3.get("id"), equalTo("Record 3"));
+        assertThat(record3.get("id"), equalTo("3"));
         assertThat(record3.get("version"), equalTo("Record 3 version"));
         assertThat(record3.get("value_1"), nullValue());
         assertThat(record3.get("value_2"), nullValue());
@@ -116,7 +116,7 @@ public class YamlDataSetProducerTest {
 
         final Map<String, String> record4 = rebuildRecord(table2Columns, allRows.get(3));
         assertThat(record4.size(), equalTo(4));
-        assertThat(record4.get("id"), equalTo("Record 4"));
+        assertThat(record4.get("id"), equalTo("4"));
         assertThat(record4.get("version"), equalTo("Record 4 version"));
         assertThat(record4.get("value_6"), equalTo("Record 4 Value 6"));
         assertThat(record4.get("value_7"), equalTo("Record 4 Value 7"));
@@ -152,7 +152,8 @@ public class YamlDataSetProducerTest {
     private Map<String, String> rebuildRecord(final List<Column> columns, final Object[] entries) {
         final Map<String, String> record = new HashMap<>();
         for (int i = 0; i < columns.size(); i++) {
-            record.put(columns.get(i).getColumnName(), (String) entries[i]);
+            final Object entry = entries[i];
+            record.put(columns.get(i).getColumnName(), entry == null ? null : String.valueOf(entry));
         }
         return record;
     }
