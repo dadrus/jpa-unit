@@ -331,7 +331,6 @@ public class DbFeatureFactoryTest {
         verify(dbUnitConnection, times(0)).getConnection();
     }
 
-    @Test
     public void testVerifyDataAfterIsEnabled() throws DbFeatureException, SQLException {
         // TODO
     }
