@@ -1,6 +1,5 @@
---- # TABLE 1 entries
 TABLE_1:
-  - id: Record 1,
+  - id: Record 1
     version: Record 1 version
     value_1: Record 1 Value 1
     value_2: Record 1 Value 2
@@ -16,7 +15,6 @@ TABLE_1:
     version: Record 3 version
     value_5: Record 3 Value 5
 
---- # TABLE 2 entries
 TABLE_2:
   - id: Record 4
     version: Record 4 version

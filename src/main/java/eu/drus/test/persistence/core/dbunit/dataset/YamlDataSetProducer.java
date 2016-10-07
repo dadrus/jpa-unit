@@ -28,7 +28,7 @@ public class YamlDataSetProducer extends DataSetProducer {
                 return Collections.emptyMap();
             }
 
-            return (Map<String, List<Map<String, String>>>) createYamlReader().load(input);
+            return (Map<String, List<Map<String, String>>>) yamlData;
         } catch (final Exception e) {
             throw new DataSetException("Error parsing yaml data set", e);
         }
