@@ -22,6 +22,7 @@
 		<plugin.version.jar>2.6</plugin.version.jar>
 		<plugin.version.javadoc>2.10.4</plugin.version.javadoc>
 		<plugin.version.jacoco>0.7.7.201606060606</plugin.version.jacoco>
+		<plugin.version.coveralls>4.3.0</plugin.version.coveralls>
 
 		<version.slf4j>1.7.21</version.slf4j>
 		<version.junit>4.12</version.junit>
@@ -135,6 +136,12 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.eluder.coveralls</groupId>
+				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>${plugin.version.coveralls}</version>
 			</plugin>
 		</plugins>
 	</build>
