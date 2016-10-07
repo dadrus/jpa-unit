@@ -1,10 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>eu.drus.test</groupId>
 	<artifactId>persistence-test</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
+	<url>https://github.com/dadrus/persistence-test</url>
+	<inceptionYear>2016</inceptionYear>
+
+	<name>JPA Persistence Test</name>
 	<description>JUnit extension to run tests for JPA entities using EntityManagerFactory or EntityManager</description>
 
 	<properties>
@@ -30,6 +35,39 @@
 		<version.h2>1.4.192</version.h2>
 		<version.logback>1.1.7</version.logback>
 	</properties>
+
+	<scm>
+		<connection>scm:git:https://github.com/dadrus/persistence-test.git</connection>
+		<developerConnection>scm:git:https://github.com/dadrus/persistence-test.git</developerConnection>
+		<url>https://github.com/dadrus/persistence-test.git</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/dadrus/persistence-test</url>
+		<notifiers />
+	</ciManagement>
+
+	<developers>
+		<developer>
+			<name>Dimitrij Drus</name>
+			<email>dadrus@gmx.de</email>
+			<timezone>+1</timezone>
+			<roles>
+				<role>architect</role>
+				<role>committer</role>
+			</roles>
+		</developer>
+	</developers>
 
 	<build>
 		<pluginManagement>
@@ -62,7 +100,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
+				<version>${plugin.version.javadoc}</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
