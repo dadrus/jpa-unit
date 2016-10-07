@@ -1,5 +1,6 @@
 package eu.drus.test.persistence.core.metadata;
 
+import static eu.drus.test.persistence.core.metadata.TestCodeUtils.buildModel;
 import static eu.drus.test.persistence.core.metadata.TestCodeUtils.compileModel;
 import static eu.drus.test.persistence.core.metadata.TestCodeUtils.loadClass;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -54,7 +55,7 @@ public class AnnotationInspectorTest {
         jAnnotationUse = jMethod.annotate(ApplyScriptsAfter.class);
         jAnnotationUse.param("value", "ApplyScriptsAfter.file");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 

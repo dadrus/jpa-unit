@@ -1,8 +1,10 @@
 package eu.drus.test.persistence.core.metadata;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -12,9 +14,15 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import com.sun.codemodel.JCodeModel;
+
 public final class TestCodeUtils {
 
     private TestCodeUtils() {}
+
+    public static void buildModel(final File destinationFolder, final JCodeModel jCodeModel) throws IOException {
+        jCodeModel.build(destinationFolder, new PrintStream(new ByteArrayOutputStream()));
+    }
 
     public static void compileModel(final File destinationFolder) throws IOException {
 

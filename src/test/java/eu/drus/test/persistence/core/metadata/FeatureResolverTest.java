@@ -1,5 +1,6 @@
 package eu.drus.test.persistence.core.metadata;
 
+import static eu.drus.test.persistence.core.metadata.TestCodeUtils.buildModel;
 import static eu.drus.test.persistence.core.metadata.TestCodeUtils.compileModel;
 import static eu.drus.test.persistence.core.metadata.TestCodeUtils.loadClass;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -49,7 +50,7 @@ public class FeatureResolverTest {
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -76,7 +77,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("value", "Script.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -108,7 +109,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("seedStrategy", DataSeedStrategy.UPDATE);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -142,7 +143,7 @@ public class FeatureResolverTest {
         jAnnotationUse = jMethod.annotate(InitialDataSets.class);
         jAnnotationUse.param("value", "MethodScript.file");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -177,7 +178,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("value", "MethodScript.file");
         jAnnotationUse.param("seedStrategy", DataSeedStrategy.UPDATE);
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -206,7 +207,7 @@ public class FeatureResolverTest {
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -233,7 +234,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("value", "Script.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -263,7 +264,7 @@ public class FeatureResolverTest {
         jAnnotationUse = jMethod.annotate(ApplyScriptsBefore.class);
         jAnnotationUse.param("value", "MethodScript.file");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -289,7 +290,7 @@ public class FeatureResolverTest {
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -316,7 +317,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("value", "Script.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -346,7 +347,7 @@ public class FeatureResolverTest {
         jAnnotationUse = jMethod.annotate(ApplyScriptsAfter.class);
         jAnnotationUse.param("value", "MethodScript.file");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -372,7 +373,7 @@ public class FeatureResolverTest {
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -396,7 +397,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("value", "ClassLevelScript.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -427,7 +428,7 @@ public class FeatureResolverTest {
         jAnnotationUse = jMethod.annotate(ExpectedDataSets.class);
         jAnnotationUse.param("value", "MethodLevelScript.file");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -463,7 +464,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("value", jClass);
         jMethod = jTestClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -499,7 +500,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("value", jFilterClass);
         jMethod = jTestClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -531,7 +532,7 @@ public class FeatureResolverTest {
         jAnnotationUse = jMethod.annotate(CustomColumnFilter.class);
         jAnnotationUse.param("value", jFilterClass);
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -553,7 +554,7 @@ public class FeatureResolverTest {
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -578,7 +579,7 @@ public class FeatureResolverTest {
         jClass.annotate(Cleanup.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -604,7 +605,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("strategy", CleanupStrategy.USED_ROWS_ONLY);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -631,7 +632,7 @@ public class FeatureResolverTest {
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
         jAnnotationUse = jMethod.annotate(Cleanup.class);
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -657,7 +658,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("phase", CleanupPhase.NONE);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -683,7 +684,7 @@ public class FeatureResolverTest {
         jAnnotationUse = jMethod.annotate(Cleanup.class);
         jAnnotationUse.param("phase", CleanupPhase.NONE);
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -706,7 +707,7 @@ public class FeatureResolverTest {
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -730,7 +731,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("phase", CleanupPhase.BEFORE);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -756,7 +757,7 @@ public class FeatureResolverTest {
         jAnnotationUse = jMethod.annotate(Cleanup.class);
         jAnnotationUse.param("phase", CleanupPhase.BEFORE);
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -779,7 +780,7 @@ public class FeatureResolverTest {
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -804,7 +805,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("phase", CleanupPhase.BEFORE);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -836,7 +837,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("value", "MethodScripts.file");
         jAnnotationUse.param("phase", CleanupPhase.BEFORE);
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -861,7 +862,7 @@ public class FeatureResolverTest {
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -886,7 +887,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("value", "Script.file");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -916,7 +917,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("phase", CleanupPhase.AFTER);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -948,7 +949,7 @@ public class FeatureResolverTest {
         jAnnotationUse = jMethod.annotate(CleanupUsingScripts.class);
         jAnnotationUse.param("value", "MethodScript.file");
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
@@ -978,7 +979,7 @@ public class FeatureResolverTest {
         jAnnotationUse.param("value", "Script.file");
         jAnnotationUse.param("phase", CleanupPhase.AFTER);
 
-        jCodeModel.build(testFolder.getRoot());
+        buildModel(testFolder.getRoot(), jCodeModel);
 
         compileModel(testFolder.getRoot());
 
