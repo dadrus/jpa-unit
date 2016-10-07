@@ -69,12 +69,12 @@ public class YamlDataSetProducerTest {
         final ITableMetaData tmd2 = tmdList.get(1);
         final List<Column> table2Columns = Arrays.asList(tmd2.getColumns());
 
-        assertThat(tmd1.getTableName(), equalTo("TABLE_1"));
+        assertThat(tmd1.getTableName(), equalTo("YAML_TABLE_1"));
         assertThat(table1Columns.size(), equalTo(7));
         assertThat(table1Columns, hasItems(columnWithName("id"), columnWithName("version"), columnWithName("value_1"),
                 columnWithName("value_2"), columnWithName("value_3"), columnWithName("value_4"), columnWithName("value_5")));
 
-        assertThat(tmd2.getTableName(), equalTo("TABLE_2"));
+        assertThat(tmd2.getTableName(), equalTo("YAML_TABLE_2"));
         assertThat(table2Columns.size(), equalTo(4));
         assertThat(table2Columns,
                 hasItems(columnWithName("id"), columnWithName("version"), columnWithName("value_6"), columnWithName("value_7")));

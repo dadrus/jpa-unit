@@ -1,4 +1,4 @@
-TABLE_1:
+YAML_TABLE_1:
   - id: Record 1
     version: Record 1 version
     value_1: Record 1 Value 1
@@ -15,7 +15,7 @@ TABLE_1:
     version: Record 3 version
     value_5: Record 3 Value 5
 
-TABLE_2:
+YAML_TABLE_2:
   - id: Record 4
     version: Record 4 version
     value_6: Record 4 Value 6

@@ -1,5 +1,5 @@
 {
-	"TABLE_1": [
+	"JSON_TABLE_1": [
 		{
 			"id": "Record 1",
 			"version": "Record 1 version",
@@ -21,7 +21,7 @@
 		}
 	],
 	
-	"TABLE_2": [
+	"JSON_TABLE_2": [
 		{
 			"id": "Record 4",
 			"version": "Record 4 version",
