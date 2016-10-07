@@ -16,14 +16,17 @@
 		<plugin.version.source>2.4</plugin.version.source>
 		<plugin.version.jar>2.6</plugin.version.jar>
 
-		<version.slf4j>1.7.14</version.slf4j>
+		<version.slf4j>1.7.21</version.slf4j>
 		<version.junit>4.12</version.junit>
 		<version.mockito>1.10.19</version.mockito>
-		<version.gson>2.5</version.gson>
-		<version.dbunit>2.5.1</version.dbunit>
+		<version.gson>2.7</version.gson>
+		<version.dbunit>2.5.3</version.dbunit>
 		<version.hibernate-jpa-2.1-api>1.0.0.Final</version.hibernate-jpa-2.1-api>
 		<version.snakeyaml>1.10</version.snakeyaml>
+		<version.commons-lang3>3.4</version.commons-lang3>
 		<version.codemodel>2.6</version.codemodel>
+		<version.h2>1.4.192</version.h2>
+		<version.logback>1.1.7</version.logback>
 	</properties>
 
 	<build>
@@ -100,7 +103,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
+			<version>${version.commons-lang3}</version>
 		</dependency>
 
 		<dependency>
@@ -118,13 +121,13 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>1.4.191</version>
+			<version>${version.h2}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.1.7</version>
+			<version>${version.logback}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
