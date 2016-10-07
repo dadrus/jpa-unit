@@ -32,6 +32,7 @@ public class SqlScriptTest {
         " \n\n;\n";                                      // just some empty lines
     //@formatter:on
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testRemovalOfCommentsProperSplittingOfStatementsAndTrimmingOfEachOfIt() {
         // GIVEN

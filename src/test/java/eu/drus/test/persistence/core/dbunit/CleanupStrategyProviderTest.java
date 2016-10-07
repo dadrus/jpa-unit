@@ -5,13 +5,13 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.apache.commons.codec.Charsets;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
@@ -31,7 +31,7 @@ public class CleanupStrategyProviderTest {
 
     @BeforeClass
     public static void createSchema() throws Exception {
-        RunScript.execute(CONNECTION_URL, USER_NAME, PASSWORD, DB_SETUP_SCRIPT, Charsets.UTF_8, false);
+        RunScript.execute(CONNECTION_URL, USER_NAME, PASSWORD, DB_SETUP_SCRIPT, StandardCharsets.UTF_8, false);
     }
 
     private DatabaseConnection connection;
