@@ -14,14 +14,6 @@ import eu.drus.test.persistence.annotation.CleanupStrategy.StrategyProvider;
 
 public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategyExecutor> {
 
-    private final DatabaseConnection connection;
-    private final List<IDataSet> initialDataSets;
-
-    public CleanupStrategyProvider(final DatabaseConnection connection, final List<IDataSet> initialDataSets) {
-        this.connection = connection;
-        this.initialDataSets = initialDataSets;
-    }
-
     @Override
     public CleanupStrategyExecutor strictStrategy() {
         return new StrictCleanupStrategyExecutor();
@@ -48,7 +40,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
     private class StrictCleanupStrategyExecutor implements CleanupStrategyExecutor {
 
         @Override
-        public void cleanupDatabase(final String... tablesToExclude) {
+        public void execute(final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) {
             try {
                 final IDataSet dataSet = excludeTables(connection.createDataSet(), tablesToExclude);
                 DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
@@ -62,7 +54,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
     private class UsedTablesOnlyCleanupStrategyExecutor implements CleanupStrategyExecutor {
 
         @Override
-        public void cleanupDatabase(final String... tablesToExclude) {
+        public void execute(final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) {
             if (initialDataSets.isEmpty()) {
                 return;
             }
@@ -80,7 +72,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
     private class UsedRowsOnlyCleanupStrategyExecutor implements CleanupStrategyExecutor {
 
         @Override
-        public void cleanupDatabase(final String... tablesToExclude) {
+        public void execute(final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) {
             if (initialDataSets.isEmpty()) {
                 return;
             }

@@ -51,16 +51,19 @@ public class DbFeatureFactory {
 
         private final CleanupStrategy cleanupStrategy;
         private final List<IDataSet> initialDataSets;
+        private final CleanupStrategyProvider provider;
 
-        private CleanupFeature(final CleanupStrategy cleanupStrategy, final List<IDataSet> initialDataSets) {
+        private CleanupFeature(final CleanupStrategyProvider provider, final CleanupStrategy cleanupStrategy,
+                final List<IDataSet> initialDataSets) {
+            this.provider = provider;
             this.cleanupStrategy = cleanupStrategy;
             this.initialDataSets = initialDataSets;
         }
 
         @Override
         public void execute(final DatabaseConnection connection) throws DbFeatureException {
-            final CleanupStrategyExecutor executor = cleanupStrategy.provide(new CleanupStrategyProvider(connection, initialDataSets));
-            executor.cleanupDatabase();
+            final CleanupStrategyExecutor executor = cleanupStrategy.provide(provider);
+            executor.execute(connection, initialDataSets);
         }
     }
 
@@ -96,16 +99,19 @@ public class DbFeatureFactory {
 
         private final DataSeedStrategy dataSeedStrategy;
         private final List<IDataSet> initialDataSets;
+        private final DataSeedStrategyProvider provider;
 
-        public SeedDataFeature(final DataSeedStrategy dataSeedStrategy, final List<IDataSet> initialDataSets) {
+        public SeedDataFeature(final DataSeedStrategyProvider provider, final DataSeedStrategy dataSeedStrategy,
+                final List<IDataSet> initialDataSets) {
             this.dataSeedStrategy = dataSeedStrategy;
             this.initialDataSets = initialDataSets;
+            this.provider = provider;
         }
 
         @Override
         public void execute(final DatabaseConnection connection) throws DbFeatureException {
             try {
-                final DatabaseOperation operation = dataSeedStrategy.provide(new DataSeedStrategyProvider());
+                final DatabaseOperation operation = dataSeedStrategy.provide(provider);
                 operation.execute(connection, mergeDataSets(initialDataSets));
             } catch (DatabaseUnitException | SQLException e) {
                 throw new DbFeatureException("Could not execute DB seed feature", e);
@@ -145,11 +151,13 @@ public class DbFeatureFactory {
 
     private static final NopFeature NOP_FEATURE = new NopFeature();
 
-    private FeatureResolver featureResolver;
+    private final FeatureResolver featureResolver;
+    private StrategyProviderFactory providerFactory;
     private final List<IDataSet> initialDataSets;
 
     public DbFeatureFactory(final FeatureResolver featureResolver) {
         this.featureResolver = featureResolver;
+        providerFactory = new StrategyProviderFactory();
         try {
             initialDataSets = loadDataSets(featureResolver.getSeedData());
         } catch (final IOException e) {
@@ -157,9 +165,15 @@ public class DbFeatureFactory {
         }
     }
 
+    // for tests
+    void setProviderFactory(final StrategyProviderFactory providerFactory) {
+        this.providerFactory = providerFactory;
+    }
+
     public DbFeature getCleanUpBeforeFeature() {
         if (featureResolver.shouldCleanupBefore()) {
-            return new CleanupFeature(featureResolver.getCleanupStrategy(), initialDataSets);
+            return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
+                    initialDataSets);
         } else {
             return NOP_FEATURE;
         }
@@ -167,7 +181,8 @@ public class DbFeatureFactory {
 
     public DbFeature getCleanUpAfterFeature() {
         if (featureResolver.shouldCleanupAfter()) {
-            return new CleanupFeature(featureResolver.getCleanupStrategy(), initialDataSets);
+            return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
+                    initialDataSets);
         } else {
             return NOP_FEATURE;
         }
@@ -191,14 +206,14 @@ public class DbFeatureFactory {
 
     public DbFeature getApplyCustomScriptBeforeFeature() {
         if (featureResolver.shouldApplyCustomScriptBefore()) {
-            return new ApplyCustomScriptFeature(featureResolver.getPostExecutionScripts());
+            return new ApplyCustomScriptFeature(featureResolver.getPreExecutionScripts());
         } else {
             return NOP_FEATURE;
         }
     }
 
     public DbFeature getApplyCustomScriptAfterFeature() {
-        if (featureResolver.shouldApplyCustomScriptBefore()) {
+        if (featureResolver.shouldApplyCustomScriptAfter()) {
             return new ApplyCustomScriptFeature(featureResolver.getPostExecutionScripts());
         } else {
             return NOP_FEATURE;
@@ -207,7 +222,8 @@ public class DbFeatureFactory {
 
     public DbFeature getSeedDataFeature() {
         if (featureResolver.shouldSeedData()) {
-            return new SeedDataFeature(featureResolver.getDataSeedStrategy(), initialDataSets);
+            return new SeedDataFeature(providerFactory.createDataSeedStrategyProvider(), featureResolver.getDataSeedStrategy(),
+                    initialDataSets);
         } else {
             return NOP_FEATURE;
         }

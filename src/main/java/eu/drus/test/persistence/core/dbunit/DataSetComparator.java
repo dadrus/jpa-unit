@@ -32,11 +32,11 @@ public class DataSetComparator {
 
     private static final Logger log = Logger.getLogger(DataSetComparator.class.getName());
 
-    final ColumnsHolder toExclude;
+    private final ColumnsHolder toExclude;
 
-    final ColumnsHolder orderBy;
+    private final ColumnsHolder orderBy;
 
-    final Set<Class<? extends IColumnFilter>> columnFilters;
+    private final Set<Class<? extends IColumnFilter>> columnFilters;
 
     public DataSetComparator(final String[] orderBy, final String[] toExclude, final Set<Class<? extends IColumnFilter>> columnFilters) {
         this.toExclude = new ColumnsHolder(toExclude);
@@ -53,7 +53,19 @@ public class DataSetComparator {
         }
     }
 
-    public void compareContent(final IDataSet currentDataSet, final IDataSet expectedDataSet, final AssertionErrorCollector errorCollector)
+    private void shouldBeEmpty(final IDataSet dataSet, final AssertionErrorCollector errorCollector) throws DatabaseUnitException {
+        final String[] tableNames = dataSet.getTableNames();
+        for (final String tableName : tableNames) {
+            final SortedTable tableState = new SortedTable(dataSet.getTable(tableName));
+            final int rowCount = tableState.getRowCount();
+            if (rowCount != 0) {
+                errorCollector.collect(new AssertionError(tableName + " expected to be empty, but was <" + rowCount + ">."));
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void compareContent(final IDataSet currentDataSet, final IDataSet expectedDataSet, final AssertionErrorCollector errorCollector)
             throws DatabaseUnitException, ReflectiveOperationException {
         final String[] tableNames = expectedDataSet.getTableNames();
         final FilteredDataSet filteredCurrentDataSet = new FilteredDataSet(new IncludeTableFilter(tableNames), currentDataSet);
@@ -71,47 +83,15 @@ public class DataSetComparator {
 
             final DiffCollectingFailureHandler diffCollector = new DiffCollectingFailureHandler();
 
-            final ITable expectedTableWithFilteredColumns = filter(expectedTable, toStringArray(columnsToIgnore));
-            final ITable actualTableWithFilteredColumns = filter(currentTable, toStringArray(columnsToIgnore));
+            final String[] toBeIgnored = columnsToIgnore.toArray(new String[columnsToIgnore.size()]);
+
+            final ITable expectedTableWithFilteredColumns = filter(expectedTable, toBeIgnored);
+            final ITable actualTableWithFilteredColumns = filter(currentTable, toBeIgnored);
 
             Assertion.assertEquals(expectedTableWithFilteredColumns, actualTableWithFilteredColumns, diffCollector);
 
-            @SuppressWarnings("unchecked")
-            final List<Difference> diffs = diffCollector.getDiffList();
-            collectErrors(errorCollector, diffs);
+            collectErrors(errorCollector, diffCollector.getDiffList());
         }
-    }
-
-    public void shouldBeEmpty(final IDataSet dataSet, final AssertionErrorCollector errorCollector) throws DatabaseUnitException {
-        final String[] tableNames = dataSet.getTableNames();
-        for (final String tableName : tableNames) {
-            shouldBeEmpty(dataSet, tableName, errorCollector);
-        }
-    }
-
-    public void shouldBeEmpty(final IDataSet dataSet, final String tableName, final AssertionErrorCollector errorCollector)
-            throws DataSetException {
-        final SortedTable tableState = new SortedTable(dataSet.getTable(tableName));
-        final int rowCount = tableState.getRowCount();
-        if (rowCount != 0) {
-            errorCollector.collect(new AssertionError(tableName + " expected to be empty, but was <" + rowCount + ">."));
-        }
-    }
-
-    // -- Private methods
-
-    private void collectErrors(final AssertionErrorCollector errorCollector, final List<Difference> diffs) {
-        for (final Difference diff : diffs) {
-            final String tableName = diff.getActualTable().getTableMetaData().getTableName();
-            errorCollector.collect(String.format(DIFF_ERROR, tableName, diff.getRowIndex(), diff.getColumnName(), diff.getExpectedValue(),
-                    diff.getActualValue()));
-        }
-    }
-
-    private ITable sort(final ITable table, final List<String> columnsForSorting) throws DataSetException {
-        final SortedTable sortedTable = new SortedTable(table, toStringArray(columnsForSorting));
-        sortedTable.setUseComparable(true);
-        return sortedTable;
     }
 
     private List<String> defineColumnsForSorting(final IDataSet currentDataSet, final IDataSet expectedDataSet, final String tableName)
@@ -126,22 +106,10 @@ public class DataSetComparator {
         return columnsForSorting;
     }
 
-    private static <T> String[] toStringArray(final Collection<T> collection) {
-        return collection.toArray(new String[collection.size()]);
-    }
-
-    private List<String> additionalColumnsForSorting(final ITable expectedTableState, final ITable currentTableState)
-            throws DataSetException {
-        final List<String> columnsForSorting = new ArrayList<>();
-        final Set<String> allColumns = new HashSet<>(extractColumnNames(expectedTableState.getTableMetaData().getColumns()));
-        final Set<String> columnsToIgnore = new HashSet<>(extractColumnsToBeIgnored(expectedTableState, currentTableState));
-        for (final String column : allColumns) {
-            if (!columnsToIgnore.contains(column)) {
-                columnsForSorting.add(column);
-            }
-        }
-
-        return columnsForSorting;
+    private ITable sort(final ITable table, final List<String> columnsForSorting) throws DataSetException {
+        final SortedTable sortedTable = new SortedTable(table, columnsForSorting.toArray(new String[columnsForSorting.size()]));
+        sortedTable.setUseComparable(true);
+        return sortedTable;
     }
 
     private List<String> extractColumnsToBeIgnored(final ITable expectedTableState, final ITable currentTableState)
@@ -169,6 +137,28 @@ public class DataSetComparator {
     private ITable filter(final ITable table, final String[] columnsToFilter) throws ReflectiveOperationException, DataSetException {
         final ITable filteredTable = DefaultColumnFilter.excludedColumnsTable(table, columnsToFilter);
         return applyCustomFilters(filteredTable);
+    }
+
+    private void collectErrors(final AssertionErrorCollector errorCollector, final List<Difference> diffs) {
+        for (final Difference diff : diffs) {
+            final String tableName = diff.getActualTable().getTableMetaData().getTableName();
+            errorCollector.collect(String.format(DIFF_ERROR, tableName, diff.getRowIndex(), diff.getColumnName(), diff.getExpectedValue(),
+                    diff.getActualValue()));
+        }
+    }
+
+    private List<String> additionalColumnsForSorting(final ITable expectedTableState, final ITable currentTableState)
+            throws DataSetException {
+        final List<String> columnsForSorting = new ArrayList<>();
+        final Set<String> allColumns = new HashSet<>(extractColumnNames(expectedTableState.getTableMetaData().getColumns()));
+        final Set<String> columnsToIgnore = new HashSet<>(extractColumnsToBeIgnored(expectedTableState, currentTableState));
+        for (final String column : allColumns) {
+            if (!columnsToIgnore.contains(column)) {
+                columnsForSorting.add(column);
+            }
+        }
+
+        return columnsForSorting;
     }
 
     private ITable applyCustomFilters(ITable table) throws ReflectiveOperationException, DataSetException {

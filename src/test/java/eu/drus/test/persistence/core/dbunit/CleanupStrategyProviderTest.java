@@ -62,10 +62,6 @@ public class CleanupStrategyProviderTest {
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(4));
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_2"), equalTo(1));
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_2"), equalTo(1));
-        connection.close();
-
-        connection = new DatabaseConnection(DriverManager.getConnection(CONNECTION_URL, USER_NAME, PASSWORD));
-
     }
 
     public void tearDown() throws SQLException {
@@ -75,12 +71,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testStrictCleanupWithInitialDataSets() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Arrays.asList(initialDataSet));
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.strictStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase();
+        strategyExecutor.execute(connection, Arrays.asList(initialDataSet));
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(0));
@@ -91,12 +87,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testStrictCleanupWithInitialDataSetsExcludingOneTable() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Arrays.asList(initialDataSet));
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.strictStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase("XML_TABLE_2");
+        strategyExecutor.execute(connection, Arrays.asList(initialDataSet), "XML_TABLE_2");
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(0));
@@ -107,12 +103,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testStrictCleanupWithoutInitialDataSets() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Collections.emptyList());
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.strictStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase();
+        strategyExecutor.execute(connection, Collections.emptyList());
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(0));
@@ -123,12 +119,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testStrictCleanupWithoutInitialDataSetsExcludingOneTable() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Collections.emptyList());
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.strictStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase("XML_TABLE_2");
+        strategyExecutor.execute(connection, Collections.emptyList(), "XML_TABLE_2");
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(0));
@@ -139,12 +135,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testUsedRowsOnlyCleanupWithInitialDataSets() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Arrays.asList(initialDataSet));
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.usedRowsOnlyStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase();
+        strategyExecutor.execute(connection, Arrays.asList(initialDataSet));
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(1));
@@ -155,12 +151,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testUsedRowsOnlyCleanupWithInitialDataSetsExcludingOneTable() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Arrays.asList(initialDataSet));
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.usedRowsOnlyStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase("XML_TABLE_2");
+        strategyExecutor.execute(connection, Arrays.asList(initialDataSet), "XML_TABLE_2");
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(1));
@@ -171,12 +167,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testUsedRowsOnlyCleanupWithoutInitialDataSets() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Collections.emptyList());
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.usedRowsOnlyStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase();
+        strategyExecutor.execute(connection, Collections.emptyList());
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(4));
@@ -187,12 +183,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testUsedRowsOnlyCleanupWithoutInitialDataSetsExcludingOneTable() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Collections.emptyList());
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.usedRowsOnlyStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase("XML_TABLE_2");
+        strategyExecutor.execute(connection, Collections.emptyList(), "XML_TABLE_2");
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(4));
@@ -203,12 +199,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testUsedTablesOnlyCleanupWithInitialDataSets() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Arrays.asList(initialDataSet));
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.usedTablesOnlyStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase();
+        strategyExecutor.execute(connection, Arrays.asList(initialDataSet));
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(0));
@@ -219,12 +215,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testUsedTablesOnlyCleanupWithInitialDataSetsExcludingOneTable() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Arrays.asList(initialDataSet));
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.usedTablesOnlyStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase("XML_TABLE_2");
+        strategyExecutor.execute(connection, Arrays.asList(initialDataSet), "XML_TABLE_2");
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(0));
@@ -235,12 +231,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testUsedTablesOnlyCleanupWithoutInitialDataSets() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Collections.emptyList());
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.usedTablesOnlyStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase();
+        strategyExecutor.execute(connection, Collections.emptyList());
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(4));
@@ -251,12 +247,12 @@ public class CleanupStrategyProviderTest {
     @Test
     public void testUsedTablesOnlyCleanupWithoutInitialDataSetsExcludingOneTable() throws Exception {
         // GIVEN
-        final CleanupStrategyProvider provider = new CleanupStrategyProvider(connection, Collections.emptyList());
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
         final CleanupStrategyExecutor strategyExecutor = provider.usedTablesOnlyStrategy();
         assertThat(strategyExecutor, notNullValue());
 
         // WHEN
-        strategyExecutor.cleanupDatabase("XML_TABLE_2");
+        strategyExecutor.execute(connection, Collections.emptyList(), "XML_TABLE_2");
 
         // THEN
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(4));
