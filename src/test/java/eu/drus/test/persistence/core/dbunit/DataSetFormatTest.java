@@ -1,4 +1,4 @@
-package eu.drus.test.persistence.core.dbunit.dataset;
+package eu.drus.test.persistence.core.dbunit;
 
 import static org.mockito.Mockito.verify;
 
