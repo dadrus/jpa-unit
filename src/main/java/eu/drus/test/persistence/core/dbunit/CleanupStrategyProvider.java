@@ -1,12 +1,13 @@
-package eu.drus.test.persistence.core.dbunit.cleanup;
-
-import static eu.drus.test.persistence.core.dbunit.DataSetUtils.excludeTables;
-import static eu.drus.test.persistence.core.dbunit.DataSetUtils.mergeDataSets;
+package eu.drus.test.persistence.core.dbunit;
 
 import java.util.List;
 
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.dataset.CompositeDataSet;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.filter.ExcludeTableFilter;
 import org.dbunit.operation.DatabaseOperation;
 
 import eu.drus.test.persistence.annotation.CleanupStrategy.StrategyProvider;
@@ -34,6 +35,14 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
     @Override
     public CleanupStrategyExecutor usedRowsOnlyStrategy() {
         return new UsedRowsOnlyCleanupStrategyExecutor();
+    }
+
+    private IDataSet mergeDataSets(final List<IDataSet> dataSets) throws DataSetException {
+        return new CompositeDataSet(dataSets.toArray(new IDataSet[dataSets.size()]));
+    }
+
+    private IDataSet excludeTables(final IDataSet dataSet, final String... tablesToExclude) {
+        return new FilteredDataSet(new ExcludeTableFilter(tablesToExclude), dataSet);
     }
 
     private class StrictCleanupStrategyExecutor implements CleanupStrategyExecutor {

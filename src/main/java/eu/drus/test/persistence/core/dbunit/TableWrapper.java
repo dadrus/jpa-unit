@@ -1,4 +1,4 @@
-package eu.drus.test.persistence.core.dbunit.dataset;
+package eu.drus.test.persistence.core.dbunit;
 
 import org.dbunit.dataset.AbstractTable;
 import org.dbunit.dataset.DataSetException;

@@ -1,7 +1,24 @@
 package eu.drus.test.persistence.core.dbunit;
 
 public enum DataSetFormat {
-    XML("xml"), YAML("yml"), JSON("json");
+    XML("xml") {
+        @Override
+        public <T> T select(final LoaderProvider<T> provider) {
+            return provider.xmlLoader();
+        }
+    },
+    YAML("yml") {
+        @Override
+        public <T> T select(final LoaderProvider<T> provider) {
+            return provider.yamlLoader();
+        }
+    },
+    JSON("json") {
+        @Override
+        public <T> T select(final LoaderProvider<T> provider) {
+            return provider.jsonLoader();
+        }
+    };
 
     private final String fileExtension;
 
@@ -13,6 +30,8 @@ public enum DataSetFormat {
         return fileExtension;
     }
 
+    public abstract <T> T select(LoaderProvider<T> provider);
+
     public static DataSetFormat inferFromFile(final String fileName) {
 
         for (final DataSetFormat format : values()) {
@@ -22,5 +41,13 @@ public enum DataSetFormat {
         }
 
         throw new UnsupportedDataSetFormatException("File " + fileName + " is not supported as data set format.");
+    }
+
+    public interface LoaderProvider<T> {
+        T xmlLoader();
+
+        T yamlLoader();
+
+        T jsonLoader();
     }
 }

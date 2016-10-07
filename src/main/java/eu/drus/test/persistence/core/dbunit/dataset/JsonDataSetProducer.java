@@ -1,4 +1,4 @@
-package eu.drus.test.persistence.core.dbunit.dataset.json;
+package eu.drus.test.persistence.core.dbunit.dataset;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,8 +9,6 @@ import org.dbunit.dataset.DataSetException;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import eu.drus.test.persistence.core.dbunit.dataset.DataSetProducer;
 
 public class JsonDataSetProducer extends DataSetProducer {
 

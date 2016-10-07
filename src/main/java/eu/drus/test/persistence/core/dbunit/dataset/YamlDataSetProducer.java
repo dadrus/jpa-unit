@@ -1,4 +1,4 @@
-package eu.drus.test.persistence.core.dbunit.dataset.yaml;
+package eu.drus.test.persistence.core.dbunit.dataset;
 
 import java.io.InputStream;
 import java.util.Collections;
@@ -12,8 +12,6 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
-
-import eu.drus.test.persistence.core.dbunit.dataset.DataSetProducer;
 
 public class YamlDataSetProducer extends DataSetProducer {
 

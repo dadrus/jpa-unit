@@ -42,38 +42,27 @@ public abstract class DataSetProducer implements IDataSetProducer {
 
         final Map<String, List<Map<String, String>>> dataset = loadDataSet();
 
-        final List<Table> tables = createTables(dataset);
+        for (final Map.Entry<String, List<Map<String, String>>> entry : dataset.entrySet()) {
+            // an entry represents a table
+            final List<Map<String, String>> rows = entry.getValue();
+            final Collection<String> columnNames = extractColumnNames(rows);
+            final ITableMetaData tableMetaData = new DefaultTableMetaData(entry.getKey(), createColumns(columnNames));
 
-        for (final Table table : tables) {
-            final ITableMetaData tableMetaData = createTableMetaData(table);
             consumer.startTable(tableMetaData);
-            for (final Row row : table.getRows()) {
-                final List<String> values = new ArrayList<String>();
+
+            for (final Map<String, String> row : rows) {
+                final List<String> values = new ArrayList<>();
                 for (final Column column : tableMetaData.getColumns()) {
-                    values.add(row.valueOf(column.getColumnName()));
+                    values.add(row.get(column.getColumnName()));
                 }
                 consumer.row(values.toArray());
             }
 
             consumer.endTable();
+
         }
 
         consumer.endDataSet();
-    }
-
-    private ITableMetaData createTableMetaData(final Table table) {
-        return new DefaultTableMetaData(table.getTableName(), createColumns(table.getColumns()));
-    }
-
-    private List<Table> createTables(final Map<String, List<Map<String, String>>> jsonStructure) {
-        final List<Table> tables = new ArrayList<Table>();
-        for (final Map.Entry<String, List<Map<String, String>>> entry : jsonStructure.entrySet()) {
-            final Table table = new Table(entry.getKey());
-            table.addColumns(extractColumns(entry.getValue()));
-            table.addRows(extractRows(entry.getValue()));
-            tables.add(table);
-        }
-        return tables;
     }
 
     private Column[] createColumns(final Collection<String> columnNames) {
@@ -81,11 +70,7 @@ public abstract class DataSetProducer implements IDataSetProducer {
         return columns.toArray(new Column[columns.size()]);
     }
 
-    private Collection<Row> extractRows(final List<Map<String, String>> rows) {
-        return rows.stream().map(e -> new Row(e)).collect(toList());
-    }
-
-    private Collection<String> extractColumns(final List<Map<String, String>> rows) {
+    private Collection<String> extractColumnNames(final List<Map<String, String>> rows) {
         return rows.stream().flatMap(e -> e.keySet().stream()).collect(toSet());
     }
 

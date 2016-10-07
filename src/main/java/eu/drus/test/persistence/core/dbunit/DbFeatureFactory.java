@@ -1,7 +1,6 @@
 package eu.drus.test.persistence.core.dbunit;
 
-import static eu.drus.test.persistence.core.dbunit.DataSetUtils.mergeDataSets;
-
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,6 +11,8 @@ import java.util.Set;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.dataset.CompositeDataSet;
+import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.IColumnFilter;
 import org.dbunit.operation.DatabaseOperation;
@@ -20,13 +21,25 @@ import eu.drus.test.persistence.annotation.CleanupStrategy;
 import eu.drus.test.persistence.annotation.DataSeedStrategy;
 import eu.drus.test.persistence.annotation.ExpectedDataSets;
 import eu.drus.test.persistence.core.AssertionErrorCollector;
-import eu.drus.test.persistence.core.dbunit.cleanup.CleanupStrategyExecutor;
-import eu.drus.test.persistence.core.dbunit.cleanup.CleanupStrategyProvider;
-import eu.drus.test.persistence.core.dbunit.dataset.DataSetBuilder;
+import eu.drus.test.persistence.core.dbunit.dataset.DataSetLoader;
+import eu.drus.test.persistence.core.dbunit.dataset.DataSetLoaderProvider;
 import eu.drus.test.persistence.core.metadata.FeatureResolver;
 import eu.drus.test.persistence.core.sql.SqlScript;
 
 public class DbFeatureFactory {
+
+    private static IDataSet mergeDataSets(final List<IDataSet> dataSets) throws DataSetException {
+        return new CompositeDataSet(dataSets.toArray(new IDataSet[dataSets.size()]));
+    }
+
+    private static List<IDataSet> loadDataSets(final List<String> paths) throws IOException {
+        final List<IDataSet> dataSets = new ArrayList<>();
+        for (final String path : paths) {
+            final DataSetLoader loader = DataSetFormat.inferFromFile(path).select(new DataSetLoaderProvider());
+            dataSets.add(loader.load(path));
+        }
+        return dataSets;
+    }
 
     private static class NopFeature implements DbFeature {
 
@@ -124,20 +137,10 @@ public class DbFeatureFactory {
                 dataSetComparator.compare(currentDataSet, expectedDataSet, errorCollector);
 
                 errorCollector.report();
-            } catch (final SQLException | DatabaseUnitException | ReflectiveOperationException e) {
+            } catch (final SQLException | DatabaseUnitException | ReflectiveOperationException | IOException e) {
                 throw new DbFeatureException("Could not execute DB contents verification feature", e);
             }
         }
-
-        private List<IDataSet> loadDataSets(final List<String> paths) {
-            final List<IDataSet> dataSets = new ArrayList<>();
-            for (final String path : paths) {
-                final DataSetBuilder builder = DataSetBuilder.builderFor(DataSetFormat.inferFromFile(path));
-                dataSets.add(builder.build(path));
-            }
-            return dataSets;
-        }
-
     }
 
     private static final NopFeature NOP_FEATURE = new NopFeature();
@@ -147,16 +150,11 @@ public class DbFeatureFactory {
 
     public DbFeatureFactory(final FeatureResolver featureResolver) {
         this.featureResolver = featureResolver;
-        initialDataSets = loadDataSets(featureResolver.getSeedData());
-    }
-
-    private List<IDataSet> loadDataSets(final List<String> paths) {
-        final List<IDataSet> dataSets = new ArrayList<>();
-        for (final String path : paths) {
-            final DataSetBuilder builder = DataSetBuilder.builderFor(DataSetFormat.inferFromFile(path));
-            dataSets.add(builder.build(path));
+        try {
+            initialDataSets = loadDataSets(featureResolver.getSeedData());
+        } catch (final IOException e) {
+            throw new RuntimeException("Could not load initial data sets", e);
         }
-        return dataSets;
     }
 
     public DbFeature getCleanUpBeforeFeature() {

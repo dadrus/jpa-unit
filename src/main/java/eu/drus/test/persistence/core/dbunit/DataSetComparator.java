@@ -1,9 +1,5 @@
 package eu.drus.test.persistence.core.dbunit;
 
-import static eu.drus.test.persistence.core.dbunit.DataSetUtils.extractColumnNames;
-import static eu.drus.test.persistence.core.dbunit.DataSetUtils.extractColumnsNotSpecifiedInExpectedDataSet;
-import static eu.drus.test.persistence.core.dbunit.DataSetUtils.extractNonExistingColumns;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,6 +12,7 @@ import org.dbunit.Assertion;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.assertion.DiffCollectingFailureHandler;
 import org.dbunit.assertion.Difference;
+import org.dbunit.dataset.Column;
 import org.dbunit.dataset.CompositeTable;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.FilteredDataSet;
@@ -28,7 +25,6 @@ import org.dbunit.dataset.filter.IColumnFilter;
 import org.dbunit.dataset.filter.IncludeTableFilter;
 
 import eu.drus.test.persistence.core.AssertionErrorCollector;
-import eu.drus.test.persistence.core.dbunit.dataset.TableWrapper;
 
 public class DataSetComparator {
 
@@ -120,7 +116,7 @@ public class DataSetComparator {
 
     private List<String> defineColumnsForSorting(final IDataSet currentDataSet, final IDataSet expectedDataSet, final String tableName)
             throws DataSetException {
-        final List<String> columnsForSorting = new ArrayList<String>();
+        final List<String> columnsForSorting = new ArrayList<>();
         columnsForSorting.addAll(orderBy.global);
         final List<String> columsPerTable = orderBy.columnsPerTable.get(tableName);
         if (columsPerTable != null) {
@@ -136,9 +132,9 @@ public class DataSetComparator {
 
     private List<String> additionalColumnsForSorting(final ITable expectedTableState, final ITable currentTableState)
             throws DataSetException {
-        final List<String> columnsForSorting = new ArrayList<String>();
-        final Set<String> allColumns = new HashSet<String>(extractColumnNames(expectedTableState.getTableMetaData().getColumns()));
-        final Set<String> columnsToIgnore = new HashSet<String>(extractColumnsToBeIgnored(expectedTableState, currentTableState));
+        final List<String> columnsForSorting = new ArrayList<>();
+        final Set<String> allColumns = new HashSet<>(extractColumnNames(expectedTableState.getTableMetaData().getColumns()));
+        final Set<String> columnsToIgnore = new HashSet<>(extractColumnsToBeIgnored(expectedTableState, currentTableState));
         for (final String column : allColumns) {
             if (!columnsToIgnore.contains(column)) {
                 columnsForSorting.add(column);
@@ -150,7 +146,7 @@ public class DataSetComparator {
 
     private List<String> extractColumnsToBeIgnored(final ITable expectedTableState, final ITable currentTableState)
             throws DataSetException {
-        final List<String> columnsToIgnore = extractColumnsNotSpecifiedInExpectedDataSet(expectedTableState, currentTableState);
+        final List<String> columnsToIgnore = extractNotExpectedColumnNames(expectedTableState, currentTableState);
         final String tableName = expectedTableState.getTableMetaData().getTableName();
         final List<String> tableColumns = toExclude.columnsPerTable.get(tableName);
 
@@ -160,8 +156,8 @@ public class DataSetComparator {
             columnsToIgnore.addAll(tableColumns);
         }
 
-        final List<String> nonExistingColumns = extractNonExistingColumns(columnsToIgnore,
-                extractColumnNames(currentTableState.getTableMetaData().getColumns()));
+        final List<String> nonExistingColumns = new ArrayList<>(columnsToIgnore);
+        nonExistingColumns.removeAll(extractColumnNames(currentTableState.getTableMetaData().getColumns()));
 
         if (!nonExistingColumns.isEmpty()) {
             log.warning("Columns which are specified to be filtered out " + Arrays.toString(nonExistingColumns.toArray())
@@ -182,6 +178,21 @@ public class DataSetComparator {
             table = new CompositeTable(metaData, table);
         }
         return table;
+    }
+
+    private Collection<String> extractColumnNames(final Column[] columns) {
+        final List<String> names = new ArrayList<>(columns.length);
+        for (final Column column : columns) {
+            names.add(column.getColumnName().toLowerCase());
+        }
+        return names;
+    }
+
+    private List<String> extractNotExpectedColumnNames(final ITable expectedTable, final ITable currentTable) throws DataSetException {
+        final Set<String> actualColumnNames = new HashSet<>(extractColumnNames(currentTable.getTableMetaData().getColumns()));
+        final Set<String> expectedColumnNames = new HashSet<>(extractColumnNames(expectedTable.getTableMetaData().getColumns()));
+        actualColumnNames.removeAll(expectedColumnNames);
+        return new ArrayList<>(actualColumnNames);
     }
 
 }
