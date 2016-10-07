@@ -1,5 +1,6 @@
 package eu.drus.test.persistence.core.dbunit.dataset;
 
+import static eu.drus.test.persistence.core.dbunit.dataset.ColumnNameMatcher.columnWithName;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -22,8 +23,6 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.ITableMetaData;
 import org.dbunit.dataset.stream.IDataSetConsumer;
 import org.dbunit.dataset.stream.IDataSetProducer;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -168,29 +167,5 @@ public class JsonDataSetProducerTest {
             record.put(columns.get(i).getColumnName(), (String) entries[i]);
         }
         return record;
-    }
-
-    private static ColumnNameMatcher columnWithName(final String name) {
-        return new ColumnNameMatcher(name);
-    }
-
-    private static class ColumnNameMatcher extends BaseMatcher<Column> {
-
-        private String columnName;
-
-        public ColumnNameMatcher(final String columnName) {
-            this.columnName = columnName;
-        }
-
-        @Override
-        public boolean matches(final Object item) {
-            return ((Column) item).getColumnName().equals(columnName);
-        }
-
-        @Override
-        public void describeTo(final Description description) {
-            description.appendText("a column matching given name");
-        }
-
     }
 }
