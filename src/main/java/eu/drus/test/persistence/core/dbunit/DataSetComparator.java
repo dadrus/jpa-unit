@@ -161,13 +161,14 @@ public class DataSetComparator {
         return columnsForSorting;
     }
 
-    private ITable applyCustomFilters(ITable table) throws ReflectiveOperationException, DataSetException {
+    private ITable applyCustomFilters(final ITable table) throws ReflectiveOperationException, DataSetException {
+        ITable compositeTable = table;
         for (final Class<? extends IColumnFilter> columnFilter : columnFilters) {
             final IColumnFilter customColumnFilter = columnFilter.newInstance();
-            final FilteredTableMetaData metaData = new FilteredTableMetaData(table.getTableMetaData(), customColumnFilter);
-            table = new CompositeTable(metaData, table);
+            final FilteredTableMetaData metaData = new FilteredTableMetaData(compositeTable.getTableMetaData(), customColumnFilter);
+            compositeTable = new CompositeTable(metaData, compositeTable);
         }
-        return table;
+        return compositeTable;
     }
 
     private Collection<String> extractColumnNames(final Column[] columns) {
