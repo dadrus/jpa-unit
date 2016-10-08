@@ -14,6 +14,8 @@ import eu.drus.test.persistence.annotation.CleanupStrategy.StrategyProvider;
 
 public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategyExecutor> {
 
+    private static final String UNABLE_TO_CLEAN_DATABASE = "Unable to clean database.";
+
     @Override
     public CleanupStrategyExecutor strictStrategy() {
         return new StrictCleanupStrategyExecutor();
@@ -45,7 +47,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
                 final IDataSet dataSet = excludeTables(connection.createDataSet(), tablesToExclude);
                 DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
             } catch (final Exception e) {
-                throw new RuntimeException("Unable to clean database.", e);
+                throw new RuntimeException(UNABLE_TO_CLEAN_DATABASE, e);
             }
         }
 
@@ -63,7 +65,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
                 final IDataSet dataSet = excludeTables(mergeDataSets(initialDataSets), tablesToExclude);
                 DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
             } catch (final Exception e) {
-                throw new RuntimeException("Unable to clean database.", e);
+                throw new RuntimeException(UNABLE_TO_CLEAN_DATABASE, e);
             }
         }
 
@@ -81,7 +83,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
                 final IDataSet dataSet = excludeTables(mergeDataSets(initialDataSets), tablesToExclude);
                 DatabaseOperation.DELETE.execute(connection, dataSet);
             } catch (final Exception e) {
-                throw new RuntimeException("Unable to clean database.", e);
+                throw new RuntimeException(UNABLE_TO_CLEAN_DATABASE, e);
             }
         }
     }
