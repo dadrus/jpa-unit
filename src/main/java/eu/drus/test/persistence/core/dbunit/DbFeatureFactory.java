@@ -44,7 +44,9 @@ public class DbFeatureFactory {
     private static class NopFeature implements DbFeature {
 
         @Override
-        public void execute(final DatabaseConnection connection) throws DbFeatureException {}
+        public void execute(final DatabaseConnection connection) throws DbFeatureException {
+            // does nothing like the name implies
+        }
     }
 
     private static class CleanupFeature implements DbFeature {
