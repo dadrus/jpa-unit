@@ -12,7 +12,7 @@ import java.util.List;
  * @author <a href="mailto:bartosz.majsak@gmail.com">Bartosz Majsak</a>
  */
 public class AssertionErrorCollector {
-    private final List<String> assertionErrors = new ArrayList<String>();
+    private final List<String> assertionErrors = new ArrayList<>();
 
     public void collect(final AssertionError error) {
         collect(error.getMessage());
