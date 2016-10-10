@@ -1,7 +1,9 @@
 package eu.drus.test.persistence.core.dbunit;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.DataSetException;
@@ -18,17 +20,46 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
 
     @Override
     public CleanupStrategyExecutor strictStrategy() {
-        return new StrictCleanupStrategyExecutor();
+        return (final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) -> {
+            try {
+                final IDataSet dataSet = excludeTables(connection.createDataSet(), tablesToExclude);
+                DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
+            } catch (final SQLException | DatabaseUnitException e) {
+                throw new DbFeatureException(UNABLE_TO_CLEAN_DATABASE, e);
+            }
+        };
     }
 
     @Override
     public CleanupStrategyExecutor usedTablesOnlyStrategy() {
-        return new UsedTablesOnlyCleanupStrategyExecutor();
+        return (final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) -> {
+            if (initialDataSets.isEmpty()) {
+                return;
+            }
+
+            try {
+                final IDataSet dataSet = excludeTables(mergeDataSets(initialDataSets), tablesToExclude);
+                DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
+            } catch (final SQLException | DatabaseUnitException e) {
+                throw new DbFeatureException(UNABLE_TO_CLEAN_DATABASE, e);
+            }
+        };
     }
 
     @Override
     public CleanupStrategyExecutor usedRowsOnlyStrategy() {
-        return new UsedRowsOnlyCleanupStrategyExecutor();
+        return (final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) -> {
+            if (initialDataSets.isEmpty()) {
+                return;
+            }
+
+            try {
+                final IDataSet dataSet = excludeTables(mergeDataSets(initialDataSets), tablesToExclude);
+                DatabaseOperation.DELETE.execute(connection, dataSet);
+            } catch (final SQLException | DatabaseUnitException e) {
+                throw new DbFeatureException(UNABLE_TO_CLEAN_DATABASE, e);
+            }
+        };
     }
 
     private IDataSet mergeDataSets(final List<IDataSet> dataSets) throws DataSetException {
@@ -38,54 +69,4 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
     private IDataSet excludeTables(final IDataSet dataSet, final String... tablesToExclude) {
         return new FilteredDataSet(new ExcludeTableFilter(tablesToExclude), dataSet);
     }
-
-    private class StrictCleanupStrategyExecutor implements CleanupStrategyExecutor {
-
-        @Override
-        public void execute(final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) {
-            try {
-                final IDataSet dataSet = excludeTables(connection.createDataSet(), tablesToExclude);
-                DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
-            } catch (final Exception e) {
-                throw new RuntimeException(UNABLE_TO_CLEAN_DATABASE, e);
-            }
-        }
-
-    }
-
-    private class UsedTablesOnlyCleanupStrategyExecutor implements CleanupStrategyExecutor {
-
-        @Override
-        public void execute(final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) {
-            if (initialDataSets.isEmpty()) {
-                return;
-            }
-
-            try {
-                final IDataSet dataSet = excludeTables(mergeDataSets(initialDataSets), tablesToExclude);
-                DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
-            } catch (final Exception e) {
-                throw new RuntimeException(UNABLE_TO_CLEAN_DATABASE, e);
-            }
-        }
-
-    }
-
-    private class UsedRowsOnlyCleanupStrategyExecutor implements CleanupStrategyExecutor {
-
-        @Override
-        public void execute(final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) {
-            if (initialDataSets.isEmpty()) {
-                return;
-            }
-
-            try {
-                final IDataSet dataSet = excludeTables(mergeDataSets(initialDataSets), tablesToExclude);
-                DatabaseOperation.DELETE.execute(connection, dataSet);
-            } catch (final Exception e) {
-                throw new RuntimeException(UNABLE_TO_CLEAN_DATABASE, e);
-            }
-        }
-    }
-
 }

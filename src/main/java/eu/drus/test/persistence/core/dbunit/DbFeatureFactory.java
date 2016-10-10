@@ -28,8 +28,6 @@ import eu.drus.test.persistence.core.sql.SqlScript;
 
 public class DbFeatureFactory {
 
-    private static final NopFeature NOP_FEATURE = new NopFeature();
-
     private final FeatureResolver featureResolver;
     private final List<IDataSet> initialDataSets;
     private StrategyProviderFactory providerFactory;
@@ -63,7 +61,7 @@ public class DbFeatureFactory {
             return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
                     initialDataSets);
         } else {
-            return NOP_FEATURE;
+            return NopFeature.INSTANCE;
         }
     }
 
@@ -72,7 +70,7 @@ public class DbFeatureFactory {
             return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
                     initialDataSets);
         } else {
-            return NOP_FEATURE;
+            return NopFeature.INSTANCE;
         }
     }
 
@@ -80,7 +78,7 @@ public class DbFeatureFactory {
         if (featureResolver.shouldCleanupUsingScriptBefore()) {
             return new ApplyCustomScriptFeature(featureResolver.getCleanupScripts());
         } else {
-            return NOP_FEATURE;
+            return NopFeature.INSTANCE;
         }
     }
 
@@ -88,7 +86,7 @@ public class DbFeatureFactory {
         if (featureResolver.shouldCleanupUsingScriptAfter()) {
             return new ApplyCustomScriptFeature(featureResolver.getCleanupScripts());
         } else {
-            return NOP_FEATURE;
+            return NopFeature.INSTANCE;
         }
     }
 
@@ -96,7 +94,7 @@ public class DbFeatureFactory {
         if (featureResolver.shouldApplyCustomScriptBefore()) {
             return new ApplyCustomScriptFeature(featureResolver.getPreExecutionScripts());
         } else {
-            return NOP_FEATURE;
+            return NopFeature.INSTANCE;
         }
     }
 
@@ -104,7 +102,7 @@ public class DbFeatureFactory {
         if (featureResolver.shouldApplyCustomScriptAfter()) {
             return new ApplyCustomScriptFeature(featureResolver.getPostExecutionScripts());
         } else {
-            return NOP_FEATURE;
+            return NopFeature.INSTANCE;
         }
     }
 
@@ -113,7 +111,7 @@ public class DbFeatureFactory {
             return new SeedDataFeature(providerFactory.createDataSeedStrategyProvider(), featureResolver.getDataSeedStrategy(),
                     initialDataSets);
         } else {
-            return NOP_FEATURE;
+            return NopFeature.INSTANCE;
         }
     }
 
@@ -121,11 +119,13 @@ public class DbFeatureFactory {
         if (featureResolver.shouldVerifyDataAfter()) {
             return new VerifyDataAfterFeature(featureResolver.getExpectedDataSets(), featureResolver.getCustomColumnFilter());
         } else {
-            return NOP_FEATURE;
+            return NopFeature.INSTANCE;
         }
     }
 
     private static class NopFeature implements DbFeature {
+
+        private static final NopFeature INSTANCE = new NopFeature();
 
         @Override
         public void execute(final DatabaseConnection connection) throws DbFeatureException {
