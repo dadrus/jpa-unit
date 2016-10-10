@@ -1,7 +1,9 @@
 package eu.drus.test.persistence.core.dbunit;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.times;
@@ -245,6 +247,31 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
+    public void testApplyCustomScriptBeforeIsEnabledAndFails() throws DbFeatureException, SQLException {
+        // GIVEN
+        final SQLException error = new SQLException("Could not execute statement");
+        when(statement.execute(any(String.class))).thenThrow(error);
+        when(connection.createStatement()).thenReturn(statement);
+        when(dbUnitConnection.getConnection()).thenReturn(connection);
+        when(resolver.getPreExecutionScripts()).thenReturn(Arrays.asList("src/test/resources/schema.sql"));
+        when(resolver.shouldApplyCustomScriptBefore()).thenReturn(Boolean.TRUE);
+        final DbFeatureFactory factory = new DbFeatureFactory(resolver);
+
+        // WHEN
+        final DbFeature feature = factory.getApplyCustomScriptBeforeFeature();
+        assertThat(feature, notNullValue());
+
+        try {
+            feature.execute(dbUnitConnection);
+            fail("DbFeatureException expected");
+        } catch (final DbFeatureException e) {
+
+            // THEN
+            assertThat(e.getCause(), equalTo(error));
+        }
+    }
+
+    @Test
     public void testApplyCustomScriptAfterIsDisabled() throws DbFeatureException, SQLException {
         // GIVEN
         when(resolver.shouldApplyCustomScriptAfter()).thenReturn(Boolean.FALSE);
@@ -277,6 +304,31 @@ public class DbFeatureFactoryTest {
 
         // THEN
         verify(statement).execute(any(String.class));
+    }
+
+    @Test
+    public void testApplyCustomScriptAfterIsEnabledAndFails() throws DbFeatureException, SQLException {
+        // GIVEN
+        final SQLException error = new SQLException("Could not execute statement");
+        when(statement.execute(any(String.class))).thenThrow(error);
+        when(connection.createStatement()).thenReturn(statement);
+        when(dbUnitConnection.getConnection()).thenReturn(connection);
+        when(resolver.getPostExecutionScripts()).thenReturn(Arrays.asList("src/test/resources/schema.sql"));
+        when(resolver.shouldApplyCustomScriptAfter()).thenReturn(Boolean.TRUE);
+        final DbFeatureFactory factory = new DbFeatureFactory(resolver);
+
+        // WHEN
+        final DbFeature feature = factory.getApplyCustomScriptAfterFeature();
+        assertThat(feature, notNullValue());
+
+        try {
+            feature.execute(dbUnitConnection);
+            fail("DbFeatureException expected");
+        } catch (final DbFeatureException e) {
+
+            // THEN
+            assertThat(e.getCause(), equalTo(error));
+        }
     }
 
     @Test
