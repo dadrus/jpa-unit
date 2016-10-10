@@ -16,21 +16,15 @@ public class JsonDataSetProducer extends DataSetProducer {
 
     public JsonDataSetProducer(final InputStream input) {
         super(input);
-    }
-
-    private Gson getGson() {
-        if (gson == null) {
-            final GsonBuilder gsonBuilder = new GsonBuilder();
-            gson = gsonBuilder.create();
-        }
-        return gson;
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        gson = gsonBuilder.create();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected Map<String, List<Map<String, String>>> loadDataSet() throws DataSetException {
         try {
-            return getGson().fromJson(new InputStreamReader(input), Map.class);
+            return gson.fromJson(new InputStreamReader(input), Map.class);
         } catch (final Exception e) {
             throw new DataSetException("Error parsing json data set", e);
         }
