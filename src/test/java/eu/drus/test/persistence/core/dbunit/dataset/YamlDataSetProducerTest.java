@@ -7,6 +7,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -33,17 +34,20 @@ public class YamlDataSetProducerTest {
 
     private InputStream jsonStream;
     private InputStream yamlStream;
+    private InputStream emptyStream;
 
     @Before
     public void openResourceStream() {
         jsonStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test-data.json");
         yamlStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test-data.yaml");
+        emptyStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("empty.file");
     }
 
     @After
     public void closeResourceStream() throws IOException {
         jsonStream.close();
         yamlStream.close();
+        emptyStream.close();
     }
 
     @SuppressWarnings("unchecked")
@@ -122,6 +126,26 @@ public class YamlDataSetProducerTest {
         assertThat(record4.get("value_7"), equalTo("Record 4 Value 7"));
 
         verify(consumer, times(2)).endTable();
+
+        verify(consumer).endDataSet();
+    }
+
+    @Test
+    public void testProduceDataSetFromEmptyFile() throws DataSetException {
+        // GIVEN
+        final IDataSetConsumer consumer = mock(IDataSetConsumer.class);
+        final IDataSetProducer producer = new YamlDataSetProducer(emptyStream);
+        producer.setConsumer(consumer);
+
+        // WHEN
+        producer.produce();
+
+        // THEN
+        verify(consumer).startDataSet();
+
+        verify(consumer, times(0)).startTable(any(ITableMetaData.class));
+        verify(consumer, times(0)).row(any(Object[].class));
+        verify(consumer, times(0)).endTable();
 
         verify(consumer).endDataSet();
     }

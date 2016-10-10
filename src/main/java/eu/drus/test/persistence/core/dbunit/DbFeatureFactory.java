@@ -28,6 +28,22 @@ import eu.drus.test.persistence.core.sql.SqlScript;
 
 public class DbFeatureFactory {
 
+    private static final NopFeature NOP_FEATURE = new NopFeature();
+
+    private final FeatureResolver featureResolver;
+    private final List<IDataSet> initialDataSets;
+    private StrategyProviderFactory providerFactory;
+
+    public DbFeatureFactory(final FeatureResolver featureResolver) {
+        this.featureResolver = featureResolver;
+        providerFactory = new StrategyProviderFactory();
+        try {
+            initialDataSets = loadDataSets(featureResolver.getSeedData());
+        } catch (final IOException e) {
+            throw new RuntimeException("Could not load initial data sets", e);
+        }
+    }
+
     private static IDataSet mergeDataSets(final List<IDataSet> dataSets) throws DataSetException {
         return new CompositeDataSet(dataSets.toArray(new IDataSet[dataSets.size()]));
     }
@@ -39,6 +55,78 @@ public class DbFeatureFactory {
             dataSets.add(loader.load(path));
         }
         return dataSets;
+    }
+
+    // for tests
+    void setProviderFactory(final StrategyProviderFactory providerFactory) {
+        this.providerFactory = providerFactory;
+    }
+
+    public DbFeature getCleanUpBeforeFeature() {
+        if (featureResolver.shouldCleanupBefore()) {
+            return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
+                    initialDataSets);
+        } else {
+            return NOP_FEATURE;
+        }
+    }
+
+    public DbFeature getCleanUpAfterFeature() {
+        if (featureResolver.shouldCleanupAfter()) {
+            return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
+                    initialDataSets);
+        } else {
+            return NOP_FEATURE;
+        }
+    }
+
+    public DbFeature getCleanupUsingScriptBeforeFeature() {
+        if (featureResolver.shouldCleanupUsingScriptBefore()) {
+            return new ApplyCustomScriptFeature(featureResolver.getCleanupScripts());
+        } else {
+            return NOP_FEATURE;
+        }
+    }
+
+    public DbFeature getCleanupUsingScriptAfterFeature() {
+        if (featureResolver.shouldCleanupUsingScriptAfter()) {
+            return new ApplyCustomScriptFeature(featureResolver.getCleanupScripts());
+        } else {
+            return NOP_FEATURE;
+        }
+    }
+
+    public DbFeature getApplyCustomScriptBeforeFeature() {
+        if (featureResolver.shouldApplyCustomScriptBefore()) {
+            return new ApplyCustomScriptFeature(featureResolver.getPreExecutionScripts());
+        } else {
+            return NOP_FEATURE;
+        }
+    }
+
+    public DbFeature getApplyCustomScriptAfterFeature() {
+        if (featureResolver.shouldApplyCustomScriptAfter()) {
+            return new ApplyCustomScriptFeature(featureResolver.getPostExecutionScripts());
+        } else {
+            return NOP_FEATURE;
+        }
+    }
+
+    public DbFeature getSeedDataFeature() {
+        if (featureResolver.shouldSeedData()) {
+            return new SeedDataFeature(providerFactory.createDataSeedStrategyProvider(), featureResolver.getDataSeedStrategy(),
+                    initialDataSets);
+        } else {
+            return NOP_FEATURE;
+        }
+    }
+
+    public DbFeature getVerifyDataAfterFeature() {
+        if (featureResolver.shouldVerifyDataAfter()) {
+            return new VerifyDataAfterFeature(featureResolver.getExpectedDataSets(), featureResolver.getCustomColumnFilter());
+        } else {
+            return NOP_FEATURE;
+        }
     }
 
     private static class NopFeature implements DbFeature {
@@ -148,94 +236,6 @@ public class DbFeatureFactory {
             } catch (final SQLException | DatabaseUnitException | ReflectiveOperationException | IOException e) {
                 throw new DbFeatureException("Could not execute DB contents verification feature", e);
             }
-        }
-    }
-
-    private static final NopFeature NOP_FEATURE = new NopFeature();
-
-    private final FeatureResolver featureResolver;
-    private StrategyProviderFactory providerFactory;
-    private final List<IDataSet> initialDataSets;
-
-    public DbFeatureFactory(final FeatureResolver featureResolver) {
-        this.featureResolver = featureResolver;
-        providerFactory = new StrategyProviderFactory();
-        try {
-            initialDataSets = loadDataSets(featureResolver.getSeedData());
-        } catch (final IOException e) {
-            throw new RuntimeException("Could not load initial data sets", e);
-        }
-    }
-
-    // for tests
-    void setProviderFactory(final StrategyProviderFactory providerFactory) {
-        this.providerFactory = providerFactory;
-    }
-
-    public DbFeature getCleanUpBeforeFeature() {
-        if (featureResolver.shouldCleanupBefore()) {
-            return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
-                    initialDataSets);
-        } else {
-            return NOP_FEATURE;
-        }
-    }
-
-    public DbFeature getCleanUpAfterFeature() {
-        if (featureResolver.shouldCleanupAfter()) {
-            return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
-                    initialDataSets);
-        } else {
-            return NOP_FEATURE;
-        }
-    }
-
-    public DbFeature getCleanupUsingScriptBeforeFeature() {
-        if (featureResolver.shouldCleanupUsingScriptBefore()) {
-            return new ApplyCustomScriptFeature(featureResolver.getCleanupScripts());
-        } else {
-            return NOP_FEATURE;
-        }
-    }
-
-    public DbFeature getCleanupUsingScriptAfterFeature() {
-        if (featureResolver.shouldCleanupUsingScriptAfter()) {
-            return new ApplyCustomScriptFeature(featureResolver.getCleanupScripts());
-        } else {
-            return NOP_FEATURE;
-        }
-    }
-
-    public DbFeature getApplyCustomScriptBeforeFeature() {
-        if (featureResolver.shouldApplyCustomScriptBefore()) {
-            return new ApplyCustomScriptFeature(featureResolver.getPreExecutionScripts());
-        } else {
-            return NOP_FEATURE;
-        }
-    }
-
-    public DbFeature getApplyCustomScriptAfterFeature() {
-        if (featureResolver.shouldApplyCustomScriptAfter()) {
-            return new ApplyCustomScriptFeature(featureResolver.getPostExecutionScripts());
-        } else {
-            return NOP_FEATURE;
-        }
-    }
-
-    public DbFeature getSeedDataFeature() {
-        if (featureResolver.shouldSeedData()) {
-            return new SeedDataFeature(providerFactory.createDataSeedStrategyProvider(), featureResolver.getDataSeedStrategy(),
-                    initialDataSets);
-        } else {
-            return NOP_FEATURE;
-        }
-    }
-
-    public DbFeature getVerifyDataAfterFeature() {
-        if (featureResolver.shouldVerifyDataAfter()) {
-            return new VerifyDataAfterFeature(featureResolver.getExpectedDataSets(), featureResolver.getCustomColumnFilter());
-        } else {
-            return NOP_FEATURE;
         }
     }
 }

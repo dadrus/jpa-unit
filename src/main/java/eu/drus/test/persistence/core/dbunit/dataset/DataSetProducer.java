@@ -56,7 +56,9 @@ public abstract class DataSetProducer implements IDataSetProducer {
             for (final Map<String, String> row : rows) {
                 final List<String> values = new ArrayList<>();
                 for (final Column column : tableMetaData.getColumns()) {
-                    values.add(row.get(column.getColumnName()));
+                    final Object rawValue = row.get(column.getColumnName());
+                    final String value = rawValue == null ? null : String.valueOf(rawValue);
+                    values.add(value);
                 }
                 consumer.row(values.toArray());
             }

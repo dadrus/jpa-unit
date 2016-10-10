@@ -7,9 +7,9 @@ import java.util.Map;
 
 public class ColumnsHolder {
 
-    final List<String> global = new ArrayList<String>();
+    final List<String> global = new ArrayList<>();
 
-    final Map<String, List<String>> columnsPerTable = new HashMap<String, List<String>>();
+    final Map<String, List<String>> columnsPerTable = new HashMap<>();
 
     public ColumnsHolder(final String[] columns) {
         for (final String column : columns) {
@@ -36,7 +36,7 @@ public class ColumnsHolder {
         List<String> tableColumns = columnsPerTable.get(tableName);
 
         if (tableColumns == null) {
-            tableColumns = new ArrayList<String>();
+            tableColumns = new ArrayList<>();
             columnsPerTable.put(tableName, tableColumns);
         }
 

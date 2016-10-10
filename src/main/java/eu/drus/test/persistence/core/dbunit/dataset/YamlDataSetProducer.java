@@ -35,7 +35,7 @@ public class YamlDataSetProducer extends DataSetProducer {
     }
 
     public Yaml createYamlReader() {
-        final Yaml yaml = new Yaml(new Constructor(), new Representer(), new DumperOptions(), new Resolver() {
+        return new Yaml(new Constructor(), new Representer(), new DumperOptions(), new Resolver() {
             @Override
             protected void addImplicitResolvers() {
                 // Intentionally left TIMESTAMP as string to let DBUnit deal with the conversion
@@ -49,6 +49,5 @@ public class YamlDataSetProducer extends DataSetProducer {
                 addImplicitResolver(Tag.YAML, YAML, "!&*");
             }
         });
-        return yaml;
     }
 }
