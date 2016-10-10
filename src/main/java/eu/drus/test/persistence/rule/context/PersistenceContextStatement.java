@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 public class PersistenceContextStatement extends Statement {
@@ -16,7 +15,7 @@ public class PersistenceContextStatement extends Statement {
     private final Object target;
 
     public PersistenceContextStatement(final EntityManagerFactory entityManagerFactory, final Field persistenceField, final Statement base,
-            final FrameworkMethod method, final Object target) {
+            final Object target) {
         this.entityManagerFactory = entityManagerFactory;
         this.persistenceField = persistenceField;
         this.base = base;

@@ -1,7 +1,6 @@
 package eu.drus.test.persistence.rule.transaction;
 
 import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceException;
 
 import org.junit.runners.model.Statement;
 
@@ -17,75 +16,36 @@ public class TransactionStrategyProvider implements StrategyProvider<Transaction
 
     @Override
     public TransactionStrategyExecutor rollbackStrategy() {
-        return new RollbackTransactionStrategyExecutor();
+        return (final Statement stmt) -> {
+            tx.begin();
+            try {
+                stmt.evaluate();
+            } finally {
+                if (tx.isActive()) {
+                    tx.rollback();
+                }
+            }
+        };
     }
 
     @Override
     public TransactionStrategyExecutor commitStrategy() {
-        return new CommitTransactionStrategyExecutor();
+        return (final Statement stmt) -> {
+            tx.begin();
+            try {
+                stmt.evaluate();
+            } finally {
+                if (tx.isActive()) {
+                    tx.commit();
+                }
+            }
+        };
     }
 
     @Override
     public TransactionStrategyExecutor disabledStrategy() {
-        return new NoTransactionStrategyExecutor();
+        return (final Statement stmt) -> {
+            stmt.evaluate();
+        };
     }
-
-    private void beginTransaction() {
-        tx.begin();
-    }
-
-    private void commitTransaction() {
-        try {
-            if (tx.isActive()) {
-                tx.commit();
-            }
-        } catch (final PersistenceException e) {
-            // TODO: log
-        }
-    }
-
-    private void rollbackTransaction() {
-        try {
-            if (tx.isActive()) {
-                tx.rollback();
-            }
-        } catch (final PersistenceException e) {
-            // TODO: log
-        }
-    }
-
-    private class RollbackTransactionStrategyExecutor implements TransactionStrategyExecutor {
-
-        @Override
-        public void execute(final Statement statement) throws Throwable {
-            beginTransaction();
-            try {
-                statement.evaluate();
-            } finally {
-                rollbackTransaction();
-            }
-        }
-    }
-
-    private class CommitTransactionStrategyExecutor implements TransactionStrategyExecutor {
-
-        @Override
-        public void execute(final Statement statement) throws Throwable {
-            beginTransaction();
-            try {
-                statement.evaluate();
-            } finally {
-                commitTransaction();
-            }
-        }
-    }
-
-    private static class NoTransactionStrategyExecutor implements TransactionStrategyExecutor {
-
-        @Override
-        public void execute(final Statement statement) throws Throwable {
-            statement.evaluate();
-        }
-    }
-
 }

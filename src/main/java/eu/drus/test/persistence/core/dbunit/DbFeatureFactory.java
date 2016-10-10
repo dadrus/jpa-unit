@@ -34,14 +34,10 @@ public class DbFeatureFactory {
     private final List<IDataSet> initialDataSets;
     private StrategyProviderFactory providerFactory;
 
-    public DbFeatureFactory(final FeatureResolver featureResolver) {
+    public DbFeatureFactory(final FeatureResolver featureResolver) throws IOException {
         this.featureResolver = featureResolver;
         providerFactory = new StrategyProviderFactory();
-        try {
-            initialDataSets = loadDataSets(featureResolver.getSeedData());
-        } catch (final IOException e) {
-            throw new RuntimeException("Could not load initial data sets", e);
-        }
+        initialDataSets = loadDataSets(featureResolver.getSeedData());
     }
 
     private static IDataSet mergeDataSets(final List<IDataSet> dataSets) throws DataSetException {

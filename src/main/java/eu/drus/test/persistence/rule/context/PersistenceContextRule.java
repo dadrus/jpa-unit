@@ -20,7 +20,7 @@ public class PersistenceContextRule implements MethodRule {
 
     @Override
     public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-        return new PersistenceContextStatement(entityManagerFactory, persistenceField, base, method, target);
+        return new PersistenceContextStatement(entityManagerFactory, persistenceField, base, target);
     }
 
 }

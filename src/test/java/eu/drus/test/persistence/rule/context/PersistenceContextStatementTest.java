@@ -47,7 +47,7 @@ public class PersistenceContextStatementTest {
     public void testEntityManagerFactoryInjection() throws Throwable {
         // GIVEN
         final Field field = getClass().getDeclaredField("emf");
-        final PersistenceContextStatement stmt = new PersistenceContextStatement(entityManagerFactory, field, base, method, this);
+        final PersistenceContextStatement stmt = new PersistenceContextStatement(entityManagerFactory, field, base, this);
 
         // WHEN
         stmt.evaluate();
@@ -57,6 +57,7 @@ public class PersistenceContextStatementTest {
         assertThat(em, nullValue());
         verify(base).evaluate();
         verify(entityManagerFactory, times(0)).createEntityManager();
+        verify(entityManager, times(0)).close();
     }
 
     @Test
@@ -64,7 +65,7 @@ public class PersistenceContextStatementTest {
         // GIVEN
         when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
         final Field field = getClass().getDeclaredField("em");
-        final PersistenceContextStatement stmt = new PersistenceContextStatement(entityManagerFactory, field, base, method, this);
+        final PersistenceContextStatement stmt = new PersistenceContextStatement(entityManagerFactory, field, base, this);
 
         // WHEN
         stmt.evaluate();
@@ -81,7 +82,7 @@ public class PersistenceContextStatementTest {
     public void testUnsupportedFieldInjection() throws Throwable {
         // GIVEN
         final Field field = getClass().getDeclaredField("someField");
-        final PersistenceContextStatement stmt = new PersistenceContextStatement(entityManagerFactory, field, base, method, this);
+        final PersistenceContextStatement stmt = new PersistenceContextStatement(entityManagerFactory, field, base, this);
 
         // WHEN
         try {

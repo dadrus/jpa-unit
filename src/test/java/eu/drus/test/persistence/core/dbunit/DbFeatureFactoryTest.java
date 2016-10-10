@@ -16,7 +16,6 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
@@ -60,7 +59,7 @@ public class DbFeatureFactoryTest {
     private DatabaseOperation databaseOperation;
 
     @Test
-    public void testCleanUpBeforeIsDisabled() throws DbFeatureException {
+    public void testCleanUpBeforeIsDisabled() throws Exception {
         // GIVEN
         when(cleanupStrategyProvider.strictStrategy()).thenReturn(cleanupStrategyExecutor);
         when(strategyProviderFactory.createCleanupStrategyProvider()).thenReturn(cleanupStrategyProvider);
@@ -80,7 +79,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testCleanUpBeforeIsEnabled() throws DbFeatureException {
+    public void testCleanUpBeforeIsEnabled() throws Exception {
         // GIVEN
         when(cleanupStrategyProvider.strictStrategy()).thenReturn(cleanupStrategyExecutor);
         when(strategyProviderFactory.createCleanupStrategyProvider()).thenReturn(cleanupStrategyProvider);
@@ -101,7 +100,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testCleanUpAfterIsDisabled() throws DbFeatureException {
+    public void testCleanUpAfterIsDisabled() throws Exception {
         // GIVEN
         when(cleanupStrategyProvider.strictStrategy()).thenReturn(cleanupStrategyExecutor);
         when(strategyProviderFactory.createCleanupStrategyProvider()).thenReturn(cleanupStrategyProvider);
@@ -121,7 +120,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testCleanUpAfterIsEnabled() throws DbFeatureException {
+    public void testCleanUpAfterIsEnabled() throws Exception {
         // GIVEN
         when(cleanupStrategyProvider.strictStrategy()).thenReturn(cleanupStrategyExecutor);
         when(strategyProviderFactory.createCleanupStrategyProvider()).thenReturn(cleanupStrategyProvider);
@@ -142,7 +141,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testCleanupUsingScriptBeforeIsDisabled() throws DbFeatureException, SQLException {
+    public void testCleanupUsingScriptBeforeIsDisabled() throws Exception {
         // GIVEN
         when(resolver.shouldCleanupUsingScriptBefore()).thenReturn(Boolean.FALSE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
@@ -158,7 +157,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testCleanupUsingScriptBeforeIsEnabled() throws DbFeatureException, SQLException {
+    public void testCleanupUsingScriptBeforeIsEnabled() throws Exception {
         // GIVEN
         when(connection.createStatement()).thenReturn(statement);
         when(dbUnitConnection.getConnection()).thenReturn(connection);
@@ -177,7 +176,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testCleanupUsingScriptAfterIsDisabled() throws DbFeatureException, SQLException {
+    public void testCleanupUsingScriptAfterIsDisabled() throws Exception {
         // GIVEN
         when(resolver.shouldCleanupUsingScriptAfter()).thenReturn(Boolean.FALSE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
@@ -193,7 +192,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testCleanupUsingScriptAfterIsEnabled() throws DbFeatureException, SQLException {
+    public void testCleanupUsingScriptAfterIsEnabled() throws Exception {
         // GIVEN
         when(connection.createStatement()).thenReturn(statement);
         when(dbUnitConnection.getConnection()).thenReturn(connection);
@@ -212,7 +211,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testApplyCustomScriptBeforeIsDisabled() throws DbFeatureException, SQLException {
+    public void testApplyCustomScriptBeforeIsDisabled() throws Exception {
         // GIVEN
         when(resolver.shouldApplyCustomScriptBefore()).thenReturn(Boolean.FALSE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
@@ -228,7 +227,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testApplyCustomScriptBeforeIsEnabled() throws DbFeatureException, SQLException {
+    public void testApplyCustomScriptBeforeIsEnabled() throws Exception {
         // GIVEN
         when(connection.createStatement()).thenReturn(statement);
         when(dbUnitConnection.getConnection()).thenReturn(connection);
@@ -247,7 +246,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testApplyCustomScriptBeforeIsEnabledAndFails() throws DbFeatureException, SQLException {
+    public void testApplyCustomScriptBeforeIsEnabledAndFails() throws Exception {
         // GIVEN
         final SQLException error = new SQLException("Could not execute statement");
         when(statement.execute(any(String.class))).thenThrow(error);
@@ -272,7 +271,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testApplyCustomScriptAfterIsDisabled() throws DbFeatureException, SQLException {
+    public void testApplyCustomScriptAfterIsDisabled() throws Exception {
         // GIVEN
         when(resolver.shouldApplyCustomScriptAfter()).thenReturn(Boolean.FALSE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
@@ -288,7 +287,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testApplyCustomScriptAfterIsEnabled() throws DbFeatureException, SQLException {
+    public void testApplyCustomScriptAfterIsEnabled() throws Exception {
         // GIVEN
         when(connection.createStatement()).thenReturn(statement);
         when(dbUnitConnection.getConnection()).thenReturn(connection);
@@ -307,7 +306,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testApplyCustomScriptAfterIsEnabledAndFails() throws DbFeatureException, SQLException {
+    public void testApplyCustomScriptAfterIsEnabledAndFails() throws Exception {
         // GIVEN
         final SQLException error = new SQLException("Could not execute statement");
         when(statement.execute(any(String.class))).thenThrow(error);
@@ -332,7 +331,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testSeedDataIdDisabled() throws DbFeatureException, SQLException {
+    public void testSeedDataIdDisabled() throws Exception {
         // GIVEN
         when(resolver.shouldSeedData()).thenReturn(Boolean.FALSE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
@@ -348,7 +347,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testSeedDataIsEnabled() throws DbFeatureException, SQLException, DatabaseUnitException {
+    public void testSeedDataIsEnabled() throws Exception {
         // GIVEN
         when(resolver.getDataSeedStrategy()).thenReturn(DataSeedStrategy.INSERT);
         when(dataSeedStrategyProvider.insertStrategy()).thenReturn(databaseOperation);
@@ -368,7 +367,7 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
-    public void testVerifyDataAfterIsDisabled() throws DbFeatureException, SQLException {
+    public void testVerifyDataAfterIsDisabled() throws Exception {
         // GIVEN
         when(resolver.shouldVerifyDataAfter()).thenReturn(Boolean.FALSE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
