@@ -7,8 +7,11 @@ import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.junit.Test;
@@ -48,5 +51,38 @@ public class SqlScriptTest {
         assertThat(list, everyItem(not(startsWith("\t"))));
         assertThat(list, everyItem(not(endsWith(" "))));
         assertThat(list, everyItem(not(endsWith("\t"))));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testSpliteratorIsNotSupported() {
+        // GIVEN
+        final SqlScript script = new SqlScript(TEST_SCRIPT);
+
+        // WHEN
+        script.spliterator();
+
+        // THEN
+        // UnsupportedOperationException is thrown
+    }
+
+    public void testIterator() {
+        // GIVEN
+        final String token = "code";
+        final SqlScript script = new SqlScript(token);
+
+        // WHEN
+        final Iterator<String> it = script.iterator();
+
+        // THEN
+        assertThat(it.hasNext(), equalTo(Boolean.TRUE));
+        assertThat(it.next(), equalTo(token));
+
+        assertThat(it.hasNext(), equalTo(Boolean.FALSE));
+        try {
+            it.next();
+            fail("NoSuchElementException expected");
+        } catch (final NoSuchElementException e) {
+            // expected
+        }
     }
 }
