@@ -1,13 +1,13 @@
 package eu.drus.test.persistence.core.dbunit;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import eu.drus.test.persistence.core.dbunit.DataSetFormat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataSetFormatTest {
@@ -40,5 +40,31 @@ public class DataSetFormatTest {
         format.select(loaderProvider);
 
         verify(loaderProvider).xmlLoader();
+    }
+
+    public void testInferJsonFormatFromFile() {
+        final DataSetFormat format = DataSetFormat.inferFromFile("test.json");
+
+        assertThat(format, equalTo(DataSetFormat.JSON));
+        assertThat(format.extension(), equalTo("json"));
+    }
+
+    public void testInferXmlFormatFromFile() {
+        final DataSetFormat format = DataSetFormat.inferFromFile("test.xml");
+
+        assertThat(format, equalTo(DataSetFormat.XML));
+        assertThat(format.extension(), equalTo("xml"));
+    }
+
+    public void testInferYamlFormatFromFile() {
+        final DataSetFormat format = DataSetFormat.inferFromFile("test.yaml");
+
+        assertThat(format, equalTo(DataSetFormat.YAML));
+        assertThat(format.extension(), equalTo("yaml"));
+    }
+
+    @Test(expected = UnsupportedDataSetFormatException.class)
+    public void testInferFormatFromFileWithUnknownFileExtension() {
+        DataSetFormat.inferFromFile("test.foo");
     }
 }
