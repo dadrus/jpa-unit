@@ -1,4 +1,4 @@
-# JPA 2.1 persistence test [![Build Status](https://travis-ci.org/dadrus/persistence-test.svg?branch=master)](https://travis-ci.org/dadrus/persistence-test) [![Coverage Status](https://coveralls.io/repos/github/dadrus/persistence-test/badge.svg?branch=master)](https://coveralls.io/github/dadrus/persistence-test?branch=master)
+# JPA 2.1 persistence test [![Build Status](https://travis-ci.org/dadrus/persistence-test.svg?branch=master)](https://travis-ci.org/dadrus/persistence-test) [![Coverage Status](https://img.shields.io/sonar/http/sonarqube.com/eu.drus.test:persistence-test/coverage.svg)](https://sonarqube.com/dashboard/index?id=eu.drus.test%3Apersistence-test)
 
 Implements [JUnit](http://junit.org) runner to test javax.persistence entities using an arbitrary persistence provider
 
