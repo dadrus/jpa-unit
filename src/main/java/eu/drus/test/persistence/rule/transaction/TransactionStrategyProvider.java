@@ -44,6 +44,6 @@ public class TransactionStrategyProvider implements StrategyProvider<Transaction
 
     @Override
     public TransactionStrategyExecutor disabledStrategy() {
-        return (final Statement stmt) -> stmt.evaluate();
+        return Statement::evaluate;
     }
 }
