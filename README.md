@@ -153,6 +153,5 @@ public class MyTest {
 
 ## TODOs
 
-- Implement tests and examples
-- Enable usage with JPA 2.0
+- Implement examples
 - Make the extension available in mavencentral
