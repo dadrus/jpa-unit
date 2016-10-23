@@ -6,6 +6,7 @@ groups:
       enabled: true
       reject_regex: ^Rejected
     required: 1
-    reset_on_push: false
+    reset_on_push:
+      enabled: false
     users:
     - dadrus
