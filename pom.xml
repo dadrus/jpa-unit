@@ -37,6 +37,8 @@
     <version.codemodel>2.6</version.codemodel>
     <version.h2>1.4.192</version.h2>
     <version.logback>1.1.7</version.logback>
+    <version.eclipselink>2.5.2</version.eclipselink>
+    <version.h2>1.4.191</version.h2>
   </properties>
 
   <scm>
@@ -201,6 +203,18 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>${version.logback}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>eclipselink</artifactId>
+      <version>${version.eclipselink}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${version.h2}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
