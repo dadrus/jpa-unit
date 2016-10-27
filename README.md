@@ -15,7 +15,7 @@ Implements [JUnit](http://junit.org) runner to test javax.persistence entities u
 	
 ## Credits
 
-The implementation makes heavy use of code from the arquillian persistence extension, which was extracted out of it and adopted to suite the needs.
+The implementation makes heavy use of code from the arquillian persistence extension, which was extracted out of it and adopted to suit the needs.
 Because of this the license of the Arquillian project apply here as well.
 
 ## Maven integraton
