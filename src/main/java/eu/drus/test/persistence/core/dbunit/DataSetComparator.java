@@ -19,6 +19,7 @@ import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.FilteredTableMetaData;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.NoSuchTableException;
 import org.dbunit.dataset.SortedTable;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.IColumnFilter;
@@ -54,12 +55,10 @@ public class DataSetComparator {
     }
 
     private void shouldBeEmpty(final IDataSet dataSet, final AssertionErrorCollector errorCollector) throws DatabaseUnitException {
-        final String[] tableNames = dataSet.getTableNames();
-        for (final String tableName : tableNames) {
-            final SortedTable tableState = new SortedTable(dataSet.getTable(tableName));
-            final int rowCount = tableState.getRowCount();
+        for (final String tableName : dataSet.getTableNames()) {
+            final int rowCount = dataSet.getTable(tableName).getRowCount();
             if (rowCount != 0) {
-                errorCollector.collect(new AssertionError(tableName + " expected to be empty, but was <" + rowCount + ">."));
+                errorCollector.collect("Table " + tableName + " was expected to be empty, but has <" + rowCount + "> entries.");
             }
         }
     }
@@ -67,43 +66,55 @@ public class DataSetComparator {
     @SuppressWarnings("unchecked")
     private void compareContent(final IDataSet currentDataSet, final IDataSet expectedDataSet, final AssertionErrorCollector errorCollector)
             throws DatabaseUnitException, ReflectiveOperationException {
-        final String[] tableNames = expectedDataSet.getTableNames();
-        final FilteredDataSet filteredCurrentDataSet = new FilteredDataSet(new IncludeTableFilter(tableNames), currentDataSet);
+        final String[] expectedTableNames = expectedDataSet.getTableNames();
+        final FilteredDataSet filteredCurrentDataSet = new FilteredDataSet(new IncludeTableFilter(expectedTableNames), currentDataSet);
 
-        for (final String tableName : tableNames) {
-            final List<String> columnsForSorting = defineColumnsForSorting(filteredCurrentDataSet, expectedDataSet, tableName);
+        for (final String tableName : expectedTableNames) {
+            try {
+                final List<String> columnsForSorting = defineColumnsForSorting(filteredCurrentDataSet, expectedDataSet, tableName);
 
-            final ITable expectedTable = sort(
-                    new TableWrapper(expectedDataSet.getTable(tableName), filteredCurrentDataSet.getTable(tableName).getTableMetaData()),
-                    columnsForSorting);
-            final ITable currentTable = sort(filteredCurrentDataSet.getTable(tableName), columnsForSorting);
+                final ITable table = filteredCurrentDataSet.getTable(tableName);
+                final ITable expectedTable = sort(new TableWrapper(expectedDataSet.getTable(tableName), table.getTableMetaData()),
+                        columnsForSorting);
+                final ITable currentTable = sort(table, columnsForSorting);
 
-            final List<String> columnsToIgnore = extractColumnsToBeIgnored(expectedDataSet.getTable(tableName),
-                    filteredCurrentDataSet.getTable(tableName));
+                final List<String> columnsToIgnore = extractColumnsToBeIgnored(expectedDataSet.getTable(tableName), table);
 
-            final DiffCollectingFailureHandler diffCollector = new DiffCollectingFailureHandler();
+                final String[] toBeIgnored = columnsToIgnore.toArray(new String[columnsToIgnore.size()]);
 
-            final String[] toBeIgnored = columnsToIgnore.toArray(new String[columnsToIgnore.size()]);
+                final ITable expectedTableWithFilteredColumns = filter(expectedTable, toBeIgnored);
+                final ITable actualTableWithFilteredColumns = filter(currentTable, toBeIgnored);
 
-            final ITable expectedTableWithFilteredColumns = filter(expectedTable, toBeIgnored);
-            final ITable actualTableWithFilteredColumns = filter(currentTable, toBeIgnored);
+                final DiffCollectingFailureHandler diffCollector = new DiffCollectingFailureHandler();
+                Assertion.assertEquals(expectedTableWithFilteredColumns, actualTableWithFilteredColumns, diffCollector);
 
-            Assertion.assertEquals(expectedTableWithFilteredColumns, actualTableWithFilteredColumns, diffCollector);
+                collectErrors(errorCollector, diffCollector.getDiffList());
+            } catch (final NoSuchTableException e) {
+                final int rowCount = expectedDataSet.getTable(tableName).getRowCount();
+                errorCollector.collect(
+                        "Table " + tableName + " was expected to be present and to contain <" + rowCount + "> entries, but not found.");
+            }
+        }
 
-            collectErrors(errorCollector, diffCollector.getDiffList());
+        final List<String> currentTableNames = new ArrayList<>(Arrays.asList(currentDataSet.getTableNames()));
+        currentTableNames.removeAll(Arrays.asList(expectedTableNames));
+        for (final String notExpectedTableName : currentTableNames) {
+            final int rowCount = currentDataSet.getTable(notExpectedTableName).getRowCount();
+            errorCollector.collect(
+                    "Table " + notExpectedTableName + " was not expected, but is present and contains <" + rowCount + "> entries.");
         }
     }
 
     private List<String> defineColumnsForSorting(final IDataSet currentDataSet, final IDataSet expectedDataSet, final String tableName)
             throws DataSetException {
-        final List<String> columnsForSorting = new ArrayList<>();
-        columnsForSorting.addAll(orderBy.global);
-        final List<String> columsPerTable = orderBy.columnsPerTable.get(tableName);
-        if (columsPerTable != null) {
-            columnsForSorting.addAll(columsPerTable);
-        }
-        columnsForSorting.addAll(additionalColumnsForSorting(expectedDataSet.getTable(tableName), currentDataSet.getTable(tableName)));
-        return columnsForSorting;
+
+        final List<String> additionalColumns = additionalColumnsForSorting(expectedDataSet.getTable(tableName),
+                currentDataSet.getTable(tableName));
+
+        final List<String> result = new ArrayList<>();
+        result.addAll(orderBy.getColumns(tableName));
+        result.addAll(additionalColumns);
+        return result;
     }
 
     private ITable sort(final ITable table, final List<String> columnsForSorting) throws DataSetException {
@@ -116,13 +127,8 @@ public class DataSetComparator {
             throws DataSetException {
         final List<String> columnsToIgnore = extractNotExpectedColumnNames(expectedTableState, currentTableState);
         final String tableName = expectedTableState.getTableMetaData().getTableName();
-        final List<String> tableColumns = toExclude.columnsPerTable.get(tableName);
 
-        columnsToIgnore.addAll(toExclude.global);
-
-        if (tableColumns != null) {
-            columnsToIgnore.addAll(tableColumns);
-        }
+        columnsToIgnore.addAll(toExclude.getColumns(tableName));
 
         final List<String> nonExistingColumns = new ArrayList<>(columnsToIgnore);
         nonExistingColumns.removeAll(extractColumnNames(currentTableState.getTableMetaData().getColumns()));
@@ -180,8 +186,17 @@ public class DataSetComparator {
     }
 
     private List<String> extractNotExpectedColumnNames(final ITable expectedTable, final ITable currentTable) throws DataSetException {
-        final Set<String> actualColumnNames = new HashSet<>(extractColumnNames(currentTable.getTableMetaData().getColumns()));
-        final Set<String> expectedColumnNames = new HashSet<>(extractColumnNames(expectedTable.getTableMetaData().getColumns()));
+        final Set<String> actualColumnNames = new HashSet<>();
+        final Set<String> expectedColumnNames = new HashSet<>();
+
+        if (currentTable != null) {
+            actualColumnNames.addAll(extractColumnNames(currentTable.getTableMetaData().getColumns()));
+        }
+
+        if (expectedTable != null) {
+            expectedColumnNames.addAll(extractColumnNames(expectedTable.getTableMetaData().getColumns()));
+        }
+
         actualColumnNames.removeAll(expectedColumnNames);
         return new ArrayList<>(actualColumnNames);
     }

@@ -1,15 +1,16 @@
 package eu.drus.test.persistence.core.dbunit;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ColumnsHolder {
 
-    final List<String> global = new ArrayList<>();
+    private final List<String> columns = new ArrayList<>();
 
-    final Map<String, List<String>> columnsPerTable = new HashMap<>();
+    private final Map<String, List<String>> columnsInTable = new HashMap<>();
 
     public ColumnsHolder(final String[] columns) {
         for (final String column : columns) {
@@ -17,7 +18,7 @@ public class ColumnsHolder {
                 continue;
             }
             if (!column.contains(".")) {
-                global.add(column);
+                this.columns.add(column);
             } else {
                 splitTableAndColumn(column);
             }
@@ -33,14 +34,23 @@ public class ColumnsHolder {
         }
 
         final String tableName = splittedTableAndColumn[0];
-        List<String> tableColumns = columnsPerTable.get(tableName);
+        List<String> columns = columnsInTable.get(tableName);
 
-        if (tableColumns == null) {
-            tableColumns = new ArrayList<>();
-            columnsPerTable.put(tableName, tableColumns);
+        if (columns == null) {
+            columns = new ArrayList<>();
+            columnsInTable.put(tableName, columns);
         }
 
-        tableColumns.add(splittedTableAndColumn[1]);
+        columns.add(splittedTableAndColumn[1]);
+    }
+
+    public List<String> getColumns(final String tableName) {
+        final List<String> tableColumns = columnsInTable.get(tableName);
+
+        final List<String> result = new ArrayList<>();
+        result.addAll(columns);
+        result.addAll(tableColumns != null ? tableColumns : Collections.emptyList());
+        return result;
     }
 
 }
