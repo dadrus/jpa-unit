@@ -10,4 +10,12 @@ public class JpaTestException extends RuntimeException {
     public JpaTestException(final Throwable cause) {
         super(cause);
     }
+
+    /**
+     * @param message
+     * @param cause
+     */
+    public JpaTestException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }
