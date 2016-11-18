@@ -15,7 +15,7 @@ import org.dbunit.dataset.filter.IColumnFilter;
  * ) used when comparing datasets specified by {@link ExpectedDataSets} annotation. <br>
  * <br>
  * The use of IColumnFilter implementations is described
- * <a href="http://www.dbunit.org/faq.html#columnfilter">here</a>. <br>
+ * <a href="http://dbunit.sourceforge.net/faq.html#columnfilter">here</a>. <br>
  */
 @Target({
         TYPE, METHOD
@@ -28,5 +28,5 @@ public @interface CustomColumnFilter {
      * expected to have default non-argument constructor which will be used when creating an
      * instance of the filter.
      */
-    Class<? extends IColumnFilter>[]value();
+    Class<? extends IColumnFilter>[] value();
 }
