@@ -132,6 +132,18 @@ public class CleanupStrategyProviderTest {
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_3"), equalTo(0));
     }
 
+    @Test(expected = DbFeatureException.class)
+    public void testStrictCleanupOnClosedConnection() throws Exception {
+        // GIVEN
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
+        final CleanupStrategyExecutor strategyExecutor = provider.strictStrategy();
+        assertThat(strategyExecutor, notNullValue());
+        connection.close();
+
+        // WHEN
+        strategyExecutor.execute(connection, Arrays.asList());
+    }
+
     @Test
     public void testUsedRowsOnlyCleanupWithInitialDataSets() throws Exception {
         // GIVEN
@@ -196,6 +208,18 @@ public class CleanupStrategyProviderTest {
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_3"), equalTo(1));
     }
 
+    @Test(expected = DbFeatureException.class)
+    public void testUsedRowsOnlyCleanupOnClosedConnection() throws Exception {
+        // GIVEN
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
+        final CleanupStrategyExecutor strategyExecutor = provider.strictStrategy();
+        assertThat(strategyExecutor, notNullValue());
+        connection.close();
+
+        // WHEN
+        strategyExecutor.execute(connection, Arrays.asList());
+    }
+
     @Test
     public void testUsedTablesOnlyCleanupWithInitialDataSets() throws Exception {
         // GIVEN
@@ -258,5 +282,17 @@ public class CleanupStrategyProviderTest {
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(4));
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_2"), equalTo(1));
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_3"), equalTo(1));
+    }
+
+    @Test(expected = DbFeatureException.class)
+    public void testUsedTablesOnlyCleanupOnClosedConnection() throws Exception {
+        // GIVEN
+        final CleanupStrategyProvider provider = new CleanupStrategyProvider();
+        final CleanupStrategyExecutor strategyExecutor = provider.strictStrategy();
+        assertThat(strategyExecutor, notNullValue());
+        connection.close();
+
+        // WHEN
+        strategyExecutor.execute(connection, Arrays.asList());
     }
 }
