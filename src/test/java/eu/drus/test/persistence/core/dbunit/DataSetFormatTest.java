@@ -42,6 +42,7 @@ public class DataSetFormatTest {
         verify(loaderProvider).xmlLoader();
     }
 
+    @Test
     public void testInferJsonFormatFromFile() {
         final DataSetFormat format = DataSetFormat.inferFromFile("test.json");
 
@@ -49,6 +50,7 @@ public class DataSetFormatTest {
         assertThat(format.extension(), equalTo("json"));
     }
 
+    @Test
     public void testInferXmlFormatFromFile() {
         final DataSetFormat format = DataSetFormat.inferFromFile("test.xml");
 
@@ -56,6 +58,7 @@ public class DataSetFormatTest {
         assertThat(format.extension(), equalTo("xml"));
     }
 
+    @Test
     public void testInferYamlFormatFromFile() {
         final DataSetFormat format = DataSetFormat.inferFromFile("test.yaml");
 
