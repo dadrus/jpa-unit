@@ -7,7 +7,7 @@ public enum DataSetFormat {
             return provider.xmlLoader();
         }
     },
-    YAML("yml") {
+    YAML("yaml") {
         @Override
         public <T> T select(final LoaderProvider<T> provider) {
             return provider.yamlLoader();
