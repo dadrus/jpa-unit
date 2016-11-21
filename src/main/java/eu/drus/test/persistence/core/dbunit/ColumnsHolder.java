@@ -15,7 +15,7 @@ public class ColumnsHolder {
     public ColumnsHolder(final String[] columns) {
         for (final String column : columns) {
             if (column.length() == 0) {
-                continue;
+                throw new IllegalArgumentException("Column name can not be an empty string");
             }
             if (!column.contains(".")) {
                 this.columns.add(column);
@@ -34,14 +34,14 @@ public class ColumnsHolder {
         }
 
         final String tableName = splittedTableAndColumn[0];
-        List<String> columns = columnsInTable.get(tableName);
+        List<String> tableColumns = columnsInTable.get(tableName);
 
-        if (columns == null) {
-            columns = new ArrayList<>();
-            columnsInTable.put(tableName, columns);
+        if (tableColumns == null) {
+            tableColumns = new ArrayList<>();
+            columnsInTable.put(tableName, tableColumns);
         }
 
-        columns.add(splittedTableAndColumn[1]);
+        tableColumns.add(splittedTableAndColumn[1]);
     }
 
     public List<String> getColumns(final String tableName) {
