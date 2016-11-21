@@ -22,15 +22,22 @@ public @interface ExpectedDataSets {
     /**
      * List of data set files used for comparison.
      */
-    String[]value();
+    String[] value();
 
     /**
      * List of columns to be used for sorting rows to determine order of data sets comparison.
      */
-    String[]orderBy() default "";
+    String[] orderBy() default {};
 
     /**
      * List of columns to be excluded.
      */
-    String[]excludeColumns() default "";
+    String[] excludeColumns() default {};
+
+    /**
+     * Defines whether the performed verification about expected data sets is strict or not. In
+     * strict mode all tables and entries not defined in the expected data sets are considered to be
+     * an error.
+     */
+    boolean strict() default false;
 }

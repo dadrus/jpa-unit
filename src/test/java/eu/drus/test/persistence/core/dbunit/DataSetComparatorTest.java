@@ -167,14 +167,10 @@ public class DataSetComparatorTest {
     public void testCurrentDataSetContainsDataAndExpectedDataSetIsEmpty() throws Exception {
         // GIVEN
         final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
-        final String[] orderBy = new String[] {
-                ""
-        };
-        final String[] toExclude = new String[] {
-                ""
-        };
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
-        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, columnFilters);
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, false, columnFilters);
 
         when(currentDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME
@@ -211,14 +207,10 @@ public class DataSetComparatorTest {
     public void testCurrentDataSetIsEmptyAndExpectedDataContainsData() throws Exception {
         // GIVEN
         final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
-        final String[] orderBy = new String[] {
-                ""
-        };
-        final String[] toExclude = new String[] {
-                ""
-        };
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
-        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, columnFilters);
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, false, columnFilters);
 
         when(currentDataSet.getTableNames()).thenReturn(new String[] {});
         when(currentDataSet.getTable(any(String.class))).thenThrow(new NoSuchTableException());
@@ -252,17 +244,60 @@ public class DataSetComparatorTest {
     }
 
     @Test
-    public void testCurrentDataSetAndExpectedDataSetContainDataButAreFullyDisjunctive() throws Exception {
+    public void testCurrentDataSetAndExpectedDataSetContainDataButAreFullyDisjunctiveUsingNotStrictMode() throws Exception {
         // GIVEN
         final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
-        final String[] orderBy = new String[] {
-                ""
-        };
-        final String[] toExclude = new String[] {
-                ""
-        };
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
-        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, columnFilters);
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, false, columnFilters);
+
+        when(expectedDataSet.getTableNames()).thenReturn(new String[] {
+                TABLE_1_NAME
+        });
+        when(expectedDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
+            final String tableName = (String) invocation.getArguments()[0];
+            if (tableName == TABLE_1_NAME) {
+                return table1;
+            } else {
+                throw new NoSuchTableException(tableName);
+            }
+        });
+
+        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+                TABLE_2_NAME
+        });
+        when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
+            final String tableName = (String) invocation.getArguments()[0];
+            if (tableName == TABLE_2_NAME) {
+                return table2;
+            } else {
+                throw new NoSuchTableException(tableName);
+            }
+        });
+
+        // WHEN
+        comparator.compare(currentDataSet, expectedDataSet, errorCollector);
+
+        // THEN
+        assertThat(errorCollector.amountOfErrors(), equalTo(1));
+
+        try {
+            errorCollector.report();
+            fail("AssertionError expected");
+        } catch (final AssertionError e) {
+            assertThat(e.getMessage(), containsString("failed in 1 case"));
+        }
+    }
+
+    @Test
+    public void testCurrentDataSetAndExpectedDataSetContainDataButAreFullyDisjunctiveUsingStrictMode() throws Exception {
+        // GIVEN
+        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
+        final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, true, columnFilters);
 
         when(expectedDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME
@@ -305,17 +340,66 @@ public class DataSetComparatorTest {
     }
 
     @Test
-    public void testCurrentDataSetAndExpectedDataSetHaveOnlyOneTableInCommon() throws Exception {
+    public void testCurrentDataSetAndExpectedDataSetHaveOnlyOneTableInCommonUsingNotStrictMode() throws Exception {
         // GIVEN
         final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
-        final String[] orderBy = new String[] {
-                ""
-        };
-        final String[] toExclude = new String[] {
-                ""
-        };
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
-        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, columnFilters);
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, false, columnFilters);
+
+        when(expectedDataSet.getTableNames()).thenReturn(new String[] {
+                TABLE_1_NAME, TABLE_2_NAME
+        });
+        when(expectedDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
+            final String tableName = (String) invocation.getArguments()[0];
+            if (tableName == TABLE_1_NAME) {
+                return table1;
+            } else if (tableName == TABLE_2_NAME) {
+                return table2;
+            } else {
+                throw new NoSuchTableException(tableName);
+            }
+        });
+
+        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+                TABLE_2_NAME, TABLE_3_NAME
+        });
+        when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
+            final String tableName = (String) invocation.getArguments()[0];
+            if (tableName == TABLE_2_NAME) {
+                return table2;
+            } else if (tableName == TABLE_3_NAME) {
+                return table3;
+            } else {
+                throw new NoSuchTableException(tableName);
+            }
+        });
+
+        // WHEN
+        comparator.compare(currentDataSet, expectedDataSet, errorCollector);
+
+        // THEN
+        assertThat(errorCollector.amountOfErrors(), equalTo(1));
+
+        try {
+            errorCollector.report();
+            fail("AssertionError expected");
+        } catch (final AssertionError e) {
+            assertThat(e.getMessage(), containsString("failed in 1 case"));
+            assertThat(e.getMessage(), containsString(
+                    TABLE_1_NAME + " was expected to be present and to contain <" + TABLE_1_ENTRIES + "> entries, but not found"));
+        }
+    }
+
+    @Test
+    public void testCurrentDataSetAndExpectedDataSetHaveOnlyOneTableInCommonUsingStrictMode() throws Exception {
+        // GIVEN
+        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
+        final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, true, columnFilters);
 
         when(expectedDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME, TABLE_2_NAME
@@ -367,14 +451,10 @@ public class DataSetComparatorTest {
     public void testCurrentDataSetIsASubsetOfExpectedDataSet() throws Exception {
         // GIVEN
         final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
-        final String[] orderBy = new String[] {
-                ""
-        };
-        final String[] toExclude = new String[] {
-                ""
-        };
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
-        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, columnFilters);
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, false, columnFilters);
 
         when(expectedDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME, TABLE_2_NAME
@@ -419,17 +499,57 @@ public class DataSetComparatorTest {
     }
 
     @Test
-    public void testExpectedDataSetIsASubsetOfCurrentDataSet() throws Exception {
+    public void testExpectedDataSetIsASubsetOfCurrentDataSetUsingNotStringMode() throws Exception {
         // GIVEN
         final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
-        final String[] orderBy = new String[] {
-                ""
-        };
-        final String[] toExclude = new String[] {
-                ""
-        };
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
-        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, columnFilters);
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, false, columnFilters);
+
+        when(expectedDataSet.getTableNames()).thenReturn(new String[] {
+                TABLE_2_NAME
+        });
+        when(expectedDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
+            final String tableName = (String) invocation.getArguments()[0];
+            if (tableName == TABLE_2_NAME) {
+                return table2;
+            } else {
+                throw new NoSuchTableException(tableName);
+            }
+        });
+
+        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+                TABLE_1_NAME, TABLE_2_NAME
+        });
+        when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
+            final String tableName = (String) invocation.getArguments()[0];
+            if (tableName == TABLE_1_NAME) {
+                return table1;
+            } else if (tableName == TABLE_2_NAME) {
+                return table2;
+            } else {
+                throw new NoSuchTableException(tableName);
+            }
+        });
+
+        // WHEN
+        comparator.compare(currentDataSet, expectedDataSet, errorCollector);
+
+        // THEN
+        assertThat(errorCollector.amountOfErrors(), equalTo(0));
+
+        errorCollector.report();
+    }
+
+    @Test
+    public void testExpectedDataSetIsASubsetOfCurrentDataSetUsingStringMode() throws Exception {
+        // GIVEN
+        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
+        final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, true, columnFilters);
 
         when(expectedDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_2_NAME
@@ -477,14 +597,10 @@ public class DataSetComparatorTest {
     public void testCurrentDataSetAndExpectedDataSetDifferInTableRecords() throws Exception {
         // GIVEN
         final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
-        final String[] orderBy = new String[] {
-                ""
-        };
-        final String[] toExclude = new String[] {
-                ""
-        };
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
-        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, columnFilters);
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, false, columnFilters);
 
         when(expectedDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME
@@ -538,14 +654,10 @@ public class DataSetComparatorTest {
     public void testCurrentDataSetAndExpectedDataSetAreEqual() throws Exception {
         // GIVEN
         final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
-        final String[] orderBy = new String[] {
-                ""
-        };
-        final String[] toExclude = new String[] {
-                ""
-        };
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
-        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, columnFilters);
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, false, columnFilters);
 
         when(expectedDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME
@@ -594,14 +706,10 @@ public class DataSetComparatorTest {
     public void testCustomFilter() throws Exception {
         // GIVEN
         final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
-        final String[] orderBy = new String[] {
-                ""
-        };
-        final String[] toExclude = new String[] {
-                ""
-        };
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = new HashSet<>(Arrays.asList(MyCustomFilter.class));
-        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, columnFilters);
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, false, columnFilters);
 
         when(expectedDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME

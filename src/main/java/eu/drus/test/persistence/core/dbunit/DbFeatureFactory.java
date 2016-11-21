@@ -223,7 +223,7 @@ public class DbFeatureFactory {
                 final IDataSet expectedDataSet = mergeDataSets(loadDataSets(Arrays.asList(expectedDataSets.value())));
 
                 final DataSetComparator dataSetComparator = new DataSetComparator(expectedDataSets.orderBy(),
-                        expectedDataSets.excludeColumns(), customColumnFilter);
+                        expectedDataSets.excludeColumns(), expectedDataSets.strict(), customColumnFilter);
 
                 final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
                 dataSetComparator.compare(currentDataSet, expectedDataSet, errorCollector);

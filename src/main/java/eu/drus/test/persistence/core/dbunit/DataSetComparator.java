@@ -39,9 +39,13 @@ public class DataSetComparator {
 
     private final Set<Class<? extends IColumnFilter>> columnFilters;
 
-    public DataSetComparator(final String[] orderBy, final String[] toExclude, final Set<Class<? extends IColumnFilter>> columnFilters) {
+    private boolean isStrict;
+
+    public DataSetComparator(final String[] orderBy, final String[] toExclude, final boolean isStrict,
+            final Set<Class<? extends IColumnFilter>> columnFilters) {
         this.toExclude = new ColumnsHolder(toExclude);
         this.orderBy = new ColumnsHolder(orderBy);
+        this.isStrict = isStrict;
         this.columnFilters = columnFilters;
     }
 
@@ -96,12 +100,14 @@ public class DataSetComparator {
             }
         }
 
-        final List<String> currentTableNames = new ArrayList<>(Arrays.asList(currentDataSet.getTableNames()));
-        currentTableNames.removeAll(Arrays.asList(expectedTableNames));
-        for (final String notExpectedTableName : currentTableNames) {
-            final int rowCount = currentDataSet.getTable(notExpectedTableName).getRowCount();
-            errorCollector.collect(
-                    "Table " + notExpectedTableName + " was not expected, but is present and contains <" + rowCount + "> entries.");
+        if (isStrict) {
+            final List<String> currentTableNames = new ArrayList<>(Arrays.asList(currentDataSet.getTableNames()));
+            currentTableNames.removeAll(Arrays.asList(expectedTableNames));
+            for (final String notExpectedTableName : currentTableNames) {
+                final int rowCount = currentDataSet.getTable(notExpectedTableName).getRowCount();
+                errorCollector.collect(
+                        "Table " + notExpectedTableName + " was not expected, but is present and contains <" + rowCount + "> entries.");
+            }
         }
     }
 
