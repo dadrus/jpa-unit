@@ -29,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import eu.drus.test.persistence.JpaTestException;
 import eu.drus.test.persistence.core.AssertionErrorCollector;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -752,6 +753,56 @@ public class DataSetComparatorTest {
         errorCollector.report();
     }
 
+    @Test
+    public void testCustomFilterImplementedNotAccordingToTheRequirements() throws Exception {
+        // GIVEN
+        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
+        final String[] orderBy = new String[] {};
+        final String[] toExclude = new String[] {};
+        final Set<Class<? extends IColumnFilter>> columnFilters = new HashSet<>(Arrays.asList(BadCustomFilter.class));
+        final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, false, columnFilters);
+
+        when(expectedDataSet.getTableNames()).thenReturn(new String[] {
+                TABLE_1_NAME
+        });
+        when(expectedDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
+            final String tableName = (String) invocation.getArguments()[0];
+            if (tableName == TABLE_1_NAME) {
+                return table1;
+            } else {
+                throw new NoSuchTableException(tableName);
+            }
+        });
+        when(table1.getValue(eq(0), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value1");
+        when(table1.getValue(eq(1), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value2");
+
+        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+                TABLE_1_NAME
+        });
+        when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
+            final String tableName = (String) invocation.getArguments()[0];
+            if (tableName == TABLE_1_NAME) {
+                return table4;
+            } else {
+                throw new NoSuchTableException(tableName);
+            }
+        });
+        when(table4.getRowCount()).thenReturn(TABLE_1_ENTRIES);
+        when(table4.getTableMetaData()).thenReturn(table1MetaData);
+        when(table4.getValue(eq(0), eq(TABLE_1_COLUMN_1.getColumnName()))).thenReturn("col1_value1");
+        when(table4.getValue(eq(1), eq(TABLE_1_COLUMN_1.getColumnName()))).thenReturn("col1_value2");
+        when(table4.getValue(eq(0), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value1");
+        when(table4.getValue(eq(1), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value2");
+
+        // WHEN
+        try {
+            comparator.compare(currentDataSet, expectedDataSet, errorCollector);
+            fail("JpaTestException expected");
+        } catch (final JpaTestException e) {
+            assertThat(e.getMessage(), containsString("Could not instanciate"));
+        }
+    }
+
     public static class MyCustomFilter implements IColumnFilter {
 
         @Override
@@ -759,6 +810,17 @@ public class DataSetComparatorTest {
             // reject column 1
             return column.getColumnName() != TABLE_1_COLUMN_1.getColumnName();
         }
+    }
 
+    public static class BadCustomFilter implements IColumnFilter {
+
+        public BadCustomFilter(final boolean val) {
+
+        }
+
+        @Override
+        public boolean accept(final String tableName, final Column column) {
+            return false;
+        }
     }
 }

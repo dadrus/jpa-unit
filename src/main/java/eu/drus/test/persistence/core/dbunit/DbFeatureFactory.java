@@ -229,7 +229,7 @@ public class DbFeatureFactory {
                 dataSetComparator.compare(currentDataSet, expectedDataSet, errorCollector);
 
                 errorCollector.report();
-            } catch (final SQLException | DatabaseUnitException | ReflectiveOperationException | IOException e) {
+            } catch (final SQLException | DatabaseUnitException | IOException e) {
                 throw new DbFeatureException("Could not execute DB contents verification feature", e);
             }
         }

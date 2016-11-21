@@ -51,7 +51,7 @@ public class DataSetComparator {
     }
 
     public void compare(final IDataSet currentDataSet, final IDataSet expectedDataSet, final AssertionErrorCollector errorCollector)
-            throws DatabaseUnitException, ReflectiveOperationException {
+            throws DatabaseUnitException {
         if (expectedDataSet.getTableNames().length == 0) {
             shouldBeEmpty(currentDataSet, errorCollector);
         } else {
