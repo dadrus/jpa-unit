@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -26,6 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.test.persistence.annotation.CleanupStrategy;
 import eu.drus.test.persistence.annotation.DataSeedStrategy;
+import eu.drus.test.persistence.annotation.ExpectedDataSets;
 import eu.drus.test.persistence.core.metadata.FeatureResolver;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -382,7 +384,30 @@ public class DbFeatureFactoryTest {
         verify(dbUnitConnection, times(0)).getConnection();
     }
 
-    public void testVerifyDataAfterIsEnabled() throws DbFeatureException, SQLException {
-        // TODO
+    @Test
+    public void testVerifyDataAfterIsEnabled() throws Exception {
+        // GIVEN
+        final ExpectedDataSets eds = mock(ExpectedDataSets.class);
+        when(eds.strict()).thenReturn(Boolean.FALSE);
+        when(eds.orderBy()).thenReturn(new String[] {});
+        when(eds.excludeColumns()).thenReturn(new String[] {});
+        when(eds.value()).thenReturn(new String[] {});
+        when(resolver.getExpectedDataSets()).thenReturn(eds);
+        when(resolver.getCustomColumnFilter()).thenReturn(Collections.emptySet());
+        when(resolver.shouldVerifyDataAfter()).thenReturn(Boolean.TRUE);
+
+        final IDataSet ds = mock(IDataSet.class);
+        when(ds.getTableNames()).thenReturn(new String[] {});
+        when(dbUnitConnection.createDataSet()).thenReturn(ds);
+        final DbFeatureFactory factory = new DbFeatureFactory(resolver);
+
+        // WHEN
+        final DbFeature feature = factory.getVerifyDataAfterFeature();
+        assertThat(feature, notNullValue());
+
+        feature.execute(dbUnitConnection);
+
+        // THEN
+        // no errors reported
     }
 }
