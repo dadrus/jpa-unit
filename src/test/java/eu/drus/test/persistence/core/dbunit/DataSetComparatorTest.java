@@ -53,7 +53,6 @@ public class DataSetComparatorTest {
     private static final Column TABLE_3_COLUMN_3 = new Column("t3col3", DataType.VARCHAR);
     private static final Column TABLE_3_COLUMN_4 = new Column("t3col4", DataType.VARCHAR);
 
-    private static final int TABLE_4_ENTRIES = 2;
     private static final Column TABLE_4_COLUMN_1 = new Column("t1col1", DataType.DOUBLE);
     private static final Column TABLE_4_COLUMN_2 = new Column("t1col2", DataType.VARCHAR);
 

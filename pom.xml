@@ -6,13 +6,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>eu.drus.test</groupId>
-  <artifactId>persistence-test</artifactId>
+  <artifactId>jpa-unit</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
-  <url>https://github.com/dadrus/persistence-test</url>
+  <url>https://github.com/dadrus/jpa-unit</url>
   <inceptionYear>2016</inceptionYear>
 
-  <name>JPA Persistence Test</name>
+  <name>JPA Unit</name>
   <description>JUnit extension to run tests for JPA entities using EntityManagerFactory or EntityManager</description>
 
   <properties>
@@ -42,9 +42,9 @@
   </properties>
 
   <scm>
-    <connection>scm:git:https://github.com/dadrus/persistence-test.git</connection>
-    <developerConnection>scm:git:https://github.com/dadrus/persistence-test.git</developerConnection>
-    <url>https://github.com/dadrus/persistence-test.git</url>
+    <connection>scm:git:https://github.com/dadrus/jpa-unit.git</connection>
+    <developerConnection>scm:git:https://github.com/dadrus/jpa-unit.git</developerConnection>
+    <url>https://github.com/dadrus/jpa-unit.git</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -58,7 +58,7 @@
 
   <ciManagement>
     <system>Travis CI</system>
-    <url>https://travis-ci.org/dadrus/persistence-test</url>
+    <url>https://travis-ci.org/dadrus/jpa-unit</url>
     <notifiers />
   </ciManagement>
 
