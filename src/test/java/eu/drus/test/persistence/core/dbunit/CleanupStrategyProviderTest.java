@@ -212,12 +212,12 @@ public class CleanupStrategyProviderTest {
     public void testUsedRowsOnlyCleanupOnClosedConnection() throws Exception {
         // GIVEN
         final CleanupStrategyProvider provider = new CleanupStrategyProvider();
-        final CleanupStrategyExecutor strategyExecutor = provider.strictStrategy();
+        final CleanupStrategyExecutor strategyExecutor = provider.usedRowsOnlyStrategy();
         assertThat(strategyExecutor, notNullValue());
         connection.close();
 
         // WHEN
-        strategyExecutor.execute(connection, Arrays.asList());
+        strategyExecutor.execute(connection, Arrays.asList(initialDataSet));
     }
 
     @Test
@@ -288,11 +288,11 @@ public class CleanupStrategyProviderTest {
     public void testUsedTablesOnlyCleanupOnClosedConnection() throws Exception {
         // GIVEN
         final CleanupStrategyProvider provider = new CleanupStrategyProvider();
-        final CleanupStrategyExecutor strategyExecutor = provider.strictStrategy();
+        final CleanupStrategyExecutor strategyExecutor = provider.usedTablesOnlyStrategy();
         assertThat(strategyExecutor, notNullValue());
         connection.close();
 
         // WHEN
-        strategyExecutor.execute(connection, Arrays.asList());
+        strategyExecutor.execute(connection, Arrays.asList(initialDataSet));
     }
 }
