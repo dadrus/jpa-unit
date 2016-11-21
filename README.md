@@ -1,6 +1,7 @@
-# JPA 2.1 persistence test [![Build Status](https://travis-ci.org/dadrus/persistence-test.svg?branch=master)](https://travis-ci.org/dadrus/persistence-test) [![Coverage Status](https://img.shields.io/sonar/http/sonarqube.com/eu.drus.test:persistence-test/coverage.svg?maxAge=3600)](https://sonarqube.com/dashboard/index?id=eu.drus.test%3Apersistence-test) [![Technical Debt](https://img.shields.io/sonar/http/sonarqube.com/eu.drus.test:persistence-test/tech_debt.svg?maxAge=3600)](https://sonarqube.com/dashboard/index?id=eu.drus.test%3Apersistence-test)
+# JPA Unit [![Build Status](https://travis-ci.org/dadrus/jpa-unit.svg?branch=master)](https://travis-ci.org/dadrus/jpa-unit) [![Coverage Status](https://img.shields.io/sonar/http/sonarqube.com/eu.drus.test:jpa-unit/coverage.svg?maxAge=3600)](https://sonarqube.com/dashboard/index?id=eu.drus.test%3Ajpa-unit) [![Technical Debt](https://img.shields.io/sonar/http/sonarqube.com/eu.drus.test:jpa-unit/tech_debt.svg?maxAge=3600)](https://sonarqube.com/component_measures/?id=eu.drus.test%3Ajpa-unit)
 
-Implements [JUnit](http://junit.org) runner to test javax.persistence entities using an arbitrary persistence provider
+Implements [JUnit](http://junit.org) runner to test javax.persistence entities using an arbitrary persistence provider. As of today
+the extension support JPA 2.1 only.
 
 ## Features
 
