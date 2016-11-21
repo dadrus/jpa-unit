@@ -25,6 +25,7 @@ import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.IColumnFilter;
 import org.dbunit.dataset.filter.IncludeTableFilter;
 
+import eu.drus.test.persistence.JpaTestException;
 import eu.drus.test.persistence.core.AssertionErrorCollector;
 
 public class DataSetComparator {
@@ -62,14 +63,14 @@ public class DataSetComparator {
         for (final String tableName : dataSet.getTableNames()) {
             final int rowCount = dataSet.getTable(tableName).getRowCount();
             if (rowCount != 0) {
-                errorCollector.collect("Table " + tableName + " was expected to be empty, but has <" + rowCount + "> entries.");
+                errorCollector.collect(tableName + " was expected to be empty, but has <" + rowCount + "> entries.");
             }
         }
     }
 
     @SuppressWarnings("unchecked")
     private void compareContent(final IDataSet currentDataSet, final IDataSet expectedDataSet, final AssertionErrorCollector errorCollector)
-            throws DatabaseUnitException, ReflectiveOperationException {
+            throws DatabaseUnitException {
         final String[] expectedTableNames = expectedDataSet.getTableNames();
         final FilteredDataSet filteredCurrentDataSet = new FilteredDataSet(new IncludeTableFilter(expectedTableNames), currentDataSet);
 
@@ -95,8 +96,7 @@ public class DataSetComparator {
                 collectErrors(errorCollector, diffCollector.getDiffList());
             } catch (final NoSuchTableException e) {
                 final int rowCount = expectedDataSet.getTable(tableName).getRowCount();
-                errorCollector.collect(
-                        "Table " + tableName + " was expected to be present and to contain <" + rowCount + "> entries, but not found.");
+                errorCollector.collect(tableName + " was expected to be present and to contain <" + rowCount + "> entries, but not found.");
             }
         }
 
@@ -105,8 +105,7 @@ public class DataSetComparator {
             currentTableNames.removeAll(Arrays.asList(expectedTableNames));
             for (final String notExpectedTableName : currentTableNames) {
                 final int rowCount = currentDataSet.getTable(notExpectedTableName).getRowCount();
-                errorCollector.collect(
-                        "Table " + notExpectedTableName + " was not expected, but is present and contains <" + rowCount + "> entries.");
+                errorCollector.collect(notExpectedTableName + " was not expected, but is present and contains <" + rowCount + "> entries.");
             }
         }
     }
@@ -146,7 +145,7 @@ public class DataSetComparator {
         return columnsToIgnore;
     }
 
-    private ITable filter(final ITable table, final String[] columnsToFilter) throws ReflectiveOperationException, DataSetException {
+    private ITable filter(final ITable table, final String[] columnsToFilter) throws DataSetException {
         final ITable filteredTable = DefaultColumnFilter.excludedColumnsTable(table, columnsToFilter);
         return applyCustomFilters(filteredTable);
     }
@@ -173,10 +172,15 @@ public class DataSetComparator {
         return columnsForSorting;
     }
 
-    private ITable applyCustomFilters(final ITable table) throws ReflectiveOperationException, DataSetException {
+    private ITable applyCustomFilters(final ITable table) throws DataSetException {
         ITable compositeTable = table;
         for (final Class<? extends IColumnFilter> columnFilter : columnFilters) {
-            final IColumnFilter customColumnFilter = columnFilter.newInstance();
+            IColumnFilter customColumnFilter;
+            try {
+                customColumnFilter = columnFilter.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new JpaTestException("Could not instanciate custom column filter", e);
+            }
             final FilteredTableMetaData metaData = new FilteredTableMetaData(compositeTable.getTableMetaData(), customColumnFilter);
             compositeTable = new CompositeTable(metaData, compositeTable);
         }
