@@ -1,7 +1,7 @@
 # JPA Unit [![Build Status](https://travis-ci.org/dadrus/jpa-unit.svg?branch=master)](https://travis-ci.org/dadrus/jpa-unit) [![Coverage Status](https://img.shields.io/sonar/http/sonarqube.com/eu.drus.test:jpa-unit/coverage.svg?maxAge=3600)](https://sonarqube.com/dashboard/index?id=eu.drus.test%3Ajpa-unit) [![Technical Debt](https://img.shields.io/sonar/http/sonarqube.com/eu.drus.test:jpa-unit/tech_debt.svg?maxAge=3600)](https://sonarqube.com/component_measures/?id=eu.drus.test%3Ajpa-unit)
 
 Implements [JUnit](http://junit.org) runner to test javax.persistence entities using an arbitrary persistence provider. As of today
-the extension support JPA 2.1 only.
+the extension supports JPA 2.1 only.
 
 ## Features
 
@@ -26,8 +26,8 @@ Add the following dependencies to your Maven project:
 ```xml
 <dependency>
   <groupId>eu.drus.test</groupId>
-  <artifactId>persistence-test</artifactId>
-  <version>${persistence-test.version}</version>
+  <artifactId>jpa-unit</artifactId>
+  <version>${jpa-unit.version}</version>
   <scope>test</scope>
 </dependency>
 ```
