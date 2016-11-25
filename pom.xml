@@ -1,19 +1,15 @@
-<project
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>eu.drus.test</groupId>
-  <artifactId>jpa-unit</artifactId>
+  <artifactId>jpa-unit-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
   <url>https://github.com/dadrus/jpa-unit</url>
   <inceptionYear>2016</inceptionYear>
-
-  <name>JPA Unit</name>
-  <description>JUnit extension to run tests for JPA entities using EntityManagerFactory or EntityManager</description>
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -21,24 +17,14 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <plugin.version.compiler>3.3</plugin.version.compiler>
+    <plugin.version.resources>3.0.1</plugin.version.resources>
     <plugin.version.source>3.0.1</plugin.version.source>
     <plugin.version.jar>2.6</plugin.version.jar>
     <plugin.version.javadoc>2.10.4</plugin.version.javadoc>
     <plugin.version.jacoco>0.7.7.201606060606</plugin.version.jacoco>
 
-    <version.slf4j>1.7.21</version.slf4j>
     <version.junit>4.12</version.junit>
     <version.mockito>1.10.19</version.mockito>
-    <version.gson>2.7</version.gson>
-    <version.dbunit>2.5.3</version.dbunit>
-    <version.hibernate-jpa-2.1-api>1.0.0.Final</version.hibernate-jpa-2.1-api>
-    <version.snakeyaml>1.10</version.snakeyaml>
-    <version.commons-lang3>3.4</version.commons-lang3>
-    <version.codemodel>2.6</version.codemodel>
-    <version.h2>1.4.192</version.h2>
-    <version.logback>1.1.7</version.logback>
-    <version.eclipselink>2.5.2</version.eclipselink>
-    <version.h2>1.4.191</version.h2>
   </properties>
 
   <scm>
@@ -74,6 +60,11 @@
     </developer>
   </developers>
 
+  <modules>
+    <module>extension</module>
+    <module>integration-test</module>
+  </modules>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -81,6 +72,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${plugin.version.compiler}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${plugin.version.resources}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -98,119 +94,87 @@
             </archive>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${plugin.version.javadoc}</version>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${plugin.version.source}</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${plugin.version.jacoco}</version>
+          <executions>
+            <execution>
+              <id>prepare-agent</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
 
     <plugins>
       <plugin>
+
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${plugin.version.javadoc}</version>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>${plugin.version.source}</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${plugin.version.jacoco}</version>
-        <executions>
-          <execution>
-            <id>prepare-agent</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.1-api</artifactId>
-      <version>${version.hibernate-jpa-2.1-api}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.dbunit</groupId>
-      <artifactId>dbunit</artifactId>
-      <version>${version.dbunit}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${version.slf4j}</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${version.junit}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>${version.gson}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>${version.snakeyaml}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${version.commons-lang3}</version>
-    </dependency>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${version.junit}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-all</artifactId>
+        <version>${version.mockito}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>${version.mockito}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.codemodel</groupId>
-      <artifactId>codemodel</artifactId>
-      <version>${version.codemodel}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${version.h2}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>${version.logback}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.persistence</groupId>
-      <artifactId>eclipselink</artifactId>
-      <version>${version.eclipselink}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+
 </project>
