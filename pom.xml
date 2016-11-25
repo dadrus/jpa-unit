@@ -149,6 +149,7 @@
       <groupId>org.hibernate.javax.persistence</groupId>
       <artifactId>hibernate-jpa-2.1-api</artifactId>
       <version>${version.hibernate-jpa-2.1-api}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.dbunit</groupId>
