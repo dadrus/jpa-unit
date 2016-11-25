@@ -1,7 +1,7 @@
 # JPA Unit [![Build Status](https://travis-ci.org/dadrus/jpa-unit.svg?branch=master)](https://travis-ci.org/dadrus/jpa-unit) [![Coverage Status](https://img.shields.io/sonar/http/sonarqube.com/eu.drus.test:jpa-unit/coverage.svg?maxAge=3600)](https://sonarqube.com/dashboard/index?id=eu.drus.test%3Ajpa-unit) [![Technical Debt](https://img.shields.io/sonar/http/sonarqube.com/eu.drus.test:jpa-unit/tech_debt.svg?maxAge=3600)](https://sonarqube.com/component_measures/?id=eu.drus.test%3Ajpa-unit)
 
-Implements [JUnit](http://junit.org) runner to test javax.persistence entities using an arbitrary persistence provider. As of today
-the extension supports JPA 2.1 only.
+Implements [JUnit](http://junit.org) runner to test javax.persistence entities using an arbitrary persistence provider. Both JPA 2.0, as well
+as JPA 2.1 are supported (See [Issues](https://github.com/dadrus/jpa-unit/issues) for limitations).
 
 ## Features
 
@@ -17,7 +17,6 @@ the extension supports JPA 2.1 only.
 ## Credits
 
 The implementation makes heavy use of code from the arquillian persistence extension, which was extracted out of it and adopted to suit the needs.
-Because of this the license of the Arquillian project apply here as well.
 
 ## Maven integraton
 
@@ -32,7 +31,7 @@ Add the following dependencies to your Maven project:
 </dependency>
 ```
 
-In addition add the dependencies of your JPA 2.1 provider (e.g. [EclipseLink](http://www.eclipse.org/eclipselink) and of the database JDBC driver, you would like to use.
+In addition add the dependencies of your JPA 2.x provider (e.g. [EclipseLink](http://www.eclipse.org/eclipselink) and of the database JDBC driver, you would like to use.
 E.g.:
 
 ```xml
@@ -152,7 +151,16 @@ public class MyTest {
 }
 ```
 
+### Examples
+
+You can find working examples in the `integration-test` subproject. As for today it defines four maven profiles to run tests with EclipseLink and Hibernate:
+
+- `jpa2.0-eclipselink`
+- `jpa2.1-eclipselink`
+- `jpa2.0-hibernate`
+- `jpa2.1-hibernate`
+
+
 ## TODOs
 
-- Implement examples
 - Make the extension available in mavencentral
