@@ -4,6 +4,10 @@ public class JpaTestException extends RuntimeException {
 
     private static final long serialVersionUID = 6564897685710323054L;
 
+    public JpaTestException(final String message) {
+        super(message);
+    }
+
     /**
      * @param cause
      */
@@ -18,4 +22,5 @@ public class JpaTestException extends RuntimeException {
     public JpaTestException(final String message, final Throwable cause) {
         super(message, cause);
     }
+
 }

@@ -16,6 +16,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
+import eu.drus.test.persistence.core.PersistenceUnitDescriptorLoader;
 import eu.drus.test.persistence.core.metadata.AnnotationInspector;
 import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
 import eu.drus.test.persistence.core.metadata.MetadataExtractor;
@@ -27,6 +28,8 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
 
     private EntityManagerFactory entityManagerFactory;
     private Field persistenceField;
+    private Map<String, Object> properties;
+    private String unitName;
 
     public JpaTestRunner(final Class<?> klass) throws InitializationError {
         super(klass);
@@ -37,7 +40,7 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
         final FeatureResolverFactory featureResolverFactory = new FeatureResolverFactory();
         final List<MethodRule> rules = super.rules(target);
         rules.add(new TransactionalRule(featureResolverFactory, persistenceField));
-        rules.add(new EvaluationRule(featureResolverFactory, entityManagerFactory));
+        rules.add(new EvaluationRule(featureResolverFactory, new PersistenceUnitDescriptorLoader(), unitName, properties));
         rules.add(new PersistenceContextRule(entityManagerFactory, persistenceField));
         return rules;
     }
@@ -66,8 +69,9 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
             }
 
             final PersistenceContext persistenceContext = inspector.fetchFromField(persistenceField);
-            entityManagerFactory = Persistence.createEntityManagerFactory(persistenceContext.unitName(),
-                    getPersistenceContextProperties(persistenceContext));
+            unitName = persistenceContext.unitName();
+            properties = getPersistenceContextProperties(persistenceContext);
+            entityManagerFactory = Persistence.createEntityManagerFactory(persistenceContext.unitName(), properties);
 
             super.run(notifier);
         } finally {
@@ -75,8 +79,8 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
         }
     }
 
-    private Map<String, String> getPersistenceContextProperties(final PersistenceContext persistenceContext) {
-        final Map<String, String> properties = new HashMap<>();
+    private Map<String, Object> getPersistenceContextProperties(final PersistenceContext persistenceContext) {
+        final Map<String, Object> properties = new HashMap<>();
         for (final PersistenceProperty property : persistenceContext.properties()) {
             properties.put(property.name(), property.value());
         }

@@ -1,15 +1,17 @@
 package eu.drus.test.persistence.rule.evaluation;
 
 import java.io.IOException;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 import eu.drus.test.persistence.JpaTestException;
+import eu.drus.test.persistence.core.PersistenceUnitDescriptor;
+import eu.drus.test.persistence.core.PersistenceUnitDescriptorLoader;
 import eu.drus.test.persistence.core.dbunit.DatabaseConnectionFactory;
 import eu.drus.test.persistence.core.dbunit.DbFeatureFactory;
 import eu.drus.test.persistence.core.metadata.FeatureResolver;
@@ -18,13 +20,26 @@ import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
 public class EvaluationRule implements MethodRule {
 
     private final DatabaseConnectionFactory connectionFactory;
-    private FeatureResolverFactory featureResolverFactory;
+    private final FeatureResolverFactory featureResolverFactory;
 
-    public EvaluationRule(final FeatureResolverFactory featureResolverFactory, final EntityManagerFactory entityManagerFactory) {
+    public EvaluationRule(final FeatureResolverFactory featureResolverFactory, final PersistenceUnitDescriptorLoader pudLoader,
+            final String unitName, final Map<String, Object> properties) {
         this.featureResolverFactory = featureResolverFactory;
-        final EntityManager tmp = entityManagerFactory.createEntityManager();
-        connectionFactory = new DatabaseConnectionFactory(tmp.getProperties());
-        tmp.close();
+
+        List<PersistenceUnitDescriptor> descriptors = pudLoader.loadPersistenceUnitDescriptors(properties);
+
+        descriptors = descriptors.stream().filter(u -> u.getUnitName().equals(unitName)).collect(Collectors.toList());
+
+        if (descriptors.isEmpty()) {
+            throw new JpaTestException("No peristence unit found for given unit name");
+        }
+        if (descriptors.size() > 1) {
+            throw new JpaTestException("Multiple persistence units found for given name");
+        }
+
+        final PersistenceUnitDescriptor descriptor = descriptors.get(0);
+
+        connectionFactory = new DatabaseConnectionFactory(descriptor.getProperties());
     }
 
     @Override

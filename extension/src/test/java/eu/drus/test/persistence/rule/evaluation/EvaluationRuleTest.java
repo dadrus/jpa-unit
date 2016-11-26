@@ -10,9 +10,7 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +21,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.test.persistence.JpaTestException;
+import eu.drus.test.persistence.core.PersistenceUnitDescriptor;
+import eu.drus.test.persistence.core.PersistenceUnitDescriptorLoader;
 import eu.drus.test.persistence.core.metadata.FeatureResolver;
 import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
 
@@ -30,13 +30,13 @@ import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
 public class EvaluationRuleTest {
 
     @Mock
-    private EntityManagerFactory emf;
-
-    @Mock
-    private EntityManager em;
-
-    @Mock
     private FeatureResolverFactory featureResolverFactory;
+
+    @Mock
+    private PersistenceUnitDescriptorLoader pudLoader;
+
+    @Mock
+    private PersistenceUnitDescriptor descriptor;
 
     @Mock
     private FeatureResolver resolver;
@@ -50,8 +50,9 @@ public class EvaluationRuleTest {
     @Before
     public void setUp() throws Exception {
 
-        when(emf.createEntityManager()).thenReturn(em);
-        when(em.getProperties()).thenReturn(Collections.emptyMap());
+        when(pudLoader.loadPersistenceUnitDescriptors(any(Map.class))).thenReturn(Arrays.asList(descriptor));
+        when(descriptor.getUnitName()).thenReturn("");
+        when(descriptor.getProperties()).thenReturn(Collections.emptyMap());
 
         when(featureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
         when(resolver.getSeedData()).thenReturn(Collections.emptyList());
@@ -60,7 +61,7 @@ public class EvaluationRuleTest {
     @Test
     public void testApplyRule() {
         // GIVEN
-        final EvaluationRule rule = new EvaluationRule(featureResolverFactory, emf);
+        final EvaluationRule rule = new EvaluationRule(featureResolverFactory, pudLoader, "", Collections.emptyMap());
 
         // WHEN
         final Statement stmt = rule.apply(base, method, this);
@@ -73,7 +74,7 @@ public class EvaluationRuleTest {
     public void testApplyRuleForBadSeedData() {
         // GIVEN
         when(resolver.getSeedData()).thenReturn(Arrays.asList("not-existent.yaml"));
-        final EvaluationRule rule = new EvaluationRule(featureResolverFactory, emf);
+        final EvaluationRule rule = new EvaluationRule(featureResolverFactory, pudLoader, "", Collections.emptyMap());
 
         try {
             // WHEN
