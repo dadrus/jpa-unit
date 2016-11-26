@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>jpa-unit</artifactId>
-
+  <name>JPA Unit - JUnit Extension</name>
   <description>JUnit extension to run tests for JPA entities using EntityManagerFactory or EntityManager</description>
 
   <properties>

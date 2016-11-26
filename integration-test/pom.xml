@@ -9,6 +9,7 @@
   </parent>
 
   <artifactId>jpa-unit-integration-test</artifactId>
+  <name>JPA Unit - Initegration Tests</name>
 
   <dependencies>
     <dependency>
