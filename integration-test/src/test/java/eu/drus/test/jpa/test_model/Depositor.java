@@ -1,4 +1,4 @@
-package eu.drus.test.jpa;
+package eu.drus.test.jpa.test_model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

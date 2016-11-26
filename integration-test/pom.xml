@@ -10,6 +10,18 @@
 
   <artifactId>jpa-unit-integration-test</artifactId>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <configuration>
+          <destFile>${sonar.jacoco.reportPath}</destFile>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>eu.drus.test</groupId>
@@ -211,6 +223,6 @@
         </dependency>
       </dependencies>
     </profile>
-    
+
   </profiles>
 </project>

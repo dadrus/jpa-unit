@@ -7,7 +7,7 @@
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
 
         <!-- your classes converters, etc -->
-        <class>eu.drus.test.jpa.Depositor</class>
+        <class>eu.drus.test.jpa.test_model.Depositor</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />

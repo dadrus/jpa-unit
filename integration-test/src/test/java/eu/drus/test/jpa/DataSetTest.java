@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
+import eu.drus.test.jpa.test_model.Depositor;
 import eu.drus.test.persistence.JpaTestRunner;
 import eu.drus.test.persistence.annotation.ExpectedDataSets;
 import eu.drus.test.persistence.annotation.InitialDataSets;

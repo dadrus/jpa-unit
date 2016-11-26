@@ -16,6 +16,8 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+
     <plugin.version.compiler>3.3</plugin.version.compiler>
     <plugin.version.resources>3.0.1</plugin.version.resources>
     <plugin.version.source>3.0.1</plugin.version.source>
@@ -124,6 +126,10 @@
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>${plugin.version.jacoco}</version>
+          <configuration>
+            <destFile>${sonar.jacoco.reportPath}</destFile>
+            <append>true</append>
+          </configuration>
           <executions>
             <execution>
               <id>prepare-agent</id>
