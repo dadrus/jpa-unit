@@ -126,6 +126,10 @@
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>${plugin.version.jacoco}</version>
+          <configuration>
+            <destFile>${sonar.jacoco.reportPath}</destFile>
+            <append>true</append>
+          </configuration>
           <executions>
             <execution>
               <id>prepare-agent</id>
@@ -155,10 +159,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
