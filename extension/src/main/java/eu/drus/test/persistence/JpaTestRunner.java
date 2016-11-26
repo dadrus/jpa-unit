@@ -35,6 +35,14 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
         super(klass);
     }
 
+    private static Map<String, Object> getPersistenceContextProperties(final PersistenceContext persistenceContext) {
+        final Map<String, Object> properties = new HashMap<>();
+        for (final PersistenceProperty property : persistenceContext.properties()) {
+            properties.put(property.name(), property.value());
+        }
+        return properties;
+    }
+
     @Override
     protected List<MethodRule> rules(final Object target) {
         final FeatureResolverFactory featureResolverFactory = new FeatureResolverFactory();
@@ -77,14 +85,6 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
         } finally {
             shutdown();
         }
-    }
-
-    private Map<String, Object> getPersistenceContextProperties(final PersistenceContext persistenceContext) {
-        final Map<String, Object> properties = new HashMap<>();
-        for (final PersistenceProperty property : persistenceContext.properties()) {
-            properties.put(property.name(), property.value());
-        }
-        return properties;
     }
 
     private void shutdown() {

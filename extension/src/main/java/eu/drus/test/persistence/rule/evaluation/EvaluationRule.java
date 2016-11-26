@@ -26,7 +26,12 @@ public class EvaluationRule implements MethodRule {
             final String unitName, final Map<String, Object> properties) {
         this.featureResolverFactory = featureResolverFactory;
 
-        List<PersistenceUnitDescriptor> descriptors = pudLoader.loadPersistenceUnitDescriptors(properties);
+        List<PersistenceUnitDescriptor> descriptors;
+        try {
+            descriptors = pudLoader.loadPersistenceUnitDescriptors(properties);
+        } catch (final IOException e) {
+            throw new JpaTestException("Error while loading persistence unit descriptors", e);
+        }
 
         descriptors = descriptors.stream().filter(u -> u.getUnitName().equals(unitName)).collect(Collectors.toList());
 

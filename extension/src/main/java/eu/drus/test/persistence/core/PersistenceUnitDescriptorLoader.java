@@ -9,7 +9,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -26,13 +25,8 @@ public class PersistenceUnitDescriptorLoader {
 
     private DocumentBuilderFactory documentBuilderFactory;
 
-    public List<PersistenceUnitDescriptor> loadPersistenceUnitDescriptors(final Map<String, Object> properties) {
-        Enumeration<URL> resources = null;
-        try {
-            resources = Thread.currentThread().getContextClassLoader().getResources("META-INF/persistence.xml");
-        } catch (final IOException e) {
-            throw new JpaTestException("Unexpected exception while looking for [/META-INF/persistence.xml]", e);
-        }
+    public List<PersistenceUnitDescriptor> loadPersistenceUnitDescriptors(final Map<String, Object> properties) throws IOException {
+        final Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources("META-INF/persistence.xml");
 
         final List<PersistenceUnitDescriptor> units = new ArrayList<>();
         while (resources.hasMoreElements()) {
@@ -44,7 +38,7 @@ public class PersistenceUnitDescriptorLoader {
                 if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
                     final Element element = (Element) children.item(i);
                     final String tag = element.getTagName();
-                    if (tag.equals("persistence-unit")) {
+                    if ("persistence-unit".equals(tag)) {
                         units.add(new PersistenceUnitDescriptor(element, properties));
                     }
                 }
@@ -55,26 +49,13 @@ public class PersistenceUnitDescriptorLoader {
 
     }
 
-    private Document loadDocument(final URL url) {
-        final String resourceName = url.toExternalForm();
-        try {
-            final URLConnection conn = url.openConnection();
-            conn.setUseCaches(false);
-            try (InputStream in = conn.getInputStream()) {
-                final InputSource is = new InputSource(in);
-                try {
-                    final DocumentBuilder documentBuilder = getDocumentBuilderFactory().newDocumentBuilder();
-                    try {
-                        return documentBuilder.parse(is);
-                    } catch (final SAXException | IOException e) {
-                        throw new JpaTestException("Unexpected error parsing [" + resourceName + "]", e);
-                    }
-                } catch (final ParserConfigurationException e) {
-                    throw new JpaTestException("Unable to generate javax.xml.parsers.DocumentBuilder instance", e);
-                }
-            }
-        } catch (final IOException e) {
-            throw new JpaTestException("Unable to access [" + resourceName + "]", e);
+    private Document loadDocument(final URL url) throws IOException {
+        final URLConnection conn = url.openConnection();
+        conn.setUseCaches(false);
+        try (InputStream in = conn.getInputStream()) {
+            return getDocumentBuilderFactory().newDocumentBuilder().parse(new InputSource(in));
+        } catch (final SAXException | ParserConfigurationException e) {
+            throw new JpaTestException("Error parsing [" + url.toExternalForm() + "]", e);
         }
     }
 
