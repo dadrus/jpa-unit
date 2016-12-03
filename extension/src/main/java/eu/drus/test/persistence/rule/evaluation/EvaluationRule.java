@@ -33,7 +33,7 @@ public class EvaluationRule implements MethodRule {
             throw new JpaTestException("Error while loading persistence unit descriptors", e);
         }
 
-        descriptors = descriptors.stream().filter(u -> u.getUnitName().equals(unitName)).collect(Collectors.toList());
+        descriptors = descriptors.stream().filter(u -> unitName.equals(u.getUnitName())).collect(Collectors.toList());
 
         if (descriptors.isEmpty()) {
             throw new JpaTestException("No peristence unit found for given unit name");

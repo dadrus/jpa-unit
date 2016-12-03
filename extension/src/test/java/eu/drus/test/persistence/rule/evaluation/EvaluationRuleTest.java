@@ -1,12 +1,16 @@
 package eu.drus.test.persistence.rule.evaluation;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
@@ -82,6 +86,53 @@ public class EvaluationRuleTest {
             fail("JpaTestException expected");
         } catch (final JpaTestException e) {
             // THEN
+            assertThat(e.getMessage(), containsString("Failed to create statement"));
+        }
+    }
+
+    @Test
+    public void testCreateRuleWithErrorWhileLoadingPersistenceUnitDescriptors() throws IOException {
+        // GIVEN
+        when(pudLoader.loadPersistenceUnitDescriptors(any(Map.class))).thenThrow(IOException.class);
+
+        try {
+            // WHEN
+            final EvaluationRule rule = new EvaluationRule(featureResolverFactory, pudLoader, "", Collections.emptyMap());
+            fail("JpaTestException expected");
+        } catch (final JpaTestException e) {
+            // THEN
+            assertThat(e.getMessage(), containsString("Error while loading persistence unit descriptors"));
+            assertThat(e.getCause(), instanceOf(IOException.class));
+        }
+    }
+
+    @Test
+    public void testCreateRuleWithoutFindingProvidedPersistenceUnitName() throws IOException {
+        // GIVEN
+        when(pudLoader.loadPersistenceUnitDescriptors(any(Map.class))).thenReturn(Arrays.asList(mock(PersistenceUnitDescriptor.class)));
+
+        try {
+            // WHEN
+            new EvaluationRule(featureResolverFactory, pudLoader, "", Collections.emptyMap());
+            fail("JpaTestException expected");
+        } catch (final JpaTestException e) {
+            // THEN
+            assertThat(e.getMessage(), containsString("No peristence unit found"));
+        }
+    }
+
+    @Test
+    public void testCreateRuleHavingMultipleUnitsForProvidedPersistenceUnitName() throws IOException {
+        // GIVEN
+        when(pudLoader.loadPersistenceUnitDescriptors(any(Map.class))).thenReturn(Arrays.asList(descriptor, descriptor));
+
+        try {
+            // WHEN
+            new EvaluationRule(featureResolverFactory, pudLoader, "", Collections.emptyMap());
+            fail("JpaTestException expected");
+        } catch (final JpaTestException e) {
+            // THEN
+            assertThat(e.getMessage(), containsString("Multiple persistence units found"));
         }
     }
 }
