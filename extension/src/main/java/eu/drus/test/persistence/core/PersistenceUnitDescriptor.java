@@ -1,5 +1,6 @@
 package eu.drus.test.persistence.core;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,7 @@ public class PersistenceUnitDescriptor {
     private String providerClassName;
 
     public PersistenceUnitDescriptor(final Element element, final Map<String, Object> properties) {
-        this.properties = properties;
+        this.properties = new HashMap<>(properties);
         parse(element);
     }
 
@@ -37,7 +38,7 @@ public class PersistenceUnitDescriptor {
         }
     }
 
-    private void parseChild(final NodeList children, int i) {
+    private void parseChild(final NodeList children, final int i) {
         final Element element = (Element) children.item(i);
         final String tag = element.getTagName();
         if (tag.equals(ENTRY_PROVIDER)) {
