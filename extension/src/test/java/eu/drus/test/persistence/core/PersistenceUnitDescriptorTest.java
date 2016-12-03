@@ -78,6 +78,10 @@ public class PersistenceUnitDescriptorTest {
         ddlGenPropElement.setAttribute("name", ATTRIBUTE_DDL_GENERATION);
         ddlGenPropElement.setAttribute("value", DDL_GENERATION_VALUE);
         propsElement.appendChild(ddlGenPropElement);
+
+        final Element notAPropertyElement = document.createElement("foo");
+        notAPropertyElement.setAttribute("foo", "foo");
+        propsElement.appendChild(notAPropertyElement);
     }
 
     @Test
