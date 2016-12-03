@@ -66,10 +66,6 @@ public class PersistenceUnitDescriptor {
     }
 
     private static String extractContent(final Element element) {
-        if (element == null) {
-            return null;
-        }
-
         final NodeList children = element.getChildNodes();
         final StringBuilder result = new StringBuilder("");
         for (int i = 0; i < children.getLength(); i++) {
