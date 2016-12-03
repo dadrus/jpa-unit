@@ -199,7 +199,7 @@ public class JpaTestRunnerTest {
         jAnnotationUse.param("value", JpaTestRunner.class);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceContext.class);
-        jAnnotation.param("unitName", "test-unit");
+        jAnnotation.param("unitName", "test-unit-1");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
         jMethod.annotate(Test.class);
 
