@@ -34,9 +34,9 @@ public class PersistenceUnitDescriptorLoader {
 
             final NodeList children = doc.getDocumentElement().getChildNodes();
             for (int i = 0; i < children.getLength(); i++) {
-                final Element element = (Element) children.item(i);
-                if (element.getNodeType() == Node.ELEMENT_NODE && "persistence-unit".equals(element.getTagName())) {
-                    units.add(new PersistenceUnitDescriptor(element, properties));
+                final Node node = children.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE && "persistence-unit".equals(((Element) node).getTagName())) {
+                    units.add(new PersistenceUnitDescriptor((Element) node, properties));
                 }
             }
         }
