@@ -31,16 +31,12 @@ public class PersistenceUnitDescriptorLoader {
         final List<PersistenceUnitDescriptor> units = new ArrayList<>();
         while (resources.hasMoreElements()) {
             final Document doc = loadDocument(resources.nextElement());
-            final Element top = doc.getDocumentElement();
 
-            final NodeList children = top.getChildNodes();
+            final NodeList children = doc.getDocumentElement().getChildNodes();
             for (int i = 0; i < children.getLength(); i++) {
-                if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                    final Element element = (Element) children.item(i);
-                    final String tag = element.getTagName();
-                    if ("persistence-unit".equals(tag)) {
-                        units.add(new PersistenceUnitDescriptor(element, properties));
-                    }
+                final Element element = (Element) children.item(i);
+                if (element.getNodeType() == Node.ELEMENT_NODE && "persistence-unit".equals(element.getTagName())) {
+                    units.add(new PersistenceUnitDescriptor(element, properties));
                 }
             }
         }
