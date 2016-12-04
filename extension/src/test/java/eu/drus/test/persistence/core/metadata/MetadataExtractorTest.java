@@ -4,12 +4,10 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.runners.model.TestClass;
-import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.test.persistence.annotation.ApplyScriptsAfter;
 import eu.drus.test.persistence.annotation.ApplyScriptsBefore;
@@ -20,10 +18,8 @@ import eu.drus.test.persistence.annotation.ExpectedDataSets;
 import eu.drus.test.persistence.annotation.InitialDataSets;
 import eu.drus.test.persistence.annotation.Transactional;
 
-@RunWith(MockitoJUnitRunner.class)
 public class MetadataExtractorTest {
 
-    @Spy
     private MetadataExtractor metadataExtractor = new MetadataExtractor(new TestClass(MetadataExtractorTest.class));
 
     @Test
@@ -101,6 +97,16 @@ public class MetadataExtractorTest {
 
         // WHEN
         final AnnotationInspector<PersistenceContext> ai = metadataExtractor.persistenceContext();
+
+        // THEN
+        assertThat(ai, notNullValue());
+    }
+
+    @Test
+    public void testPersistenceUnit() {
+
+        // WHEN
+        final AnnotationInspector<PersistenceUnit> ai = metadataExtractor.persistenceUnit();
 
         // THEN
         assertThat(ai, notNullValue());

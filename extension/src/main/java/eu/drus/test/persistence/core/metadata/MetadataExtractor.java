@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 
 import org.junit.runners.model.TestClass;
 
@@ -64,6 +65,10 @@ public class MetadataExtractor {
 
     public AnnotationInspector<PersistenceContext> persistenceContext() {
         return using(PersistenceContext.class);
+    }
+
+    public AnnotationInspector<PersistenceUnit> persistenceUnit() {
+        return using(PersistenceUnit.class);
     }
 
     public AnnotationInspector<ApplyScriptsBefore> applyScriptsBefore() {

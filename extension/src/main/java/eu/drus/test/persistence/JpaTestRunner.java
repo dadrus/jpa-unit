@@ -1,6 +1,7 @@
 package eu.drus.test.persistence;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
+import javax.persistence.PersistenceUnit;
 
 import org.junit.rules.MethodRule;
 import org.junit.runner.notification.RunNotifier;
@@ -57,29 +59,52 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
     public void run(final RunNotifier notifier) {
         try {
             final MetadataExtractor extractor = new MetadataExtractor(getTestClass());
-            final AnnotationInspector<PersistenceContext> inspector = extractor.persistenceContext();
-            final List<Field> fields = inspector.getAnnotatedFields();
+            final AnnotationInspector<PersistenceContext> pcInspector = extractor.persistenceContext();
+            final AnnotationInspector<PersistenceUnit> puInspector = extractor.persistenceUnit();
+            final List<Field> pcFields = pcInspector.getAnnotatedFields();
+            final List<Field> puFields = puInspector.getAnnotatedFields();
 
-            if (fields.isEmpty()) {
+            if (puFields.isEmpty() && pcFields.isEmpty()) {
                 throw new IllegalArgumentException(
-                        "JPA test must have either EntityManagerFactory or EntityManager field annotated with @PersistenceContext");
+                        "JPA test must have either EntityManagerFactory or EntityManager field annotated with @PersistenceUnit, respectively @PersistenceContext");
             }
 
-            if (fields.size() > 1) {
+            if (!puFields.isEmpty() && !pcFields.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Only single field annotated with either @PersistenceUnit or @PersistenceContext is allowed to be present");
+            }
+
+            if (puFields.size() > 1) {
+                throw new IllegalArgumentException("Only single field is allowed to be annotated with @PersistenceUnit");
+            }
+
+            if (pcFields.size() > 1) {
                 throw new IllegalArgumentException("Only single field is allowed to be annotated with @PersistenceContext");
             }
 
-            persistenceField = fields.get(0);
-            if (!persistenceField.getType().equals(EntityManagerFactory.class) && !persistenceField.getType().equals(EntityManager.class)) {
-                throw new IllegalArgumentException(String.format(
-                        "Filed %s annotated with @PersistenceContext is neither of type EntityManagerFactory, nor EntityManager.",
-                        persistenceField.getName()));
+            if (!puFields.isEmpty()) {
+                persistenceField = puFields.get(0);
+                if (!persistenceField.getType().equals(EntityManagerFactory.class)) {
+                    throw new IllegalArgumentException(String.format(
+                            "Field %s annotated with @PersistenceUnit is not of type EntityManagerFactory.", persistenceField.getName()));
+                }
+                final PersistenceUnit persistenceUnit = puInspector.fetchFromField(persistenceField);
+                unitName = persistenceUnit.unitName();
+                properties = Collections.emptyMap();
             }
 
-            final PersistenceContext persistenceContext = inspector.fetchFromField(persistenceField);
-            unitName = persistenceContext.unitName();
-            properties = getPersistenceContextProperties(persistenceContext);
-            entityManagerFactory = Persistence.createEntityManagerFactory(persistenceContext.unitName(), properties);
+            if (!pcFields.isEmpty()) {
+                persistenceField = pcFields.get(0);
+                if (!persistenceField.getType().equals(EntityManager.class)) {
+                    throw new IllegalArgumentException(String.format(
+                            "Field %s annotated with @PersistenceContext is not of type EntityManager.", persistenceField.getName()));
+                }
+                final PersistenceContext persistenceContext = pcInspector.fetchFromField(persistenceField);
+                unitName = persistenceContext.unitName();
+                properties = getPersistenceContextProperties(persistenceContext);
+            }
+
+            entityManagerFactory = Persistence.createEntityManagerFactory(unitName, properties);
 
             super.run(notifier);
         } finally {
