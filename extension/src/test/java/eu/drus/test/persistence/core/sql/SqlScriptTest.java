@@ -65,6 +65,7 @@ public class SqlScriptTest {
         // UnsupportedOperationException is thrown
     }
 
+    @Test
     public void testIterator() {
         // GIVEN
         final String token = "code";

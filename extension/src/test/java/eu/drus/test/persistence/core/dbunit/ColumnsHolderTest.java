@@ -88,4 +88,18 @@ public class ColumnsHolderTest {
         assertThat(columns.size(), equalTo(1));
         assertThat(columns, hasItem(column3));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateColumnHolderProvidingInvalidColumnName() {
+        // GIVEN
+        final String column1 = "tab.tab.col1";
+
+        // WHEN
+        new ColumnsHolder(new String[] {
+                column1
+        });
+
+        // THEN
+        // exception is thrown
+    }
 }
