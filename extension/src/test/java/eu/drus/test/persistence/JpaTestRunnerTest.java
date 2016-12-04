@@ -132,6 +132,38 @@ public class JpaTestRunnerTest {
     }
 
     @Test
+    public void testClassWithPersistenceContextAndPersistenceUnitFields() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
+        jAnnotationUse.param("value", JpaTestRunner.class);
+        final JFieldVar emf1Field = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
+        emf1Field.annotate(PersistenceContext.class);
+        final JFieldVar emf2Field = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
+        emf2Field.annotate(PersistenceUnit.class);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
+        jMethod.annotate(Test.class);
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final JpaTestRunner runner = new JpaTestRunner(cut);
+
+        try {
+            // WHEN
+            runner.run(new RunNotifier());
+            fail("IllegalArgumentException expected");
+        } catch (final IllegalArgumentException e) {
+
+            // THEN
+            assertThat(e.getMessage(), containsString("either @PersistenceUnit or @PersistenceContext"));
+        }
+    }
+
+    @Test
     public void testClassWithPersistenceContextFieldOfWrongType() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
