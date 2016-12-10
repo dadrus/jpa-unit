@@ -31,11 +31,11 @@ public final class TransactionSupport {
     }
 
     private boolean beforeTransactionBegin(final EntityTransaction tx) {
-        boolean wasActive = false;
-        if (wasActive = tx.isActive()) {
+        final boolean isActive = tx.isActive();
+        if (isActive) {
             tx.commit();
         }
-        return wasActive;
+        return isActive;
     }
 
     private void transactionBegin(final EntityTransaction tx) {
@@ -74,7 +74,7 @@ public final class TransactionSupport {
     }
 
     public void execute(final Runnable function) {
-        execute((Void) -> {
+        execute(Void -> {
             function.run();
             return null;
         });

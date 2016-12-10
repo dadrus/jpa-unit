@@ -64,30 +64,20 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
             final List<Field> pcFields = pcInspector.getAnnotatedFields();
             final List<Field> puFields = puInspector.getAnnotatedFields();
 
-            if (puFields.isEmpty() && pcFields.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "JPA test must have either EntityManagerFactory or EntityManager field annotated with @PersistenceUnit, respectively @PersistenceContext");
-            }
+            checkArgument(!(puFields.isEmpty() && pcFields.isEmpty()),
+                    "JPA test must have either EntityManagerFactory or EntityManager field annotated with @PersistenceUnit, respectively @PersistenceContext");
 
-            if (!puFields.isEmpty() && !pcFields.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "Only single field annotated with either @PersistenceUnit or @PersistenceContext is allowed to be present");
-            }
+            checkArgument(!(!puFields.isEmpty() && !pcFields.isEmpty()),
+                    "Only single field annotated with either @PersistenceUnit or @PersistenceContext is allowed to be present");
 
-            if (puFields.size() > 1) {
-                throw new IllegalArgumentException("Only single field is allowed to be annotated with @PersistenceUnit");
-            }
+            checkArgument(puFields.size() <= 1, "Only single field is allowed to be annotated with @PersistenceUnit");
 
-            if (pcFields.size() > 1) {
-                throw new IllegalArgumentException("Only single field is allowed to be annotated with @PersistenceContext");
-            }
+            checkArgument(pcFields.size() <= 1, "Only single field is allowed to be annotated with @PersistenceContext");
 
             if (!puFields.isEmpty()) {
                 persistenceField = puFields.get(0);
-                if (!persistenceField.getType().equals(EntityManagerFactory.class)) {
-                    throw new IllegalArgumentException(String.format(
-                            "Field %s annotated with @PersistenceUnit is not of type EntityManagerFactory.", persistenceField.getName()));
-                }
+                checkArgument(persistenceField.getType().equals(EntityManagerFactory.class), String.format(
+                        "Field %s annotated with @PersistenceUnit is not of type EntityManagerFactory.", persistenceField.getName()));
                 final PersistenceUnit persistenceUnit = puInspector.fetchFromField(persistenceField);
                 unitName = persistenceUnit.unitName();
                 properties = Collections.emptyMap();
@@ -95,10 +85,8 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
 
             if (!pcFields.isEmpty()) {
                 persistenceField = pcFields.get(0);
-                if (!persistenceField.getType().equals(EntityManager.class)) {
-                    throw new IllegalArgumentException(String.format(
-                            "Field %s annotated with @PersistenceContext is not of type EntityManager.", persistenceField.getName()));
-                }
+                checkArgument(persistenceField.getType().equals(EntityManager.class), String
+                        .format("Field %s annotated with @PersistenceContext is not of type EntityManager.", persistenceField.getName()));
                 final PersistenceContext persistenceContext = pcInspector.fetchFromField(persistenceField);
                 unitName = persistenceContext.unitName();
                 properties = getPersistenceContextProperties(persistenceContext);
@@ -116,6 +104,12 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
         if (entityManagerFactory != null) {
             entityManagerFactory.close();
             entityManagerFactory = null;
+        }
+    }
+
+    private static void checkArgument(final boolean flag, final String msg) {
+        if (!flag) {
+            throw new IllegalArgumentException(msg);
         }
     }
 
