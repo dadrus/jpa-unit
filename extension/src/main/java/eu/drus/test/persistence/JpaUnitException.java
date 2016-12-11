@@ -1,17 +1,17 @@
 package eu.drus.test.persistence;
 
-public class JpaTestException extends RuntimeException {
+public class JpaUnitException extends RuntimeException {
 
     private static final long serialVersionUID = 6564897685710323054L;
 
-    public JpaTestException(final String message) {
+    public JpaUnitException(final String message) {
         super(message);
     }
 
     /**
      * @param cause
      */
-    public JpaTestException(final Throwable cause) {
+    public JpaUnitException(final Throwable cause) {
         super(cause);
     }
 
@@ -19,7 +19,7 @@ public class JpaTestException extends RuntimeException {
      * @param message
      * @param cause
      */
-    public JpaTestException(final String message, final Throwable cause) {
+    public JpaUnitException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

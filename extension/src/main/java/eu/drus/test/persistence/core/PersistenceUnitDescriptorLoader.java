@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import eu.drus.test.persistence.JpaTestException;
+import eu.drus.test.persistence.JpaUnitException;
 
 public class PersistenceUnitDescriptorLoader {
 
@@ -51,7 +51,7 @@ public class PersistenceUnitDescriptorLoader {
         try (InputStream in = conn.getInputStream()) {
             return getDocumentBuilderFactory().newDocumentBuilder().parse(new InputSource(in));
         } catch (final SAXException | ParserConfigurationException e) {
-            throw new JpaTestException("Error parsing [" + url.toExternalForm() + "]", e);
+            throw new JpaUnitException("Error parsing [" + url.toExternalForm() + "]", e);
         }
     }
 

@@ -7,7 +7,7 @@ import java.util.Map;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 
-import eu.drus.test.persistence.JpaTestException;
+import eu.drus.test.persistence.JpaUnitException;
 
 public class DatabaseConnectionFactory {
 
@@ -26,7 +26,7 @@ public class DatabaseConnectionFactory {
         try {
             Class.forName(driverClass);
         } catch (final ClassNotFoundException e) {
-            throw new JpaTestException(e);
+            throw new JpaUnitException(e);
         }
 
         try {
@@ -36,7 +36,7 @@ public class DatabaseConnectionFactory {
                 return new DatabaseConnection(DriverManager.getConnection(connectionUrl, username, password));
             }
         } catch (DatabaseUnitException | SQLException e) {
-            throw new JpaTestException(e);
+            throw new JpaUnitException(e);
         }
     }
 }

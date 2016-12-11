@@ -34,7 +34,7 @@ import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
 
-public class JpaTestRunnerTest {
+public class JpaUnitRunnerTest {
 
     @ClassRule
     public static TemporaryFolder testFolder = new TemporaryFolder();
@@ -46,7 +46,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
         jMethod.annotate(Test.class);
 
@@ -54,7 +54,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
@@ -74,7 +74,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JFieldVar em1Field = jClass.field(JMod.PRIVATE, EntityManager.class, "em1");
         em1Field.annotate(PersistenceContext.class);
         final JFieldVar em2Field = jClass.field(JMod.PRIVATE, EntityManager.class, "em2");
@@ -86,7 +86,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
@@ -106,7 +106,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JFieldVar emf1Field = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf1");
         emf1Field.annotate(PersistenceUnit.class);
         final JFieldVar emf2Field = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf2");
@@ -118,7 +118,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
@@ -138,7 +138,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JFieldVar emf1Field = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
         emf1Field.annotate(PersistenceContext.class);
         final JFieldVar emf2Field = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
@@ -150,7 +150,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
@@ -170,7 +170,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "em");
         emField.annotate(PersistenceContext.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
@@ -180,7 +180,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
@@ -200,7 +200,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManager.class, "emf");
         emField.annotate(PersistenceUnit.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
@@ -210,7 +210,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
@@ -230,7 +230,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
         emField.annotate(PersistenceContext.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
@@ -240,7 +240,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
@@ -260,7 +260,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
         emField.annotate(PersistenceUnit.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
@@ -270,7 +270,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
@@ -290,7 +290,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceContext.class);
         jAnnotation.param("unitName", "foo");
@@ -301,7 +301,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
@@ -321,7 +321,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceUnit.class);
         jAnnotation.param("unitName", "foo");
@@ -332,7 +332,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
@@ -352,7 +352,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceContext.class);
         jAnnotation.param("unitName", "test-unit-1");
@@ -363,7 +363,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         final RunListener listener = mock(RunListener.class);
         final RunNotifier notifier = new RunNotifier();
@@ -392,7 +392,7 @@ public class JpaTestRunnerTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaTestRunner.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceUnit.class);
         jAnnotation.param("unitName", "test-unit-1");
@@ -403,7 +403,7 @@ public class JpaTestRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaTestRunner runner = new JpaTestRunner(cut);
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         final RunListener listener = mock(RunListener.class);
         final RunNotifier notifier = new RunNotifier();

@@ -20,7 +20,7 @@ import org.junit.runners.model.Statement;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.drus.test.persistence.JpaTestException;
+import eu.drus.test.persistence.JpaUnitException;
 import eu.drus.test.persistence.core.metadata.FeatureResolver;
 import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
 
@@ -67,7 +67,7 @@ public class EvaluationRuleTest {
             // WHEN
             rule.apply(base, method, this);
             fail("JpaTestException expected");
-        } catch (final JpaTestException e) {
+        } catch (final JpaUnitException e) {
             // THEN
             assertThat(e.getMessage(), containsString("Failed to create statement"));
         }

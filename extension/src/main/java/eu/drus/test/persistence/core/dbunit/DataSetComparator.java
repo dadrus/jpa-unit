@@ -25,7 +25,7 @@ import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.IColumnFilter;
 import org.dbunit.dataset.filter.IncludeTableFilter;
 
-import eu.drus.test.persistence.JpaTestException;
+import eu.drus.test.persistence.JpaUnitException;
 import eu.drus.test.persistence.core.AssertionErrorCollector;
 
 public class DataSetComparator {
@@ -179,7 +179,7 @@ public class DataSetComparator {
             try {
                 customColumnFilter = columnFilter.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
-                throw new JpaTestException("Could not instanciate custom column filter", e);
+                throw new JpaUnitException("Could not instanciate custom column filter", e);
             }
             final FilteredTableMetaData metaData = new FilteredTableMetaData(compositeTable.getTableMetaData(), customColumnFilter);
             compositeTable = new CompositeTable(metaData, compositeTable);

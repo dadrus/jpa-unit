@@ -7,7 +7,7 @@ import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-import eu.drus.test.persistence.JpaTestException;
+import eu.drus.test.persistence.JpaUnitException;
 import eu.drus.test.persistence.core.dbunit.DatabaseConnectionFactory;
 import eu.drus.test.persistence.core.dbunit.DbFeatureFactory;
 import eu.drus.test.persistence.core.metadata.FeatureResolver;
@@ -29,7 +29,7 @@ public class EvaluationRule implements MethodRule {
         try {
             return new EvaluationStatement(connectionFactory, new DbFeatureFactory(featureResolver), base);
         } catch (final IOException e) {
-            throw new JpaTestException("Failed to create statement", e);
+            throw new JpaUnitException("Failed to create statement", e);
         }
     }
 }

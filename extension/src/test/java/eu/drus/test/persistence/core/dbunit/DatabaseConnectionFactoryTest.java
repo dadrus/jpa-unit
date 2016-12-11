@@ -10,7 +10,7 @@ import java.util.Map;
 import org.dbunit.database.DatabaseConnection;
 import org.junit.Test;
 
-import eu.drus.test.persistence.JpaTestException;
+import eu.drus.test.persistence.JpaUnitException;
 
 public class DatabaseConnectionFactoryTest {
 
@@ -55,7 +55,7 @@ public class DatabaseConnectionFactoryTest {
         try {
             factory.openConnection();
             fail("JpaTestException is expected");
-        } catch (final JpaTestException e) {
+        } catch (final JpaUnitException e) {
             // THEN
             // JpaTestException is thrown
         }
@@ -90,7 +90,7 @@ public class DatabaseConnectionFactoryTest {
         try {
             factory.openConnection();
             fail("JpaTestException is expected");
-        } catch (final JpaTestException e) {
+        } catch (final JpaUnitException e) {
             // THEN
             // JpaTestException is thrown
         }

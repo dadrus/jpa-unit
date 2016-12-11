@@ -29,7 +29,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.drus.test.persistence.JpaTestException;
+import eu.drus.test.persistence.JpaUnitException;
 import eu.drus.test.persistence.core.AssertionErrorCollector;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -797,7 +797,7 @@ public class DataSetComparatorTest {
         try {
             comparator.compare(currentDataSet, expectedDataSet, errorCollector);
             fail("JpaTestException expected");
-        } catch (final JpaTestException e) {
+        } catch (final JpaUnitException e) {
             assertThat(e.getMessage(), containsString("Could not instanciate"));
         }
     }

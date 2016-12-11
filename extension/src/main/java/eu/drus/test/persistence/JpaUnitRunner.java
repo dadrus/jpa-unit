@@ -30,13 +30,13 @@ import eu.drus.test.persistence.rule.context.PersistenceContextRule;
 import eu.drus.test.persistence.rule.evaluation.EvaluationRule;
 import eu.drus.test.persistence.rule.transaction.TransactionalRule;
 
-public class JpaTestRunner extends BlockJUnit4ClassRunner {
+public class JpaUnitRunner extends BlockJUnit4ClassRunner {
 
     private EntityManagerFactory entityManagerFactory;
     private Field persistenceField;
     private Map<String, Object> properties;
 
-    public JpaTestRunner(final Class<?> klass) throws InitializationError {
+    public JpaUnitRunner(final Class<?> klass) throws InitializationError {
         super(klass);
     }
 
@@ -109,17 +109,17 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
             descriptors = descriptors.stream().filter(u -> unitName.equals(u.getUnitName())).collect(Collectors.toList());
 
             if (descriptors.isEmpty()) {
-                throw new JpaTestException("No peristence unit found for given unit name");
+                throw new JpaUnitException("No peristence unit found for given unit name");
             }
             if (descriptors.size() > 1) {
-                throw new JpaTestException("Multiple persistence units found for given name");
+                throw new JpaUnitException("Multiple persistence units found for given name");
             }
 
             properties = descriptors.get(0).getProperties();
 
             super.run(notifier);
         } catch (final IOException e) {
-            throw new JpaTestException("Error while loading persistence unit descriptors", e);
+            throw new JpaUnitException("Error while loading persistence unit descriptors", e);
         } finally {
             shutdown();
         }
