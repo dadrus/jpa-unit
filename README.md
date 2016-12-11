@@ -85,11 +85,11 @@ and [H2](http://www.h2database.com/html/main.html) database:
 
 ### Test code
 
-The basic requirements on the code level are the presence of the `@RunWith(JpaTestRunner.class)` annotation on the class level and a property of type 
+The basic requirements on the code level are the presence of the `@RunWith(JpaUnitRunner.class)` annotation on the class level and a property of type 
 `EntityManager` or `EntityManagerFactory` annotated with `@PersistenceContext` which at least references the required persistence unit:
 
 ```java
-@RunWith(JpaTestRunner.class)
+@RunWith(JpaUnitRunner.class)
 public class MyTest {
 
     @PersistenceContext(unitName = "my-test-unit")
@@ -125,7 +125,7 @@ All these annotations can be applied on class and method level, where the latter
 Here another example which shows the usage of some of the aforementioned annotations:
 
 ```java
-@RunWith(JpaTestRunner.class)
+@RunWith(JpaUnitRunner.class)
 public class MyTest {
 
     @PersistenceContext(unitName = "my-test-unit")
