@@ -1,10 +1,13 @@
 package eu.drus.test.persistence;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -18,6 +21,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
+import eu.drus.test.persistence.core.PersistenceUnitDescriptor;
 import eu.drus.test.persistence.core.PersistenceUnitDescriptorLoader;
 import eu.drus.test.persistence.core.metadata.AnnotationInspector;
 import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
@@ -31,7 +35,6 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
     private EntityManagerFactory entityManagerFactory;
     private Field persistenceField;
     private Map<String, Object> properties;
-    private String unitName;
 
     public JpaTestRunner(final Class<?> klass) throws InitializationError {
         super(klass);
@@ -47,10 +50,16 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected List<MethodRule> rules(final Object target) {
-        final FeatureResolverFactory featureResolverFactory = new FeatureResolverFactory();
         final List<MethodRule> rules = super.rules(target);
+        rules.addAll(getMethodRules());
+        return rules;
+    }
+
+    private List<MethodRule> getMethodRules() {
+        final FeatureResolverFactory featureResolverFactory = new FeatureResolverFactory();
+        final List<MethodRule> rules = new ArrayList<>();
         rules.add(new TransactionalRule(featureResolverFactory, persistenceField));
-        rules.add(new EvaluationRule(featureResolverFactory, new PersistenceUnitDescriptorLoader(), unitName, properties));
+        rules.add(new EvaluationRule(featureResolverFactory, properties));
         rules.add(new PersistenceContextRule(entityManagerFactory, persistenceField));
         return rules;
     }
@@ -74,6 +83,8 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
 
             checkArgument(pcFields.size() <= 1, "Only single field is allowed to be annotated with @PersistenceContext");
 
+            String unitName;
+
             if (!puFields.isEmpty()) {
                 persistenceField = puFields.get(0);
                 checkArgument(persistenceField.getType().equals(EntityManagerFactory.class), String.format(
@@ -81,9 +92,7 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
                 final PersistenceUnit persistenceUnit = puInspector.fetchFromField(persistenceField);
                 unitName = persistenceUnit.unitName();
                 properties = Collections.emptyMap();
-            }
-
-            if (!pcFields.isEmpty()) {
+            } else {
                 persistenceField = pcFields.get(0);
                 checkArgument(persistenceField.getType().equals(EntityManager.class), String
                         .format("Field %s annotated with @PersistenceContext is not of type EntityManager.", persistenceField.getName()));
@@ -94,7 +103,23 @@ public class JpaTestRunner extends BlockJUnit4ClassRunner {
 
             entityManagerFactory = Persistence.createEntityManagerFactory(unitName, properties);
 
+            final PersistenceUnitDescriptorLoader pudLoader = new PersistenceUnitDescriptorLoader();
+            List<PersistenceUnitDescriptor> descriptors = pudLoader.loadPersistenceUnitDescriptors(properties);
+
+            descriptors = descriptors.stream().filter(u -> unitName.equals(u.getUnitName())).collect(Collectors.toList());
+
+            if (descriptors.isEmpty()) {
+                throw new JpaTestException("No peristence unit found for given unit name");
+            }
+            if (descriptors.size() > 1) {
+                throw new JpaTestException("Multiple persistence units found for given name");
+            }
+
+            properties = descriptors.get(0).getProperties();
+
             super.run(notifier);
+        } catch (final IOException e) {
+            throw new JpaTestException("Error while loading persistence unit descriptors", e);
         } finally {
             shutdown();
         }
