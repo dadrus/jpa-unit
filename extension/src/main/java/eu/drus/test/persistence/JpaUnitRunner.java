@@ -35,7 +35,7 @@ public class JpaUnitRunner extends BlockJUnit4ClassRunner {
         final List<MethodRule> rules = super.rules(target);
         rules.add(new TransactionalRule(featureResolverFactory, ctx.getPersistenceField()));
         rules.add(new EvaluationRule(featureResolverFactory, ctx.getProperties()));
-        rules.add(new PersistenceContextRule(ctx, ctx.getPersistenceField()));
+        rules.add(new PersistenceContextRule(featureResolverFactory, ctx, ctx.getPersistenceField()));
         return rules;
     }
 }

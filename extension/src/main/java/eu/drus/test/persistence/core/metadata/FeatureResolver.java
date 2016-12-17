@@ -136,4 +136,9 @@ public class FeatureResolver {
         final CleanupUsingScripts cleanupUsingScript = metadataExtractor.cleanupUsingScripts().fetchUsingFirst(testMethod);
         return cleanupUsingScript == null ? CleanupPhase.AFTER : cleanupUsingScript.phase();
     }
+
+    public boolean shouldEvictCache() {
+        final Cleanup cleanup = metadataExtractor.cleanup().fetchUsingFirst(testMethod);
+        return cleanup == null ? false : cleanup.evictCache();
+    }
 }

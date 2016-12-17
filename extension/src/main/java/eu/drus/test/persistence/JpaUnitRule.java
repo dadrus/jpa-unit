@@ -28,7 +28,7 @@ public class JpaUnitRule implements MethodRule {
         final List<MethodRule> rules = new ArrayList<>();
         rules.add(new TransactionalRule(featureResolverFactory, ctx.getPersistenceField()));
         rules.add(new EvaluationRule(featureResolverFactory, ctx.getProperties()));
-        rules.add(new PersistenceContextRule(ctx, ctx.getPersistenceField()));
+        rules.add(new PersistenceContextRule(featureResolverFactory, ctx, ctx.getPersistenceField()));
 
         for (final MethodRule rule : rules) {
             result = rule.apply(result, method, target);

@@ -9,15 +9,19 @@ import javax.persistence.EntityManagerFactory;
 
 import org.junit.runners.model.Statement;
 
+import eu.drus.test.persistence.core.metadata.FeatureResolver;
+
 public class PersistenceContextStatement extends Statement {
 
+    private final FeatureResolver resolver;
     private final EntityManagerFactoryProducer emfProducer;
     private final Field persistenceField;
     private final Statement base;
     private final Object target;
 
-    public PersistenceContextStatement(final EntityManagerFactoryProducer emfProducer, final Field persistenceField, final Statement base,
-            final Object target) {
+    public PersistenceContextStatement(final FeatureResolver resolver, final EntityManagerFactoryProducer emfProducer,
+            final Field persistenceField, final Statement base, final Object target) {
+        this.resolver = resolver;
         this.emfProducer = emfProducer;
         this.persistenceField = persistenceField;
         this.base = base;
@@ -50,6 +54,8 @@ public class PersistenceContextStatement extends Statement {
             throw new IllegalArgumentException("Unexpected field type: " + fieldType.getName());
         }
 
+        evictCache(resolver.shouldCleanupBefore() && resolver.shouldEvictCache(), emf);
+
         try {
             base.evaluate();
         } finally {
@@ -64,8 +70,14 @@ public class PersistenceContextStatement extends Statement {
             } catch (final IllegalStateException e) {
                 // TODO: log warning
             } finally {
-                emf.getCache().evictAll();
+                evictCache(resolver.shouldCleanupAfter() && resolver.shouldEvictCache(), emf);
             }
+        }
+    }
+
+    private void evictCache(final boolean doEvict, final EntityManagerFactory emf) {
+        if (doEvict) {
+            emf.getCache().evictAll();
         }
     }
 
