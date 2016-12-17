@@ -10,6 +10,10 @@
 
   <artifactId>jpa-unit-integration-test</artifactId>
   <name>JPA Unit - Initegration Tests</name>
+  
+  <properties>
+    <version.commons-lang3>3.4</version.commons-lang3>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -18,6 +22,14 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${version.commons-lang3}</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
