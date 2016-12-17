@@ -22,7 +22,7 @@ public class JpaUnitRule implements MethodRule {
     }
 
     @Override
-    public Statement apply(Statement result, final FrameworkMethod method, final Object target) {
+    public Statement apply(final Statement result, final FrameworkMethod method, final Object target) {
         final FeatureResolverFactory featureResolverFactory = new FeatureResolverFactory();
 
         final List<MethodRule> rules = new ArrayList<>();
@@ -30,10 +30,12 @@ public class JpaUnitRule implements MethodRule {
         rules.add(new EvaluationRule(featureResolverFactory, ctx.getProperties()));
         rules.add(new PersistenceContextRule(featureResolverFactory, ctx, ctx.getPersistenceField()));
 
+        Statement lastResult = null;
+
         for (final MethodRule rule : rules) {
-            result = rule.apply(result, method, target);
+            lastResult = rule.apply(result, method, target);
         }
 
-        return result;
+        return lastResult;
     }
 }

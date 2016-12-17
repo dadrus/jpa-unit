@@ -8,10 +8,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import eu.drus.test.persistence.core.metadata.FeatureResolver;
 
 public class PersistenceContextStatement extends Statement {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PersistenceContextStatement.class);
 
     private final FeatureResolver resolver;
     private final EntityManagerFactoryProducer emfProducer;
@@ -67,8 +71,8 @@ public class PersistenceContextStatement extends Statement {
         if (em != null) {
             try {
                 em.close();
-            } catch (final IllegalStateException e) {
-                // TODO: log warning
+            } catch (final Exception e) {
+                LOG.error("Unexpected exception while closing EntityManager", e);
             } finally {
                 evictCache(resolver.shouldCleanupAfter() && resolver.shouldEvictCache(), emf);
             }

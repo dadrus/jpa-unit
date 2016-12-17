@@ -21,6 +21,8 @@ import javax.persistence.PersistenceUnit;
 import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import eu.drus.test.persistence.core.PersistenceUnitDescriptor;
 import eu.drus.test.persistence.core.PersistenceUnitDescriptorLoader;
@@ -30,21 +32,14 @@ import eu.drus.test.persistence.rule.context.EntityManagerFactoryProducer;
 
 class JpaUnitContext implements EntityManagerFactoryProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JpaUnitContext.class);
+
     private static final Map<TestClass, JpaUnitContext> CTX_MAP = new HashMap<>();
 
     private Field persistenceField;
     private Map<String, Object> properties;
     private AtomicInteger count;
     private EntityManagerFactory emf;
-
-    synchronized static JpaUnitContext getInstance(final TestClass testClass) {
-        JpaUnitContext ctx = CTX_MAP.get(testClass);
-        if (ctx == null) {
-            ctx = new JpaUnitContext(testClass);
-            CTX_MAP.put(testClass, ctx);
-        }
-        return ctx;
-    }
 
     private JpaUnitContext(final TestClass testClass) {
         try {
@@ -103,6 +98,15 @@ class JpaUnitContext implements EntityManagerFactoryProducer {
         }
     }
 
+    static synchronized JpaUnitContext getInstance(final TestClass testClass) {
+        JpaUnitContext ctx = CTX_MAP.get(testClass);
+        if (ctx == null) {
+            ctx = new JpaUnitContext(testClass);
+            CTX_MAP.put(testClass, ctx);
+        }
+        return ctx;
+    }
+
     private static Map<String, Object> getPersistenceContextProperties(final PersistenceContext persistenceContext) {
         final Map<String, Object> properties = new HashMap<>();
         for (final PersistenceProperty property : persistenceContext.properties()) {
@@ -130,7 +134,7 @@ class JpaUnitContext implements EntityManagerFactoryProducer {
             try {
                 emf.close();
             } catch (final Exception e) {
-                // TODO: log warning
+                LOG.error("Enexpected error while closing the EntityManagerFactory", e);
             }
         }
     }

@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.dbunit.Assertion;
 import org.dbunit.DatabaseUnitException;
@@ -24,6 +23,8 @@ import org.dbunit.dataset.SortedTable;
 import org.dbunit.dataset.filter.DefaultColumnFilter;
 import org.dbunit.dataset.filter.IColumnFilter;
 import org.dbunit.dataset.filter.IncludeTableFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import eu.drus.test.persistence.JpaUnitException;
 import eu.drus.test.persistence.core.AssertionErrorCollector;
@@ -32,7 +33,7 @@ public class DataSetComparator {
 
     private static final String DIFF_ERROR = "%s | In row %d: expected value of %s \"%s\" but was \"%s\".";
 
-    private static final Logger log = Logger.getLogger(DataSetComparator.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(DataSetComparator.class);
 
     private final ColumnsHolder toExclude;
 
@@ -139,7 +140,7 @@ public class DataSetComparator {
         nonExistingColumns.removeAll(extractColumnNames(currentTableState.getTableMetaData().getColumns()));
 
         if (!nonExistingColumns.isEmpty()) {
-            log.warning("Columns which are specified to be filtered out " + Arrays.toString(nonExistingColumns.toArray())
+            LOG.warn("Columns which are specified to be filtered out " + Arrays.toString(nonExistingColumns.toArray())
                     + " are not existing in the table " + tableName);
         }
         return columnsToIgnore;
