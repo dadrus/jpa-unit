@@ -11,13 +11,13 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import eu.drus.test.jpa.test_model.Depositor;
-import eu.drus.test.persistence.JpaTestRunner;
+import eu.drus.test.persistence.JpaUnitRunner;
 import eu.drus.test.persistence.annotation.ExpectedDataSets;
 import eu.drus.test.persistence.annotation.InitialDataSets;
 import eu.drus.test.persistence.annotation.TransactionMode;
 import eu.drus.test.persistence.annotation.Transactional;
 
-@RunWith(JpaTestRunner.class)
+@RunWith(JpaUnitRunner.class)
 public class DataSetTest {
 
     @PersistenceContext(unitName = "my-test-unit")
@@ -31,7 +31,7 @@ public class DataSetTest {
     @ExpectedDataSets("datasets/test-data.json")
     @Transactional(TransactionMode.DISABLED)
     public void someReadDataTest1() {
-        final Depositor entity = manager.find(Depositor.class, 1L);
+        final Depositor entity = manager.find(Depositor.class, 100L);
 
         assertNotNull(entity);
         entity.setName("Foo");
@@ -42,7 +42,7 @@ public class DataSetTest {
     @ExpectedDataSets("datasets/test-data.json")
     @Transactional(TransactionMode.ROLLBACK)
     public void someReadDataTest2() {
-        final Depositor entity = manager.find(Depositor.class, 1L);
+        final Depositor entity = manager.find(Depositor.class, 100L);
 
         assertNotNull(entity);
         entity.setName("Foo");
@@ -53,10 +53,10 @@ public class DataSetTest {
     @ExpectedDataSets("datasets/test-data.json")
     @Transactional(TransactionMode.COMMIT)
     public void someReadDataTest3() {
-        final Depositor entity = manager.find(Depositor.class, 1L);
+        final Depositor entity = manager.find(Depositor.class, 100L);
 
         assertNotNull(entity);
-        entity.setName("Foo");
+        entity.setName("Moo");
 
         // THEN
         // we've explicitly changed the name and implicitly the version.
