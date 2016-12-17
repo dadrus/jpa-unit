@@ -17,6 +17,7 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.filter.IColumnFilter;
 import org.dbunit.operation.DatabaseOperation;
 
+import eu.drus.test.persistence.JpaUnitException;
 import eu.drus.test.persistence.annotation.CleanupStrategy;
 import eu.drus.test.persistence.annotation.DataSeedStrategy;
 import eu.drus.test.persistence.annotation.ExpectedDataSets;
@@ -29,13 +30,12 @@ import eu.drus.test.persistence.core.sql.SqlScript;
 public class DbFeatureFactory {
 
     private final FeatureResolver featureResolver;
-    private final List<IDataSet> initialDataSets;
+    private List<IDataSet> initialDataSets;
     private StrategyProviderFactory providerFactory;
 
-    public DbFeatureFactory(final FeatureResolver featureResolver) throws IOException {
+    public DbFeatureFactory(final FeatureResolver featureResolver) {
         this.featureResolver = featureResolver;
         providerFactory = new StrategyProviderFactory();
-        initialDataSets = loadDataSets(featureResolver.getSeedData());
     }
 
     private static IDataSet mergeDataSets(final List<IDataSet> dataSets) throws DataSetException {
@@ -56,10 +56,21 @@ public class DbFeatureFactory {
         this.providerFactory = providerFactory;
     }
 
+    private List<IDataSet> getInitialDataSets() {
+        if (initialDataSets == null) {
+            try {
+                initialDataSets = loadDataSets(featureResolver.getSeedData());
+            } catch (final IOException e) {
+                throw new JpaUnitException("Could not load initial data sets", e);
+            }
+        }
+        return initialDataSets;
+    }
+
     public DbFeature getCleanUpBeforeFeature() {
         if (featureResolver.shouldCleanupBefore()) {
             return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
-                    initialDataSets);
+                    getInitialDataSets());
         } else {
             return NopFeature.INSTANCE;
         }
@@ -68,7 +79,7 @@ public class DbFeatureFactory {
     public DbFeature getCleanUpAfterFeature() {
         if (featureResolver.shouldCleanupAfter()) {
             return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
-                    initialDataSets);
+                    getInitialDataSets());
         } else {
             return NopFeature.INSTANCE;
         }
@@ -109,7 +120,7 @@ public class DbFeatureFactory {
     public DbFeature getSeedDataFeature() {
         if (featureResolver.shouldSeedData()) {
             return new SeedDataFeature(providerFactory.createDataSeedStrategyProvider(), featureResolver.getDataSeedStrategy(),
-                    initialDataSets);
+                    getInitialDataSets());
         } else {
             return NopFeature.INSTANCE;
         }

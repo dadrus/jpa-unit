@@ -1,15 +1,12 @@
 package eu.drus.test.persistence.rule.evaluation;
 
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Before;
@@ -20,7 +17,6 @@ import org.junit.runners.model.Statement;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.drus.test.persistence.JpaUnitException;
 import eu.drus.test.persistence.core.metadata.FeatureResolver;
 import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
 
@@ -55,21 +51,5 @@ public class EvaluationRuleTest {
 
         // THEN
         assertThat(stmt, not(nullValue()));
-    }
-
-    @Test
-    public void testApplyRuleForBadSeedData() {
-        // GIVEN
-        when(resolver.getSeedData()).thenReturn(Arrays.asList("not-existent.yaml"));
-        final EvaluationRule rule = new EvaluationRule(featureResolverFactory, Collections.emptyMap());
-
-        try {
-            // WHEN
-            rule.apply(base, method, this);
-            fail("JpaTestException expected");
-        } catch (final JpaUnitException e) {
-            // THEN
-            assertThat(e.getMessage(), containsString("Failed to create statement"));
-        }
     }
 }
