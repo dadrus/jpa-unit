@@ -74,13 +74,13 @@ public final class TransactionSupport {
     }
 
     public void execute(final Runnable function) {
-        execute(Void -> {
+        execute(v -> {
             function.run();
             return null;
         });
     }
 
     public <T> T execute(final Supplier<T> function) {
-        return execute((T) -> function.get());
+        return execute(t -> function.get());
     }
 }
