@@ -8,6 +8,8 @@
 
         <!-- your classes converters, etc -->
         <class>eu.drus.test.jpa.test_model.Depositor</class>
+        
+        <shared-cache-mode>NONE</shared-cache-mode>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
