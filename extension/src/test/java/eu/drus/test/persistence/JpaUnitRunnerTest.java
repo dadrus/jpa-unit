@@ -18,12 +18,14 @@ import javax.persistence.PersistenceException;
 import javax.persistence.PersistenceUnit;
 
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.model.InitializationError;
 import org.mockito.ArgumentCaptor;
 
 import com.sun.codemodel.JAnnotationUse;
@@ -54,11 +56,10 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
-            runner.run(new RunNotifier());
+            new JpaUnitRunner(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -86,11 +87,10 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
-            runner.run(new RunNotifier());
+            new JpaUnitRunner(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -118,11 +118,10 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
-            runner.run(new RunNotifier());
+            new JpaUnitRunner(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -150,11 +149,10 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
-            runner.run(new RunNotifier());
+            new JpaUnitRunner(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -180,11 +178,10 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
-            runner.run(new RunNotifier());
+            new JpaUnitRunner(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -210,11 +207,10 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
-            runner.run(new RunNotifier());
+            new JpaUnitRunner(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -240,16 +236,15 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
-            runner.run(new RunNotifier());
-            fail("IllegalArgumentException expected");
+            new JpaUnitRunner(cut);
+            fail("PersistenceException expected");
         } catch (final PersistenceException e) {
 
             // THEN
-            assertThat(e.getMessage(), containsString("No Persistence provider"));
+            assertThat(e.getMessage(), containsString("No Persistence"));
         }
     }
 
@@ -270,16 +265,15 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
-            runner.run(new RunNotifier());
-            fail("IllegalArgumentException expected");
+            new JpaUnitRunner(cut);
+            fail("PersistenceException expected");
         } catch (final PersistenceException e) {
 
             // THEN
-            assertThat(e.getMessage(), containsString("No Persistence provider"));
+            assertThat(e.getMessage(), containsString("No Persistence"));
         }
     }
 
@@ -301,16 +295,15 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
-            runner.run(new RunNotifier());
-            fail("IllegalArgumentException expected");
+            new JpaUnitRunner(cut);
+            fail("PersistenceException expected");
         } catch (final PersistenceException e) {
 
             // THEN
-            assertThat(e.getMessage(), containsString("No Persistence provider"));
+            assertThat(e.getMessage(), containsString("No Persistence"));
         }
     }
 
@@ -332,16 +325,15 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
         try {
             // WHEN
-            runner.run(new RunNotifier());
-            fail("IllegalArgumentException expected");
+            new JpaUnitRunner(cut);
+            fail("PersistenceException expected");
         } catch (final PersistenceException e) {
 
             // THEN
-            assertThat(e.getMessage(), containsString("No Persistence provider"));
+            assertThat(e.getMessage(), containsString("No Persistence"));
         }
     }
 
@@ -423,5 +415,35 @@ public class JpaUnitRunnerTest {
         assertThat(descriptionCaptor.getValue().getMethodName(), equalTo("testMethod"));
 
         verifyNoMoreInteractions(listener);
+    }
+
+    @Test
+    public void testJpaUnitRunnerAndJpaUnitRuleFieldExcludeEachOther() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
+        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
+        final JAnnotationUse jAnnotation = emField.annotate(PersistenceUnit.class);
+        jAnnotation.param("unitName", "test-unit-1");
+        final JFieldVar ruleField = jClass.field(JMod.PRIVATE, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
+        jMethod.annotate(Test.class);
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+
+        try {
+            new JpaUnitRunner(cut);
+            fail("InitializationError expected");
+        } catch (final InitializationError e) {
+            // expected
+        }
+
     }
 }

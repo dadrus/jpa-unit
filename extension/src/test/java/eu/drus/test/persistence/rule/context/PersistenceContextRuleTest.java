@@ -6,7 +6,6 @@ import static org.junit.Assert.assertThat;
 
 import java.lang.reflect.Field;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.junit.Test;
@@ -20,10 +19,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class PersistenceContextRuleTest {
 
     @Mock
-    private EntityManagerFactory entityManagerFactory;
-
-    @Mock
-    private EntityManager entityManager;
+    private EntityManagerFactoryProducer emfProducer;
 
     @Mock
     private Statement base;
@@ -38,7 +34,7 @@ public class PersistenceContextRuleTest {
     public void testApplyPersistenceContextRule() throws Throwable {
         // GIVEN
         final Field field = getClass().getDeclaredField("emf");
-        final PersistenceContextRule rule = new PersistenceContextRule(entityManagerFactory, field);
+        final PersistenceContextRule rule = new PersistenceContextRule(emfProducer, field);
 
         // WHEN
         final Statement stmt = rule.apply(base, method, this);

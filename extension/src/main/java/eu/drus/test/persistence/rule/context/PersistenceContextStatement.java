@@ -1,5 +1,7 @@
 package eu.drus.test.persistence.rule.context;
 
+import static eu.drus.test.persistence.util.ReflectionUtils.injectValue;
+
 import java.lang.reflect.Field;
 
 import javax.persistence.EntityManager;
@@ -9,14 +11,14 @@ import org.junit.runners.model.Statement;
 
 public class PersistenceContextStatement extends Statement {
 
-    private final EntityManagerFactory entityManagerFactory;
+    private final EntityManagerFactoryProducer emfProducer;
     private final Field persistenceField;
     private final Statement base;
     private final Object target;
 
-    public PersistenceContextStatement(final EntityManagerFactory entityManagerFactory, final Field persistenceField, final Statement base,
+    public PersistenceContextStatement(final EntityManagerFactoryProducer emfProducer, final Field persistenceField, final Statement base,
             final Object target) {
-        this.entityManagerFactory = entityManagerFactory;
+        this.emfProducer = emfProducer;
         this.persistenceField = persistenceField;
         this.base = base;
         this.target = target;
@@ -24,31 +26,45 @@ public class PersistenceContextStatement extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-        EntityManager entityManager = null;
+        final EntityManagerFactory emf = emfProducer.createEntityManagerFactory();
 
-        final Class<?> persistenceContextFieldType = persistenceField.getType();
-        final boolean isAccessible = persistenceField.isAccessible();
-        persistenceField.setAccessible(true);
         try {
-            if (persistenceContextFieldType.equals(EntityManagerFactory.class)) {
-                // just inject the factory
-                persistenceField.set(target, entityManagerFactory);
-            } else if (persistenceContextFieldType.equals(EntityManager.class)) {
-                // create EntityManager and inject it
-                entityManager = entityManagerFactory.createEntityManager();
-                persistenceField.set(target, entityManager);
-            } else {
-                throw new IllegalArgumentException("Unexpected field type: " + persistenceContextFieldType.getName());
-            }
+            doEvaluate(emf);
         } finally {
-            persistenceField.setAccessible(isAccessible);
+            emfProducer.destroyEntityManagerFactory(emf);
+        }
+    }
+
+    private void doEvaluate(final EntityManagerFactory emf) throws Throwable {
+        EntityManager em = null;
+
+        final Class<?> fieldType = persistenceField.getType();
+        if (fieldType.equals(EntityManagerFactory.class)) {
+            // just inject the factory
+            injectValue(persistenceField, target, emf);
+        } else if (fieldType.equals(EntityManager.class)) {
+            // create EntityManager and inject it
+            em = emf.createEntityManager();
+            injectValue(persistenceField, target, em);
+        } else {
+            throw new IllegalArgumentException("Unexpected field type: " + fieldType.getName());
         }
 
         try {
             base.evaluate();
         } finally {
-            if (entityManager != null) {
-                entityManager.close();
+            clearSecondLevelCacheAndCloseEntityManager(emf, em);
+        }
+    }
+
+    private void clearSecondLevelCacheAndCloseEntityManager(final EntityManagerFactory emf, final EntityManager em) {
+        if (em != null) {
+            try {
+                em.close();
+            } catch (final IllegalStateException e) {
+                // TODO: log warning
+            } finally {
+                emf.getCache().evictAll();
             }
         }
     }
