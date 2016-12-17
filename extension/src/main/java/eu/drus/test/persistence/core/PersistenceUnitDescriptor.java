@@ -3,7 +3,6 @@ package eu.drus.test.persistence.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -26,7 +25,7 @@ public class PersistenceUnitDescriptor {
 
     private void parse(final Element persistenceUnitElement) {
         final String name = persistenceUnitElement.getAttribute(ENTRY_NAME);
-        if (StringUtils.isNotEmpty(name)) {
+        if (name != null && !name.isEmpty()) {
             unitName = name;
         }
 

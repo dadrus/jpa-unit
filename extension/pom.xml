@@ -19,7 +19,6 @@
     <version.dbunit>2.5.3</version.dbunit>
     <version.hibernate-jpa-2.1-api>1.0.0.Final</version.hibernate-jpa-2.1-api>
     <version.snakeyaml>1.10</version.snakeyaml>
-    <version.commons-lang3>3.4</version.commons-lang3>
     <version.codemodel>2.6</version.codemodel>
     <version.h2>1.4.192</version.h2>
     <version.logback>1.1.7</version.logback>
@@ -58,12 +57,6 @@
       <artifactId>snakeyaml</artifactId>
       <version>${version.snakeyaml}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${version.commons-lang3}</version>
-    </dependency>
-
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
