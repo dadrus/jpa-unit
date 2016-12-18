@@ -428,7 +428,7 @@ public class JpaUnitRunnerTest {
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceUnit.class);
         jAnnotation.param("unitName", "test-unit-1");
-        final JFieldVar ruleField = jClass.field(JMod.PRIVATE, JpaUnitRule.class, "rule");
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
         ruleField.annotate(Rule.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
         jMethod.annotate(Test.class);
@@ -443,6 +443,7 @@ public class JpaUnitRunnerTest {
             fail("InitializationError expected");
         } catch (final InitializationError e) {
             // expected
+            assertThat(e.getCauses().get(0).getMessage(), containsString("exclude each other"));
         }
 
     }
