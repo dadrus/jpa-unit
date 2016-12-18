@@ -1,6 +1,6 @@
 package eu.drus.test.persistence.rule.evaluation;
 
-import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
 import org.junit.runners.model.Statement;
 
 import eu.drus.test.persistence.core.dbunit.DatabaseConnectionFactory;
@@ -20,7 +20,7 @@ public class EvaluationStatement extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-        final DatabaseConnection connection = connectionFactory.openConnection();
+        final IDatabaseConnection connection = connectionFactory.openConnection();
         try {
             featureFactory.getCleanUpBeforeFeature().execute(connection);
             featureFactory.getCleanupUsingScriptBeforeFeature().execute(connection);

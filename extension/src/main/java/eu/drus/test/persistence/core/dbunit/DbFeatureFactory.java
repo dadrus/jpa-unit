@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
@@ -139,7 +139,7 @@ public class DbFeatureFactory {
         private static final NopFeature INSTANCE = new NopFeature();
 
         @Override
-        public void execute(final DatabaseConnection connection) throws DbFeatureException {
+        public void execute(final IDatabaseConnection connection) throws DbFeatureException {
             // does nothing like the name implies
         }
     }
@@ -158,7 +158,7 @@ public class DbFeatureFactory {
         }
 
         @Override
-        public void execute(final DatabaseConnection connection) throws DbFeatureException {
+        public void execute(final IDatabaseConnection connection) throws DbFeatureException {
             final CleanupStrategyExecutor executor = cleanupStrategy.provide(provider);
             executor.execute(connection, initialDataSets);
         }
@@ -173,7 +173,7 @@ public class DbFeatureFactory {
         }
 
         @Override
-        public void execute(final DatabaseConnection connection) throws DbFeatureException {
+        public void execute(final IDatabaseConnection connection) throws DbFeatureException {
             try {
                 for (final String script : scriptPaths) {
                     executeScript(script, connection.getConnection());
@@ -206,7 +206,7 @@ public class DbFeatureFactory {
         }
 
         @Override
-        public void execute(final DatabaseConnection connection) throws DbFeatureException {
+        public void execute(final IDatabaseConnection connection) throws DbFeatureException {
             try {
                 final DatabaseOperation operation = dataSeedStrategy.provide(provider);
                 operation.execute(connection, mergeDataSets(initialDataSets));
@@ -228,7 +228,7 @@ public class DbFeatureFactory {
         }
 
         @Override
-        public void execute(final DatabaseConnection connection) throws DbFeatureException {
+        public void execute(final IDatabaseConnection connection) throws DbFeatureException {
             try {
                 final IDataSet currentDataSet = connection.createDataSet();
                 final IDataSet expectedDataSet = mergeDataSets(loadDataSets(Arrays.asList(expectedDataSets.value())));

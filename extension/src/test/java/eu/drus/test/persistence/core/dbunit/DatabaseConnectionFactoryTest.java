@@ -7,7 +7,7 @@ import static org.junit.Assert.fail;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
 import org.junit.Test;
 
 import eu.drus.test.persistence.JpaUnitException;
@@ -36,7 +36,7 @@ public class DatabaseConnectionFactoryTest {
         final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
 
         // WHEN
-        final DatabaseConnection connection = factory.openConnection();
+        final IDatabaseConnection connection = factory.openConnection();
 
         // THEN
         assertThat(connection, notNullValue());
@@ -72,7 +72,7 @@ public class DatabaseConnectionFactoryTest {
         final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
 
         // WHEN
-        final DatabaseConnection connection = factory.openConnection();
+        final IDatabaseConnection connection = factory.openConnection();
 
         // THEN
         assertThat(connection, notNullValue());

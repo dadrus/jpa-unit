@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.FilteredDataSet;
@@ -20,7 +20,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
 
     @Override
     public CleanupStrategyExecutor strictStrategy() {
-        return (final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) -> {
+        return (final IDatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) -> {
             try {
                 final IDataSet dataSet = excludeTables(connection.createDataSet(), tablesToExclude);
                 DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
@@ -32,7 +32,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
 
     @Override
     public CleanupStrategyExecutor usedTablesOnlyStrategy() {
-        return (final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) -> {
+        return (final IDatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) -> {
             if (initialDataSets.isEmpty()) {
                 return;
             }
@@ -48,7 +48,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
 
     @Override
     public CleanupStrategyExecutor usedRowsOnlyStrategy() {
-        return (final DatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) -> {
+        return (final IDatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) -> {
             if (initialDataSets.isEmpty()) {
                 return;
             }

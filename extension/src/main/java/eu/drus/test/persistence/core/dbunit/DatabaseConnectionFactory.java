@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
 
 import eu.drus.test.persistence.JpaUnitException;
 
@@ -17,18 +18,20 @@ public class DatabaseConnectionFactory {
         this.properties = properties;
     }
 
-    public DatabaseConnection openConnection() {
+    public IDatabaseConnection openConnection() {
         final String driverClass = (String) properties.get("javax.persistence.jdbc.driver");
         final String connectionUrl = (String) properties.get("javax.persistence.jdbc.url");
         final String username = (String) properties.get("javax.persistence.jdbc.user");
         final String password = (String) properties.get("javax.persistence.jdbc.password");
 
-        try {
-            Class.forName(driverClass);
-        } catch (final ClassNotFoundException e) {
-            throw new JpaUnitException(e);
-        }
+        loadDriver(driverClass);
 
+        final IDatabaseConnection connection = createDBUnitDatabaseConnection(connectionUrl, username, password);
+
+        return connection;
+    }
+
+    private DatabaseConnection createDBUnitDatabaseConnection(final String connectionUrl, final String username, final String password) {
         try {
             if (username == null && password == null) {
                 return new DatabaseConnection(DriverManager.getConnection(connectionUrl));
@@ -36,6 +39,14 @@ public class DatabaseConnectionFactory {
                 return new DatabaseConnection(DriverManager.getConnection(connectionUrl, username, password));
             }
         } catch (DatabaseUnitException | SQLException e) {
+            throw new JpaUnitException(e);
+        }
+    }
+
+    private void loadDriver(final String driverClass) {
+        try {
+            Class.forName(driverClass);
+        } catch (final ClassNotFoundException e) {
             throw new JpaUnitException(e);
         }
     }

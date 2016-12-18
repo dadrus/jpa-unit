@@ -1,8 +1,8 @@
 package eu.drus.test.persistence.core.dbunit;
 
-import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
 
 @FunctionalInterface
 public interface DbFeature {
-    void execute(DatabaseConnection connection) throws DbFeatureException;
+    void execute(IDatabaseConnection connection) throws DbFeatureException;
 }
