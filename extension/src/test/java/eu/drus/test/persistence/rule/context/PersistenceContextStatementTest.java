@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -54,7 +55,7 @@ public class PersistenceContextStatementTest {
     }
 
     @Test
-    public void testEntityManagerFactoryInjection() throws Throwable {
+    public void testEvaluateWithEntityManagerFactoryInjection() throws Throwable {
         // GIVEN
         final Field field = getClass().getDeclaredField("emf");
         final PersistenceContextStatement stmt = new PersistenceContextStatement(emfProducer, field, base, this);
@@ -71,7 +72,7 @@ public class PersistenceContextStatementTest {
     }
 
     @Test
-    public void testEntityManagerInjection() throws Throwable {
+    public void testEvaluateWithEntityManagerInjection() throws Throwable {
         // GIVEN
         final Field field = getClass().getDeclaredField("em");
         final PersistenceContextStatement stmt = new PersistenceContextStatement(emfProducer, field, base, this);
@@ -88,7 +89,7 @@ public class PersistenceContextStatementTest {
     }
 
     @Test
-    public void testUnsupportedFieldInjection() throws Throwable {
+    public void testEvaluateWithUnsupportedFieldInjection() throws Throwable {
         // GIVEN
         final Field field = getClass().getDeclaredField("someField");
         final PersistenceContextStatement stmt = new PersistenceContextStatement(emfProducer, field, base, this);
@@ -107,5 +108,23 @@ public class PersistenceContextStatementTest {
         verify(base, times(0)).evaluate();
         verify(entityManagerFactory, times(0)).createEntityManager();
         verify(entityManager, times(0)).close();
+    }
+
+    @Test
+    public void testEvaluateWithExceptionOnEntityManagerCloseIsCatched() throws Throwable {
+        // GIVEN
+        doThrow(Exception.class).when(entityManager).close();
+        final Field field = getClass().getDeclaredField("em");
+        final PersistenceContextStatement stmt = new PersistenceContextStatement(emfProducer, field, base, this);
+
+        // WHEN
+        stmt.evaluate();
+
+        // THEN
+        assertThat(emf, nullValue());
+        assertThat(em, equalTo(entityManager));
+        verify(base).evaluate();
+        verify(entityManagerFactory).createEntityManager();
+        verify(entityManager).close();
     }
 }
