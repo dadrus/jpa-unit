@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 
-import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -23,8 +22,6 @@ import org.junit.runners.model.Statement;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.drus.test.persistence.core.metadata.FeatureResolver;
-
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceContextStatementTest {
 
@@ -33,12 +30,6 @@ public class PersistenceContextStatementTest {
 
     @Mock
     private EntityManagerFactory entityManagerFactory;
-
-    @Mock
-    private FeatureResolver resolver;
-
-    @Mock
-    private Cache cache;
 
     @Mock
     private EntityManager entityManager;
@@ -60,17 +51,13 @@ public class PersistenceContextStatementTest {
     public void setupMocks() {
         when(emfProducer.createEntityManagerFactory()).thenReturn(entityManagerFactory);
         when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
-        when(entityManagerFactory.getCache()).thenReturn(cache);
-
-        when(resolver.shouldCleanupAfter()).thenReturn(Boolean.TRUE);
-        when(resolver.shouldEvictCache()).thenReturn(Boolean.FALSE);
     }
 
     @Test
     public void testEntityManagerFactoryInjection() throws Throwable {
         // GIVEN
         final Field field = getClass().getDeclaredField("emf");
-        final PersistenceContextStatement stmt = new PersistenceContextStatement(resolver, emfProducer, field, base, this);
+        final PersistenceContextStatement stmt = new PersistenceContextStatement(emfProducer, field, base, this);
 
         // WHEN
         stmt.evaluate();
@@ -87,7 +74,7 @@ public class PersistenceContextStatementTest {
     public void testEntityManagerInjection() throws Throwable {
         // GIVEN
         final Field field = getClass().getDeclaredField("em");
-        final PersistenceContextStatement stmt = new PersistenceContextStatement(resolver, emfProducer, field, base, this);
+        final PersistenceContextStatement stmt = new PersistenceContextStatement(emfProducer, field, base, this);
 
         // WHEN
         stmt.evaluate();
@@ -104,7 +91,7 @@ public class PersistenceContextStatementTest {
     public void testUnsupportedFieldInjection() throws Throwable {
         // GIVEN
         final Field field = getClass().getDeclaredField("someField");
-        final PersistenceContextStatement stmt = new PersistenceContextStatement(resolver, emfProducer, field, base, this);
+        final PersistenceContextStatement stmt = new PersistenceContextStatement(emfProducer, field, base, this);
 
         // WHEN
         try {

@@ -11,21 +11,17 @@ import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.drus.test.persistence.core.metadata.FeatureResolver;
-
 public class PersistenceContextStatement extends Statement {
 
     private static final Logger LOG = LoggerFactory.getLogger(PersistenceContextStatement.class);
 
-    private final FeatureResolver resolver;
     private final EntityManagerFactoryProducer emfProducer;
     private final Field persistenceField;
     private final Statement base;
     private final Object target;
 
-    public PersistenceContextStatement(final FeatureResolver resolver, final EntityManagerFactoryProducer emfProducer,
-            final Field persistenceField, final Statement base, final Object target) {
-        this.resolver = resolver;
+    public PersistenceContextStatement(final EntityManagerFactoryProducer emfProducer, final Field persistenceField, final Statement base,
+            final Object target) {
         this.emfProducer = emfProducer;
         this.persistenceField = persistenceField;
         this.base = base;
@@ -58,31 +54,20 @@ public class PersistenceContextStatement extends Statement {
             throw new IllegalArgumentException("Unexpected field type: " + fieldType.getName());
         }
 
-        evictCache(resolver.shouldCleanupBefore() && resolver.shouldEvictCache(), emf);
-
         try {
             base.evaluate();
         } finally {
-            clearSecondLevelCacheAndCloseEntityManager(emf, em);
+            closeEntityManager(em);
         }
     }
 
-    private void clearSecondLevelCacheAndCloseEntityManager(final EntityManagerFactory emf, final EntityManager em) {
+    private void closeEntityManager(final EntityManager em) {
         if (em != null) {
             try {
                 em.close();
             } catch (final Exception e) {
                 LOG.error("Unexpected exception while closing EntityManager", e);
-            } finally {
-                evictCache(resolver.shouldCleanupAfter() && resolver.shouldEvictCache(), emf);
             }
         }
     }
-
-    private void evictCache(final boolean doEvict, final EntityManagerFactory emf) {
-        if (doEvict) {
-            emf.getCache().evictAll();
-        }
-    }
-
 }

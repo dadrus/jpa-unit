@@ -78,7 +78,10 @@ class JpaUnitContext implements EntityManagerFactoryProducer {
             }
 
             final List<FrameworkMethod> testMethods = testClass.getAnnotatedMethods(Test.class);
-            count = new AtomicInteger(testMethods.size());
+
+            // The * 2 is because SecondLevelCache rule/statement use create/destroy
+            // EntityManagerFactory in addition to PersistenceContext rule/statement
+            count = new AtomicInteger(testMethods.size() * 2);
             emf = Persistence.createEntityManagerFactory(unitName, properties);
 
             final PersistenceUnitDescriptorLoader pudLoader = new PersistenceUnitDescriptorLoader();

@@ -9,6 +9,7 @@ import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
 import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
+import eu.drus.test.persistence.rule.cache.SecondLevelCacheRule;
 import eu.drus.test.persistence.rule.context.PersistenceContextRule;
 import eu.drus.test.persistence.rule.evaluation.EvaluationRule;
 import eu.drus.test.persistence.rule.transaction.TransactionalRule;
@@ -28,7 +29,8 @@ public class JpaUnitRule implements MethodRule {
         final List<MethodRule> rules = new ArrayList<>();
         rules.add(new TransactionalRule(featureResolverFactory, ctx.getPersistenceField()));
         rules.add(new EvaluationRule(featureResolverFactory, ctx.getProperties()));
-        rules.add(new PersistenceContextRule(featureResolverFactory, ctx, ctx.getPersistenceField()));
+        rules.add(new SecondLevelCacheRule(featureResolverFactory, ctx));
+        rules.add(new PersistenceContextRule(ctx, ctx.getPersistenceField()));
 
         Statement lastResult = null;
 

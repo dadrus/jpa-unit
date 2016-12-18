@@ -9,6 +9,7 @@ import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.InitializationError;
 
 import eu.drus.test.persistence.core.metadata.FeatureResolverFactory;
+import eu.drus.test.persistence.rule.cache.SecondLevelCacheRule;
 import eu.drus.test.persistence.rule.context.PersistenceContextRule;
 import eu.drus.test.persistence.rule.evaluation.EvaluationRule;
 import eu.drus.test.persistence.rule.transaction.TransactionalRule;
@@ -35,7 +36,8 @@ public class JpaUnitRunner extends BlockJUnit4ClassRunner {
         final List<MethodRule> rules = super.rules(target);
         rules.add(new TransactionalRule(featureResolverFactory, ctx.getPersistenceField()));
         rules.add(new EvaluationRule(featureResolverFactory, ctx.getProperties()));
-        rules.add(new PersistenceContextRule(featureResolverFactory, ctx, ctx.getPersistenceField()));
+        rules.add(new SecondLevelCacheRule(featureResolverFactory, ctx));
+        rules.add(new PersistenceContextRule(ctx, ctx.getPersistenceField()));
         return rules;
     }
 }
