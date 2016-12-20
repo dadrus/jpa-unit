@@ -7,20 +7,21 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.ext.h2.H2Connection;
-import org.junit.Ignore;
+import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import eu.drus.test.persistence.JpaUnitException;
 
-@Ignore("FIXME")
+// @Ignore("FIXME")
 public class DatabaseConnectionFactoryTest {
 
     private static final String CONNECTION_URL_PROP_NAME = "javax.persistence.jdbc.url";
@@ -38,6 +39,17 @@ public class DatabaseConnectionFactoryTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
+    private IDatabaseConnection connection;
+
+    @After
+    public void closeConnection() throws SQLException {
+        if (connection != null) {
+            connection.close();
+        }
+
+        connection = null;
+    }
+
     @Test
     public void testOpenConnectionToH2DbHavingAllSupportedPersistenceProperties() throws ClassNotFoundException {
         // GIVEN
@@ -50,30 +62,11 @@ public class DatabaseConnectionFactoryTest {
         final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
 
         // WHEN
-        final IDatabaseConnection connection = factory.openConnection();
+        connection = factory.openConnection();
 
         // THEN
         assertThat(connection, notNullValue());
         assertThat(connection, instanceOf(H2Connection.class));
-    }
-
-    @Test
-    public void testOpenConnectionToH2DbWithoutHavingUsernameAndPasswordProperties() throws ClassNotFoundException {
-        // GIVEN
-        final Map<String, Object> props = new HashMap<>();
-        props.put(CONNECTION_URL_PROP_NAME, H2_CONNECTION_URL_PROP_VALUE);
-        props.put(DRIVER_CLASS_PROP_NAME, H2_DRIVER_CLASS_PROP_VALUE);
-
-        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
-
-        // WHEN
-        try {
-            factory.openConnection();
-            fail("JpaTestException is expected");
-        } catch (final JpaUnitException e) {
-            // THEN
-            // JpaTestException is thrown
-        }
     }
 
     @Test
@@ -87,7 +80,7 @@ public class DatabaseConnectionFactoryTest {
         final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
 
         // WHEN
-        final IDatabaseConnection connection = factory.openConnection();
+        connection = factory.openConnection();
 
         // THEN
         assertThat(connection, notNullValue());
@@ -104,7 +97,7 @@ public class DatabaseConnectionFactoryTest {
 
         // WHEN
         try {
-            factory.openConnection();
+            connection = factory.openConnection();
             fail("JpaTestException is expected");
         } catch (final JpaUnitException e) {
             // THEN
@@ -126,7 +119,25 @@ public class DatabaseConnectionFactoryTest {
         final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
 
         // WHEN
-        final IDatabaseConnection connection = factory.openConnection();
+        connection = factory.openConnection();
+
+        // THEN
+        assertThat(connection, notNullValue());
+        assertThat(connection.getClass(), equalTo(DatabaseConnection.class));
+    }
+
+    @Test
+    public void testOpenConnectionToSqliteDbWithoutHavingUsernameAndPasswordProperties() throws Exception {
+        // GIVEN
+        final File dbFile = folder.newFile("test.db");
+        final Map<String, Object> props = new HashMap<>();
+        props.put(CONNECTION_URL_PROP_NAME, SQLITE_CONNECTION_URL_PROP_PREFIX + dbFile.getAbsolutePath());
+        props.put(DRIVER_CLASS_PROP_NAME, SQLITE_DRIVER_CLASS_PROP_VALUE);
+
+        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
+
+        // WHEN
+        connection = factory.openConnection();
 
         // THEN
         assertThat(connection, notNullValue());
