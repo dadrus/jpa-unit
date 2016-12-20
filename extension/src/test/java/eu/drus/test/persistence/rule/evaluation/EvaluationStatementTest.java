@@ -2,6 +2,7 @@ package eu.drus.test.persistence.rule.evaluation;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.Statement;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -18,7 +20,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import eu.drus.test.persistence.core.dbunit.DatabaseConnectionFactory;
 import eu.drus.test.persistence.core.dbunit.DbFeature;
 import eu.drus.test.persistence.core.dbunit.DbFeatureFactory;
-import eu.drus.test.persistence.rule.evaluation.EvaluationStatement;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EvaluationStatementTest {
@@ -57,28 +58,30 @@ public class EvaluationStatementTest {
     @Test
     public void testStatementEvaluation() throws Throwable {
         // GIVEN
+        final InOrder order = inOrder(connectionFactory, baseStatement, featureFactory, connection);
 
         // WHEN
         stmt.evaluate();
 
         // THEN
-        verify(connectionFactory).openConnection();
-        verify(baseStatement).evaluate();
-        verify(featureFactory).getCleanUpBeforeFeature();
-        verify(featureFactory).getCleanupUsingScriptBeforeFeature();
-        verify(featureFactory).getApplyCustomScriptBeforeFeature();
-        verify(featureFactory).getSeedDataFeature();
-        verify(featureFactory).getVerifyDataAfterFeature();
-        verify(featureFactory).getCleanUpAfterFeature();
-        verify(featureFactory).getCleanupUsingScriptAfterFeature();
-        verify(featureFactory).getApplyCustomScriptAfterFeature();
+        order.verify(connectionFactory).openConnection();
+        order.verify(featureFactory).getCleanUpBeforeFeature();
+        order.verify(featureFactory).getCleanupUsingScriptBeforeFeature();
+        order.verify(featureFactory).getApplyCustomScriptBeforeFeature();
+        order.verify(featureFactory).getSeedDataFeature();
+        order.verify(baseStatement).evaluate();
+        order.verify(featureFactory).getVerifyDataAfterFeature();
+        order.verify(featureFactory).getCleanUpAfterFeature();
+        order.verify(featureFactory).getCleanupUsingScriptAfterFeature();
+        order.verify(featureFactory).getApplyCustomScriptAfterFeature();
         verify(dbFeature, times(8)).execute(eq(connection));
-        verify(connection).close();
+        order.verify(connection).close();
     }
 
     @Test
     public void testDataVerificationIsSkippedButAllAfterTestFeaturesAreExecutedIfBaseStatementEvaluationFails() throws Throwable {
         // GIVEN
+        final InOrder order = inOrder(connectionFactory, baseStatement, featureFactory, connection);
         doThrow(new Exception()).when(baseStatement).evaluate();
 
         // WHEN
@@ -89,17 +92,17 @@ public class EvaluationStatementTest {
         }
 
         // THEN
-        verify(connectionFactory).openConnection();
-        verify(baseStatement).evaluate();
-        verify(featureFactory).getCleanUpBeforeFeature();
-        verify(featureFactory).getCleanupUsingScriptBeforeFeature();
-        verify(featureFactory).getApplyCustomScriptBeforeFeature();
-        verify(featureFactory).getSeedDataFeature();
-        verify(featureFactory, times(0)).getVerifyDataAfterFeature();
-        verify(featureFactory).getCleanUpAfterFeature();
-        verify(featureFactory).getCleanupUsingScriptAfterFeature();
-        verify(featureFactory).getApplyCustomScriptAfterFeature();
+        order.verify(connectionFactory).openConnection();
+        order.verify(featureFactory).getCleanUpBeforeFeature();
+        order.verify(featureFactory).getCleanupUsingScriptBeforeFeature();
+        order.verify(featureFactory).getApplyCustomScriptBeforeFeature();
+        order.verify(featureFactory).getSeedDataFeature();
+        order.verify(baseStatement).evaluate();
+        order.verify(featureFactory, times(0)).getVerifyDataAfterFeature();
+        order.verify(featureFactory).getCleanUpAfterFeature();
+        order.verify(featureFactory).getCleanupUsingScriptAfterFeature();
+        order.verify(featureFactory).getApplyCustomScriptAfterFeature();
         verify(dbFeature, times(7)).execute(eq(connection));
-        verify(connection).close();
+        order.verify(connection).close();
     }
 }
