@@ -24,6 +24,7 @@
     <version.logback>1.1.7</version.logback>
     <version.eclipselink>2.5.2</version.eclipselink>
     <version.h2>1.4.191</version.h2>
+    <version.sqlite>3.15.1</version.sqlite>
   </properties>
 
   <dependencies>
@@ -80,6 +81,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+      <version>${version.sqlite}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>${version.logback}</version>
@@ -92,4 +99,26 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>eu.somatik.serviceloader-maven-plugin</groupId>
+        <artifactId>serviceloader-maven-plugin</artifactId>
+        <version>1.0.7</version>
+        <configuration>
+          <services>
+            <param>eu.drus.test.persistence.core.dbunit.ext.DbUnitConnectionFactory</param>
+          </services>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
