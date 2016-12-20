@@ -355,6 +355,7 @@ public class DbFeatureFactoryTest {
         when(dataSeedStrategyProvider.insertStrategy()).thenReturn(databaseOperation);
         when(strategyProviderFactory.createDataSeedStrategyProvider()).thenReturn(dataSeedStrategyProvider);
         when(resolver.shouldSeedData()).thenReturn(Boolean.TRUE);
+        when(resolver.getSeedData()).thenReturn(Arrays.asList("test-data.json"));
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
         factory.setProviderFactory(strategyProviderFactory);
 
