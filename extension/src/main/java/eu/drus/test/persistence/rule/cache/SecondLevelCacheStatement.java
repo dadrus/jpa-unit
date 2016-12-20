@@ -31,12 +31,12 @@ public class SecondLevelCacheStatement extends Statement {
     }
 
     private void doEvaluate(final EntityManagerFactory emf) throws Throwable {
-        evictCache(resolver.shouldCleanupBefore() && resolver.shouldEvictCache(), emf);
+        evictCache(resolver.shouldEvictCacheBefore(), emf);
 
         try {
             base.evaluate();
         } finally {
-            evictCache(resolver.shouldCleanupAfter() && resolver.shouldEvictCache(), emf);
+            evictCache(resolver.shouldEvictCacheAfter(), emf);
         }
     }
 

@@ -996,4 +996,248 @@ public class FeatureResolverTest {
         assertThat(cleanupScripts.size(), equalTo(1));
         assertThat(cleanupScripts, hasItem("Script.file"));
     }
+
+    @Test
+    public void testEvictCacheAfterTestIsDisabledForClassWithoutCorrespondingAnnotations() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldEvictCacheAfter(), equalTo(Boolean.FALSE));
+    }
+
+    @Test
+    public void testEvictCacheAfterTestIsDisabledForClassWithCorrespondingClassLevelAnnotations() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
+        jAnnotationUse.param("evictCache", Boolean.FALSE);
+        jAnnotationUse.param("phase", CleanupPhase.AFTER);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldEvictCacheAfter(), equalTo(Boolean.FALSE));
+    }
+
+    @Test
+    public void testEvictCacheAfterTestIsEnabledForClassWithCorrespondingClassLevelAnnotations() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
+        jAnnotationUse.param("evictCache", Boolean.TRUE);
+        jAnnotationUse.param("phase", CleanupPhase.AFTER);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldEvictCacheAfter(), equalTo(Boolean.TRUE));
+    }
+
+    @Test
+    public void testEvictCacheAfterTestIsDisabledForClassWithCorrespondingMethodLevelAnnotations() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+        final JAnnotationUse jAnnotationUse = jMethod.annotate(Cleanup.class);
+        jAnnotationUse.param("evictCache", Boolean.FALSE);
+        jAnnotationUse.param("phase", CleanupPhase.AFTER);
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldEvictCacheAfter(), equalTo(Boolean.FALSE));
+    }
+
+    @Test
+    public void testEvictCacheAfterTestIsEnabledForClassWithCorrespondingMethodLevelAnnotations() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+        final JAnnotationUse jAnnotationUse = jMethod.annotate(Cleanup.class);
+        jAnnotationUse.param("evictCache", Boolean.TRUE);
+        jAnnotationUse.param("phase", CleanupPhase.AFTER);
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldEvictCacheAfter(), equalTo(Boolean.TRUE));
+    }
+
+    @Test
+    public void testEvictCacheBeforeTestIsDisabledForClassWithoutCorrespondingAnnotations() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldEvictCacheBefore(), equalTo(Boolean.FALSE));
+    }
+
+    @Test
+    public void testEvictCacheBeforeTestIsDisabledForClassWithCorrespondingClassLevelAnnotations() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
+        jAnnotationUse.param("evictCache", Boolean.FALSE);
+        jAnnotationUse.param("phase", CleanupPhase.BEFORE);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldEvictCacheBefore(), equalTo(Boolean.FALSE));
+    }
+
+    @Test
+    public void testEvictCacheBeforeTestIsEnabledForClassWithCorrespondingClassLevelAnnotations() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
+        jAnnotationUse.param("evictCache", Boolean.TRUE);
+        jAnnotationUse.param("phase", CleanupPhase.BEFORE);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldEvictCacheBefore(), equalTo(Boolean.TRUE));
+    }
+
+    @Test
+    public void testEvictCacheBeforeTestIsDisabledForClassWithCorrespondingMethodLevelAnnotations() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+        final JAnnotationUse jAnnotationUse = jMethod.annotate(Cleanup.class);
+        jAnnotationUse.param("evictCache", Boolean.FALSE);
+        jAnnotationUse.param("phase", CleanupPhase.BEFORE);
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldEvictCacheBefore(), equalTo(Boolean.FALSE));
+    }
+
+    @Test
+    public void testEvictCacheBeforeTestIsEnabledForClassWithCorrespondingMethodLevelAnnotations() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+        final JAnnotationUse jAnnotationUse = jMethod.annotate(Cleanup.class);
+        jAnnotationUse.param("evictCache", Boolean.TRUE);
+        jAnnotationUse.param("phase", CleanupPhase.BEFORE);
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldEvictCacheBefore(), equalTo(Boolean.TRUE));
+    }
 }

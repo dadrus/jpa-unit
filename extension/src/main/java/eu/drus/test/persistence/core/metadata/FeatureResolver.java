@@ -137,8 +137,16 @@ public class FeatureResolver {
         return cleanupUsingScript == null ? CleanupPhase.AFTER : cleanupUsingScript.phase();
     }
 
-    public boolean shouldEvictCache() {
+    private boolean shouldEvictCache() {
         final Cleanup cleanup = metadataExtractor.cleanup().fetchUsingFirst(testMethod);
         return cleanup == null ? false : cleanup.evictCache();
+    }
+
+    public boolean shouldEvictCacheBefore() {
+        return shouldEvictCache() && getCleanupPhase() == CleanupPhase.BEFORE;
+    }
+
+    public boolean shouldEvictCacheAfter() {
+        return shouldEvictCache() && getCleanupPhase() == CleanupPhase.AFTER;
     }
 }

@@ -61,8 +61,7 @@ public class SecondLevelCacheStatementTest {
     @Test
     public void testEvictionOfSecondLevelCacheIsRunBeforeBaseStatementExecution() throws Throwable {
         // GIVEN
-        when(resolver.shouldCleanupBefore()).thenReturn(Boolean.TRUE);
-        when(resolver.shouldEvictCache()).thenReturn(Boolean.TRUE);
+        when(resolver.shouldEvictCacheBefore()).thenReturn(Boolean.TRUE);
         final SecondLevelCacheStatement stmt = new SecondLevelCacheStatement(resolver, emfProducer, base);
 
         // WHEN
@@ -79,8 +78,7 @@ public class SecondLevelCacheStatementTest {
     @Test
     public void testEvictionOfSecondLevelCacheIsRunAfterBaseStatementExecution() throws Throwable {
         // GIVEN
-        when(resolver.shouldCleanupAfter()).thenReturn(Boolean.TRUE);
-        when(resolver.shouldEvictCache()).thenReturn(Boolean.TRUE);
+        when(resolver.shouldEvictCacheAfter()).thenReturn(Boolean.TRUE);
         final SecondLevelCacheStatement stmt = new SecondLevelCacheStatement(resolver, emfProducer, base);
 
         // WHEN
