@@ -32,10 +32,10 @@ public class JpaUnitRule implements MethodRule {
         rules.add(new SecondLevelCacheRule(featureResolverFactory, ctx));
         rules.add(new PersistenceContextRule(ctx, ctx.getPersistenceField()));
 
-        Statement lastResult = null;
+        Statement lastResult = result;
 
         for (final MethodRule rule : rules) {
-            lastResult = rule.apply(result, method, target);
+            lastResult = rule.apply(lastResult, method, target);
         }
 
         return lastResult;

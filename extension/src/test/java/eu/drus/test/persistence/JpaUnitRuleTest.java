@@ -23,22 +23,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.Description;
-import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.model.InitializationError;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.mockito.ArgumentCaptor;
 
 import com.sun.codemodel.JAnnotationArrayMember;
 import com.sun.codemodel.JAnnotationUse;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JFieldVar;
+import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
 
-public class JpaUnitRunnerTest {
+public class JpaUnitRuleTest {
 
     @ClassRule
     public static TemporaryFolder testFolder = new TemporaryFolder();
@@ -49,8 +50,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
         jMethod.annotate(Test.class);
 
@@ -61,7 +64,7 @@ public class JpaUnitRunnerTest {
 
         try {
             // WHEN
-            new JpaUnitRunner(cut);
+            new JpaUnitRule(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -76,8 +79,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar em1Field = jClass.field(JMod.PRIVATE, EntityManager.class, "em1");
         em1Field.annotate(PersistenceContext.class);
         final JFieldVar em2Field = jClass.field(JMod.PRIVATE, EntityManager.class, "em2");
@@ -92,7 +97,7 @@ public class JpaUnitRunnerTest {
 
         try {
             // WHEN
-            new JpaUnitRunner(cut);
+            new JpaUnitRule(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -107,8 +112,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar emf1Field = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf1");
         emf1Field.annotate(PersistenceUnit.class);
         final JFieldVar emf2Field = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf2");
@@ -123,7 +130,7 @@ public class JpaUnitRunnerTest {
 
         try {
             // WHEN
-            new JpaUnitRunner(cut);
+            new JpaUnitRule(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -138,8 +145,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar emf1Field = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
         emf1Field.annotate(PersistenceContext.class);
         final JFieldVar emf2Field = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
@@ -154,7 +163,7 @@ public class JpaUnitRunnerTest {
 
         try {
             // WHEN
-            new JpaUnitRunner(cut);
+            new JpaUnitRule(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -169,8 +178,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "em");
         emField.annotate(PersistenceContext.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
@@ -183,7 +194,7 @@ public class JpaUnitRunnerTest {
 
         try {
             // WHEN
-            new JpaUnitRunner(cut);
+            new JpaUnitRule(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -198,8 +209,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManager.class, "emf");
         emField.annotate(PersistenceUnit.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
@@ -212,7 +225,7 @@ public class JpaUnitRunnerTest {
 
         try {
             // WHEN
-            new JpaUnitRunner(cut);
+            new JpaUnitRule(cut);
             fail("IllegalArgumentException expected");
         } catch (final IllegalArgumentException e) {
 
@@ -227,8 +240,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
         emField.annotate(PersistenceContext.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
@@ -241,7 +256,7 @@ public class JpaUnitRunnerTest {
 
         try {
             // WHEN
-            new JpaUnitRunner(cut);
+            new JpaUnitRule(cut);
             fail("PersistenceException expected");
         } catch (final PersistenceException e) {
 
@@ -256,8 +271,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
         emField.annotate(PersistenceUnit.class);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
@@ -270,7 +287,7 @@ public class JpaUnitRunnerTest {
 
         try {
             // WHEN
-            new JpaUnitRunner(cut);
+            new JpaUnitRule(cut);
             fail("PersistenceException expected");
         } catch (final PersistenceException e) {
 
@@ -285,8 +302,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceContext.class);
         jAnnotation.param("unitName", "foo");
@@ -300,7 +319,7 @@ public class JpaUnitRunnerTest {
 
         try {
             // WHEN
-            new JpaUnitRunner(cut);
+            new JpaUnitRule(cut);
             fail("PersistenceException expected");
         } catch (final PersistenceException e) {
 
@@ -315,8 +334,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceUnit.class);
         jAnnotation.param("unitName", "foo");
@@ -330,7 +351,7 @@ public class JpaUnitRunnerTest {
 
         try {
             // WHEN
-            new JpaUnitRunner(cut);
+            new JpaUnitRule(cut);
             fail("PersistenceException expected");
         } catch (final PersistenceException e) {
 
@@ -345,8 +366,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceContext.class);
         jAnnotation.param("unitName", "test-unit-1");
@@ -357,7 +380,7 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
+        final BlockJUnit4ClassRunner runner = new BlockJUnit4ClassRunner(cut);
 
         final RunListener listener = mock(RunListener.class);
         final RunNotifier notifier = new RunNotifier();
@@ -385,8 +408,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceUnit.class);
         jAnnotation.param("unitName", "test-unit-1");
@@ -397,7 +422,7 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
+        final BlockJUnit4ClassRunner runner = new BlockJUnit4ClassRunner(cut);
 
         final RunListener listener = mock(RunListener.class);
         final RunNotifier notifier = new RunNotifier();
@@ -425,8 +450,10 @@ public class JpaUnitRunnerTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
+        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
+        ruleField.annotate(Rule.class);
+        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
+        ruleField.init(instance);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceContext.class);
         jAnnotation.param("unitName", "test-unit-1");
@@ -443,7 +470,7 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-        final JpaUnitRunner runner = new JpaUnitRunner(cut);
+        final BlockJUnit4ClassRunner runner = new BlockJUnit4ClassRunner(cut);
 
         final RunListener listener = mock(RunListener.class);
         final RunNotifier notifier = new RunNotifier();
@@ -463,36 +490,5 @@ public class JpaUnitRunnerTest {
         assertThat(descriptionCaptor.getValue().getMethodName(), equalTo("testMethod"));
 
         verifyNoMoreInteractions(listener);
-    }
-
-    @Test
-    public void testJpaUnitRunnerAndJpaUnitRuleFieldExcludeEachOther() throws Exception {
-        // GIVEN
-        final JCodeModel jCodeModel = new JCodeModel();
-        final JPackage jp = jCodeModel.rootPackage();
-        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(RunWith.class);
-        jAnnotationUse.param("value", JpaUnitRunner.class);
-        final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
-        final JAnnotationUse jAnnotation = emField.annotate(PersistenceUnit.class);
-        jAnnotation.param("unitName", "test-unit-1");
-        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
-        ruleField.annotate(Rule.class);
-        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
-        jMethod.annotate(Test.class);
-
-        buildModel(testFolder.getRoot(), jCodeModel);
-        compileModel(testFolder.getRoot());
-
-        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-
-        try {
-            new JpaUnitRunner(cut);
-            fail("InitializationError expected");
-        } catch (final InitializationError e) {
-            // expected
-            assertThat(e.getCauses().get(0).getMessage(), containsString("exclude each other"));
-        }
-
     }
 }
