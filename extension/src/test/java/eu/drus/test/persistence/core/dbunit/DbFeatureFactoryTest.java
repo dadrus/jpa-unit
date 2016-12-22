@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import eu.drus.test.persistence.JpaUnitException;
 import eu.drus.test.persistence.annotation.CleanupStrategy;
 import eu.drus.test.persistence.annotation.DataSeedStrategy;
 import eu.drus.test.persistence.annotation.ExpectedDataSets;
@@ -102,6 +103,26 @@ public class DbFeatureFactoryTest {
     }
 
     @Test
+    public void testCleanUpBeforeThrowsExceptionOnBadInitialDataSets() throws Exception {
+        // GIVEN
+        when(cleanupStrategyProvider.strictStrategy()).thenReturn(cleanupStrategyExecutor);
+        when(strategyProviderFactory.createCleanupStrategyProvider()).thenReturn(cleanupStrategyProvider);
+        when(resolver.getSeedData()).thenReturn(Arrays.asList("not-there.xml"));
+        when(resolver.getCleanupStrategy()).thenReturn(CleanupStrategy.STRICT);
+        when(resolver.shouldCleanupBefore()).thenReturn(Boolean.TRUE);
+        final DbFeatureFactory factory = new DbFeatureFactory(resolver);
+        factory.setProviderFactory(strategyProviderFactory);
+
+        // WHEN
+        try {
+            factory.getCleanUpBeforeFeature();
+            fail("JpaUnitException expected");
+        } catch (final JpaUnitException e) {
+            // THEN
+        }
+    }
+
+    @Test
     public void testCleanUpAfterIsDisabled() throws Exception {
         // GIVEN
         when(cleanupStrategyProvider.strictStrategy()).thenReturn(cleanupStrategyExecutor);
@@ -140,6 +161,26 @@ public class DbFeatureFactoryTest {
 
         // THEN
         verify(cleanupStrategyExecutor, times(1)).execute(any(DatabaseConnection.class), anyListOf(IDataSet.class));
+    }
+
+    @Test
+    public void testCleanUpAfterThrowsExceptionOnBadInitialDataSets() throws Exception {
+        // GIVEN
+        when(cleanupStrategyProvider.strictStrategy()).thenReturn(cleanupStrategyExecutor);
+        when(strategyProviderFactory.createCleanupStrategyProvider()).thenReturn(cleanupStrategyProvider);
+        when(resolver.getSeedData()).thenReturn(Arrays.asList("not-there.xml"));
+        when(resolver.getCleanupStrategy()).thenReturn(CleanupStrategy.STRICT);
+        when(resolver.shouldCleanupAfter()).thenReturn(Boolean.TRUE);
+        final DbFeatureFactory factory = new DbFeatureFactory(resolver);
+        factory.setProviderFactory(strategyProviderFactory);
+
+        // WHEN
+        try {
+            factory.getCleanUpAfterFeature();
+            fail("JpaUnitException expected");
+        } catch (final JpaUnitException e) {
+            // THEN
+        }
     }
 
     @Test
@@ -367,6 +408,26 @@ public class DbFeatureFactoryTest {
 
         // THEN
         verify(databaseOperation).execute(any(DatabaseConnection.class), any(IDataSet.class));
+    }
+
+    @Test
+    public void testSeedDataThrowsExceptionOnBadInitialDataSets() throws Exception {
+        // GIVEN
+        when(resolver.getDataSeedStrategy()).thenReturn(DataSeedStrategy.INSERT);
+        when(dataSeedStrategyProvider.insertStrategy()).thenReturn(databaseOperation);
+        when(strategyProviderFactory.createDataSeedStrategyProvider()).thenReturn(dataSeedStrategyProvider);
+        when(resolver.shouldSeedData()).thenReturn(Boolean.TRUE);
+        when(resolver.getSeedData()).thenReturn(Arrays.asList("not-there.json"));
+        final DbFeatureFactory factory = new DbFeatureFactory(resolver);
+        factory.setProviderFactory(strategyProviderFactory);
+
+        // WHEN
+        try {
+            factory.getSeedDataFeature();
+            fail("JpaUnitException expected");
+        } catch (final JpaUnitException e) {
+            // THEN
+        }
     }
 
     @Test

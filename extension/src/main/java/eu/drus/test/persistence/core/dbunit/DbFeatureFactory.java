@@ -42,11 +42,15 @@ public class DbFeatureFactory {
         return new CompositeDataSet(dataSets.toArray(new IDataSet[dataSets.size()]));
     }
 
-    private static List<IDataSet> loadDataSets(final List<String> paths) throws IOException {
+    private static List<IDataSet> loadDataSets(final List<String> paths) {
         final List<IDataSet> dataSets = new ArrayList<>();
-        for (final String path : paths) {
-            final DataSetLoader loader = DataSetFormat.inferFromFile(path).select(new DataSetLoaderProvider());
-            dataSets.add(loader.load(path));
+        try {
+            for (final String path : paths) {
+                final DataSetLoader loader = DataSetFormat.inferFromFile(path).select(new DataSetLoaderProvider());
+                dataSets.add(loader.load(path));
+            }
+        } catch (final IOException e) {
+            throw new JpaUnitException("Could not load initial data sets", e);
         }
         return dataSets;
     }
@@ -58,11 +62,7 @@ public class DbFeatureFactory {
 
     private List<IDataSet> getInitialDataSets() {
         if (initialDataSets == null) {
-            try {
-                initialDataSets = loadDataSets(featureResolver.getSeedData());
-            } catch (final IOException e) {
-                throw new JpaUnitException("Could not load initial data sets", e);
-            }
+            initialDataSets = loadDataSets(featureResolver.getSeedData());
         }
         return initialDataSets;
     }
@@ -240,7 +240,7 @@ public class DbFeatureFactory {
                 dataSetComparator.compare(currentDataSet, expectedDataSet, errorCollector);
 
                 errorCollector.report();
-            } catch (final SQLException | DatabaseUnitException | IOException e) {
+            } catch (final SQLException | DatabaseUnitException e) {
                 throw new DbFeatureException("Could not execute DB contents verification feature", e);
             }
         }
