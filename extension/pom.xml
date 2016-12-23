@@ -108,7 +108,7 @@
         <version>1.0.7</version>
         <configuration>
           <services>
-            <param>eu.drus.test.persistence.core.dbunit.ext.DbUnitConnectionFactory</param>
+            <param>eu.drus.jpa.unit.core.dbunit.ext.DbUnitConnectionFactory</param>
           </services>
         </configuration>
         <executions>
