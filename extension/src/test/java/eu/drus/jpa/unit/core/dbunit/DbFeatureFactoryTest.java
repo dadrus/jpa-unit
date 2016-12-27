@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -29,13 +30,6 @@ import eu.drus.jpa.unit.JpaUnitException;
 import eu.drus.jpa.unit.annotation.CleanupStrategy;
 import eu.drus.jpa.unit.annotation.DataSeedStrategy;
 import eu.drus.jpa.unit.annotation.ExpectedDataSets;
-import eu.drus.jpa.unit.core.dbunit.CleanupStrategyExecutor;
-import eu.drus.jpa.unit.core.dbunit.CleanupStrategyProvider;
-import eu.drus.jpa.unit.core.dbunit.DataSeedStrategyProvider;
-import eu.drus.jpa.unit.core.dbunit.DbFeature;
-import eu.drus.jpa.unit.core.dbunit.DbFeatureException;
-import eu.drus.jpa.unit.core.dbunit.DbFeatureFactory;
-import eu.drus.jpa.unit.core.dbunit.StrategyProviderFactory;
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -211,7 +205,7 @@ public class DbFeatureFactoryTest {
         // GIVEN
         when(connection.createStatement()).thenReturn(statement);
         when(dbUnitConnection.getConnection()).thenReturn(connection);
-        when(resolver.getCleanupScripts()).thenReturn(Arrays.asList("src/test/resources/schema.sql"));
+        when(resolver.getCleanupScripts()).thenReturn(Arrays.asList("schema.sql"));
         when(resolver.shouldCleanupUsingScriptBefore()).thenReturn(Boolean.TRUE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
 
@@ -222,7 +216,7 @@ public class DbFeatureFactoryTest {
         feature.execute(dbUnitConnection);
 
         // THEN
-        verify(statement).execute(any(String.class));
+        verify(statement, times(3)).execute(contains("create table"));
     }
 
     @Test
@@ -246,7 +240,7 @@ public class DbFeatureFactoryTest {
         // GIVEN
         when(connection.createStatement()).thenReturn(statement);
         when(dbUnitConnection.getConnection()).thenReturn(connection);
-        when(resolver.getCleanupScripts()).thenReturn(Arrays.asList("src/test/resources/schema.sql"));
+        when(resolver.getCleanupScripts()).thenReturn(Arrays.asList("schema.sql"));
         when(resolver.shouldCleanupUsingScriptAfter()).thenReturn(Boolean.TRUE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
 
@@ -257,7 +251,7 @@ public class DbFeatureFactoryTest {
         feature.execute(dbUnitConnection);
 
         // THEN
-        verify(statement).execute(any(String.class));
+        verify(statement, times(3)).execute(contains("create table"));
     }
 
     @Test
@@ -281,7 +275,7 @@ public class DbFeatureFactoryTest {
         // GIVEN
         when(connection.createStatement()).thenReturn(statement);
         when(dbUnitConnection.getConnection()).thenReturn(connection);
-        when(resolver.getPreExecutionScripts()).thenReturn(Arrays.asList("src/test/resources/schema.sql"));
+        when(resolver.getPreExecutionScripts()).thenReturn(Arrays.asList("schema.sql"));
         when(resolver.shouldApplyCustomScriptBefore()).thenReturn(Boolean.TRUE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
 
@@ -292,7 +286,7 @@ public class DbFeatureFactoryTest {
         feature.execute(dbUnitConnection);
 
         // THEN
-        verify(statement).execute(any(String.class));
+        verify(statement, times(3)).execute(contains("create table"));
     }
 
     @Test
@@ -302,7 +296,7 @@ public class DbFeatureFactoryTest {
         when(statement.execute(any(String.class))).thenThrow(error);
         when(connection.createStatement()).thenReturn(statement);
         when(dbUnitConnection.getConnection()).thenReturn(connection);
-        when(resolver.getPreExecutionScripts()).thenReturn(Arrays.asList("src/test/resources/schema.sql"));
+        when(resolver.getPreExecutionScripts()).thenReturn(Arrays.asList("schema.sql"));
         when(resolver.shouldApplyCustomScriptBefore()).thenReturn(Boolean.TRUE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
 
@@ -341,7 +335,7 @@ public class DbFeatureFactoryTest {
         // GIVEN
         when(connection.createStatement()).thenReturn(statement);
         when(dbUnitConnection.getConnection()).thenReturn(connection);
-        when(resolver.getPostExecutionScripts()).thenReturn(Arrays.asList("src/test/resources/schema.sql"));
+        when(resolver.getPostExecutionScripts()).thenReturn(Arrays.asList("schema.sql"));
         when(resolver.shouldApplyCustomScriptAfter()).thenReturn(Boolean.TRUE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
 
@@ -352,7 +346,7 @@ public class DbFeatureFactoryTest {
         feature.execute(dbUnitConnection);
 
         // THEN
-        verify(statement).execute(any(String.class));
+        verify(statement, times(3)).execute(contains("create table"));
     }
 
     @Test
@@ -362,7 +356,7 @@ public class DbFeatureFactoryTest {
         when(statement.execute(any(String.class))).thenThrow(error);
         when(connection.createStatement()).thenReturn(statement);
         when(dbUnitConnection.getConnection()).thenReturn(connection);
-        when(resolver.getPostExecutionScripts()).thenReturn(Arrays.asList("src/test/resources/schema.sql"));
+        when(resolver.getPostExecutionScripts()).thenReturn(Arrays.asList("schema.sql"));
         when(resolver.shouldApplyCustomScriptAfter()).thenReturn(Boolean.TRUE);
         final DbFeatureFactory factory = new DbFeatureFactory(resolver);
 

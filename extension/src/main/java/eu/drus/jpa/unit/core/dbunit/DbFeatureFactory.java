@@ -1,6 +1,10 @@
 package eu.drus.jpa.unit.core.dbunit;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -175,12 +179,17 @@ public class DbFeatureFactory {
         @Override
         public void execute(final IDatabaseConnection connection) throws DbFeatureException {
             try {
-                for (final String script : scriptPaths) {
-                    executeScript(script, connection.getConnection());
+                for (final String scriptPath : scriptPaths) {
+                    executeScript(loadScript(scriptPath), connection.getConnection());
                 }
-            } catch (final SQLException e) {
+            } catch (final SQLException | IOException | URISyntaxException e) {
                 throw new DbFeatureException("Could not apply custom scripts feature", e);
             }
+        }
+
+        private String loadScript(final String path) throws IOException, URISyntaxException {
+            URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+            return new String(Files.readAllBytes(Paths.get(url.toURI())));
         }
 
         private void executeScript(final String script, final Connection connection) throws SQLException {
