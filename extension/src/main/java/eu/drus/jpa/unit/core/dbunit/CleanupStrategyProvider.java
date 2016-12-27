@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.DatabaseSequenceFilter;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.DataSetException;
@@ -22,7 +23,8 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
     public CleanupStrategyExecutor strictStrategy() {
         return (final IDatabaseConnection connection, final List<IDataSet> initialDataSets, final String... tablesToExclude) -> {
             try {
-                final IDataSet dataSet = excludeTables(connection.createDataSet(), tablesToExclude);
+                IDataSet dataSet = excludeTables(connection.createDataSet(), tablesToExclude);
+                dataSet = new FilteredDataSet(new DatabaseSequenceFilter(connection), dataSet);
                 DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
             } catch (final SQLException | DatabaseUnitException e) {
                 throw new DbFeatureException(UNABLE_TO_CLEAN_DATABASE, e);
@@ -38,7 +40,8 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
             }
 
             try {
-                final IDataSet dataSet = excludeTables(mergeDataSets(initialDataSets), tablesToExclude);
+                IDataSet dataSet = excludeTables(mergeDataSets(initialDataSets), tablesToExclude);
+                dataSet = new FilteredDataSet(new DatabaseSequenceFilter(connection), dataSet);
                 DatabaseOperation.DELETE_ALL.execute(connection, dataSet);
             } catch (final SQLException | DatabaseUnitException e) {
                 throw new DbFeatureException(UNABLE_TO_CLEAN_DATABASE, e);
