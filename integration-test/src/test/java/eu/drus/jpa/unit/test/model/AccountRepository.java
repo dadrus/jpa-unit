@@ -1,5 +1,5 @@
 package eu.drus.jpa.unit.test.model;
 
-public class BankAccount {
+public class AccountRepository {
 
 }
