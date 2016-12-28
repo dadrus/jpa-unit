@@ -49,5 +49,9 @@ public enum DataSetFormat {
         T yamlLoader();
 
         T jsonLoader();
+
+        T csvLoader();
+
+        T xlsLoader();
     }
 }
