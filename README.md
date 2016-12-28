@@ -1,22 +1,21 @@
 # JPA Unit [![Build Status](https://travis-ci.org/dadrus/jpa-unit.svg?branch=master)](https://travis-ci.org/dadrus/jpa-unit) [![Coverage Status](https://img.shields.io/sonar/http/sonarqube.com/eu.drus.test:jpa-unit-parent/coverage.svg?maxAge=3600)](https://sonarqube.com/dashboard/index?id=eu.drus.test%3Ajpa-unit-parent) [![Technical Debt](https://img.shields.io/sonar/http/sonarqube.com/eu.drus.test:jpa-unit-parent/tech_debt.svg?maxAge=3600)](https://sonarqube.com/component_measures/?id=eu.drus.test%3Ajpa-unit-parent)
 
-Implements [JUnit](http://junit.org) runner to test javax.persistence entities using an arbitrary persistence provider. Both JPA 2.0, as well
-as JPA 2.1 are supported (See [Issues](https://github.com/dadrus/jpa-unit/issues) for limitations).
+Implements [JUnit](http://junit.org) runner and rule to test javax.persistence entities using an arbitrary persistence provider. Both JPA 2.0, as well as JPA 2.1 is supported (See [Issues](https://github.com/dadrus/jpa-unit/issues) for limitations).
 
 ## Features
 
-- Makes use of standard `@PersistenceContext` annotation to inject the `EntityManager` or `EntityManagerFactory` required by the test and to access the database configuration.
+- Makes use of standard `@PersistenceContext` and `@PersistenceUnit` annotations to inject the `EntityManager`, respectively `EntityManagerFactory` required by the test and to access the database configuration.
 - Implements automatic transaction management
 - Incorporates [DbUnit](http://dbunit.sourceforge.net) to
-	- seed the database using predefined data sets (defined in XML, JSON or YAML) or SQL statements
-	- cleanup the database before or after the actual test execution based on data sets or arbitrary SQL script
-	- execute arbitrary SQL statements before and/or after test execution
-	- verify contents of the database after test execution
+    - seed the database using predefined data sets (defined in XML, JSON or YAML) or SQL statements
+    - cleanup the database before or after the actual test execution based on data sets or arbitrary SQL script
+    - execute arbitrary SQL statements before and/or after test execution
+    - verify contents of the database after test execution
 - Close to [Arquillian Persistence Extension](http://arquillian.org/modules/persistence-extension) on the annotation API level
 	
 ## Credits
 
-The implementation makes heavy use of code from the arquillian persistence extension, which was extracted out of it and adopted to suit the needs.
+The implementation is inspired by the arquillian persistence extension. Some of the code fragments are extracted out of it and adopted to suit the needs.
 
 ## Maven integraton
 
@@ -53,11 +52,7 @@ E.g.:
 
 ### Persistence provider configuration
 
-Like in any JPA application, you have to define a `persistence.xml` file in the `META-INF` directory which includes the configuration of your entities
-and the used JPA provider. For test purposes the `transaction-type` of the configured `persistence-unit` must be `RESOURCE_LOCAL`. The test runner makes
-use of the standard `javax.persistence.jdbc.driver`, `javax.persistence.jdbc.url`, `javax.persistence.jdbc.user` and `javax.persistence.jdbc.password`
-properties to access the database directly. Here an example of a `persistence.xml` file which configures [EclipseLink](http://www.eclipse.org/eclipselink)
-and [H2](http://www.h2database.com/html/main.html) database:
+Like in any JPA application, you have to define a `persistence.xml` file in the `META-INF` directory which includes the configuration of your entities and the used JPA provider. For test purposes the `transaction-type` of the configured `persistence-unit` must be `RESOURCE_LOCAL`. The test runner, as well as the rule implementation make use of the standard `javax.persistence.jdbc.driver`, `javax.persistence.jdbc.url`, `javax.persistence.jdbc.user` and `javax.persistence.jdbc.password` properties to access the database directly. Here an example of a `persistence.xml` file which configures [EclipseLink](http://www.eclipse.org/eclipselink) and [H2](http://www.h2database.com/html/main.html) database:
 
 ```xml
 <persistence version="2.1"
@@ -85,8 +80,9 @@ and [H2](http://www.h2database.com/html/main.html) database:
 
 ### Test code
 
-The basic requirements on the code level are the presence of the `@RunWith(JpaUnitRunner.class)` annotation on the class level and a property of type 
-`EntityManager` or `EntityManagerFactory` annotated with `@PersistenceContext` which at least references the required persistence unit:
+The basic requirements on the code level are the presence of either the `@RunWith(JpaUnitRunner.class)` annotation on the class level or of the `JpaUnitRule` attribute, latter annotated with `@Rule` and a property of type `EntityManager` or `EntityManagerFactory` annotated with `@PersistenceContext`, respectively `@PersistenceUnit` which at least references the required persistence unit.
+
+Example using `JpaUnitRunner`:
 
 ```java
 @RunWith(JpaUnitRunner.class)
@@ -102,15 +98,31 @@ public class MyTest {
 }
 ```
 
-In the above example the `EntityManager` will be injected into the `MyTest` class. The transaction management is done by default and the transaction is
-committed after the return of the test method (here `someTest`), respectively the method annotated with `@After`. The `@Transactional` annotation can be
-used to overwrite this behavior and to configure the require behavior.
+Example using `JpaUnitRule`:
 
-If the `@PersistenceContext` annotation is applied to a property of type `EntityManagerFactory`, no transaction management is done. The user is then
-responsible for obtaining and closing the required `EntityManager` instance including the corresponding transaction management.
+```java
+public class MyTest {
 
-Irrespective of the transaction management and the usage of the either `EntityManager` or `EntityManagerFactory`, following further annotations are
-available to prepare, clean or verify the content of the database in different stages of the test run:
+    @Rule
+    public JpaUnitRule rule = new JpaUnitRule(getClass());
+
+    @PersistenceContext(unitName = "my-test-unit")
+    private EntityManager manager;
+	
+	@Test
+	public void someTest() {
+		// use manager here
+	}
+}
+```
+
+`JpaUnitRunner` and `JpaUnitRule` are fully interchangeable without any functionality limitations.
+
+In the above examples the `EntityManager` will be injected into the `MyTest` class thanks to the `@PersistenceContext` annotation. In this case the `EntityManager` is created for each test and cleared and closed after each test. The transaction management is done by default and the transaction is committed after the return of the test method (here `someTest`), respectively the method annotated with `@After`. The `@Transactional` annotation can be used to overwrite this behavior and to configure the require behavior.
+
+If the `@PersistenceUnit` annotation is applied to a property of type `EntityManagerFactory`, no transaction management is done. The user is then responsible for obtaining and closing the required `EntityManager` instance including the corresponding transaction management. There are however some utility functions which can ease the test implementation (see `TransactionSupport` class).
+
+Irrespective of the transaction management and the usage of the either `EntityManager` or `EntityManagerFactory`, following further annotations are available to prepare, clean or verify the content of the database in different stages of the test run:
 
 - `@ApplyScriptsAfter`, which can be used to define arbitrary SQL scripts which shall be executed before running the test method.
 - `@ApplyScriptsBefore`, which can be used to define arbitrary SQL scripts which shall be executed after running the test method.
@@ -153,7 +165,7 @@ public class MyTest {
 
 ### Examples
 
-You can find working examples in the `integration-test` subproject. As for today it defines four maven profiles to run tests with EclipseLink and Hibernate:
+You can find working examples in the `integration-test` subproject. As for today it implements a simple model and defines four maven profiles to run tests with EclipseLink and Hibernate:
 
 - `jpa2.0-eclipselink`
 - `jpa2.1-eclipselink`
