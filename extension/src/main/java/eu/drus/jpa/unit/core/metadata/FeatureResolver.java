@@ -103,11 +103,11 @@ public class FeatureResolver {
     }
 
     public boolean shouldCleanupBefore() {
-        return shouldCleanup() && getCleanupPhase() == CleanupPhase.BEFORE;
+        return !shouldCleanupUsingScriptBefore() && shouldCleanup() && getCleanupPhase() == CleanupPhase.BEFORE;
     }
 
     public boolean shouldCleanupAfter() {
-        return shouldCleanup() && getCleanupPhase() == CleanupPhase.AFTER;
+        return !shouldCleanupUsingScriptAfter() && shouldCleanup() && getCleanupPhase() == CleanupPhase.AFTER;
     }
 
     private boolean shouldCleanup() {
