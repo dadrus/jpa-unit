@@ -60,7 +60,8 @@ Like in any JPA application, you have to define a `persistence.xml` file in the 
 <persistence version="2.1"
     xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/persistence/persistence_2_1.xsd">
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence 
+    http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/persistence/persistence_2_1.xsd">
 	
 	<persistence-unit name="my-test-unit" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
@@ -68,12 +69,18 @@ Like in any JPA application, you have to define a `persistence.xml` file in the 
         <!-- your classes converters, etc -->
 
         <properties>
-            <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
-            <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform" />
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:serviceEnablerDB;DB_CLOSE_DELAY=-1" />
-            <property name="javax.persistence.jdbc.user" value="test" />
-            <property name="javax.persistence.jdbc.password" value="test" />
+            <property name="eclipselink.ddl-generation" 
+                      value="drop-and-create-tables" />
+            <property name="eclipselink.target-database" 
+                      value="org.eclipse.persistence.platform.database.H2Platform" />
+            <property name="javax.persistence.jdbc.driver" 
+                      value="org.h2.Driver" />
+            <property name="javax.persistence.jdbc.url" 
+                      value="jdbc:h2:mem:serviceEnablerDB;DB_CLOSE_DELAY=-1" />
+            <property name="javax.persistence.jdbc.user" 
+                      value="test" />
+            <property name="javax.persistence.jdbc.password" 
+                      value="test" />
 
         </properties>
     </persistence-unit>
@@ -177,8 +184,10 @@ Creating ad-hoc object graphs in a test to seed the database can be a complex ta
 ```xml
 <dataset>
 	<DEPOSITOR id="100" version="1" name="John" surname="Doe" />
-	<ADDRESS id="100" city="SomeCity" country="SomeCountry" street="SomeStreet 1" zip_code="12345" owner_id="100"/>
-	<ADDRESS id="101" city="SomeOtherCity" country="SomeOtherCountry" street="SomeStreet 2" zip_code="54321" owner_id="100"/>
+	<ADDRESS id="100" city="SomeCity" country="SomeCountry" street="SomeStreet 1" 
+	         zip_code="12345" owner_id="100"/>
+	<ADDRESS id="101" city="SomeOtherCity" country="SomeOtherCountry" street="SomeStreet 2" 
+	         zip_code="54321" owner_id="100"/>
 <dataset>
 ```
 - YAML. Same as above (with XML) can be achieved as depicted below.
@@ -196,7 +205,7 @@ ADDRESS:
     street: SomeStreet 1
     zip_code: 12345
     owner_id: 100
- - id: 101
+  - id: 101
     city: SomeOtherCity
     country: SomeOtherCountry
     street: SomeStreet 2
@@ -209,8 +218,10 @@ ADDRESS:
 	{ "id": "100", "version": "1", "name": "John", "surname": "Doe" }
 ],
 "ADDRESS": [
-	{ "id":"100", "city":"SomeCity", "country": "SomeCountry", "street": "SomeStreet 1", "zip_code": "12345", "owner_id": "100" },
-	{ "id":"101", "city":"SomeOtherCity", "country": "SomeOtherCountry", "street": "SomeStreet 2", "zip_code": "54321", "owner_id": "100" }
+	{ "id":"100", "city":"SomeCity", "country": "SomeCountry", "street": "SomeStreet 1", 
+	  "zip_code": "12345", "owner_id": "100" },
+	{ "id":"101", "city":"SomeOtherCity", "country": "SomeOtherCountry", "street": "SomeStreet 2", 
+	  "zip_code": "54321", "owner_id": "100" }
 ]
 ```
 
