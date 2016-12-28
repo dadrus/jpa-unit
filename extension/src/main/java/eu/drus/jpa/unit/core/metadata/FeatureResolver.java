@@ -13,6 +13,7 @@ import org.junit.runners.model.TestClass;
 import eu.drus.jpa.unit.annotation.ApplyScriptsAfter;
 import eu.drus.jpa.unit.annotation.ApplyScriptsBefore;
 import eu.drus.jpa.unit.annotation.Cleanup;
+import eu.drus.jpa.unit.annotation.CleanupCache;
 import eu.drus.jpa.unit.annotation.CleanupPhase;
 import eu.drus.jpa.unit.annotation.CleanupStrategy;
 import eu.drus.jpa.unit.annotation.CleanupUsingScripts;
@@ -137,16 +138,21 @@ public class FeatureResolver {
         return cleanupUsingScript == null ? CleanupPhase.AFTER : cleanupUsingScript.phase();
     }
 
-    private boolean shouldEvictCache() {
-        final Cleanup cleanup = metadataExtractor.cleanup().fetchUsingFirst(testMethod);
-        return cleanup == null ? false : cleanup.evictCache();
+    private boolean shouldCleanupCache() {
+        final CleanupCache cleanupCache = metadataExtractor.cleanupCache().fetchUsingFirst(testMethod);
+        return cleanupCache == null ? false : cleanupCache.value();
+    }
+
+    private CleanupPhase getCleanupCachePhase() {
+        final CleanupCache cleanupCache = metadataExtractor.cleanupCache().fetchUsingFirst(testMethod);
+        return cleanupCache == null ? CleanupPhase.AFTER : cleanupCache.phase();
     }
 
     public boolean shouldEvictCacheBefore() {
-        return shouldEvictCache() && getCleanupPhase() == CleanupPhase.BEFORE;
+        return shouldCleanupCache() && getCleanupCachePhase() == CleanupPhase.BEFORE;
     }
 
     public boolean shouldEvictCacheAfter() {
-        return shouldEvictCache() && getCleanupPhase() == CleanupPhase.AFTER;
+        return shouldCleanupCache() && getCleanupCachePhase() == CleanupPhase.AFTER;
     }
 }

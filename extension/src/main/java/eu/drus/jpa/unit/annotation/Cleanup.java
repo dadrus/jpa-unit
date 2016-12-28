@@ -35,12 +35,4 @@ public @interface Cleanup {
      * {@link CleanupStrategy#STRICT}.
      */
     CleanupStrategy strategy() default CleanupStrategy.STRICT;
-
-    /**
-     * Whether the second level cache should be evicted. Default is false. The behavior of the
-     * second level can be configured in the <code>persistence.xml</code>. If set to
-     * <code>true</code> the setting here will clear the second level cache regardless the settings
-     * defined in the <code>persistence.xml</code>
-     */
-    boolean evictCache() default false;
 }
