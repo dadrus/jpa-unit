@@ -29,6 +29,7 @@ import com.sun.codemodel.JPackage;
 import eu.drus.jpa.unit.annotation.ApplyScriptsAfter;
 import eu.drus.jpa.unit.annotation.ApplyScriptsBefore;
 import eu.drus.jpa.unit.annotation.Cleanup;
+import eu.drus.jpa.unit.annotation.CleanupCache;
 import eu.drus.jpa.unit.annotation.CleanupPhase;
 import eu.drus.jpa.unit.annotation.CleanupStrategy;
 import eu.drus.jpa.unit.annotation.CleanupUsingScripts;
@@ -36,7 +37,6 @@ import eu.drus.jpa.unit.annotation.CustomColumnFilter;
 import eu.drus.jpa.unit.annotation.DataSeedStrategy;
 import eu.drus.jpa.unit.annotation.ExpectedDataSets;
 import eu.drus.jpa.unit.annotation.InitialDataSets;
-import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 
 public class FeatureResolverTest {
 
@@ -1026,8 +1026,8 @@ public class FeatureResolverTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
-        jAnnotationUse.param("evictCache", Boolean.FALSE);
+        final JAnnotationUse jAnnotationUse = jClass.annotate(CleanupCache.class);
+        jAnnotationUse.param("value", Boolean.FALSE);
         jAnnotationUse.param("phase", CleanupPhase.AFTER);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
@@ -1051,8 +1051,8 @@ public class FeatureResolverTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
-        jAnnotationUse.param("evictCache", Boolean.TRUE);
+        final JAnnotationUse jAnnotationUse = jClass.annotate(CleanupCache.class);
+        jAnnotationUse.param("value", Boolean.TRUE);
         jAnnotationUse.param("phase", CleanupPhase.AFTER);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
@@ -1077,8 +1077,8 @@ public class FeatureResolverTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(Cleanup.class);
-        jAnnotationUse.param("evictCache", Boolean.FALSE);
+        final JAnnotationUse jAnnotationUse = jMethod.annotate(CleanupCache.class);
+        jAnnotationUse.param("value", Boolean.FALSE);
         jAnnotationUse.param("phase", CleanupPhase.AFTER);
 
         buildModel(testFolder.getRoot(), jCodeModel);
@@ -1102,8 +1102,8 @@ public class FeatureResolverTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(Cleanup.class);
-        jAnnotationUse.param("evictCache", Boolean.TRUE);
+        final JAnnotationUse jAnnotationUse = jMethod.annotate(CleanupCache.class);
+        jAnnotationUse.param("value", Boolean.TRUE);
         jAnnotationUse.param("phase", CleanupPhase.AFTER);
 
         buildModel(testFolder.getRoot(), jCodeModel);
@@ -1148,8 +1148,8 @@ public class FeatureResolverTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
-        jAnnotationUse.param("evictCache", Boolean.FALSE);
+        final JAnnotationUse jAnnotationUse = jClass.annotate(CleanupCache.class);
+        jAnnotationUse.param("value", Boolean.FALSE);
         jAnnotationUse.param("phase", CleanupPhase.BEFORE);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
@@ -1173,8 +1173,8 @@ public class FeatureResolverTest {
         final JCodeModel jCodeModel = new JCodeModel();
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
-        jAnnotationUse.param("evictCache", Boolean.TRUE);
+        final JAnnotationUse jAnnotationUse = jClass.annotate(CleanupCache.class);
+        jAnnotationUse.param("value", Boolean.TRUE);
         jAnnotationUse.param("phase", CleanupPhase.BEFORE);
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
@@ -1199,8 +1199,8 @@ public class FeatureResolverTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(Cleanup.class);
-        jAnnotationUse.param("evictCache", Boolean.FALSE);
+        final JAnnotationUse jAnnotationUse = jMethod.annotate(CleanupCache.class);
+        jAnnotationUse.param("value", Boolean.FALSE);
         jAnnotationUse.param("phase", CleanupPhase.BEFORE);
 
         buildModel(testFolder.getRoot(), jCodeModel);
@@ -1224,8 +1224,8 @@ public class FeatureResolverTest {
         final JPackage jp = jCodeModel.rootPackage();
         final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        final JAnnotationUse jAnnotationUse = jMethod.annotate(Cleanup.class);
-        jAnnotationUse.param("evictCache", Boolean.TRUE);
+        final JAnnotationUse jAnnotationUse = jMethod.annotate(CleanupCache.class);
+        jAnnotationUse.param("value", Boolean.TRUE);
         jAnnotationUse.param("phase", CleanupPhase.BEFORE);
 
         buildModel(testFolder.getRoot(), jCodeModel);
