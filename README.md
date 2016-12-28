@@ -112,10 +112,10 @@ public class MyTest {
     @PersistenceContext(unitName = "my-test-unit")
     private EntityManager manager;
 	
-	@Test
-	public void someTest() {
+    @Test
+    public void someTest() {
 		// use manager here
-	}
+    }
 }
 ```
 
@@ -130,10 +130,10 @@ public class MyTest {
     @PersistenceContext(unitName = "my-test-unit")
     private EntityManager manager;
 	
-	@Test
-	public void someTest() {
+    @Test
+    public void someTest() {
 		// use manager here
-	}
+    }
 }
 ```
 
@@ -164,6 +164,22 @@ Like already written above automatic transaction management is done automaticall
     - `DISABLED`. The transactional support is disabled.
     - `ROLLBACK`. Perform a _rollback_ on test return.
     
+Example which disables transactional support for all tests implemented by a given class:
+
+```java
+@RunWith(JpaUnitRunner.class)
+@Transactional(TransactionMode.DISABLED)
+public class MyTest {
+
+    @PersistenceContext(unitName = "my-test-unit")
+    private EntityManager manager;
+	
+    @Test
+    public void someTest() {
+		// use manager here
+    }
+}
+```
     
 `TransactionSupport` becomes handy, when fine graned transaction management is desired or automatic transaction management is disabled (e.g. the test injects `EntityManagerFactory`). Following methods are available:
 
@@ -173,12 +189,43 @@ Like already written above automatic transaction management is done automaticall
 - `execute(<Expression>)` executes the given expression and wraps it in a new transaction. If the expression returns a result, it is returned to the caller. Following behavior is implemented:
     - Before the execution of `<Expression>`: If an active transaction is already running, it is committed and a new transaction is started. Otherwise just a new transaction is started.
     - After the execution of `<Expression>`: The transaction wrapping the `<Expression>` is committed. If an active transaction was running and was committed before the `<Expression>` wrapping transaction was started, a new transaction is started. 
+    
+Here a usage example:
+
+```java
+@RunWith(JpaUnitRunner.class)
+@Transactional(TransactionMode.DISABLED)
+public class MyTest {
+
+    @PersistenceContext(unitName = "my-test-unit")
+    private EntityManager manager;
+	
+    @Test
+    public void someTest() {
+		newTransaction(manager).execute(() -> {
+			// some code wrapped in a transaction
+		});
+		
+		int result = newTransaction(manager)
+		.clearContextOnCommit(true)
+		.execute(() -> {
+			// some code wrapped in a transaction
+			return 1;
+		});
+    }
+}
+```
 
 ### Seeding the database
 
 Creating ad-hoc object graphs in a test to seed the database can be a complex task on the one hand and made the test less readable. On the other hand it is usually not the goal of a test case, rather a prerequisite. To address this, JPA Unit provides an alternative way in a form of database fixtures, which are easy configurable and can be applied for all tests or for a single test. To achieve this JPA Unit uses the concept of data sets from [DbUnit](http://dbunit.sourceforge.net). In essence, data sets are files containing rows to be inserted into the database. JPA Unit supports following data set formats:
 
 - XML (Flat XML Data Set). A simple XML structure, where each element represents a single row in a given table and attribute names correspond to the table columns as illustrated below.
+- YAML.
+- JSON.
+
+Here some data set examples:
+
 ```xml
 <dataset>
 	<DEPOSITOR id="100" version="1" name="John" surname="Doe" />
@@ -188,7 +235,7 @@ Creating ad-hoc object graphs in a test to seed the database can be a complex ta
 	         zip_code="54321" owner_id="100"/>
 <dataset>
 ```
-- YAML. Same as above (with XML) can be achieved as depicted below.
+
 ```yaml
 DEPOSITOR:
   - id: 100
@@ -210,7 +257,7 @@ ADDRESS:
     zip_code: 54321
     owner_id: 100
 ```
-- JSON. Same as above (with XML) can be achieved as depicted below.
+
 ```json
 "DEPOSITOR": [
 	{ "id": "100", "version": "1", "name": "John", "surname": "Doe" }
@@ -232,6 +279,22 @@ To seed the database using data set files put the `@InitialDataSets` annotation 
     - `REFRESH`. During this operation existing rows are updated and new ones are inserted. Entries already existing in the database which are not defined in the provided data set are not affected.
     - `UPDATE`. This strategy updates existing rows using data provided in the data sets. If data set contain a row which is not present in the database (identified by its primary key) then exception is thrown.
 
+Usage example:
+
+```java
+@RunWith(JpaUnitRunner.class)
+@InitialDataSets("datasets/initial-data.json")
+public class MyTest {
+
+    @PersistenceContext(unitName = "my-test-unit")
+    private EntityManager manager;
+	
+    @Test
+    public void someTest() {
+		// use manager here
+    }
+}
+```
 
 ### Running custom SQL scripts
 
