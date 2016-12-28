@@ -87,11 +87,9 @@ Like in any JPA application, you have to define a `persistence.xml` file in the 
 </persistence>
 ```
 
-### JPA Unit API
+### JPA Unit Runner & Rule
 
 JPA Unit follows the concept of configuration by exception whenever possible. To support this concept its API consists mainly of annotations with meaningful defaults (if the annotation is not present) used to drive the test. 
-
-### Setup
 
 The basic requirements on the code level are the presence of either
 
@@ -157,7 +155,7 @@ To control the test behavior, JPA Unit comes with a handful of annotations and s
 
 All these elements are described in more detail below.
 
-#### Transactional tests
+### Transactional tests
 
 Like already written above automatic transaction management is done automatically if the test uses an `EntityManager` instance controlled by JPA Unit. To tweak the required behavior you can use the `@Transactional` annotation either on a test class to apply the same behavior for all tests, or on a single test. This annotation has following properties:
 
@@ -172,11 +170,11 @@ Like already written above automatic transaction management is done automaticall
 - `newTransaction(EntityManager em)` is a static factory method to create new `TransactionSupport` object
 - `flushContextOnCommit(boolean flag)` can be used to configure the `TransactionSupport` object to *flush* the `EntityManager` after the transaction is committed.
 - `clearContextOnCommit(boolean flag)` can be used to configure the `TransactionSupport` object to *clear* the `EntityManager` after the transaction is committed.
-- `execute(<Expression>)` executes the given expression and wraps it in a new transaction. Following behavior is implemented:
+- `execute(<Expression>)` executes the given expression and wraps it in a new transaction. If the expression returns a result, it is returned to the caller. Following behavior is implemented:
     - Before the execution of `<Expression>`: If an active transaction is already running, it is committed and a new transaction is started. Otherwise just a new transaction is started.
     - After the execution of `<Expression>`: The transaction wrapping the `<Expression>` is committed. If an active transaction was running and was committed before the `<Expression>` wrapping transaction was started, a new transaction is started. 
 
-#### Seeding the data base
+### Seeding the database
 
 Creating ad-hoc object graphs in a test to seed the database can be a complex task on the one hand and made the test less readable. On the other hand it is usually not the goal of a test case, rather a prerequisite. To address this, JPA Unit provides an alternative way in a form of database fixtures, which are easy configurable and can be applied for all tests or for a single test. To achieve this JPA Unit uses the concept of data sets from [DbUnit](http://dbunit.sourceforge.net). In essence, data sets are files containing rows to be inserted into the database. JPA Unit supports following data set formats:
 
@@ -235,15 +233,15 @@ To seed the database using data set files put the `@InitialDataSets` annotation 
     - `UPDATE`. This strategy updates existing rows using data provided in the data sets. If data set contain a row which is not present in the database (identified by its primary key) then exception is thrown.
 
 
-#### Running custom SQL scripts
+### Running custom SQL scripts
 
-#### Database content verification
+### Database content verification
 
-#### Cleaning database
+### Cleaning database
 
-#### Controlling second level cache
+### Controlling second level cache
 
-### Examples
+## Examples
 
 Here another example which shows the usage of some of the aforementioned annotations:
 
