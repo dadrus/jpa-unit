@@ -18,6 +18,24 @@ public enum DataSetFormat {
         public <T> T select(final LoaderProvider<T> provider) {
             return provider.jsonLoader();
         }
+    },
+    CSV("csv") {
+        @Override
+        public <T> T select(final LoaderProvider<T> provider) {
+            return provider.csvLoader();
+        }
+    },
+    XLS("xls") {
+        @Override
+        public <T> T select(final LoaderProvider<T> provider) {
+            return provider.xlsLoader();
+        }
+    },
+    XLSX("xlsx") {
+        @Override
+        public <T> T select(final LoaderProvider<T> provider) {
+            return provider.xlsLoader();
+        }
     };
 
     private final String fileExtension;

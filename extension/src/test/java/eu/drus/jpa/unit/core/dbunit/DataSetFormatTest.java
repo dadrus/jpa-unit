@@ -9,9 +9,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.drus.jpa.unit.core.dbunit.DataSetFormat;
-import eu.drus.jpa.unit.core.dbunit.UnsupportedDataSetFormatException;
-
 @RunWith(MockitoJUnitRunner.class)
 public class DataSetFormatTest {
 
@@ -46,6 +43,33 @@ public class DataSetFormatTest {
     }
 
     @Test
+    public void testVerifyXlsLoaderSelection() {
+        final DataSetFormat format = DataSetFormat.XLS;
+
+        format.select(loaderProvider);
+
+        verify(loaderProvider).xlsLoader();
+    }
+
+    @Test
+    public void testVerifyXlsxLoaderSelection() {
+        final DataSetFormat format = DataSetFormat.XLSX;
+
+        format.select(loaderProvider);
+
+        verify(loaderProvider).xlsLoader();
+    }
+
+    @Test
+    public void testVerifyCsvLoaderSelection() {
+        final DataSetFormat format = DataSetFormat.CSV;
+
+        format.select(loaderProvider);
+
+        verify(loaderProvider).csvLoader();
+    }
+
+    @Test
     public void testInferJsonFormatFromFile() {
         final DataSetFormat format = DataSetFormat.inferFromFile("test.json");
 
@@ -67,6 +91,30 @@ public class DataSetFormatTest {
 
         assertThat(format, equalTo(DataSetFormat.YAML));
         assertThat(format.extension(), equalTo("yaml"));
+    }
+
+    @Test
+    public void testInferXlsFormatFromFile() {
+        final DataSetFormat format = DataSetFormat.inferFromFile("test.xls");
+
+        assertThat(format, equalTo(DataSetFormat.XLS));
+        assertThat(format.extension(), equalTo("xls"));
+    }
+
+    @Test
+    public void testInferXlsxFormatFromFile() {
+        final DataSetFormat format = DataSetFormat.inferFromFile("test.xlsx");
+
+        assertThat(format, equalTo(DataSetFormat.XLSX));
+        assertThat(format.extension(), equalTo("xlsx"));
+    }
+
+    @Test
+    public void testInferCsvFormatFromFile() {
+        final DataSetFormat format = DataSetFormat.inferFromFile("test.csv");
+
+        assertThat(format, equalTo(DataSetFormat.CSV));
+        assertThat(format.extension(), equalTo("csv"));
     }
 
     @Test(expected = UnsupportedDataSetFormatException.class)

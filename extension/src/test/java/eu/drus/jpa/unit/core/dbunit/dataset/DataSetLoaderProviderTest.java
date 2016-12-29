@@ -14,9 +14,6 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.junit.Test;
 
-import eu.drus.jpa.unit.core.dbunit.dataset.DataSetLoader;
-import eu.drus.jpa.unit.core.dbunit.dataset.DataSetLoaderProvider;
-
 public class DataSetLoaderProviderTest {
 
     private static final DataSetLoaderProvider LOADER_PROVIDER = new DataSetLoaderProvider();
@@ -220,6 +217,216 @@ public class DataSetLoaderProviderTest {
     public void testXmlLoaderLoadUsingNotExistingResource() throws IOException, DataSetException {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.xmlLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        loader.load("does-not-exist");
+
+        // THEN
+        // IOException is thrown
+    }
+
+    @Test
+    public void testXlsxLoaderLoadUsingProperResource() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        final IDataSet dataSet = loader.load("test-data.xlsx");
+
+        // THEN
+        assertThat(dataSet, notNullValue());
+
+        final List<String> tableNames = Arrays.asList(dataSet.getTableNames());
+        assertThat(tableNames.size(), equalTo(2));
+        assertThat(tableNames, hasItems("XLS_TABLE_1", "XLS_TABLE_2"));
+
+        final ITable table1 = dataSet.getTable("XLS_TABLE_1");
+        assertThat(table1.getRowCount(), equalTo(3));
+
+        final ITable table2 = dataSet.getTable("XLS_TABLE_2");
+        assertThat(table2.getRowCount(), equalTo(1));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testXlsxLoaderLoadUsingNullFileName() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        loader.load(null);
+
+        // THEN
+        // IOException is thrown
+    }
+
+    @Test(expected = IOException.class)
+    public void testXlsxLoaderLoadUsingWrongResource() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        loader.load("test-data.json");
+
+        // THEN
+        // IOException is thrown
+    }
+
+    @Test(expected = IOException.class)
+    public void testXlsxLoaderLoadUsingNotExistingResource() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        loader.load("does-not-exist");
+
+        // THEN
+        // IOException is thrown
+    }
+
+    @Test
+    public void testXlsLoaderLoadUsingProperResource() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        final IDataSet dataSet = loader.load("test-data.xls");
+
+        // THEN
+        assertThat(dataSet, notNullValue());
+
+        final List<String> tableNames = Arrays.asList(dataSet.getTableNames());
+        assertThat(tableNames.size(), equalTo(2));
+        assertThat(tableNames, hasItems("XLS_TABLE_1", "XLS_TABLE_2"));
+
+        final ITable table1 = dataSet.getTable("XLS_TABLE_1");
+        assertThat(table1.getRowCount(), equalTo(3));
+
+        final ITable table2 = dataSet.getTable("XLS_TABLE_2");
+        assertThat(table2.getRowCount(), equalTo(1));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testXlsLoaderLoadUsingNullFileName() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        loader.load(null);
+
+        // THEN
+        // IOException is thrown
+    }
+
+    @Test(expected = IOException.class)
+    public void testXlsLoaderLoadUsingWrongResource() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        loader.load("test-data.json");
+
+        // THEN
+        // IOException is thrown
+    }
+
+    @Test(expected = IOException.class)
+    public void testXlsLoaderLoadUsingNotExistingResource() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        loader.load("does-not-exist");
+
+        // THEN
+        // IOException is thrown
+    }
+
+    @Test
+    public void testCsvLoaderLoadUsingProperResource() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.csvLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        final IDataSet dataSet = loader.load("test-data.csv");
+
+        // THEN
+        assertThat(dataSet, notNullValue());
+
+        final List<String> tableNames = Arrays.asList(dataSet.getTableNames());
+        assertThat(tableNames.size(), equalTo(2));
+        assertThat(tableNames, hasItems("CSV_TABLE_1", "CSV_TABLE_2"));
+
+        final ITable table1 = dataSet.getTable("CSV_TABLE_1");
+        assertThat(table1.getRowCount(), equalTo(3));
+
+        final ITable table2 = dataSet.getTable("CSV_TABLE_2");
+        assertThat(table2.getRowCount(), equalTo(1));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testCsvLoaderLoadUsingNullFileName() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.csvLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        loader.load(null);
+
+        // THEN
+        // IOException is thrown
+    }
+
+    @Test(expected = IOException.class)
+    public void testCsvLoaderLoadUsingWrongResource() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.csvLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        loader.load("test-data.json");
+
+        // THEN
+        // IOException is thrown
+    }
+
+    @Test(expected = IOException.class)
+    public void testCsvLoaderLoadUsingNotExistingResource() throws IOException, DataSetException {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.csvLoader();
 
         // THEN
         assertThat(loader, notNullValue());

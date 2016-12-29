@@ -75,6 +75,9 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
     public DataSetLoader csvLoader() {
         return (final String path) -> {
             final URL csvUrl = Thread.currentThread().getContextClassLoader().getResource(path);
+            if (csvUrl == null) {
+                throw new IOException(path + " does not exist");
+            }
             try {
                 return defineReplaceableExpressions(new CsvDataSet(new File(csvUrl.toURI())));
             } catch (DataSetException | URISyntaxException e) {
