@@ -1,7 +1,6 @@
 package eu.drus.jpa.unit.core.dbunit;
 
 import java.io.File;
-import java.net.URI;
 
 public enum DataSetFormat {
     XML("xml") {
@@ -41,6 +40,7 @@ public enum DataSetFormat {
         }
     };
 
+    private static final String TABLE_ORDERING_FILE = "table-ordering.txt";
     private final String fileExtension;
 
     private DataSetFormat(final String fileExtension) {
@@ -53,21 +53,34 @@ public enum DataSetFormat {
 
     public abstract <T> T select(LoaderProvider<T> provider);
 
-    public static DataSetFormat inferFromFile(final URI fileName) {
+    public static DataSetFormat inferFromFile(final File file) {
 
-        final File dataSetFile = new File(fileName);
-        if (dataSetFile.isDirectory()) {
-            // assuming CSV
+        if (isCsvDirectory(file)) {
             return CSV;
         }
 
         for (final DataSetFormat format : values()) {
-            if (dataSetFile.getName().endsWith(format.fileExtension)) {
+            if (file.getName().endsWith(format.fileExtension)) {
                 return format;
             }
         }
 
-        throw new UnsupportedDataSetFormatException("File " + fileName + " is not supported as data set format.");
+        throw new UnsupportedDataSetFormatException("File " + file + " is not supported as data set format.");
+    }
+
+    private static boolean isCsvDirectory(final File file) {
+        if (file.isDirectory()) {
+            final File[] csvFiles = file.listFiles((final File pathname) -> {
+                return pathname.getName().endsWith(CSV.fileExtension);
+            });
+
+            final File[] metaFiles = file.listFiles((final File pathname) -> {
+                return pathname.getName().equals(TABLE_ORDERING_FILE);
+            });
+
+            return csvFiles.length != 0 && metaFiles.length != 0;
+        }
+        return false;
     }
 
     public interface LoaderProvider<T> {

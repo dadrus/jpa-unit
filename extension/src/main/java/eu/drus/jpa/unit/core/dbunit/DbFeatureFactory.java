@@ -1,5 +1,6 @@
 package eu.drus.jpa.unit.core.dbunit;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,9 +52,9 @@ public class DbFeatureFactory {
         final List<IDataSet> dataSets = new ArrayList<>();
         try {
             for (final String path : paths) {
-                final URI uri = toUri(path);
-                final DataSetLoader loader = DataSetFormat.inferFromFile(uri).select(new DataSetLoaderProvider());
-                dataSets.add(loader.load(uri));
+                final File file = new File(toUri(path));
+                final DataSetLoader loader = DataSetFormat.inferFromFile(file).select(new DataSetLoaderProvider());
+                dataSets.add(loader.load(file));
             }
         } catch (final IOException e) {
             throw new JpaUnitException("Could not load initial data sets", e);

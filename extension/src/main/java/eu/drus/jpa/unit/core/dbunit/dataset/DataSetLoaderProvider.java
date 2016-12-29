@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 
 import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.dataset.DataSetException;
@@ -27,8 +26,8 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
 
     @Override
     public DataSetLoader xmlLoader() {
-        return (final URI path) -> {
-            try (InputStream in = new FileInputStream(new File(path))) {
+        return (final File path) -> {
+            try (InputStream in = new FileInputStream(path)) {
                 final FlatXmlDataSetBuilder flatXmlDataSetBuilder = new FlatXmlDataSetBuilder();
                 flatXmlDataSetBuilder.setColumnSensing(true);
                 return defineReplaceableExpressions(flatXmlDataSetBuilder.build(in));
@@ -40,8 +39,8 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
 
     @Override
     public DataSetLoader yamlLoader() {
-        return (final URI path) -> {
-            try (InputStream in = new FileInputStream(new File(path))) {
+        return (final File path) -> {
+            try (InputStream in = new FileInputStream(path)) {
                 return defineReplaceableExpressions(new CachedDataSet(new YamlDataSetProducer(in), false));
             } catch (final DataSetException e) {
                 throw new IOException(e);
@@ -51,8 +50,8 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
 
     @Override
     public DataSetLoader jsonLoader() {
-        return (final URI path) -> {
-            try (InputStream in = new FileInputStream(new File(path))) {
+        return (final File path) -> {
+            try (InputStream in = new FileInputStream(path)) {
                 return defineReplaceableExpressions(new CachedDataSet(new JsonDataSetProducer(in), false));
             } catch (final DataSetException e) {
                 throw new IOException(e);
@@ -62,9 +61,9 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
 
     @Override
     public DataSetLoader csvLoader() {
-        return (final URI path) -> {
+        return (final File path) -> {
             try {
-                return defineReplaceableExpressions(new CsvDataSet(new File(path)));
+                return defineReplaceableExpressions(new CsvDataSet(path));
             } catch (final DataSetException e) {
                 throw new IOException(e);
             }
@@ -73,8 +72,8 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
 
     @Override
     public DataSetLoader xlsLoader() {
-        return (final URI path) -> {
-            try (InputStream in = new FileInputStream(new File(path))) {
+        return (final File path) -> {
+            try (InputStream in = new FileInputStream(path)) {
                 return defineReplaceableExpressions(new XlsDataSet(in));
             } catch (final DataSetException e) {
                 throw new IOException(e);

@@ -5,8 +5,8 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
@@ -21,9 +21,9 @@ public class DataSetLoaderProviderTest {
 
     private static final DataSetLoaderProvider LOADER_PROVIDER = new DataSetLoaderProvider();
 
-    private static URI toUri(final String path) throws URISyntaxException {
+    private static File getFile(final String path) throws URISyntaxException {
         final URL url = Thread.currentThread().getContextClassLoader().getResource(path);
-        return url.toURI();
+        return new File(url.toURI());
     }
 
     @Test
@@ -35,7 +35,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load(toUri("test-data.json"));
+        final IDataSet dataSet = loader.load(getFile("test-data.json"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -75,7 +75,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load(toUri("test-data.yaml"));
+        loader.load(getFile("test-data.yaml"));
 
         // THEN
         // IOException is thrown
@@ -90,7 +90,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load(toUri("test-data.yaml"));
+        final IDataSet dataSet = loader.load(getFile("test-data.yaml"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -130,7 +130,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load(toUri("test-data.json"));
+        loader.load(getFile("test-data.json"));
 
         // THEN
         // IOException is thrown
@@ -145,7 +145,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load(toUri("test-data.xml"));
+        final IDataSet dataSet = loader.load(getFile("test-data.xml"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -185,7 +185,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load(toUri("test-data.json"));
+        loader.load(getFile("test-data.json"));
 
         // THEN
         // IOException is thrown
@@ -200,7 +200,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load(toUri("test-data.xlsx"));
+        final IDataSet dataSet = loader.load(getFile("test-data.xlsx"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -240,7 +240,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load(toUri("test-data.json"));
+        loader.load(getFile("test-data.json"));
 
         // THEN
         // IOException is thrown
@@ -255,7 +255,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load(toUri("test-data.xls"));
+        final IDataSet dataSet = loader.load(getFile("test-data.xls"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -295,7 +295,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load(toUri("test-data.json"));
+        loader.load(getFile("test-data.json"));
 
         // THEN
         // IOException is thrown
@@ -310,7 +310,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load(toUri("test-data"));
+        final IDataSet dataSet = loader.load(getFile("test-data"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -342,7 +342,7 @@ public class DataSetLoaderProviderTest {
     }
 
     @Test(expected = IOException.class)
-    public void testCsvLoaderLoadUsingWrongResource() throws Exception {
+    public void testCsvLoaderLoadUsingWrongFileResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.csvLoader();
 
@@ -350,7 +350,22 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load(toUri("test-data.json"));
+        loader.load(getFile("test-data.json"));
+
+        // THEN
+        // IOException is thrown
+    }
+
+    @Test(expected = IOException.class)
+    public void testCsvLoaderLoadUsingWrongDirectoryResource() throws Exception {
+        // WHEN
+        final DataSetLoader loader = LOADER_PROVIDER.csvLoader();
+
+        // THEN
+        assertThat(loader, notNullValue());
+
+        // WHEN
+        loader.load(getFile("META-INF"));
 
         // THEN
         // IOException is thrown
