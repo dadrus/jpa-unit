@@ -650,6 +650,35 @@ public class FeatureResolverTest {
     }
 
     @Test
+    public void testCleanupAfterTestIsDisabledIfCleanupUsingScriptsAfterIsEnabled() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
+        jAnnotationUse.param("phase", CleanupPhase.AFTER);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+        jAnnotationUse = jMethod.annotate(CleanupUsingScripts.class);
+        jAnnotationUse.param("value", "schema.sql");
+        jAnnotationUse.param("phase", CleanupPhase.AFTER);
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupAfter(), equalTo(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupUsingScriptAfter(), equalTo(Boolean.TRUE));
+    }
+
+    @Test
     public void testCleanupIsDisabledUsingCorrespondingClassLevelAnnotation() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
@@ -771,6 +800,35 @@ public class FeatureResolverTest {
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.TRUE));
         assertThat(resolver.shouldCleanupAfter(), equalTo(Boolean.FALSE));
+    }
+
+    @Test
+    public void testCleanupBeforeTestIsDisabledIfCleanupUsingScriptsBeforeIsEnabled() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        JAnnotationUse jAnnotationUse = jClass.annotate(Cleanup.class);
+        jAnnotationUse.param("phase", CleanupPhase.BEFORE);
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+        jAnnotationUse = jMethod.annotate(CleanupUsingScripts.class);
+        jAnnotationUse.param("value", "schema.sql");
+        jAnnotationUse.param("phase", CleanupPhase.BEFORE);
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = new FeatureResolver(method, cut);
+
+        // THEN
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupAfter(), equalTo(Boolean.FALSE));
+        assertThat(resolver.shouldCleanupUsingScriptBefore(), equalTo(Boolean.TRUE));
     }
 
     @Test
