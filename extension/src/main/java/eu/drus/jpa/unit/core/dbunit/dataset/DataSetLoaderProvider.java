@@ -1,10 +1,10 @@
 package eu.drus.jpa.unit.core.dbunit.dataset;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 
 import org.dbunit.dataset.CachedDataSet;
 import org.dbunit.dataset.DataSetException;
@@ -18,8 +18,6 @@ import eu.drus.jpa.unit.core.dbunit.DataSetFormat.LoaderProvider;
 
 public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
 
-    private static final String COULD_NOT_OPEN_FILE = "Could not open file: ";
-
     private IDataSet defineReplaceableExpressions(final IDataSet dataSet) {
         final ReplacementDataSet replacementDataSet = new ReplacementDataSet(dataSet);
         replacementDataSet.addReplacementObject("[null]", null);
@@ -27,17 +25,10 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
         return replacementDataSet;
     }
 
-    private void validateStream(final InputStream in, final String message) throws IOException {
-        if (in == null) {
-            throw new IOException(message);
-        }
-    }
-
     @Override
     public DataSetLoader xmlLoader() {
-        return (final String path) -> {
-            try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
-                validateStream(in, COULD_NOT_OPEN_FILE + path);
+        return (final URI path) -> {
+            try (InputStream in = new FileInputStream(new File(path))) {
                 final FlatXmlDataSetBuilder flatXmlDataSetBuilder = new FlatXmlDataSetBuilder();
                 flatXmlDataSetBuilder.setColumnSensing(true);
                 return defineReplaceableExpressions(flatXmlDataSetBuilder.build(in));
@@ -49,9 +40,8 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
 
     @Override
     public DataSetLoader yamlLoader() {
-        return (final String path) -> {
-            try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
-                validateStream(in, COULD_NOT_OPEN_FILE + path);
+        return (final URI path) -> {
+            try (InputStream in = new FileInputStream(new File(path))) {
                 return defineReplaceableExpressions(new CachedDataSet(new YamlDataSetProducer(in), false));
             } catch (final DataSetException e) {
                 throw new IOException(e);
@@ -61,9 +51,8 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
 
     @Override
     public DataSetLoader jsonLoader() {
-        return (final String path) -> {
-            try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
-                validateStream(in, COULD_NOT_OPEN_FILE + path);
+        return (final URI path) -> {
+            try (InputStream in = new FileInputStream(new File(path))) {
                 return defineReplaceableExpressions(new CachedDataSet(new JsonDataSetProducer(in), false));
             } catch (final DataSetException e) {
                 throw new IOException(e);
@@ -73,14 +62,10 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
 
     @Override
     public DataSetLoader csvLoader() {
-        return (final String path) -> {
-            final URL csvUrl = Thread.currentThread().getContextClassLoader().getResource(path);
-            if (csvUrl == null) {
-                throw new IOException(path + " does not exist");
-            }
+        return (final URI path) -> {
             try {
-                return defineReplaceableExpressions(new CsvDataSet(new File(csvUrl.toURI())));
-            } catch (DataSetException | URISyntaxException e) {
+                return defineReplaceableExpressions(new CsvDataSet(new File(path)));
+            } catch (final DataSetException e) {
                 throw new IOException(e);
             }
         };
@@ -88,9 +73,8 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader> {
 
     @Override
     public DataSetLoader xlsLoader() {
-        return (final String path) -> {
-            try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(path)) {
-                validateStream(in, COULD_NOT_OPEN_FILE + path);
+        return (final URI path) -> {
+            try (InputStream in = new FileInputStream(new File(path))) {
                 return defineReplaceableExpressions(new XlsDataSet(in));
             } catch (final DataSetException e) {
                 throw new IOException(e);

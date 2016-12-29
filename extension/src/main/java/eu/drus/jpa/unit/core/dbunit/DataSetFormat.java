@@ -1,5 +1,8 @@
 package eu.drus.jpa.unit.core.dbunit;
 
+import java.io.File;
+import java.net.URI;
+
 public enum DataSetFormat {
     XML("xml") {
         @Override
@@ -50,10 +53,16 @@ public enum DataSetFormat {
 
     public abstract <T> T select(LoaderProvider<T> provider);
 
-    public static DataSetFormat inferFromFile(final String fileName) {
+    public static DataSetFormat inferFromFile(final URI fileName) {
+
+        final File dataSetFile = new File(fileName);
+        if (dataSetFile.isDirectory()) {
+            // assuming CSV
+            return CSV;
+        }
 
         for (final DataSetFormat format : values()) {
-            if (fileName.endsWith(format.fileExtension)) {
+            if (dataSetFile.getName().endsWith(format.fileExtension)) {
                 return format;
             }
         }

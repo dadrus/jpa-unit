@@ -1,6 +1,7 @@
 package eu.drus.jpa.unit.core.dbunit;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -50,13 +51,27 @@ public class DbFeatureFactory {
         final List<IDataSet> dataSets = new ArrayList<>();
         try {
             for (final String path : paths) {
-                final DataSetLoader loader = DataSetFormat.inferFromFile(path).select(new DataSetLoaderProvider());
-                dataSets.add(loader.load(path));
+                final URI uri = toUri(path);
+                final DataSetLoader loader = DataSetFormat.inferFromFile(uri).select(new DataSetLoaderProvider());
+                dataSets.add(loader.load(uri));
             }
         } catch (final IOException e) {
             throw new JpaUnitException("Could not load initial data sets", e);
         }
         return dataSets;
+    }
+
+    private static URI toUri(final String path) {
+        final URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+        if (url == null) {
+            throw new JpaUnitException(path + " not found");
+        }
+
+        try {
+            return url.toURI();
+        } catch (final URISyntaxException e) {
+            throw new JpaUnitException("Could not convert " + path + " to URI.", e);
+        }
     }
 
     // for tests
@@ -188,7 +203,7 @@ public class DbFeatureFactory {
         }
 
         private String loadScript(final String path) throws IOException, URISyntaxException {
-            URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+            final URL url = Thread.currentThread().getContextClassLoader().getResource(path);
             return new String(Files.readAllBytes(Paths.get(url.toURI())));
         }
 

@@ -4,6 +4,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -14,6 +18,11 @@ public class DataSetFormatTest {
 
     @Mock
     private DataSetFormat.LoaderProvider<Object> loaderProvider;
+
+    private static URI toUri(final String path) throws URISyntaxException {
+        final URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+        return url.toURI();
+    }
 
     @Test
     public void testVerifyJsonLoaderSelection() {
@@ -70,55 +79,55 @@ public class DataSetFormatTest {
     }
 
     @Test
-    public void testInferJsonFormatFromFile() {
-        final DataSetFormat format = DataSetFormat.inferFromFile("test.json");
+    public void testInferJsonFormatFromFile() throws URISyntaxException {
+        final DataSetFormat format = DataSetFormat.inferFromFile(toUri("test-data.json"));
 
         assertThat(format, equalTo(DataSetFormat.JSON));
         assertThat(format.extension(), equalTo("json"));
     }
 
     @Test
-    public void testInferXmlFormatFromFile() {
-        final DataSetFormat format = DataSetFormat.inferFromFile("test.xml");
+    public void testInferXmlFormatFromFile() throws URISyntaxException {
+        final DataSetFormat format = DataSetFormat.inferFromFile(toUri("test-data.xml"));
 
         assertThat(format, equalTo(DataSetFormat.XML));
         assertThat(format.extension(), equalTo("xml"));
     }
 
     @Test
-    public void testInferYamlFormatFromFile() {
-        final DataSetFormat format = DataSetFormat.inferFromFile("test.yaml");
+    public void testInferYamlFormatFromFile() throws URISyntaxException {
+        final DataSetFormat format = DataSetFormat.inferFromFile(toUri("test-data.yaml"));
 
         assertThat(format, equalTo(DataSetFormat.YAML));
         assertThat(format.extension(), equalTo("yaml"));
     }
 
     @Test
-    public void testInferXlsFormatFromFile() {
-        final DataSetFormat format = DataSetFormat.inferFromFile("test.xls");
+    public void testInferXlsFormatFromFile() throws URISyntaxException {
+        final DataSetFormat format = DataSetFormat.inferFromFile(toUri("test-data.xls"));
 
         assertThat(format, equalTo(DataSetFormat.XLS));
         assertThat(format.extension(), equalTo("xls"));
     }
 
     @Test
-    public void testInferXlsxFormatFromFile() {
-        final DataSetFormat format = DataSetFormat.inferFromFile("test.xlsx");
+    public void testInferXlsxFormatFromFile() throws URISyntaxException {
+        final DataSetFormat format = DataSetFormat.inferFromFile(toUri("test-data.xlsx"));
 
         assertThat(format, equalTo(DataSetFormat.XLSX));
         assertThat(format.extension(), equalTo("xlsx"));
     }
 
     @Test
-    public void testInferCsvFormatFromFile() {
-        final DataSetFormat format = DataSetFormat.inferFromFile("test.csv");
+    public void testInferCsvFormatFromFile() throws URISyntaxException {
+        final DataSetFormat format = DataSetFormat.inferFromFile(toUri("test-data"));
 
         assertThat(format, equalTo(DataSetFormat.CSV));
         assertThat(format.extension(), equalTo("csv"));
     }
 
     @Test(expected = UnsupportedDataSetFormatException.class)
-    public void testInferFormatFromFileWithUnknownFileExtension() {
-        DataSetFormat.inferFromFile("test.foo");
+    public void testInferFormatFromFileWithUnknownFileExtension() throws URISyntaxException {
+        DataSetFormat.inferFromFile(toUri("empty.file"));
     }
 }

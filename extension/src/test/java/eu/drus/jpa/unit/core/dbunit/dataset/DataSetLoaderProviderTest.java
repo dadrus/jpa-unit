@@ -6,6 +6,9 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,8 +21,13 @@ public class DataSetLoaderProviderTest {
 
     private static final DataSetLoaderProvider LOADER_PROVIDER = new DataSetLoaderProvider();
 
+    private static URI toUri(final String path) throws URISyntaxException {
+        final URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+        return url.toURI();
+    }
+
     @Test
-    public void testJsonLoaderLoadUsingProperResource() throws IOException, DataSetException {
+    public void testJsonLoaderLoadUsingProperResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.jsonLoader();
 
@@ -27,7 +35,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load("test-data.json");
+        final IDataSet dataSet = loader.load(toUri("test-data.json"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -59,7 +67,7 @@ public class DataSetLoaderProviderTest {
     }
 
     @Test(expected = IOException.class)
-    public void testJsonLoaderLoadUsingWrongResource() throws IOException, DataSetException {
+    public void testJsonLoaderLoadUsingWrongResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.jsonLoader();
 
@@ -67,29 +75,14 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load("test-data.yaml");
-
-        // THEN
-        // IOException is thrown
-    }
-
-    @Test(expected = IOException.class)
-    public void testJsonLoaderLoadUsingNotExistingResource() throws IOException, DataSetException {
-        // WHEN
-        final DataSetLoader loader = LOADER_PROVIDER.jsonLoader();
-
-        // THEN
-        assertThat(loader, notNullValue());
-
-        // WHEN
-        loader.load("does-not-exist");
+        loader.load(toUri("test-data.yaml"));
 
         // THEN
         // IOException is thrown
     }
 
     @Test
-    public void testYamlLoaderLoadUsingProperResource() throws IOException, DataSetException {
+    public void testYamlLoaderLoadUsingProperResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.yamlLoader();
 
@@ -97,7 +90,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load("test-data.yaml");
+        final IDataSet dataSet = loader.load(toUri("test-data.yaml"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -129,7 +122,7 @@ public class DataSetLoaderProviderTest {
     }
 
     @Test(expected = IOException.class)
-    public void testYamlLoaderLoadUsingWrongResource() throws IOException, DataSetException {
+    public void testYamlLoaderLoadUsingWrongResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.yamlLoader();
 
@@ -137,29 +130,14 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load("test-data.json");
-
-        // THEN
-        // IOException is thrown
-    }
-
-    @Test(expected = IOException.class)
-    public void testYamlLoaderLoadUsingNotExistingResource() throws IOException, DataSetException {
-        // WHEN
-        final DataSetLoader loader = LOADER_PROVIDER.yamlLoader();
-
-        // THEN
-        assertThat(loader, notNullValue());
-
-        // WHEN
-        loader.load("does-not-exist");
+        loader.load(toUri("test-data.json"));
 
         // THEN
         // IOException is thrown
     }
 
     @Test
-    public void testXmlLoaderLoadUsingProperResource() throws IOException, DataSetException {
+    public void testXmlLoaderLoadUsingProperResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.xmlLoader();
 
@@ -167,7 +145,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load("test-data.xml");
+        final IDataSet dataSet = loader.load(toUri("test-data.xml"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -199,7 +177,7 @@ public class DataSetLoaderProviderTest {
     }
 
     @Test(expected = IOException.class)
-    public void testXmlLoaderLoadUsingWrongResource() throws IOException, DataSetException {
+    public void testXmlLoaderLoadUsingWrongResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.xmlLoader();
 
@@ -207,29 +185,14 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load("test-data.json");
-
-        // THEN
-        // IOException is thrown
-    }
-
-    @Test(expected = IOException.class)
-    public void testXmlLoaderLoadUsingNotExistingResource() throws IOException, DataSetException {
-        // WHEN
-        final DataSetLoader loader = LOADER_PROVIDER.xmlLoader();
-
-        // THEN
-        assertThat(loader, notNullValue());
-
-        // WHEN
-        loader.load("does-not-exist");
+        loader.load(toUri("test-data.json"));
 
         // THEN
         // IOException is thrown
     }
 
     @Test
-    public void testXlsxLoaderLoadUsingProperResource() throws IOException, DataSetException {
+    public void testXlsxLoaderLoadUsingProperResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
 
@@ -237,7 +200,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load("test-data.xlsx");
+        final IDataSet dataSet = loader.load(toUri("test-data.xlsx"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -269,7 +232,7 @@ public class DataSetLoaderProviderTest {
     }
 
     @Test(expected = IOException.class)
-    public void testXlsxLoaderLoadUsingWrongResource() throws IOException, DataSetException {
+    public void testXlsxLoaderLoadUsingWrongResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
 
@@ -277,29 +240,14 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load("test-data.json");
-
-        // THEN
-        // IOException is thrown
-    }
-
-    @Test(expected = IOException.class)
-    public void testXlsxLoaderLoadUsingNotExistingResource() throws IOException, DataSetException {
-        // WHEN
-        final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
-
-        // THEN
-        assertThat(loader, notNullValue());
-
-        // WHEN
-        loader.load("does-not-exist");
+        loader.load(toUri("test-data.json"));
 
         // THEN
         // IOException is thrown
     }
 
     @Test
-    public void testXlsLoaderLoadUsingProperResource() throws IOException, DataSetException {
+    public void testXlsLoaderLoadUsingProperResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
 
@@ -307,7 +255,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load("test-data.xls");
+        final IDataSet dataSet = loader.load(toUri("test-data.xls"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -339,7 +287,7 @@ public class DataSetLoaderProviderTest {
     }
 
     @Test(expected = IOException.class)
-    public void testXlsLoaderLoadUsingWrongResource() throws IOException, DataSetException {
+    public void testXlsLoaderLoadUsingWrongResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
 
@@ -347,29 +295,14 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load("test-data.json");
-
-        // THEN
-        // IOException is thrown
-    }
-
-    @Test(expected = IOException.class)
-    public void testXlsLoaderLoadUsingNotExistingResource() throws IOException, DataSetException {
-        // WHEN
-        final DataSetLoader loader = LOADER_PROVIDER.xlsLoader();
-
-        // THEN
-        assertThat(loader, notNullValue());
-
-        // WHEN
-        loader.load("does-not-exist");
+        loader.load(toUri("test-data.json"));
 
         // THEN
         // IOException is thrown
     }
 
     @Test
-    public void testCsvLoaderLoadUsingProperResource() throws IOException, DataSetException {
+    public void testCsvLoaderLoadUsingProperResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.csvLoader();
 
@@ -377,7 +310,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        final IDataSet dataSet = loader.load("test-data.csv");
+        final IDataSet dataSet = loader.load(toUri("test-data"));
 
         // THEN
         assertThat(dataSet, notNullValue());
@@ -409,7 +342,7 @@ public class DataSetLoaderProviderTest {
     }
 
     @Test(expected = IOException.class)
-    public void testCsvLoaderLoadUsingWrongResource() throws IOException, DataSetException {
+    public void testCsvLoaderLoadUsingWrongResource() throws Exception {
         // WHEN
         final DataSetLoader loader = LOADER_PROVIDER.csvLoader();
 
@@ -417,22 +350,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load("test-data.json");
-
-        // THEN
-        // IOException is thrown
-    }
-
-    @Test(expected = IOException.class)
-    public void testCsvLoaderLoadUsingNotExistingResource() throws IOException, DataSetException {
-        // WHEN
-        final DataSetLoader loader = LOADER_PROVIDER.csvLoader();
-
-        // THEN
-        assertThat(loader, notNullValue());
-
-        // WHEN
-        loader.load("does-not-exist");
+        loader.load(toUri("test-data.json"));
 
         // THEN
         // IOException is thrown
