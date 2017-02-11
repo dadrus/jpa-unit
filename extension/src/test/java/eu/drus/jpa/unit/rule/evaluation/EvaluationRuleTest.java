@@ -18,14 +18,13 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
-import eu.drus.jpa.unit.rule.evaluation.EvaluationRule;
+import eu.drus.jpa.unit.rule.ExecutionContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EvaluationRuleTest {
 
     @Mock
-    private FeatureResolverFactory featureResolverFactory;
+    private ExecutionContext ctx;
 
     @Mock
     private FeatureResolver resolver;
@@ -38,14 +37,15 @@ public class EvaluationRuleTest {
 
     @Before
     public void setUp() throws Exception {
-        when(featureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
+        when(ctx.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
+        when(ctx.getDataBaseConnectionProperties()).thenReturn(Collections.emptyMap());
         when(resolver.getSeedData()).thenReturn(Collections.emptyList());
     }
 
     @Test
     public void testApplyRule() {
         // GIVEN
-        final EvaluationRule rule = new EvaluationRule(featureResolverFactory, Collections.emptyMap());
+        final EvaluationRule rule = new EvaluationRule(ctx);
 
         // WHEN
         final Statement stmt = rule.apply(base, method, this);

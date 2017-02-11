@@ -21,8 +21,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.annotation.TransactionMode;
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
-import eu.drus.jpa.unit.rule.transaction.TransactionalStatement;
+import eu.drus.jpa.unit.rule.ExecutionContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionalStatementTest {
@@ -40,7 +39,7 @@ public class TransactionalStatementTest {
     private EntityManager em;
 
     @Mock
-    private FeatureResolverFactory featureResolverFactory;
+    private ExecutionContext ctx;
 
     @Mock
     private FeatureResolver resolver;
@@ -54,14 +53,15 @@ public class TransactionalStatementTest {
         emfField = getClass().getDeclaredField("emf");
         emField = getClass().getDeclaredField("em");
 
-        when(featureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
+        when(ctx.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
         when(resolver.getTransactionMode()).thenReturn(TransactionMode.DISABLED);
     }
 
     @Test
     public void testNoTransactionStrategyIsExecutedForEntityManagerFactory() throws Throwable {
         // GIVEN
-        final TransactionalStatement stmt = new TransactionalStatement(featureResolverFactory, emfField, base, method, this);
+        when(ctx.getPersistenceField()).thenReturn(emfField);
+        final TransactionalStatement stmt = new TransactionalStatement(ctx, base, method, this);
 
         // WHEN
         stmt.evaluate();
@@ -75,7 +75,8 @@ public class TransactionalStatementTest {
     @Test
     public void testTransactionStrategyIsExecutedForEntityManager() throws Throwable {
         // GIVEN
-        final TransactionalStatement stmt = new TransactionalStatement(featureResolverFactory, emField, base, method, this);
+        when(ctx.getPersistenceField()).thenReturn(emField);
+        final TransactionalStatement stmt = new TransactionalStatement(ctx, base, method, this);
 
         // WHEN
         stmt.evaluate();

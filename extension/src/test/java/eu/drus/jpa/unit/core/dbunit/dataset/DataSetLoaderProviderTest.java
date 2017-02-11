@@ -365,7 +365,7 @@ public class DataSetLoaderProviderTest {
         assertThat(loader, notNullValue());
 
         // WHEN
-        loader.load(getFile("META-INF"));
+        loader.load(getFile("./META-INF"));
 
         // THEN
         // IOException is thrown

@@ -20,9 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.annotation.TransactionMode;
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
-import eu.drus.jpa.unit.rule.transaction.TransactionalRule;
-import eu.drus.jpa.unit.rule.transaction.TransactionalStatement;
+import eu.drus.jpa.unit.rule.ExecutionContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionalRuleTest {
@@ -37,7 +35,7 @@ public class TransactionalRuleTest {
     private EntityManagerFactory emf;
 
     @Mock
-    private FeatureResolverFactory featureResolverFactory;
+    private ExecutionContext ctx;
 
     @Mock
     private FeatureResolver resolver;
@@ -45,10 +43,11 @@ public class TransactionalRuleTest {
     @Test
     public void testApplyTransactionalRule() throws Throwable {
         // GIVEN
-        when(featureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
-        when(resolver.getTransactionMode()).thenReturn(TransactionMode.DISABLED);
         final Field field = getClass().getDeclaredField("emf");
-        final TransactionalRule rule = new TransactionalRule(featureResolverFactory, field);
+        when(ctx.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
+        when(ctx.getPersistenceField()).thenReturn(field);
+        when(resolver.getTransactionMode()).thenReturn(TransactionMode.DISABLED);
+        final TransactionalRule rule = new TransactionalRule(ctx);
 
         // WHEN
         final Statement stmt = rule.apply(base, method, this);

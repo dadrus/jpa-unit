@@ -8,7 +8,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
+import eu.drus.jpa.unit.rule.ExecutionContext;
 
 public class TransactionalStatement extends Statement {
     private final Field persistenceField;
@@ -16,12 +16,11 @@ public class TransactionalStatement extends Statement {
     private Statement base;
     private Object target;
 
-    public TransactionalStatement(final FeatureResolverFactory featureResolverFactory, final Field persistenceField, final Statement base,
-            final FrameworkMethod method, final Object target) {
-        this.persistenceField = persistenceField;
+    public TransactionalStatement(final ExecutionContext ctx, final Statement base, final FrameworkMethod method, final Object target) {
+        persistenceField = ctx.getPersistenceField();
         this.base = base;
         this.target = target;
-        featureResolver = featureResolverFactory.createFeatureResolver(method.getMethod(), target.getClass());
+        featureResolver = ctx.createFeatureResolver(method.getMethod(), target.getClass());
     }
 
     @Override

@@ -1,24 +1,42 @@
 package eu.drus.jpa.unit.rule.context;
 
-import java.lang.reflect.Field;
-
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+import eu.drus.jpa.unit.rule.ExecutionContext;
+import eu.drus.jpa.unit.rule.ExecutionPhase;
+import eu.drus.jpa.unit.rule.MethodRuleFactory;
+
 public class PersistenceContextRule implements MethodRule {
 
-    private final EntityManagerFactoryProducer emfProducer;
-    private final Field persistenceField;
+    public static class Factory implements MethodRuleFactory {
 
-    public PersistenceContextRule(final EntityManagerFactoryProducer emfProducer, final Field persistenceField) {
-        this.emfProducer = emfProducer;
-        this.persistenceField = persistenceField;
+        @Override
+        public ExecutionPhase getPhase() {
+            return ExecutionPhase.PERSISTENCE_PROVIDER_SETUP;
+        }
+
+        @Override
+        public int getPriority() {
+            return 0;
+        }
+
+        @Override
+        public MethodRule createRule(final ExecutionContext ctx) {
+            return new PersistenceContextRule(ctx);
+        }
+    }
+
+    private final ExecutionContext ctx;
+
+    public PersistenceContextRule(final ExecutionContext ctx) {
+        this.ctx = ctx;
     }
 
     @Override
     public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-        return new PersistenceContextStatement(emfProducer, persistenceField, base, target);
+        return new PersistenceContextStatement(ctx, base, target);
     }
 
 }

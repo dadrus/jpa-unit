@@ -17,22 +17,16 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
-import eu.drus.jpa.unit.rule.cache.SecondLevelCacheRule;
-import eu.drus.jpa.unit.rule.cache.SecondLevelCacheStatement;
-import eu.drus.jpa.unit.rule.context.EntityManagerFactoryProducer;
+import eu.drus.jpa.unit.rule.ExecutionContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SecondLevelCacheRuleTest {
 
     @Mock
-    private FeatureResolverFactory featureResolverFactory;
+    private ExecutionContext ctx;
 
     @Mock
     private FeatureResolver resolver;
-
-    @Mock
-    private EntityManagerFactoryProducer emfProducer;
 
     @Mock
     private Statement base;
@@ -42,14 +36,14 @@ public class SecondLevelCacheRuleTest {
 
     @Before
     public void setupMocks() {
-        when(featureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
+        when(ctx.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
     }
 
     @Test
     public void testApplySecondLevelCacheRule() {
 
         // GIVEN
-        final SecondLevelCacheRule rule = new SecondLevelCacheRule(featureResolverFactory, emfProducer);
+        final SecondLevelCacheRule rule = new SecondLevelCacheRule(ctx);
 
         // WHEN
         final Statement stmt = rule.apply(base, method, this);

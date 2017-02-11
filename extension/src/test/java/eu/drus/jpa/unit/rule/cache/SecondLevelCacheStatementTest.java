@@ -17,8 +17,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.rule.cache.SecondLevelCacheStatement;
-import eu.drus.jpa.unit.rule.context.EntityManagerFactoryProducer;
+import eu.drus.jpa.unit.rule.ExecutionContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SecondLevelCacheStatementTest {
@@ -27,7 +26,7 @@ public class SecondLevelCacheStatementTest {
     private FeatureResolver resolver;
 
     @Mock
-    private EntityManagerFactoryProducer emfProducer;
+    private ExecutionContext ctx;
 
     @Mock
     private EntityManagerFactory emf;
@@ -40,56 +39,56 @@ public class SecondLevelCacheStatementTest {
 
     @Before
     public void setupMocks() {
-        when(emfProducer.createEntityManagerFactory()).thenReturn(emf);
+        when(ctx.createEntityManagerFactory()).thenReturn(emf);
         when(emf.getCache()).thenReturn(cache);
     }
 
     @Test
     public void testEvictionOfSecondLevelCacheIsDisabled() throws Throwable {
         // GIVEN
-        final SecondLevelCacheStatement stmt = new SecondLevelCacheStatement(resolver, emfProducer, base);
+        final SecondLevelCacheStatement stmt = new SecondLevelCacheStatement(resolver, ctx, base);
 
         // WHEN
         stmt.evaluate();
 
         // THEN
-        verify(emfProducer).createEntityManagerFactory();
+        verify(ctx).createEntityManagerFactory();
         verify(base).evaluate();
         verify(cache, times(0)).evictAll();
-        verify(emfProducer).destroyEntityManagerFactory(emf);
+        verify(ctx).destroyEntityManagerFactory(emf);
     }
 
     @Test
     public void testEvictionOfSecondLevelCacheIsRunBeforeBaseStatementExecution() throws Throwable {
         // GIVEN
         when(resolver.shouldEvictCacheBefore()).thenReturn(Boolean.TRUE);
-        final SecondLevelCacheStatement stmt = new SecondLevelCacheStatement(resolver, emfProducer, base);
+        final SecondLevelCacheStatement stmt = new SecondLevelCacheStatement(resolver, ctx, base);
 
         // WHEN
         stmt.evaluate();
 
         // THEN
         final InOrder order = inOrder(base, cache);
-        verify(emfProducer).createEntityManagerFactory();
+        verify(ctx).createEntityManagerFactory();
         order.verify(cache).evictAll();
         order.verify(base).evaluate();
-        verify(emfProducer).destroyEntityManagerFactory(emf);
+        verify(ctx).destroyEntityManagerFactory(emf);
     }
 
     @Test
     public void testEvictionOfSecondLevelCacheIsRunAfterBaseStatementExecution() throws Throwable {
         // GIVEN
         when(resolver.shouldEvictCacheAfter()).thenReturn(Boolean.TRUE);
-        final SecondLevelCacheStatement stmt = new SecondLevelCacheStatement(resolver, emfProducer, base);
+        final SecondLevelCacheStatement stmt = new SecondLevelCacheStatement(resolver, ctx, base);
 
         // WHEN
         stmt.evaluate();
 
         // THEN
         final InOrder order = inOrder(base, cache);
-        verify(emfProducer).createEntityManagerFactory();
+        verify(ctx).createEntityManagerFactory();
         order.verify(base).evaluate();
         order.verify(cache).evictAll();
-        verify(emfProducer).destroyEntityManagerFactory(emf);
+        verify(ctx).destroyEntityManagerFactory(emf);
     }
 }

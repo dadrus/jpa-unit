@@ -1,7 +1,5 @@
 package eu.drus.jpa.unit.rule.evaluation;
 
-import java.util.Map;
-
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
@@ -9,21 +7,41 @@ import org.junit.runners.model.Statement;
 import eu.drus.jpa.unit.core.dbunit.DatabaseConnectionFactory;
 import eu.drus.jpa.unit.core.dbunit.DbFeatureFactory;
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
+import eu.drus.jpa.unit.rule.ExecutionContext;
+import eu.drus.jpa.unit.rule.ExecutionPhase;
+import eu.drus.jpa.unit.rule.MethodRuleFactory;
 
 public class EvaluationRule implements MethodRule {
 
-    private final DatabaseConnectionFactory connectionFactory;
-    private final FeatureResolverFactory featureResolverFactory;
+    public static class Factory implements MethodRuleFactory {
 
-    public EvaluationRule(final FeatureResolverFactory featureResolverFactory, final Map<String, Object> properties) {
-        this.featureResolverFactory = featureResolverFactory;
-        connectionFactory = new DatabaseConnectionFactory(properties);
+        @Override
+        public ExecutionPhase getPhase() {
+            return ExecutionPhase.DATABASE_EVALUATION;
+        }
+
+        @Override
+        public int getPriority() {
+            return 0;
+        }
+
+        @Override
+        public MethodRule createRule(final ExecutionContext ctx) {
+            return new EvaluationRule(ctx);
+        }
+    }
+
+    private final ExecutionContext ctx;
+    private final DatabaseConnectionFactory connectionFactory;
+
+    public EvaluationRule(final ExecutionContext ctx) {
+        this.ctx = ctx;
+        connectionFactory = new DatabaseConnectionFactory(ctx.getDataBaseConnectionProperties());
     }
 
     @Override
     public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-        final FeatureResolver featureResolver = featureResolverFactory.createFeatureResolver(method.getMethod(), target.getClass());
+        final FeatureResolver featureResolver = ctx.createFeatureResolver(method.getMethod(), target.getClass());
         return new EvaluationStatement(connectionFactory, new DbFeatureFactory(featureResolver), base);
     }
 }

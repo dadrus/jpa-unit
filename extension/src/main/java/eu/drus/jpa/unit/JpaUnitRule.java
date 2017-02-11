@@ -1,5 +1,7 @@
 package eu.drus.jpa.unit;
 
+import static eu.drus.jpa.unit.rule.MethodRuleRegistrar.registerRules;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,12 +9,6 @@ import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
-
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
-import eu.drus.jpa.unit.rule.cache.SecondLevelCacheRule;
-import eu.drus.jpa.unit.rule.context.PersistenceContextRule;
-import eu.drus.jpa.unit.rule.evaluation.EvaluationRule;
-import eu.drus.jpa.unit.rule.transaction.TransactionalRule;
 
 public class JpaUnitRule implements MethodRule {
 
@@ -24,20 +20,16 @@ public class JpaUnitRule implements MethodRule {
 
     @Override
     public Statement apply(final Statement result, final FrameworkMethod method, final Object target) {
-        final FeatureResolverFactory featureResolverFactory = new FeatureResolverFactory();
-
-        final List<MethodRule> rules = new ArrayList<>();
-        rules.add(new TransactionalRule(featureResolverFactory, ctx.getPersistenceField()));
-        rules.add(new EvaluationRule(featureResolverFactory, ctx.getProperties()));
-        rules.add(new SecondLevelCacheRule(featureResolverFactory, ctx));
-        rules.add(new PersistenceContextRule(ctx, ctx.getPersistenceField()));
-
         Statement lastResult = result;
 
-        for (final MethodRule rule : rules) {
+        for (final MethodRule rule : getRules()) {
             lastResult = rule.apply(lastResult, method, target);
         }
 
         return lastResult;
+    }
+
+    private List<MethodRule> getRules() {
+        return registerRules(new ArrayList<>(), ctx);
     }
 }

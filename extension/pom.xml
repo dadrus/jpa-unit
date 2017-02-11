@@ -109,6 +109,7 @@
         <configuration>
           <services>
             <param>eu.drus.jpa.unit.core.dbunit.ext.DbUnitConnectionFactory</param>
+            <param>eu.drus.jpa.unit.rule.MethodRuleFactory</param>
           </services>
         </configuration>
         <executions>

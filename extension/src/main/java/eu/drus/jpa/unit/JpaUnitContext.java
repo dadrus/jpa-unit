@@ -4,6 +4,7 @@ import static eu.drus.jpa.unit.util.Preconditions.checkArgument;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +28,11 @@ import org.slf4j.LoggerFactory;
 import eu.drus.jpa.unit.core.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.core.PersistenceUnitDescriptorLoader;
 import eu.drus.jpa.unit.core.metadata.AnnotationInspector;
+import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
-import eu.drus.jpa.unit.rule.context.EntityManagerFactoryProducer;
+import eu.drus.jpa.unit.rule.ExecutionContext;
 
-class JpaUnitContext implements EntityManagerFactoryProducer {
+class JpaUnitContext implements ExecutionContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaUnitContext.class);
 
@@ -118,11 +120,13 @@ class JpaUnitContext implements EntityManagerFactoryProducer {
         return properties;
     }
 
-    Field getPersistenceField() {
+    @Override
+    public Field getPersistenceField() {
         return persistenceField;
     }
 
-    Map<String, Object> getProperties() {
+    @Override
+    public Map<String, Object> getDataBaseConnectionProperties() {
         return properties;
     }
 
@@ -140,5 +144,10 @@ class JpaUnitContext implements EntityManagerFactoryProducer {
                 LOG.error("Enexpected error while closing the EntityManagerFactory", e);
             }
         }
+    }
+
+    @Override
+    public FeatureResolver createFeatureResolver(final Method testMethod, final Class<?> clazz) {
+        return new FeatureResolver(testMethod, clazz);
     }
 }
