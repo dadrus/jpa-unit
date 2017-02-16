@@ -24,12 +24,10 @@ class EntityManagerProducer implements Producer<EntityManager> {
         return (EntityManager) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[] {
                 EntityManager.class
         }, (final Object proxy, final Method method, final Object[] args) -> {
-            EntityManager em = null;
-            if (HOLDER.getEntityManager() != null) {
-                em = HOLDER.getEntityManager();
-            } else {
+            EntityManager em = HOLDER.getEntityManager();
+            if (em == null) {
+                em = delegate.produce(ctx);
                 delegateUsed = true;
-                return delegate.produce(ctx);
             }
 
             return method.invoke(em, args);
