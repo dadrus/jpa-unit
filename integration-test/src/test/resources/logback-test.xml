@@ -10,6 +10,7 @@
   <logger name="org.dbunit" level="INFO" />
   <logger name="org.hibernate" level="INFO" />
   <logger name="org.eclipse.persistence" level="INFO" />
+  <logger name="org.jboss.weld" level="INFO"/>
 
   <root level="TRACE">
     <appender-ref ref="STDOUT" />
