@@ -37,16 +37,16 @@ E.g.:
 
 ```xml
 <dependency>
-    <groupId>org.eclipse.persistence</groupId>
-    <artifactId>eclipselink</artifactId>
-    <version>${eclipselink.version}</version>
-    <scope>test</scope>
+  <groupId>org.eclipse.persistence</groupId>
+  <artifactId>eclipselink</artifactId>
+  <version>${eclipselink.version}</version>
+  <scope>test</scope>
 </dependency>
 <dependency>
-    <groupId>com.h2database</groupId>
-    <artifactId>h2</artifactId>
-    <version>${h2.version}</version>
-    <scope>test</scope>
+  <groupId>com.h2database</groupId>
+  <artifactId>h2</artifactId>
+  <version>${h2.version}</version>
+  <scope>test</scope>
 </dependency>
 ```
 
@@ -58,32 +58,25 @@ Like in any JPA application, you have to define a `persistence.xml` file in the 
 
 ```xml
 <persistence version="2.1"
-    xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence 
+  xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence 
     http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/persistence/persistence_2_1.xsd">
 	
-	<persistence-unit name="my-test-unit" transaction-type="RESOURCE_LOCAL">
-        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+  <persistence-unit name="my-test-unit" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
-        <!-- your classes converters, etc -->
+    <!-- your classes converters, etc -->
 
-        <properties>
-            <property name="eclipselink.ddl-generation" 
-                      value="drop-and-create-tables" />
-            <property name="eclipselink.target-database" 
-                      value="org.eclipse.persistence.platform.database.H2Platform" />
-            <property name="javax.persistence.jdbc.driver" 
-                      value="org.h2.Driver" />
-            <property name="javax.persistence.jdbc.url" 
-                      value="jdbc:h2:mem:serviceEnablerDB;DB_CLOSE_DELAY=-1" />
-            <property name="javax.persistence.jdbc.user" 
-                      value="test" />
-            <property name="javax.persistence.jdbc.password" 
-                      value="test" />
-
-        </properties>
-    </persistence-unit>
+    <properties>
+      <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
+      <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform" />
+      <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:serviceEnablerDB;DB_CLOSE_DELAY=-1" />
+      <property name="javax.persistence.jdbc.user" value="test" />
+      <property name="javax.persistence.jdbc.password" value="test" />
+    </properties>
+  </persistence-unit>
 </persistence>
 ```
 
@@ -114,7 +107,7 @@ public class MyTest {
 	
     @Test
     public void someTest() {
-		// use manager here
+		// your code here
     }
 }
 ```
@@ -132,7 +125,7 @@ public class MyTest {
 	
     @Test
     public void someTest() {
-		// use manager here
+		// your code here
     }
 }
 ```
@@ -157,7 +150,7 @@ All these elements are described in more detail below.
 
 ### Transactional tests
 
-Like already written above automatic transaction management is done automatically if the test uses an `EntityManager` instance controlled by JPA Unit. To tweak the required behavior you can use the `@Transactional` annotation either on a test class to apply the same behavior for all tests, or on a single test. This annotation has following properties:
+Like already written above automatic transaction management is active if the test uses an `EntityManager` instance controlled by JPA Unit. To tweak the required behavior you can use the `@Transactional` annotation either on a test class to apply the same behavior for all tests, or on a single test. This annotation has following properties:
 
 - value of type `TransactionMode`. Following modes are available:
     - `COMMIT`. The test is wrapped in a transaction which is committed on return. This is the **default** behavior.
@@ -176,7 +169,7 @@ public class MyTest {
 	
     @Test
     public void someTest() {
-		// use manager here
+		// your code here
     }
 }
 ```
@@ -291,7 +284,7 @@ public class MyTest {
 	
     @Test
     public void someTest() {
-		// use manager here
+		// your code here
     }
 }
 ```
@@ -315,23 +308,23 @@ public class MyTest {
     @PersistenceContext(unitName = "my-test-unit")
     private EntityManager manager;
 	
-	@Test
-	@InitialDataSets("test-data.json")
+    @Test
+    @InitialDataSets("test-data.json")
     @Transactional(TransactionMode.DISABLED)
-	public void someReadDataTest() {
+    public void someReadDataTest() {
 		final TestEntity entity = manager.find(TestEntity.class, 1L);
 		
 		// do something with entity
-	}
+    }
 	
-	@Test
-	@InitialDataSets("test-data.json")
-	@ExpectedDataSets("expected-data.json")
-	public void someUpdateDataTest() {
+    @Test
+    @InitialDataSets("test-data.json")
+    @ExpectedDataSets("expected-data.json")
+    public void someUpdateDataTest() {
 		final TestEntity entity = manager.find(TestEntity.class, 1L);
 		
 		// update entity. It is attached to the persistence context.
-	}
+    }
 }
 ```
 
