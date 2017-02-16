@@ -14,4 +14,14 @@ public final class ReflectionUtils {
             field.setAccessible(isAccessible);
         }
     }
+
+    public static Object getValue(final Field field, final Object src) throws IllegalAccessException {
+        final boolean isAccessible = field.isAccessible();
+        field.setAccessible(true);
+        try {
+            return field.get(src);
+        } finally {
+            field.setAccessible(isAccessible);
+        }
+    }
 }
