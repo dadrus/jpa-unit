@@ -64,6 +64,7 @@
 
   <modules>
     <module>extension</module>
+    <module>cdi</module>
     <module>integration-test</module>
   </modules>
 
