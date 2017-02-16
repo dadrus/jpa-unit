@@ -70,13 +70,8 @@ public enum DataSetFormat {
 
     private static boolean isCsvDirectory(final File file) {
         if (file.isDirectory()) {
-            final File[] csvFiles = file.listFiles((final File pathname) -> {
-                return pathname.getName().endsWith(CSV.fileExtension);
-            });
-
-            final File[] metaFiles = file.listFiles((final File pathname) -> {
-                return pathname.getName().equals(TABLE_ORDERING_FILE);
-            });
+            final File[] csvFiles = file.listFiles((final File pathname) -> pathname.getName().endsWith(CSV.fileExtension));
+            final File[] metaFiles = file.listFiles((final File pathname) -> pathname.getName().equals(TABLE_ORDERING_FILE));
 
             return csvFiles.length != 0 && metaFiles.length != 0;
         }

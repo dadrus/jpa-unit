@@ -140,8 +140,8 @@ public class DataSetComparator {
         nonExistingColumns.removeAll(extractColumnNames(currentTableState.getTableMetaData().getColumns()));
 
         if (!nonExistingColumns.isEmpty()) {
-            LOG.warn("Columns which are specified to be filtered out " + Arrays.toString(nonExistingColumns.toArray())
-                    + " are not existing in the table " + tableName);
+            LOG.warn("Columns which are specified to be filtered out {} are not existing in the table {}",
+                    Arrays.toString(nonExistingColumns.toArray()), tableName);
         }
         return columnsToIgnore;
     }
