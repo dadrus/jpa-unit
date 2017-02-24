@@ -12,11 +12,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
-import eu.drus.jpa.unit.JpaUnitRunner;
-import eu.drus.jpa.unit.annotation.ExpectedDataSets;
-import eu.drus.jpa.unit.annotation.InitialDataSets;
-import eu.drus.jpa.unit.annotation.TransactionMode;
-import eu.drus.jpa.unit.annotation.Transactional;
+import eu.drus.jpa.unit.api.ExpectedDataSets;
+import eu.drus.jpa.unit.api.InitialDataSets;
+import eu.drus.jpa.unit.api.JpaUnitRunner;
+import eu.drus.jpa.unit.api.TransactionMode;
+import eu.drus.jpa.unit.api.Transactional;
 import eu.drus.jpa.unit.test.model.Account;
 import eu.drus.jpa.unit.test.model.Depositor;
 import eu.drus.jpa.unit.test.model.GiroAccount;

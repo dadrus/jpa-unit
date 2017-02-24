@@ -10,8 +10,8 @@ import javax.sql.DataSource;
 import org.junit.runners.model.TestClass;
 
 import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
-import eu.drus.jpa.unit.rule.ExecutionContext;
-import eu.drus.jpa.unit.rule.GlobalTestFixture;
+import eu.drus.jpa.unit.fixture.spi.ExecutionContext;
+import eu.drus.jpa.unit.fixture.spi.GlobalTestFixture;
 
 public class BootstrappingFixture implements GlobalTestFixture {
 

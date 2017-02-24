@@ -62,7 +62,7 @@
         <version>1.0.7</version>
         <configuration>
           <services>
-            <param>eu.drus.jpa.unit.rule.TestFixture</param>
+            <param>eu.drus.jpa.unit.fixture.spi.TestFixture</param>
             <param>javax.enterprise.inject.spi.Extension</param>
           </services>
         </configuration>

@@ -3,8 +3,8 @@ package eu.drus.jpa.unit.cdi.rule;
 import javax.persistence.EntityManager;
 
 import eu.drus.jpa.unit.cdi.EntityManagerHolder;
-import eu.drus.jpa.unit.rule.TestFixture;
-import eu.drus.jpa.unit.rule.TestInvocation;
+import eu.drus.jpa.unit.fixture.spi.TestFixture;
+import eu.drus.jpa.unit.fixture.spi.TestInvocation;
 
 public class CdiProducerFixture implements TestFixture {
 

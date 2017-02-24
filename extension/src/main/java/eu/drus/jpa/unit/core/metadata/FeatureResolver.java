@@ -10,19 +10,19 @@ import java.util.Set;
 import org.dbunit.dataset.filter.IColumnFilter;
 import org.junit.runners.model.TestClass;
 
-import eu.drus.jpa.unit.annotation.ApplyScriptsAfter;
-import eu.drus.jpa.unit.annotation.ApplyScriptsBefore;
-import eu.drus.jpa.unit.annotation.Cleanup;
-import eu.drus.jpa.unit.annotation.CleanupCache;
-import eu.drus.jpa.unit.annotation.CleanupPhase;
-import eu.drus.jpa.unit.annotation.CleanupStrategy;
-import eu.drus.jpa.unit.annotation.CleanupUsingScripts;
-import eu.drus.jpa.unit.annotation.CustomColumnFilter;
-import eu.drus.jpa.unit.annotation.DataSeedStrategy;
-import eu.drus.jpa.unit.annotation.ExpectedDataSets;
-import eu.drus.jpa.unit.annotation.InitialDataSets;
-import eu.drus.jpa.unit.annotation.TransactionMode;
-import eu.drus.jpa.unit.annotation.Transactional;
+import eu.drus.jpa.unit.api.ApplyScriptsAfter;
+import eu.drus.jpa.unit.api.ApplyScriptsBefore;
+import eu.drus.jpa.unit.api.Cleanup;
+import eu.drus.jpa.unit.api.CleanupCache;
+import eu.drus.jpa.unit.api.CleanupPhase;
+import eu.drus.jpa.unit.api.CleanupStrategy;
+import eu.drus.jpa.unit.api.CleanupUsingScripts;
+import eu.drus.jpa.unit.api.CustomColumnFilter;
+import eu.drus.jpa.unit.api.DataSeedStrategy;
+import eu.drus.jpa.unit.api.ExpectedDataSets;
+import eu.drus.jpa.unit.api.InitialDataSets;
+import eu.drus.jpa.unit.api.TransactionMode;
+import eu.drus.jpa.unit.api.Transactional;
 
 public class FeatureResolver {
 

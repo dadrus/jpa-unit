@@ -9,16 +9,16 @@ import javax.persistence.PersistenceUnit;
 
 import org.junit.runners.model.TestClass;
 
-import eu.drus.jpa.unit.annotation.ApplyScriptsAfter;
-import eu.drus.jpa.unit.annotation.ApplyScriptsBefore;
-import eu.drus.jpa.unit.annotation.Bootstrapping;
-import eu.drus.jpa.unit.annotation.Cleanup;
-import eu.drus.jpa.unit.annotation.CleanupCache;
-import eu.drus.jpa.unit.annotation.CleanupUsingScripts;
-import eu.drus.jpa.unit.annotation.CustomColumnFilter;
-import eu.drus.jpa.unit.annotation.ExpectedDataSets;
-import eu.drus.jpa.unit.annotation.InitialDataSets;
-import eu.drus.jpa.unit.annotation.Transactional;
+import eu.drus.jpa.unit.api.ApplyScriptsAfter;
+import eu.drus.jpa.unit.api.ApplyScriptsBefore;
+import eu.drus.jpa.unit.api.Bootstrapping;
+import eu.drus.jpa.unit.api.Cleanup;
+import eu.drus.jpa.unit.api.CleanupCache;
+import eu.drus.jpa.unit.api.CleanupUsingScripts;
+import eu.drus.jpa.unit.api.CustomColumnFilter;
+import eu.drus.jpa.unit.api.ExpectedDataSets;
+import eu.drus.jpa.unit.api.InitialDataSets;
+import eu.drus.jpa.unit.api.Transactional;
 
 public class MetadataExtractor {
     private final TestClass testClass;

@@ -28,9 +28,9 @@ import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
 
-import eu.drus.jpa.unit.annotation.ApplyScriptsAfter;
-import eu.drus.jpa.unit.annotation.Cleanup;
-import eu.drus.jpa.unit.annotation.InitialDataSets;
+import eu.drus.jpa.unit.api.ApplyScriptsAfter;
+import eu.drus.jpa.unit.api.Cleanup;
+import eu.drus.jpa.unit.api.InitialDataSets;
 import eu.drus.jpa.unit.core.metadata.AnnotationInspector;
 
 public class AnnotationInspectorTest {

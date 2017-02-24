@@ -8,8 +8,8 @@ import org.flywaydb.core.Flyway;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import eu.drus.jpa.unit.JpaUnitRunner;
-import eu.drus.jpa.unit.annotation.Bootstrapping;
+import eu.drus.jpa.unit.api.Bootstrapping;
+import eu.drus.jpa.unit.api.JpaUnitRunner;
 
 @RunWith(JpaUnitRunner.class)
 public class FlywaydbTest {
@@ -21,6 +21,7 @@ public class FlywaydbTest {
     public void prepareDataBase(final DataSource ds) {
         final Flyway flyway = new Flyway();
         flyway.setDataSource(ds);
+        flyway.setBaselineOnMigrate(true);
         flyway.migrate();
     }
 

@@ -113,9 +113,9 @@
         <version>1.0.7</version>
         <configuration>
           <services>
-            <param>eu.drus.jpa.unit.core.dbunit.ext.DbUnitConnectionFactory</param>
-            <param>eu.drus.jpa.unit.rule.GlobalTestFixture</param>
-            <param>eu.drus.jpa.unit.rule.TestFixture</param>
+            <param>eu.drus.jpa.unit.fixture.dbunit.ext.DbUnitConnectionFactory</param>
+            <param>eu.drus.jpa.unit.fixture.spi.GlobalTestFixture</param>
+            <param>eu.drus.jpa.unit.fixture.spi.TestFixture</param>
           </services>
         </configuration>
         <executions>

@@ -5,6 +5,10 @@ import java.lang.reflect.Method;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+import eu.drus.jpa.unit.fixture.spi.ExecutionContext;
+import eu.drus.jpa.unit.fixture.spi.TestFixture;
+import eu.drus.jpa.unit.fixture.spi.TestInvocation;
+
 public class FixtureStatement extends Statement implements TestInvocation {
 
     private final ExecutionContext ctx;

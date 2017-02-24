@@ -5,6 +5,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
+import eu.drus.jpa.unit.fixture.BootstrappingFixture;
+
 public class BootstrappingFixtureTest {
 
     @Test

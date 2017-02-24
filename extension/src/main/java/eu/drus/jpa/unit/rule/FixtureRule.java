@@ -4,6 +4,9 @@ import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+import eu.drus.jpa.unit.fixture.spi.ExecutionContext;
+import eu.drus.jpa.unit.fixture.spi.TestFixture;
+
 public class FixtureRule implements MethodRule {
 
     private final ExecutionContext ctx;

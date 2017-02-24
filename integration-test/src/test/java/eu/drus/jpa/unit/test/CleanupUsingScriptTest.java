@@ -12,10 +12,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
-import eu.drus.jpa.unit.JpaUnitRunner;
-import eu.drus.jpa.unit.annotation.Cleanup;
-import eu.drus.jpa.unit.annotation.CleanupPhase;
-import eu.drus.jpa.unit.annotation.CleanupUsingScripts;
+import eu.drus.jpa.unit.api.Cleanup;
+import eu.drus.jpa.unit.api.CleanupPhase;
+import eu.drus.jpa.unit.api.CleanupUsingScripts;
+import eu.drus.jpa.unit.api.JpaUnitRunner;
 import eu.drus.jpa.unit.test.model.Address;
 import eu.drus.jpa.unit.test.model.ContactDetail;
 import eu.drus.jpa.unit.test.model.ContactType;
