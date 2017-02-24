@@ -21,5 +21,5 @@ public @interface ApplyScriptsAfter {
     /**
      * SQL Scripts to execute
      */
-    String[]value();
+    String[] value();
 }
