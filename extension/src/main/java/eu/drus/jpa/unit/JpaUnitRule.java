@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit;
 
-import static eu.drus.jpa.unit.rule.MethodRuleRegistrar.registerRules;
+import static eu.drus.jpa.unit.rule.MethodRuleRegistrar.registerRules2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +30,6 @@ public class JpaUnitRule implements MethodRule {
     }
 
     private List<MethodRule> getRules() {
-        return registerRules(new ArrayList<>(), ctx);
+        return registerRules2(new ArrayList<>(), ctx);
     }
 }

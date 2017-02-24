@@ -1,8 +1,8 @@
 package eu.drus.jpa.unit.rule.transaction;
 
-import org.junit.runners.model.Statement;
+import eu.drus.jpa.unit.rule.TestInvocation;
 
 @FunctionalInterface
-interface TransactionStrategyExecutor {
-    void execute(final Statement statement) throws Throwable;
+public interface TransactionStrategyExecutor {
+    void execute(final TestInvocation invocation) throws Throwable;
 }

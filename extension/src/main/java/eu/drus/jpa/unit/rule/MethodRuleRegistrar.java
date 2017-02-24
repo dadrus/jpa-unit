@@ -9,28 +9,30 @@ import org.junit.rules.MethodRule;
 
 public final class MethodRuleRegistrar {
 
-    private static final ServiceLoader<MethodRuleFactory> SERVICE_LOADER = ServiceLoader.load(MethodRuleFactory.class);
+    private static final ServiceLoader<TestFixture> TEST_FIXTURES = ServiceLoader.load(TestFixture.class);
+    private static final ServiceLoader<GlobalTestFixture> GLOBAL_FIXTURES = ServiceLoader.load(GlobalTestFixture.class);
 
     private MethodRuleRegistrar() {}
 
-    public static List<MethodRule> getRules(final ExecutionContext ctx, final ExecutionPhase phase) {
+    private static List<MethodRule> getGlobalTestFixtureRules(final ExecutionContext ctx) {
+        final List<GlobalTestFixture> fixtures = new ArrayList<>();
+        GLOBAL_FIXTURES.iterator().forEachRemaining(fixtures::add);
 
-        final List<MethodRuleFactory> factories = new ArrayList<>();
-        SERVICE_LOADER.forEach(mrf -> {
-            if (mrf.getPhase() == phase) {
-                factories.add(mrf);
-            }
-        });
-
-        return factories.stream().sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1)
-                .map(f -> f.createRule(ctx)).collect(Collectors.toList());
+        return fixtures.stream().sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1)
+                .map(gf -> new GlobalFixtureRule(ctx, gf)).collect(Collectors.toList());
     }
 
-    public static List<MethodRule> registerRules(final List<MethodRule> rules, final ExecutionContext ctx) {
-        rules.addAll(getRules(ctx, ExecutionPhase.TEST_EXECUTION));
-        rules.addAll(getRules(ctx, ExecutionPhase.DATABASE_EVALUATION));
-        rules.addAll(getRules(ctx, ExecutionPhase.PERSISTENCE_PROVIDER_SETUP));
-        rules.addAll(getRules(ctx, ExecutionPhase.DATABASE_INITIALIZATION));
+    private static List<MethodRule> getTestFixtureRules(final ExecutionContext ctx) {
+        final List<TestFixture> fixtures = new ArrayList<>();
+        TEST_FIXTURES.iterator().forEachRemaining(fixtures::add);
+
+        return fixtures.stream().sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1)
+                .map(f -> new FixtureRule(ctx, f)).collect(Collectors.toList());
+    }
+
+    public static List<MethodRule> registerRules2(final List<MethodRule> rules, final ExecutionContext ctx) {
+        rules.addAll(getTestFixtureRules(ctx));
+        rules.addAll(getGlobalTestFixtureRules(ctx));
         return rules;
     }
 

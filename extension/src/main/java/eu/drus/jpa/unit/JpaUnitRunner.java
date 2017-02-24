@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit;
 
-import static eu.drus.jpa.unit.rule.MethodRuleRegistrar.registerRules;
+import static eu.drus.jpa.unit.rule.MethodRuleRegistrar.registerRules2;
 
 import java.util.List;
 
@@ -27,6 +27,6 @@ public class JpaUnitRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected List<MethodRule> rules(final Object target) {
-        return registerRules(super.rules(target), ctx);
+        return registerRules2(super.rules(target), ctx);
     }
 }

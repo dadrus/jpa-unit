@@ -15,12 +15,10 @@ import javax.persistence.EntityTransaction;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.model.Statement;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.drus.jpa.unit.rule.transaction.TransactionStrategyExecutor;
-import eu.drus.jpa.unit.rule.transaction.TransactionStrategyProvider;
+import eu.drus.jpa.unit.rule.TestInvocation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionStrategyProviderTest {
@@ -29,7 +27,7 @@ public class TransactionStrategyProviderTest {
     private EntityTransaction tx;
 
     @Mock
-    private Statement statement;
+    private TestInvocation invocation;
 
     private TransactionStrategyProvider provider;
 
@@ -45,11 +43,11 @@ public class TransactionStrategyProviderTest {
         final TransactionStrategyExecutor executor = provider.rollbackStrategy();
 
         // WHEN
-        executor.execute(statement);
+        executor.execute(invocation);
 
         // THEN
         verify(tx).begin();
-        verify(statement).evaluate();
+        verify(invocation).proceed();
         verify(tx).isActive();
         verify(tx).rollback();
         verifyNoMoreInteractions(tx);
@@ -60,12 +58,12 @@ public class TransactionStrategyProviderTest {
         // GIVEN
         when(tx.isActive()).thenReturn(Boolean.TRUE);
         final RuntimeException error = new RuntimeException("Error while executing statement");
-        doThrow(error).when(statement).evaluate();
+        doThrow(error).when(invocation).proceed();
         final TransactionStrategyExecutor executor = provider.rollbackStrategy();
 
         // WHEN
         try {
-            executor.execute(statement);
+            executor.execute(invocation);
             fail("RuntimeException expected");
         } catch (final RuntimeException e) {
             assertThat(e, equalTo(error));
@@ -73,7 +71,7 @@ public class TransactionStrategyProviderTest {
 
         // THEN
         verify(tx).begin();
-        verify(statement).evaluate();
+        verify(invocation).proceed();
         verify(tx).isActive();
         verify(tx).rollback();
         verifyNoMoreInteractions(tx);
@@ -86,11 +84,11 @@ public class TransactionStrategyProviderTest {
         final TransactionStrategyExecutor executor = provider.rollbackStrategy();
 
         // WHEN
-        executor.execute(statement);
+        executor.execute(invocation);
 
         // THEN
         verify(tx).begin();
-        verify(statement).evaluate();
+        verify(invocation).proceed();
         verify(tx).isActive();
         verifyNoMoreInteractions(tx);
     }
@@ -102,11 +100,11 @@ public class TransactionStrategyProviderTest {
         final TransactionStrategyExecutor executor = provider.commitStrategy();
 
         // WHEN
-        executor.execute(statement);
+        executor.execute(invocation);
 
         // THEN
         verify(tx).begin();
-        verify(statement).evaluate();
+        verify(invocation).proceed();
         verify(tx).isActive();
         verify(tx).commit();
         verifyNoMoreInteractions(tx);
@@ -117,13 +115,13 @@ public class TransactionStrategyProviderTest {
         // GIVEN
         when(tx.isActive()).thenReturn(Boolean.TRUE);
         final RuntimeException error = new RuntimeException("Error while executing statement");
-        doThrow(error).when(statement).evaluate();
+        doThrow(error).when(invocation).proceed();
         when(tx.isActive()).thenReturn(Boolean.TRUE);
         final TransactionStrategyExecutor executor = provider.commitStrategy();
 
         // WHEN
         try {
-            executor.execute(statement);
+            executor.execute(invocation);
             fail("RuntimeException expected");
         } catch (final RuntimeException e) {
             assertThat(e, equalTo(error));
@@ -131,7 +129,7 @@ public class TransactionStrategyProviderTest {
 
         // THEN
         verify(tx).begin();
-        verify(statement).evaluate();
+        verify(invocation).proceed();
         verify(tx).isActive();
         verify(tx).commit();
         verifyNoMoreInteractions(tx);
@@ -144,11 +142,11 @@ public class TransactionStrategyProviderTest {
         final TransactionStrategyExecutor executor = provider.commitStrategy();
 
         // WHEN
-        executor.execute(statement);
+        executor.execute(invocation);
 
         // THEN
         verify(tx).begin();
-        verify(statement).evaluate();
+        verify(invocation).proceed();
         verify(tx).isActive();
         verify(tx, times(0)).commit();
         verifyNoMoreInteractions(tx);
@@ -160,10 +158,10 @@ public class TransactionStrategyProviderTest {
         final TransactionStrategyExecutor executor = provider.disabledStrategy();
 
         // WHEN
-        executor.execute(statement);
+        executor.execute(invocation);
 
         // THEN
-        verify(statement).evaluate();
+        verify(invocation).proceed();
         verifyZeroInteractions(tx);
     }
 }

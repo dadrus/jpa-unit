@@ -59,6 +59,11 @@
       <version>${version.snakeyaml}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-dbcp2</artifactId>
+      <version>2.1.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
       <scope>test</scope>
@@ -110,6 +115,8 @@
           <services>
             <param>eu.drus.jpa.unit.core.dbunit.ext.DbUnitConnectionFactory</param>
             <param>eu.drus.jpa.unit.rule.MethodRuleFactory</param>
+            <param>eu.drus.jpa.unit.rule.GlobalTestFixture</param>
+            <param>eu.drus.jpa.unit.rule.TestFixture</param>
           </services>
         </configuration>
         <executions>

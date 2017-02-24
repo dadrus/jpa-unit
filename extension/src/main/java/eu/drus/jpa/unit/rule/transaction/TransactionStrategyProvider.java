@@ -2,24 +2,23 @@ package eu.drus.jpa.unit.rule.transaction;
 
 import javax.persistence.EntityTransaction;
 
-import org.junit.runners.model.Statement;
-
 import eu.drus.jpa.unit.annotation.TransactionMode.StrategyProvider;
+import eu.drus.jpa.unit.rule.TestInvocation;
 
 public class TransactionStrategyProvider implements StrategyProvider<TransactionStrategyExecutor> {
 
     private final EntityTransaction tx;
 
-    TransactionStrategyProvider(final EntityTransaction tx) {
+    public TransactionStrategyProvider(final EntityTransaction tx) {
         this.tx = tx;
     }
 
     @Override
     public TransactionStrategyExecutor rollbackStrategy() {
-        return (final Statement stmt) -> {
+        return (final TestInvocation invocation) -> {
             tx.begin();
             try {
-                stmt.evaluate();
+                invocation.proceed();
             } finally {
                 if (tx.isActive()) {
                     tx.rollback();
@@ -30,10 +29,10 @@ public class TransactionStrategyProvider implements StrategyProvider<Transaction
 
     @Override
     public TransactionStrategyExecutor commitStrategy() {
-        return (final Statement stmt) -> {
+        return (final TestInvocation invocation) -> {
             tx.begin();
             try {
-                stmt.evaluate();
+                invocation.proceed();
             } finally {
                 if (tx.isActive()) {
                     tx.commit();
@@ -44,6 +43,6 @@ public class TransactionStrategyProvider implements StrategyProvider<Transaction
 
     @Override
     public TransactionStrategyExecutor disabledStrategy() {
-        return Statement::evaluate;
+        return TestInvocation::proceed;
     }
 }

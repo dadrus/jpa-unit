@@ -11,6 +11,7 @@ import org.junit.runners.model.TestClass;
 
 import eu.drus.jpa.unit.annotation.ApplyScriptsAfter;
 import eu.drus.jpa.unit.annotation.ApplyScriptsBefore;
+import eu.drus.jpa.unit.annotation.Bootstrapping;
 import eu.drus.jpa.unit.annotation.Cleanup;
 import eu.drus.jpa.unit.annotation.CleanupCache;
 import eu.drus.jpa.unit.annotation.CleanupUsingScripts;
@@ -82,5 +83,9 @@ public class MetadataExtractor {
 
     public AnnotationInspector<CleanupCache> cleanupCache() {
         return using(CleanupCache.class);
+    }
+
+    public AnnotationInspector<Bootstrapping> bootstrapping() {
+        return using(Bootstrapping.class);
     }
 }

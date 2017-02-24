@@ -1,26 +1,27 @@
-package eu.drus.jpa.unit.rule.evaluation;
+package eu.drus.jpa.unit.fixture;
 
 import org.dbunit.database.IDatabaseConnection;
-import org.junit.runners.model.Statement;
 
-import eu.drus.jpa.unit.core.dbunit.DatabaseConnectionFactory;
 import eu.drus.jpa.unit.core.dbunit.DbFeatureFactory;
+import eu.drus.jpa.unit.core.metadata.FeatureResolver;
+import eu.drus.jpa.unit.rule.TestFixture;
+import eu.drus.jpa.unit.rule.TestInvocation;
 
-public class EvaluationStatement extends Statement {
+public class EvaluationFixture implements TestFixture {
 
-    private final DatabaseConnectionFactory connectionFactory;
-    private final DbFeatureFactory featureFactory;
-    private final Statement base;
-
-    EvaluationStatement(final DatabaseConnectionFactory connectionFactory, final DbFeatureFactory featureFactory, final Statement base) {
-        this.connectionFactory = connectionFactory;
-        this.featureFactory = featureFactory;
-        this.base = base;
+    @Override
+    public int getPriority() {
+        return 3;
     }
 
     @Override
-    public void evaluate() throws Throwable {
-        final IDatabaseConnection connection = connectionFactory.openConnection();
+    public void apply(final TestInvocation invocation) throws Throwable {
+        final FeatureResolver featureResolver = invocation.getContext().createFeatureResolver(invocation.getMethod(),
+                invocation.getTarget().getClass());
+
+        final DbFeatureFactory featureFactory = new DbFeatureFactory(featureResolver);
+
+        final IDatabaseConnection connection = invocation.getContext().openConnection();
         try {
             featureFactory.getCleanUpBeforeFeature().execute(connection);
             featureFactory.getCleanupUsingScriptBeforeFeature().execute(connection);
@@ -28,7 +29,7 @@ public class EvaluationStatement extends Statement {
             featureFactory.getSeedDataFeature().execute(connection);
 
             try {
-                base.evaluate();
+                invocation.proceed();
                 featureFactory.getVerifyDataAfterFeature().execute(connection);
             } finally {
                 featureFactory.getCleanUpAfterFeature().execute(connection);
@@ -39,4 +40,5 @@ public class EvaluationStatement extends Statement {
             connection.close();
         }
     }
+
 }

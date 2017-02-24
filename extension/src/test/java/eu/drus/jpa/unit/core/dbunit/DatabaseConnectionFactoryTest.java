@@ -8,9 +8,8 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.ext.h2.H2Connection;
@@ -20,15 +19,9 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import eu.drus.jpa.unit.JpaUnitException;
-import eu.drus.jpa.unit.core.dbunit.DatabaseConnectionFactory;
 
 // @Ignore("FIXME")
 public class DatabaseConnectionFactoryTest {
-
-    private static final String CONNECTION_URL_PROP_NAME = "javax.persistence.jdbc.url";
-    private static final String DRIVER_CLASS_PROP_NAME = "javax.persistence.jdbc.driver";
-    private static final String PASSWORD_PROP_NAME = "javax.persistence.jdbc.password";
-    private static final String USERNAME_PROP_NAME = "javax.persistence.jdbc.user";
 
     private static final String H2_CONNECTION_URL_PROP_VALUE = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
     private static final String H2_DRIVER_CLASS_PROP_VALUE = "org.h2.Driver";
@@ -54,13 +47,13 @@ public class DatabaseConnectionFactoryTest {
     @Test
     public void testOpenConnectionToH2DbHavingAllSupportedPersistenceProperties() throws ClassNotFoundException {
         // GIVEN
-        final Map<String, Object> props = new HashMap<>();
-        props.put(CONNECTION_URL_PROP_NAME, H2_CONNECTION_URL_PROP_VALUE);
-        props.put(DRIVER_CLASS_PROP_NAME, H2_DRIVER_CLASS_PROP_VALUE);
-        props.put(USERNAME_PROP_NAME, USERNAME_PROP_VALUE);
-        props.put(PASSWORD_PROP_NAME, PASSWORD_PROP_VALUE);
+        final BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName(H2_DRIVER_CLASS_PROP_VALUE);
+        ds.setUsername(USERNAME_PROP_VALUE);
+        ds.setPassword(PASSWORD_PROP_VALUE);
+        ds.setUrl(H2_CONNECTION_URL_PROP_VALUE);
 
-        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
+        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(ds, H2_DRIVER_CLASS_PROP_VALUE);
 
         // WHEN
         connection = factory.openConnection();
@@ -73,12 +66,11 @@ public class DatabaseConnectionFactoryTest {
     @Test
     public void testOpenConnectionToH2DbHavingUsernameAndPasswordEncodedIntoConnectionUrl() throws ClassNotFoundException {
         // GIVEN
-        final Map<String, Object> props = new HashMap<>();
-        props.put(CONNECTION_URL_PROP_NAME,
-                H2_CONNECTION_URL_PROP_VALUE + ";USER=" + USERNAME_PROP_VALUE + ";PASSWORD=" + PASSWORD_PROP_VALUE);
-        props.put(DRIVER_CLASS_PROP_NAME, H2_DRIVER_CLASS_PROP_VALUE);
+        final BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName(H2_DRIVER_CLASS_PROP_VALUE);
+        ds.setUrl(H2_CONNECTION_URL_PROP_VALUE + ";USER=" + USERNAME_PROP_VALUE + ";PASSWORD=" + PASSWORD_PROP_VALUE);
 
-        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
+        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(ds, H2_DRIVER_CLASS_PROP_VALUE);
 
         // WHEN
         connection = factory.openConnection();
@@ -91,10 +83,10 @@ public class DatabaseConnectionFactoryTest {
     @Test
     public void testOpenConnectionUsingUnknownDriver() throws ClassNotFoundException {
         // GIVEN
-        final Map<String, Object> props = new HashMap<>();
-        props.put(DRIVER_CLASS_PROP_NAME, "unknown");
+        final BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName("unknown");
 
-        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
+        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(ds, "unknown");
 
         // WHEN
         try {
@@ -111,13 +103,14 @@ public class DatabaseConnectionFactoryTest {
         // This test is about a fall back functionality
         // GIVEN
         final File dbFile = folder.newFile("test.db");
-        final Map<String, Object> props = new HashMap<>();
-        props.put(CONNECTION_URL_PROP_NAME, SQLITE_CONNECTION_URL_PROP_PREFIX + dbFile.getAbsolutePath());
-        props.put(DRIVER_CLASS_PROP_NAME, SQLITE_DRIVER_CLASS_PROP_VALUE);
-        props.put(USERNAME_PROP_NAME, USERNAME_PROP_VALUE);
-        props.put(PASSWORD_PROP_NAME, PASSWORD_PROP_VALUE);
 
-        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
+        final BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName(SQLITE_DRIVER_CLASS_PROP_VALUE);
+        ds.setUsername(USERNAME_PROP_VALUE);
+        ds.setPassword(PASSWORD_PROP_VALUE);
+        ds.setUrl(SQLITE_CONNECTION_URL_PROP_PREFIX + dbFile.getAbsolutePath());
+
+        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(ds, SQLITE_DRIVER_CLASS_PROP_VALUE);
 
         // WHEN
         connection = factory.openConnection();
@@ -131,11 +124,12 @@ public class DatabaseConnectionFactoryTest {
     public void testOpenConnectionToSqliteDbWithoutHavingUsernameAndPasswordProperties() throws Exception {
         // GIVEN
         final File dbFile = folder.newFile("test.db");
-        final Map<String, Object> props = new HashMap<>();
-        props.put(CONNECTION_URL_PROP_NAME, SQLITE_CONNECTION_URL_PROP_PREFIX + dbFile.getAbsolutePath());
-        props.put(DRIVER_CLASS_PROP_NAME, SQLITE_DRIVER_CLASS_PROP_VALUE);
 
-        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(props);
+        final BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName(SQLITE_DRIVER_CLASS_PROP_VALUE);
+        ds.setUrl(SQLITE_CONNECTION_URL_PROP_PREFIX + dbFile.getAbsolutePath());
+
+        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(ds, SQLITE_DRIVER_CLASS_PROP_VALUE);
 
         // WHEN
         connection = factory.openConnection();
