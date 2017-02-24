@@ -25,11 +25,11 @@
       <property name="javax.persistence.jdbc.password" value="test" />
 
 
-      <property name="eclipselink.logging.logger" value="org.eclipse.persistence.logging.slf4j.Slf4jSessionLogger" />
-      <property name="eclipselink.logging.level" value="ALL" />
-      <property name="eclipselink.logging.level.sql" value="ALL" />
-      <property name="eclipselink.logging.parameters" value="true" />
-      <property name="eclipselink.logging.session" value="false" />
+<!--       <property name="eclipselink.logging.logger" value="org.eclipse.persistence.logging.slf4j.Slf4jSessionLogger" /> -->
+<!--       <property name="eclipselink.logging.level" value="ALL" /> -->
+<!--       <property name="eclipselink.logging.level.sql" value="ALL" /> -->
+<!--       <property name="eclipselink.logging.parameters" value="true" /> -->
+<!--       <property name="eclipselink.logging.session" value="false" /> -->
 
     </properties>
   </persistence-unit>
@@ -58,11 +58,11 @@
       <property name="javax.persistence.jdbc.password" value="test" />
 
 
-      <property name="eclipselink.logging.logger" value="org.eclipse.persistence.logging.slf4j.Slf4jSessionLogger" />
-      <property name="eclipselink.logging.level" value="ALL" />
-      <property name="eclipselink.logging.level.sql" value="ALL" />
-      <property name="eclipselink.logging.parameters" value="true" />
-      <property name="eclipselink.logging.session" value="false" />
+<!--       <property name="eclipselink.logging.logger" value="org.eclipse.persistence.logging.slf4j.Slf4jSessionLogger" /> -->
+<!--       <property name="eclipselink.logging.level" value="ALL" /> -->
+<!--       <property name="eclipselink.logging.level.sql" value="ALL" /> -->
+<!--       <property name="eclipselink.logging.parameters" value="true" /> -->
+<!--       <property name="eclipselink.logging.session" value="false" /> -->
 
     </properties>
   </persistence-unit>
