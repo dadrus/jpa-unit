@@ -14,7 +14,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 
@@ -37,9 +36,6 @@ import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
-
-import eu.drus.jpa.unit.JpaUnitRule;
-import eu.drus.jpa.unit.JpaUnitRunner;
 
 public class JpaUnitRunnerTest {
 
@@ -245,8 +241,8 @@ public class JpaUnitRunnerTest {
         try {
             // WHEN
             new JpaUnitRunner(cut);
-            fail("PersistenceException expected");
-        } catch (final PersistenceException e) {
+            fail("JpaUnitException expected");
+        } catch (final JpaUnitException e) {
 
             // THEN
             assertThat(e.getMessage(), containsString("No Persistence"));
@@ -274,8 +270,8 @@ public class JpaUnitRunnerTest {
         try {
             // WHEN
             new JpaUnitRunner(cut);
-            fail("PersistenceException expected");
-        } catch (final PersistenceException e) {
+            fail("JpaUnitException expected");
+        } catch (final JpaUnitException e) {
 
             // THEN
             assertThat(e.getMessage(), containsString("No Persistence"));
@@ -304,8 +300,8 @@ public class JpaUnitRunnerTest {
         try {
             // WHEN
             new JpaUnitRunner(cut);
-            fail("PersistenceException expected");
-        } catch (final PersistenceException e) {
+            fail("JpaUnitException expected");
+        } catch (final JpaUnitException e) {
 
             // THEN
             assertThat(e.getMessage(), containsString("No Persistence"));
@@ -334,8 +330,8 @@ public class JpaUnitRunnerTest {
         try {
             // WHEN
             new JpaUnitRunner(cut);
-            fail("PersistenceException expected");
-        } catch (final PersistenceException e) {
+            fail("JpaUnitException expected");
+        } catch (final JpaUnitException e) {
 
             // THEN
             assertThat(e.getMessage(), containsString("No Persistence"));
