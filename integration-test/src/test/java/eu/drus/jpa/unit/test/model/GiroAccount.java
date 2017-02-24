@@ -13,7 +13,7 @@ public class GiroAccount extends Account {
 
     @Column(name = "CREDIT_LIMIT")
     @Basic(optional = false)
-    private float creditLimit;
+    private double creditLimit;
 
     protected GiroAccount() {
         super();
@@ -30,7 +30,7 @@ public class GiroAccount extends Account {
         deposit(initialDeposit);
     }
 
-    public float getCreditLimit() {
+    public double getCreditLimit() {
         return creditLimit;
     }
 

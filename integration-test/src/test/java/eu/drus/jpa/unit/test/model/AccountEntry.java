@@ -38,7 +38,7 @@ public class AccountEntry {
 
     @Column(name = "AMOUNT", updatable = false)
     @Basic(optional = false)
-    private float amount;
+    private double amount;
 
     @Column(name = "TYPE", length = 50, updatable = false)
     @Basic(optional = false)
@@ -69,7 +69,7 @@ public class AccountEntry {
         return reference;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
 
