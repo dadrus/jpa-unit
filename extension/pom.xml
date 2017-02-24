@@ -114,7 +114,6 @@
         <configuration>
           <services>
             <param>eu.drus.jpa.unit.core.dbunit.ext.DbUnitConnectionFactory</param>
-            <param>eu.drus.jpa.unit.rule.MethodRuleFactory</param>
             <param>eu.drus.jpa.unit.rule.GlobalTestFixture</param>
             <param>eu.drus.jpa.unit.rule.TestFixture</param>
           </services>
