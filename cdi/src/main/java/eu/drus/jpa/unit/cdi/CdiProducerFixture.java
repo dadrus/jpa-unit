@@ -1,8 +1,7 @@
-package eu.drus.jpa.unit.cdi.rule;
+package eu.drus.jpa.unit.cdi;
 
 import javax.persistence.EntityManager;
 
-import eu.drus.jpa.unit.cdi.EntityManagerHolder;
 import eu.drus.jpa.unit.fixture.spi.TestFixture;
 import eu.drus.jpa.unit.fixture.spi.TestInvocation;
 
