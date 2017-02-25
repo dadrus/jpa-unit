@@ -25,6 +25,7 @@ public class LiquibaseTest {
     public void prepareDataBase(final DataSource ds) throws Exception {
         final Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(ds.getConnection()));
         final Liquibase liquibase = new Liquibase("changelog/changelog.xml", new ClassLoaderResourceAccessor(), database);
+        liquibase.dropAll();
         liquibase.update((String) null);
     }
 
