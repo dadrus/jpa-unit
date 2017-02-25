@@ -1,0 +1,170 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="ddrus" id="1487984229488-1">
+        <createTable catalogName="TESTDB" schemaName="PUBLIC" tableName="ACCOUNT">
+            <column name="TYPE" type="VARCHAR(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_E"/>
+            </column>
+            <column name="VERSION" type="BIGINT(19)"/>
+            <column name="CREDIT_LIMIT" type="DOUBLE(17)"/>
+            <column name="DEPOSITOR_ID" type="BIGINT(19)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-2">
+        <createTable catalogName="TESTDB" schemaName="PUBLIC" tableName="ACCOUNT_ENTRY">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_D"/>
+            </column>
+            <column name="AMOUNT" type="DOUBLE(17)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DETAILS" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REFERENCE" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TYPE" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACCOUNT_ID" type="BIGINT(19)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-3">
+        <createTable catalogName="TESTDB" schemaName="PUBLIC" tableName="ADDRESS">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_E6"/>
+            </column>
+            <column name="CITY" type="VARCHAR(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COUNTRY" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="STREET" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ZIP_CODE" type="VARCHAR(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DEPOSITOR_ID" type="BIGINT(19)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-4">
+        <createTable catalogName="TESTDB" schemaName="PUBLIC" tableName="CONTACT_DETAIL">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_EE"/>
+            </column>
+            <column name="TYPE" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DEPOSITOR_ID" type="BIGINT(19)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-5">
+        <createTable catalogName="TESTDB" schemaName="PUBLIC" tableName="CREDIT_CONDITION">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_3"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="BIGINT(19)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-6">
+        <createTable catalogName="TESTDB" schemaName="PUBLIC" tableName="DEPOSITOR">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="CONSTRAINT_7"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SURNAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="BIGINT(19)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-7">
+        <createTable catalogName="TESTDB" schemaName="PUBLIC" tableName="schema_version">
+            <column name="installed_rank" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="VARCHAR(50)"/>
+            <column name="description" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="script" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="checksum" type="INT(10)"/>
+            <column name="installed_by" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP()" name="installed_on" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="execution_time" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="success" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-8">
+        <addPrimaryKey catalogName="TESTDB" columnNames="installed_rank" constraintName="schema_version_pk" schemaName="PUBLIC" tableName="schema_version"/>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-9">
+        <createIndex catalogName="TESTDB" indexName="FK_3MW83KHHTR5RJ10MXTCLBH6JT_INDEX_E" schemaName="PUBLIC" tableName="ADDRESS">
+            <column name="DEPOSITOR_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-10">
+        <createIndex catalogName="TESTDB" indexName="FK_3RGLSD6K3E87YQM10WPQOEX0V_INDEX_E" schemaName="PUBLIC" tableName="ACCOUNT">
+            <column name="DEPOSITOR_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-11">
+        <createIndex catalogName="TESTDB" indexName="FK_BSH5CMMQEUMNPAWW9D8379IFM_INDEX_E" schemaName="PUBLIC" tableName="CONTACT_DETAIL">
+            <column name="DEPOSITOR_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-12">
+        <createIndex catalogName="TESTDB" indexName="FK_FKTO0JGAS0ORTRJCDIRBNOTWA_INDEX_D" schemaName="PUBLIC" tableName="ACCOUNT_ENTRY">
+            <column name="ACCOUNT_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-13">
+        <createIndex catalogName="TESTDB" indexName="schema_version_s_idx" schemaName="PUBLIC" tableName="schema_version">
+            <column name="success"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-14">
+        <addForeignKeyConstraint baseColumnNames="DEPOSITOR_ID" baseTableCatalogName="TESTDB" baseTableName="ADDRESS" baseTableSchemaName="PUBLIC" constraintName="FK_3MW83KHHTR5RJ10MXTCLBH6JT" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="TESTDB" referencedTableName="DEPOSITOR" referencedTableSchemaName="PUBLIC"/>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-15">
+        <addForeignKeyConstraint baseColumnNames="DEPOSITOR_ID" baseTableCatalogName="TESTDB" baseTableName="ACCOUNT" baseTableSchemaName="PUBLIC" constraintName="FK_3RGLSD6K3E87YQM10WPQOEX0V" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="TESTDB" referencedTableName="DEPOSITOR" referencedTableSchemaName="PUBLIC"/>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-16">
+        <addForeignKeyConstraint baseColumnNames="DEPOSITOR_ID" baseTableCatalogName="TESTDB" baseTableName="CONTACT_DETAIL" baseTableSchemaName="PUBLIC" constraintName="FK_BSH5CMMQEUMNPAWW9D8379IFM" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="TESTDB" referencedTableName="DEPOSITOR" referencedTableSchemaName="PUBLIC"/>
+    </changeSet>
+    <changeSet author="ddrus" id="1487984229488-17">
+        <addForeignKeyConstraint baseColumnNames="ACCOUNT_ID" baseTableCatalogName="TESTDB" baseTableName="ACCOUNT_ENTRY" baseTableSchemaName="PUBLIC" constraintName="FK_FKTO0JGAS0ORTRJCDIRBNOTWA" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableCatalogName="TESTDB" referencedTableName="ACCOUNT" referencedTableSchemaName="PUBLIC"/>
+    </changeSet>
+</databaseChangeLog>
