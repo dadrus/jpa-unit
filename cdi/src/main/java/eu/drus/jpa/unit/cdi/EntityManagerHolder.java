@@ -2,26 +2,22 @@ package eu.drus.jpa.unit.cdi;
 
 import javax.persistence.EntityManager;
 
-public class EntityManagerHolder {
+class EntityManagerHolder {
 
-    private static EntityManagerHolder instance;
-
-    private EntityManager entityManager;
+    public static final EntityManagerHolder INSTANCE = new EntityManagerHolder();
+    private static final ThreadLocal<EntityManager> CONTEXT = new ThreadLocal<>();
 
     private EntityManagerHolder() {}
 
-    public static EntityManagerHolder getInstance() {
-        if (instance == null) {
-            instance = new EntityManagerHolder();
-        }
-        return instance;
-    }
-
     public EntityManager getEntityManager() {
-        return entityManager;
+        return CONTEXT.get();
     }
 
-    public void setEntityManager(final EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public void setEntityManager(final EntityManager value) {
+        if (value != null) {
+            CONTEXT.set(value);
+        } else {
+            CONTEXT.remove();
+        }
     }
 }

@@ -7,7 +7,11 @@ import eu.drus.jpa.unit.fixture.spi.TestInvocation;
 
 public class CdiProducerFixture implements TestFixture {
 
-    private static final EntityManagerHolder emCtx = EntityManagerHolder.getInstance();
+    private EntityManagerHolder emh;
+
+    public CdiProducerFixture() {
+        emh = EntityManagerHolder.INSTANCE;
+    }
 
     @Override
     public int getPriority() {
@@ -18,10 +22,10 @@ public class CdiProducerFixture implements TestFixture {
     public void apply(final TestInvocation invocation) throws Throwable {
         try {
             final EntityManager em = (EntityManager) invocation.getContext().getData("em");
-            emCtx.setEntityManager(em);
+            emh.setEntityManager(em);
             invocation.proceed();
         } finally {
-            emCtx.setEntityManager(null);
+            emh.setEntityManager(null);
         }
     }
 }

@@ -10,8 +10,6 @@ import javax.enterprise.inject.spi.Producer;
 import javax.persistence.EntityManager;
 
 class EntityManagerProducer implements Producer<EntityManager> {
-    private static final EntityManagerHolder HOLDER = EntityManagerHolder.getInstance();
-
     private Producer<EntityManager> delegate;
     private boolean delegateUsed = false;
 
@@ -24,7 +22,7 @@ class EntityManagerProducer implements Producer<EntityManager> {
         return (EntityManager) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[] {
                 EntityManager.class
         }, (final Object proxy, final Method method, final Object[] args) -> {
-            EntityManager em = HOLDER.getEntityManager();
+            EntityManager em = EntityManagerHolder.INSTANCE.getEntityManager();
             if (em == null) {
                 em = delegate.produce(ctx);
                 delegateUsed = true;
