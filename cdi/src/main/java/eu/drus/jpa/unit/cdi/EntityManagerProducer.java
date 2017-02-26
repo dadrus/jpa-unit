@@ -35,7 +35,7 @@ class EntityManagerProducer implements Producer<EntityManager> {
     }
 
     @FunctionalInterface
-    private interface Disposable {
+    private static interface Disposable {
         void dispose();
     }
 
@@ -51,7 +51,7 @@ class EntityManagerProducer implements Producer<EntityManager> {
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            if (method.getName().equals("dispose")) {
+            if (method.equals(Disposable.class.getDeclaredMethods()[0])) {
                 if (delegateUsed) {
                     delegate.dispose(instance);
                 }
