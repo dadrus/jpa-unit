@@ -34,8 +34,8 @@ public enum DataSeedStrategy {
     },
     /**
      * This strategy updates existing rows using data provided in the datasets. If dataset contain a
-     * row which is not present in the database (identified by its primary key) then exception is
-     * thrown.
+     * row which is not present in the database (identified by its primary key) the corresponding
+     * row is not inserted into the database.
      */
     UPDATE {
         @Override
