@@ -10,18 +10,18 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.Producer;
 import javax.persistence.EntityManager;
 
-class EntityManagerProducer implements Producer<EntityManager> {
-    private Producer<EntityManager> delegate;
+class EntityManagerProducerProxy implements Producer<EntityManager> {
+    private Producer<EntityManager> proxied;
 
-    public EntityManagerProducer(final Producer<EntityManager> delegate) {
-        this.delegate = delegate;
+    public EntityManagerProducerProxy(final Producer<EntityManager> proxied) {
+        this.proxied = proxied;
     }
 
     @Override
     public EntityManager produce(final CreationalContext<EntityManager> ctx) {
         return (EntityManager) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[] {
                 EntityManager.class, Disposable.class
-        }, new EntityManagerHandler(ctx));
+        }, new EntityManagerInvocationHandler(ctx));
     }
 
     @Override
@@ -31,7 +31,7 @@ class EntityManagerProducer implements Producer<EntityManager> {
 
     @Override
     public Set<InjectionPoint> getInjectionPoints() {
-        return delegate.getInjectionPoints();
+        return proxied.getInjectionPoints();
     }
 
     @FunctionalInterface
@@ -39,13 +39,13 @@ class EntityManagerProducer implements Producer<EntityManager> {
         void dispose();
     }
 
-    private class EntityManagerHandler implements InvocationHandler {
+    private class EntityManagerInvocationHandler implements InvocationHandler {
 
         private final CreationalContext<EntityManager> ctx;
         private EntityManager instance;
         private boolean delegateUsed = false;
 
-        private EntityManagerHandler(final CreationalContext<EntityManager> ctx) {
+        private EntityManagerInvocationHandler(final CreationalContext<EntityManager> ctx) {
             this.ctx = ctx;
         }
 
@@ -53,7 +53,7 @@ class EntityManagerProducer implements Producer<EntityManager> {
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             if (method.equals(Disposable.class.getDeclaredMethods()[0])) {
                 if (delegateUsed) {
-                    delegate.dispose(instance);
+                    proxied.dispose(instance);
                 }
                 return null;
             }
@@ -63,7 +63,7 @@ class EntityManagerProducer implements Producer<EntityManager> {
             }
 
             if (instance == null) {
-                instance = delegate.produce(ctx);
+                instance = proxied.produce(ctx);
                 delegateUsed = true;
             }
 

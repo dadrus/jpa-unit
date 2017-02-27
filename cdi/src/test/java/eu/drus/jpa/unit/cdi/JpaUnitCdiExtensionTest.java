@@ -42,6 +42,6 @@ public class JpaUnitCdiExtensionTest {
 
         final Producer<EntityManager> captured = producerCaptor.getValue();
         assertThat(captured, not(nullValue()));
-        assertThat(captured, instanceOf(EntityManagerProducer.class));
+        assertThat(captured, instanceOf(EntityManagerProducerProxy.class));
     }
 }

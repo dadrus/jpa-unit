@@ -50,7 +50,7 @@ public class EntityManagerProducerTest {
     @Test
     public void testGetInjectionPoints() {
         // GIVEN
-        final EntityManagerProducer producer = new EntityManagerProducer(delegate);
+        final EntityManagerProducerProxy producer = new EntityManagerProducerProxy(delegate);
 
         // WHEN
         producer.getInjectionPoints();
@@ -63,7 +63,7 @@ public class EntityManagerProducerTest {
     @Test(expected = ClassCastException.class)
     public void testStandAloneEntityManagerDispose() {
         // GIVEN
-        final EntityManagerProducer producer = new EntityManagerProducer(delegate);
+        final EntityManagerProducerProxy producer = new EntityManagerProducerProxy(delegate);
 
         // WHEN
         producer.dispose(mock(EntityManager.class));
@@ -75,7 +75,7 @@ public class EntityManagerProducerTest {
     @Test
     public void testProduceAndUseEntityManagerWithoutHavingAnInstanceBackedByTheHolder() {
         // GIVEN
-        final EntityManagerProducer producer = new EntityManagerProducer(delegate);
+        final EntityManagerProducerProxy producer = new EntityManagerProducerProxy(delegate);
 
         // WHEN
         final EntityManager instance = producer.produce(context);
@@ -111,7 +111,7 @@ public class EntityManagerProducerTest {
         // GIVEN
         final EntityManager em = mock(EntityManager.class);
         EntityManagerHolder.INSTANCE.setEntityManager(em);
-        final EntityManagerProducer producer = new EntityManagerProducer(delegate);
+        final EntityManagerProducerProxy producer = new EntityManagerProducerProxy(delegate);
 
         // WHEN
         final EntityManager instance = producer.produce(context);
@@ -146,7 +146,7 @@ public class EntityManagerProducerTest {
         // GIVEN
         final EntityManager em = mock(EntityManager.class);
         EntityManagerHolder.INSTANCE.setEntityManager(em);
-        final EntityManagerProducer producer = new EntityManagerProducer(delegate);
+        final EntityManagerProducerProxy producer = new EntityManagerProducerProxy(delegate);
 
         // WHEN
         final EntityManager instance1 = producer.produce(context);
@@ -182,7 +182,7 @@ public class EntityManagerProducerTest {
     @Test
     public void testProduceEntityManagerMultipleTimesNotBakedByHolder() {
         // GIVEN
-        final EntityManagerProducer producer = new EntityManagerProducer(delegate);
+        final EntityManagerProducerProxy producer = new EntityManagerProducerProxy(delegate);
 
         // WHEN
         final EntityManager instance1 = producer.produce(context);
