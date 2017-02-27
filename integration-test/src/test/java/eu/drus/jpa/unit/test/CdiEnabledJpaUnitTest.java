@@ -13,7 +13,6 @@ import javax.persistence.PersistenceContext;
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import eu.drus.jpa.unit.api.ExpectedDataSets;
@@ -33,9 +32,6 @@ public class CdiEnabledJpaUnitTest {
 
     @Rule
     public JpaUnitRule rule = new JpaUnitRule(getClass());
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @PersistenceContext(unitName = "my-test-unit")
     private static EntityManager manager;
