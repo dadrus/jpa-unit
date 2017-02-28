@@ -7,16 +7,6 @@
 			"SURNAME": "Doe"
 		}
 	],
-	"ADDRESS": [
-		{
-	        "ID":"100",
-	        "CITY":"SomeCity",
-	        "COUNTRY": "SomeCountry",
-	        "STREET": "SomeStreet 1",
-	        "ZIP_CODE": "12345",
-	        "DEPOSITOR_ID": "100"
-        }
-    ],
     "CONTACT_DETAIL": [
     	{
 	        "ID": "100",
