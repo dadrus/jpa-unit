@@ -56,4 +56,32 @@
       <property name="javax.persistence.jdbc.password" value="test" />
     </properties>
   </persistence-unit>
+  
+  <persistence-unit name="my-cache-unit" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+    <!-- your classes converters, etc -->
+    <class>eu.drus.jpa.unit.test.model.Account</class>
+    <class>eu.drus.jpa.unit.test.model.AccountEntry</class>
+    <class>eu.drus.jpa.unit.test.model.Address</class>
+    <class>eu.drus.jpa.unit.test.model.ContactDetail</class>
+    <class>eu.drus.jpa.unit.test.model.CreditCondition</class>
+    <class>eu.drus.jpa.unit.test.model.Depositor</class>
+    <class>eu.drus.jpa.unit.test.model.GiroAccount</class>
+    <class>eu.drus.jpa.unit.test.model.InstantAccessAccount</class>
+
+    <shared-cache-mode>ALL</shared-cache-mode>
+
+    <properties>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
+      <property name="hibernate.hbm2ddl.auto" value="create" />
+      <property name="hibernate.show_sql" value="false" />
+      <property name="hibernate.format_sql" value="true" />
+
+      <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB;DB_CLOSE_DELAY=-1" />
+      <property name="javax.persistence.jdbc.user" value="test" />
+      <property name="javax.persistence.jdbc.password" value="test" />
+    </properties>
+  </persistence-unit>
 </persistence>
