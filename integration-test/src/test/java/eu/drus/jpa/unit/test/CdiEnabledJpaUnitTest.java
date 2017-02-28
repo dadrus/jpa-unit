@@ -1,9 +1,7 @@
 package eu.drus.jpa.unit.test;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -37,9 +35,6 @@ public class CdiEnabledJpaUnitTest {
     private static EntityManager manager;
 
     @Inject
-    private EntityManager m1;
-
-    @Inject
     private DepositorRepository repo;
 
     @Test
@@ -47,14 +42,10 @@ public class CdiEnabledJpaUnitTest {
     @ExpectedDataSets("datasets/initial-data.json")
     @Transactional(TransactionMode.DISABLED)
     public void transactionDisabledTest() {
-        final Depositor entity = m1.find(Depositor.class, 100L);
-
-        final List<Depositor> allEntities = repo.findAll();
+        final Depositor entity = repo.findBy(100L);
 
         assertNotNull(entity);
         entity.setName("David");
-
-        assertTrue(allEntities.contains(entity));
     }
 
     @Test
@@ -62,7 +53,7 @@ public class CdiEnabledJpaUnitTest {
     @ExpectedDataSets("datasets/initial-data.json")
     @Transactional(TransactionMode.ROLLBACK)
     public void transactionRollbackTest() {
-        final Depositor entity = m1.find(Depositor.class, 100L);
+        final Depositor entity = repo.findBy(100L);
 
         assertNotNull(entity);
         entity.setName("Alex");
@@ -73,7 +64,7 @@ public class CdiEnabledJpaUnitTest {
     @ExpectedDataSets("datasets/expected-data.json")
     @Transactional(TransactionMode.COMMIT)
     public void transactionCommitTest() throws OperationNotSupportedException {
-        final Depositor entity = m1.find(Depositor.class, 100L);
+        final Depositor entity = repo.findBy(100L);
 
         assertNotNull(entity);
         entity.setName("Max");

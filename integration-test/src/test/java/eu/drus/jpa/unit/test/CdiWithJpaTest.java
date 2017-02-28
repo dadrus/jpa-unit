@@ -19,7 +19,7 @@ import eu.drus.jpa.unit.test.model.DepositorRepository;
  */
 
 @RunWith(CdiTestRunner.class)
-public class CdiBootstrappingWithJpaTest {
+public class CdiWithJpaTest {
 
     @Inject
     private DepositorRepository repository;
