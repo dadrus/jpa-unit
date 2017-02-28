@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.dbunit.Assertion;
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.assertion.DbComparisonFailure;
 import org.dbunit.assertion.DiffCollectingFailureHandler;
 import org.dbunit.assertion.Difference;
 import org.dbunit.dataset.Column;
@@ -98,6 +99,8 @@ public class DataSetComparator {
             } catch (final NoSuchTableException e) {
                 final int rowCount = expectedDataSet.getTable(tableName).getRowCount();
                 errorCollector.collect(tableName + " was expected to be present and to contain <" + rowCount + "> entries, but not found.");
+            } catch (final DbComparisonFailure e) {
+                errorCollector.collect(e.getMessage());
             }
         }
 
@@ -106,7 +109,10 @@ public class DataSetComparator {
             currentTableNames.removeAll(Arrays.asList(expectedTableNames));
             for (final String notExpectedTableName : currentTableNames) {
                 final int rowCount = currentDataSet.getTable(notExpectedTableName).getRowCount();
-                errorCollector.collect(notExpectedTableName + " was not expected, but is present and contains <" + rowCount + "> entries.");
+                if (rowCount > 0) {
+                    errorCollector
+                            .collect(notExpectedTableName + " was not expected, but is present and contains <" + rowCount + "> entries.");
+                }
             }
         }
     }
