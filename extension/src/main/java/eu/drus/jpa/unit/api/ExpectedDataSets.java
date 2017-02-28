@@ -8,6 +8,8 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.dbunit.dataset.filter.IColumnFilter;
+
 /**
  * Verifies state of underlying data store using data sets defined by this annotation. Verification
  * is invoked after test's execution (including transaction if enabled).
@@ -33,6 +35,13 @@ public @interface ExpectedDataSets {
      * List of columns to be excluded.
      */
     String[] excludeColumns() default {};
+
+    /**
+     * Custom column filters to be applied in the specified order. Each concrete implementation is
+     * expected to have default non-argument constructor which will be used when creating an
+     * instance of the filter.
+     */
+    Class<? extends IColumnFilter>[] filter() default {};
 
     /**
      * Defines whether the performed verification about expected data sets is strict or not. In

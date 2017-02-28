@@ -6,7 +6,6 @@ import static eu.drus.jpa.unit.core.metadata.TestCodeUtils.loadClass;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -33,11 +32,9 @@ import eu.drus.jpa.unit.api.CleanupCache;
 import eu.drus.jpa.unit.api.CleanupPhase;
 import eu.drus.jpa.unit.api.CleanupStrategy;
 import eu.drus.jpa.unit.api.CleanupUsingScripts;
-import eu.drus.jpa.unit.api.CustomColumnFilter;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.InitialDataSets;
-import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 
 public class FeatureResolverTest {
 
@@ -450,41 +447,6 @@ public class FeatureResolverTest {
     }
 
     @Test
-    public void testCustomColumnFilterIsNotAllowedWithoutExpectedDataSetsAnnotationUsage() throws Exception {
-
-        // GIVEN
-        final JCodeModel jCodeModel = new JCodeModel();
-        final JPackage jp = jCodeModel.rootPackage();
-        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ColumnFilterImpl");
-        jClass._implements(IColumnFilter.class);
-        JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.BOOLEAN, "accept");
-        jMethod.param(String.class, "tableName");
-        jMethod.param(Column.class, "column");
-        jMethod.body()._return(JExpr.TRUE);
-        final JDefinedClass jTestClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JAnnotationUse jAnnotationUse = jTestClass.annotate(CustomColumnFilter.class);
-        jAnnotationUse.param("value", jClass);
-        jMethod = jTestClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-
-        buildModel(testFolder.getRoot(), jCodeModel);
-
-        compileModel(testFolder.getRoot());
-
-        final Class<?> cut = loadClass(testFolder.getRoot(), jTestClass.name());
-        final Method method = cut.getDeclaredMethod(jMethod.name());
-
-        // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
-
-        try {
-            resolver.getCustomColumnFilter();
-            fail("Exception expected");
-        } catch (final Exception e) {
-
-        }
-    }
-
-    @Test
     public void testCustomColumnFilterEnabledOnClassLevel() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();
@@ -496,10 +458,9 @@ public class FeatureResolverTest {
         jMethod.param(Column.class, "column");
         jMethod.body()._return(JExpr.TRUE);
         final JDefinedClass jTestClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        JAnnotationUse jAnnotationUse = jTestClass.annotate(ExpectedDataSets.class);
+        final JAnnotationUse jAnnotationUse = jTestClass.annotate(ExpectedDataSets.class);
         jAnnotationUse.param("value", "MethodLevelScript.file");
-        jAnnotationUse = jTestClass.annotate(CustomColumnFilter.class);
-        jAnnotationUse.param("value", jFilterClass);
+        jAnnotationUse.param("filter", jFilterClass);
         jMethod = jTestClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
 
         buildModel(testFolder.getRoot(), jCodeModel);
@@ -529,10 +490,9 @@ public class FeatureResolverTest {
         jMethod.body()._return(JExpr.TRUE);
         final JDefinedClass jTestClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
         jMethod = jTestClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
-        JAnnotationUse jAnnotationUse = jMethod.annotate(ExpectedDataSets.class);
+        final JAnnotationUse jAnnotationUse = jMethod.annotate(ExpectedDataSets.class);
         jAnnotationUse.param("value", "MethodLevelScript.file");
-        jAnnotationUse = jMethod.annotate(CustomColumnFilter.class);
-        jAnnotationUse.param("value", jFilterClass);
+        jAnnotationUse.param("filter", jFilterClass);
 
         buildModel(testFolder.getRoot(), jCodeModel);
 

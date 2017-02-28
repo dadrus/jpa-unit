@@ -13,12 +13,9 @@ import eu.drus.jpa.unit.api.ApplyScriptsAfter;
 import eu.drus.jpa.unit.api.ApplyScriptsBefore;
 import eu.drus.jpa.unit.api.Cleanup;
 import eu.drus.jpa.unit.api.CleanupUsingScripts;
-import eu.drus.jpa.unit.api.CustomColumnFilter;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.InitialDataSets;
 import eu.drus.jpa.unit.api.Transactional;
-import eu.drus.jpa.unit.core.metadata.AnnotationInspector;
-import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
 
 public class MetadataExtractorTest {
 
@@ -59,16 +56,6 @@ public class MetadataExtractorTest {
 
         // WHEN
         final AnnotationInspector<CleanupUsingScripts> ai = metadataExtractor.cleanupUsingScripts();
-
-        // THEN
-        assertThat(ai, notNullValue());
-    }
-
-    @Test
-    public void testCustomColumnFilter() {
-
-        // WHEN
-        final AnnotationInspector<CustomColumnFilter> ai = metadataExtractor.customColumnFilter();
 
         // THEN
         assertThat(ai, notNullValue());

@@ -15,7 +15,6 @@ import eu.drus.jpa.unit.api.Bootstrapping;
 import eu.drus.jpa.unit.api.Cleanup;
 import eu.drus.jpa.unit.api.CleanupCache;
 import eu.drus.jpa.unit.api.CleanupUsingScripts;
-import eu.drus.jpa.unit.api.CustomColumnFilter;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.InitialDataSets;
 import eu.drus.jpa.unit.api.Transactional;
@@ -51,10 +50,6 @@ public class MetadataExtractor {
 
     public AnnotationInspector<ExpectedDataSets> expectedDataSets() {
         return using(ExpectedDataSets.class);
-    }
-
-    public AnnotationInspector<CustomColumnFilter> customColumnFilter() {
-        return using(CustomColumnFilter.class);
     }
 
     public AnnotationInspector<Cleanup> cleanup() {

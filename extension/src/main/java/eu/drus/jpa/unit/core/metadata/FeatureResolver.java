@@ -17,7 +17,6 @@ import eu.drus.jpa.unit.api.CleanupCache;
 import eu.drus.jpa.unit.api.CleanupPhase;
 import eu.drus.jpa.unit.api.CleanupStrategy;
 import eu.drus.jpa.unit.api.CleanupUsingScripts;
-import eu.drus.jpa.unit.api.CustomColumnFilter;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.InitialDataSets;
@@ -75,11 +74,8 @@ public class FeatureResolver {
     }
 
     public Set<Class<? extends IColumnFilter>> getCustomColumnFilter() {
-        if (!shouldVerifyDataAfter()) {
-            throw new IllegalArgumentException("@CustomColumnFilter is not allowed without the usage of @ExpectedDataSets");
-        }
-        final CustomColumnFilter customColumnFilter = metadataExtractor.customColumnFilter().fetchUsingFirst(testMethod);
-        return customColumnFilter == null ? Collections.emptySet() : new HashSet<>(Arrays.asList(customColumnFilter.value()));
+        final ExpectedDataSets expectedDataSets = getExpectedDataSets();
+        return expectedDataSets == null ? Collections.emptySet() : new HashSet<>(Arrays.asList(expectedDataSets.filter()));
     }
 
     public boolean shouldSeedData() {
