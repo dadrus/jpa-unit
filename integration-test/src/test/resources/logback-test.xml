@@ -11,6 +11,7 @@
   <logger name="org.hibernate" level="INFO" />
   <logger name="org.eclipse.persistence" level="INFO" />
   <logger name="org.jboss.weld" level="INFO"/>
+  <logger name="net.sf.ehcache" level="INFO"/>
 
   <root level="TRACE">
     <appender-ref ref="STDOUT" />

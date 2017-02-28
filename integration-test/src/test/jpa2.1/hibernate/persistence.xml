@@ -82,6 +82,10 @@
       <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB;DB_CLOSE_DELAY=-1" />
       <property name="javax.persistence.jdbc.user" value="test" />
       <property name="javax.persistence.jdbc.password" value="test" />
+      
+      <property name="hibernate.cache.use_second_level_cache" value="true" />
+      <property name="hibernate.cache.use_query_cache" value="true" />
+      <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory" />
     </properties>
   </persistence-unit>
 </persistence>
