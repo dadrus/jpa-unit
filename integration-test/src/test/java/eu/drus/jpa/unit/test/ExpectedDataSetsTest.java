@@ -1,8 +1,13 @@
 package eu.drus.jpa.unit.test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.dbunit.dataset.Column;
+import org.dbunit.dataset.filter.IColumnFilter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,12 +59,21 @@ public class ExpectedDataSetsTest {
     }
 
     @Test
+    @ExpectedDataSets(value = "datasets/expected-data.json", orderBy = {
+            "CONTACT_DETAIL.TYPE", "ACCOUNT_ENTRY.TYPE"
+    }, filter = CustomnColumnFilter.class)
+    public void test2() throws OperationNotSupportedException {
+        // we can also apply specific filters instead of excluding columns
+        manager.persist(depositor);
+    }
+
+    @Test
     @ExpectedDataSets(value = "datasets/expected-data.json", excludeColumns = {
             "ID", "DEPOSITOR_ID", "ACCOUNT_ID", "VERSION"
     }, orderBy = {
             "CONTACT_DETAIL.TYPE", "ACCOUNT_ENTRY.TYPE"
     })
-    public void test2() throws OperationNotSupportedException {
+    public void test3() throws OperationNotSupportedException {
         manager.persist(depositor);
 
         // adding a new row to a table which is referenced by the expected data set but not included
@@ -75,7 +89,7 @@ public class ExpectedDataSetsTest {
     }, orderBy = {
             "CONTACT_DETAIL.TYPE", "ACCOUNT_ENTRY.TYPE"
     })
-    public void test3() throws OperationNotSupportedException {
+    public void test4() throws OperationNotSupportedException {
         // adding a new row to a table which is not referenced by the expected data set will not
         // lead to a comparison error.
         depositor.addAddress(new Address("SomeStreet 1", "12345", "SomeCity", "SomeCountry"));
@@ -89,7 +103,7 @@ public class ExpectedDataSetsTest {
     }, orderBy = {
             "CONTACT_DETAIL.TYPE", "ACCOUNT_ENTRY.TYPE"
     }, strict = true)
-    public void test4() throws OperationNotSupportedException {
+    public void test5() throws OperationNotSupportedException {
         // adding a new row to a table which is not referenced by the expected data set will
         // lead to a comparison error in strict mode.
         depositor.addAddress(new Address("SomeStreet 1", "12345", "SomeCity", "SomeCountry"));
@@ -97,5 +111,16 @@ public class ExpectedDataSetsTest {
         manager.persist(depositor);
 
         expectedException.expect(AssertionError.class);
+    }
+
+    public static class CustomnColumnFilter implements IColumnFilter {
+
+        private static List<String> names = Arrays.asList("ID", "DEPOSITOR_ID", "ACCOUNT_ID", "VERSION");
+
+        @Override
+        public boolean accept(final String tableName, final Column column) {
+            return !names.contains(column.getColumnName());
+        }
+
     }
 }
