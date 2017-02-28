@@ -113,9 +113,9 @@
         <version>1.0.7</version>
         <configuration>
           <services>
-            <param>eu.drus.jpa.unit.fixture.dbunit.ext.DbUnitConnectionFactory</param>
-            <param>eu.drus.jpa.unit.fixture.spi.GlobalTestFixture</param>
-            <param>eu.drus.jpa.unit.fixture.spi.TestFixture</param>
+            <param>eu.drus.jpa.unit.decorator.dbunit.ext.DbUnitConnectionFactory</param>
+            <param>eu.drus.jpa.unit.spi.TestClassDecorator</param>
+            <param>eu.drus.jpa.unit.spi.TestMethodDecorator</param>
           </services>
         </configuration>
         <executions>

@@ -7,27 +7,27 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
-import eu.drus.jpa.unit.fixture.spi.ExecutionContext;
-import eu.drus.jpa.unit.fixture.spi.GlobalTestFixture;
+import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.TestClassDecorator;
 
 public class TestClassStatement extends Statement {
 
     private final ExecutionContext ctx;
     private final Statement base;
     private final Object target;
-    private final GlobalTestFixture fixture;
+    private final TestClassDecorator decorator;
 
     private final String beforeAllKey;
     private final String counterKey;
 
-    public TestClassStatement(final ExecutionContext ctx, final GlobalTestFixture fixture, final Statement base, final Object target) {
+    public TestClassStatement(final ExecutionContext ctx, final TestClassDecorator decorator, final Statement base, final Object target) {
         this.ctx = ctx;
-        this.fixture = fixture;
+        this.decorator = decorator;
         this.base = base;
         this.target = target;
 
-        beforeAllKey = target.getClass().getName() + "[" + fixture.hashCode() + "].BeforeAllRun";
-        counterKey = target.getClass().getName() + "[" + fixture.hashCode() + "].Counter";
+        beforeAllKey = target.getClass().getName() + "[" + decorator.hashCode() + "].BeforeAllRun";
+        counterKey = target.getClass().getName() + "[" + decorator.hashCode() + "].Counter";
     }
 
     @Override
@@ -44,7 +44,7 @@ public class TestClassStatement extends Statement {
     private void beforeAll() throws Throwable {
         final Boolean isBeforeAllRun = (Boolean) ctx.getData(beforeAllKey);
         if (isBeforeAllRun == null || !isBeforeAllRun) {
-            fixture.beforeAll(ctx, target);
+            decorator.beforeAll(ctx, target);
         }
         ctx.storeData(beforeAllKey, Boolean.TRUE);
     }
@@ -57,7 +57,7 @@ public class TestClassStatement extends Statement {
         ctx.storeData(counterKey, ++counter);
         final List<FrameworkMethod> testMethods = new TestClass(target.getClass()).getAnnotatedMethods(Test.class);
         if (counter >= testMethods.size()) {
-            fixture.afterAll(ctx, target);
+            decorator.afterAll(ctx, target);
         }
     }
 }

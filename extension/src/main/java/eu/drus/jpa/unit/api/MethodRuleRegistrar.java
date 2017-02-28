@@ -9,19 +9,19 @@ import java.util.stream.Collectors;
 
 import org.junit.rules.MethodRule;
 
-import eu.drus.jpa.unit.fixture.spi.ExecutionContext;
-import eu.drus.jpa.unit.fixture.spi.GlobalTestFixture;
-import eu.drus.jpa.unit.fixture.spi.TestFixture;
+import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.TestClassDecorator;
+import eu.drus.jpa.unit.spi.TestMethodDecorator;
 
 final class MethodRuleRegistrar {
 
-    private static final ServiceLoader<TestFixture> TEST_FIXTURES = ServiceLoader.load(TestFixture.class);
-    private static final ServiceLoader<GlobalTestFixture> GLOBAL_FIXTURES = ServiceLoader.load(GlobalTestFixture.class);
+    private static final ServiceLoader<TestMethodDecorator> TEST_FIXTURES = ServiceLoader.load(TestMethodDecorator.class);
+    private static final ServiceLoader<TestClassDecorator> GLOBAL_FIXTURES = ServiceLoader.load(TestClassDecorator.class);
 
     private MethodRuleRegistrar() {}
 
     private static List<MethodRule> getGlobalTestFixtureRules(final ExecutionContext ctx) {
-        final List<GlobalTestFixture> fixtures = new ArrayList<>();
+        final List<TestClassDecorator> fixtures = new ArrayList<>();
         GLOBAL_FIXTURES.iterator().forEachRemaining(fixtures::add);
 
         return fixtures.stream().sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1)
@@ -29,7 +29,7 @@ final class MethodRuleRegistrar {
     }
 
     private static List<MethodRule> getTestFixtureRules(final ExecutionContext ctx) {
-        final List<TestFixture> fixtures = new ArrayList<>();
+        final List<TestMethodDecorator> fixtures = new ArrayList<>();
         TEST_FIXTURES.iterator().forEachRemaining(fixtures::add);
 
         return fixtures.stream().sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1)

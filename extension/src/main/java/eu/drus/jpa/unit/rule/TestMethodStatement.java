@@ -5,22 +5,22 @@ import java.lang.reflect.Method;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-import eu.drus.jpa.unit.fixture.spi.ExecutionContext;
-import eu.drus.jpa.unit.fixture.spi.TestFixture;
-import eu.drus.jpa.unit.fixture.spi.TestInvocation;
+import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.TestMethodDecorator;
+import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
-public class TestMethodStatement extends Statement implements TestInvocation {
+public class TestMethodStatement extends Statement implements TestMethodInvocation {
 
     private final ExecutionContext ctx;
-    private final TestFixture fixture;
+    private final TestMethodDecorator decorator;
     private final Statement base;
     private final FrameworkMethod method;
     private final Object target;
 
-    public TestMethodStatement(final ExecutionContext ctx, final TestFixture fixture, final Statement base, final FrameworkMethod method,
+    public TestMethodStatement(final ExecutionContext ctx, final TestMethodDecorator decorator, final Statement base, final FrameworkMethod method,
             final Object target) {
         this.ctx = ctx;
-        this.fixture = fixture;
+        this.decorator = decorator;
         this.base = base;
         this.method = method;
         this.target = target;
@@ -28,7 +28,7 @@ public class TestMethodStatement extends Statement implements TestInvocation {
 
     @Override
     public void evaluate() throws Throwable {
-        fixture.apply(this);
+        decorator.apply(this);
     }
 
     @Override

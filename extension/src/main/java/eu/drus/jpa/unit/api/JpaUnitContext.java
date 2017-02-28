@@ -32,8 +32,8 @@ import eu.drus.jpa.unit.core.PersistenceUnitDescriptorLoader;
 import eu.drus.jpa.unit.core.metadata.AnnotationInspector;
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
-import eu.drus.jpa.unit.fixture.dbunit.ext.DbUnitConnectionFactory;
-import eu.drus.jpa.unit.fixture.spi.ExecutionContext;
+import eu.drus.jpa.unit.decorator.dbunit.ext.DbUnitConnectionFactory;
+import eu.drus.jpa.unit.spi.ExecutionContext;
 
 class JpaUnitContext implements ExecutionContext {
 
