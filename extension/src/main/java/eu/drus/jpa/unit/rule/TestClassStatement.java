@@ -10,7 +10,7 @@ import org.junit.runners.model.TestClass;
 import eu.drus.jpa.unit.fixture.spi.ExecutionContext;
 import eu.drus.jpa.unit.fixture.spi.GlobalTestFixture;
 
-public class GlobalFixtureStatement extends Statement {
+public class TestClassStatement extends Statement {
 
     private final ExecutionContext ctx;
     private final Statement base;
@@ -20,7 +20,7 @@ public class GlobalFixtureStatement extends Statement {
     private final String beforeAllKey;
     private final String counterKey;
 
-    public GlobalFixtureStatement(final ExecutionContext ctx, final GlobalTestFixture fixture, final Statement base, final Object target) {
+    public TestClassStatement(final ExecutionContext ctx, final GlobalTestFixture fixture, final Statement base, final Object target) {
         this.ctx = ctx;
         this.fixture = fixture;
         this.base = base;

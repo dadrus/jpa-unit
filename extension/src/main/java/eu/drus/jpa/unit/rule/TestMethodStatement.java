@@ -9,7 +9,7 @@ import eu.drus.jpa.unit.fixture.spi.ExecutionContext;
 import eu.drus.jpa.unit.fixture.spi.TestFixture;
 import eu.drus.jpa.unit.fixture.spi.TestInvocation;
 
-public class FixtureStatement extends Statement implements TestInvocation {
+public class TestMethodStatement extends Statement implements TestInvocation {
 
     private final ExecutionContext ctx;
     private final TestFixture fixture;
@@ -17,7 +17,7 @@ public class FixtureStatement extends Statement implements TestInvocation {
     private final FrameworkMethod method;
     private final Object target;
 
-    public FixtureStatement(final ExecutionContext ctx, final TestFixture fixture, final Statement base, final FrameworkMethod method,
+    public TestMethodStatement(final ExecutionContext ctx, final TestFixture fixture, final Statement base, final FrameworkMethod method,
             final Object target) {
         this.ctx = ctx;
         this.fixture = fixture;

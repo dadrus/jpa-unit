@@ -1,5 +1,7 @@
 package eu.drus.jpa.unit.api;
 
+import static eu.drus.jpa.unit.rule.MethodRuleFactory.createRule;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -10,8 +12,6 @@ import org.junit.rules.MethodRule;
 import eu.drus.jpa.unit.fixture.spi.ExecutionContext;
 import eu.drus.jpa.unit.fixture.spi.GlobalTestFixture;
 import eu.drus.jpa.unit.fixture.spi.TestFixture;
-import eu.drus.jpa.unit.rule.FixtureRule;
-import eu.drus.jpa.unit.rule.GlobalFixtureRule;
 
 final class MethodRuleRegistrar {
 
@@ -25,7 +25,7 @@ final class MethodRuleRegistrar {
         GLOBAL_FIXTURES.iterator().forEachRemaining(fixtures::add);
 
         return fixtures.stream().sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1)
-                .map(gf -> new GlobalFixtureRule(ctx, gf)).collect(Collectors.toList());
+                .map(gf -> createRule(ctx, gf)).collect(Collectors.toList());
     }
 
     private static List<MethodRule> getTestFixtureRules(final ExecutionContext ctx) {
@@ -33,7 +33,7 @@ final class MethodRuleRegistrar {
         TEST_FIXTURES.iterator().forEachRemaining(fixtures::add);
 
         return fixtures.stream().sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1)
-                .map(f -> new FixtureRule(ctx, f)).collect(Collectors.toList());
+                .map(f -> createRule(ctx, f)).collect(Collectors.toList());
     }
 
     public static List<MethodRule> registerRules(final List<MethodRule> rules, final ExecutionContext ctx) {
