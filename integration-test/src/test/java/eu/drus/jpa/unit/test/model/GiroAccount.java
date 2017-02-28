@@ -27,7 +27,9 @@ public class GiroAccount extends Account {
     public GiroAccount(final Depositor depositor, final float initialDeposit) throws OperationNotSupportedException {
         super(depositor);
         creditLimit = 0.0f;
-        deposit(initialDeposit);
+        if (initialDeposit != 0) {
+            deposit(initialDeposit);
+        }
     }
 
     public double getCreditLimit() {
