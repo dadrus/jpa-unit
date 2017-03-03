@@ -140,7 +140,6 @@ To control the test behavior, JPA Unit comes with a handful of annotations and s
 - `@ApplyScriptsBefore`, which can be used to define arbitrary SQL scripts which shall be executed after running the test method.
 - `@Cleanup`, which can be used to define when the database cleanup should be triggered.
 - `@CleanupUsingScripts`, which can be used to define arbitrary SQL scripts which shall be used for cleaning the database.
-- `@CustomColumnFilter`, which provides ability to define custom column filters. See also [IColumnFilter](http://www.dbunit.org/faq.html#columnfilter).
 - `@ExpectedDataSets`, which provides the ability to verify the state of underlying database using data sets. Verification is invoked after test's execution.
 - `@InitialDataSets`, which provides the ability to seed the database using data sets before test method execution.
 - `@Transactional`, which can be used to control the automatic transaction management for a test.
@@ -216,6 +215,8 @@ Creating ad-hoc object graphs in a test to seed the database can be a complex ta
 - XML (Flat XML Data Set). A simple XML structure, where each element represents a single row in a given table and attribute names correspond to the table columns as illustrated below.
 - YAML.
 - JSON.
+- XSL(X)
+- CSV
 
 Here some data set examples:
 
@@ -284,12 +285,39 @@ public class MyTest {
 	
     @Test
     public void someTest() {
-		// your code here
+        // your code here
     }
 }
 ```
 
 ### Running custom SQL scripts
+
+Seeding the database as described above introduces an additional abstraction level, which is not always desired on one hand. On other hand, there might be a need to disable specific database constraint checks before a database cleanup might be performed. Usage of plain SQL comes in handy here to execute any action directly on the database level. Simply put `@ApplyScriptBefore` and/or `@ApplyScriptAfter` annotation either on your test class or directly on your test method. Corresponding scripts will be executed before and/or after test method accordingly. If there is definition on both, test method level annotation takes precedence.
+
+Both annotation have the following properties:
+
+- value of type `String[]` which needs to be set to reference the required SQL scripts.
+    
+Usage example:
+
+```java
+@RunWith(JpaUnitRunner.class)
+@ApplyScriptBefore("scrips/some-sql-script.sql")
+public class MyTest {
+
+    @PersistenceContext(unitName = "my-test-unit")
+    private EntityManager manager;
+	
+    @Test
+    @ApplyScriptAfter({
+        "scrips/some-other-script-1.sql",
+        "scrips/some-other-script-2.sql"
+    })
+    public void someTest() {
+        // your code here
+    }
+}
+```
 
 ### Database content verification
 
