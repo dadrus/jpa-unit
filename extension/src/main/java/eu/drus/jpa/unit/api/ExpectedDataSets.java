@@ -40,8 +40,8 @@ public @interface ExpectedDataSets {
      * Custom column filters to be applied in the specified order. Each concrete implementation is
      * expected to have default non-argument constructor which will be used when creating an
      * instance of the filter.
-     * 
-     * @see http://www.dbunit.org/faq.html#columnfilter
+     *
+     * @see <a href="http://www.dbunit.org/faq.html#columnfilter">IColumnFilter</a>
      */
     Class<? extends IColumnFilter>[] filter() default {};
 
