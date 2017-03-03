@@ -31,9 +31,9 @@ public class DbUnitDecorator implements TestMethodDecorator {
                 invocation.proceed();
                 featureFactory.getVerifyDataAfterFeature().execute(connection);
             } finally {
-                featureFactory.getCleanUpAfterFeature().execute(connection);
-                featureFactory.getCleanupUsingScriptAfterFeature().execute(connection);
                 featureFactory.getApplyCustomScriptAfterFeature().execute(connection);
+                featureFactory.getCleanupUsingScriptAfterFeature().execute(connection);
+                featureFactory.getCleanUpAfterFeature().execute(connection);
             }
         } finally {
             connection.close();

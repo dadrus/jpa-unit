@@ -19,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.decorator.dbunit.DbUnitDecorator;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -71,9 +70,9 @@ public class DbUnitDecoratorTest {
         order.verify(resolver).shouldSeedData();
         order.verify(invocation).proceed();
         order.verify(resolver).shouldVerifyDataAfter();
-        order.verify(resolver).shouldCleanupAfter();
-        order.verify(resolver).shouldCleanupUsingScriptAfter();
         order.verify(resolver).shouldApplyCustomScriptAfter();
+        order.verify(resolver).shouldCleanupUsingScriptAfter();
+        order.verify(resolver).shouldCleanupAfter();
         order.verify(connection).close();
     }
 
@@ -100,9 +99,9 @@ public class DbUnitDecoratorTest {
         order.verify(resolver).shouldSeedData();
         order.verify(invocation).proceed();
         order.verify(resolver, times(0)).shouldVerifyDataAfter();
-        order.verify(resolver).shouldCleanupAfter();
-        order.verify(resolver).shouldCleanupUsingScriptAfter();
         order.verify(resolver).shouldApplyCustomScriptAfter();
+        order.verify(resolver).shouldCleanupUsingScriptAfter();
+        order.verify(resolver).shouldCleanupAfter();
         order.verify(connection).close();
     }
 
