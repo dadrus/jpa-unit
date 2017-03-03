@@ -151,7 +151,7 @@ All these elements are described in more detail below.
 
 Like already written above automatic transaction management is active if the test uses an `EntityManager` instance controlled by JPA Unit. To tweak the required behavior you can use the `@Transactional` annotation either on a test class to apply the same behavior for all tests, or on a single test. This annotation has following properties:
 
-- value of type `TransactionMode`. Following modes are available:
+- `value` of type `TransactionMode`. Following modes are available:
     - `COMMIT`. The test is wrapped in a transaction which is committed on return. This is the **default** behavior.
     - `DISABLED`. The transactional support is disabled.
     - `ROLLBACK`. Perform a _rollback_ on test return.
@@ -266,8 +266,8 @@ ADDRESS:
 
 To seed the database using data set files put the `@InitialDataSets` annotation either on the test itself or on the test class. This annotation has following properties:
 
-- value of type `String[]` which takes a list of data set files used to seed the database.
-- seedStrategy of type `DataSeedStrategy` which can be used to defined the seeding strategy. Following strategies are available (as implemented by DBUnit):
+- `value` of type `String[]` which takes a list of data set files used to seed the database.
+- `seedStrategy` of type `DataSeedStrategy` which can be used to defined the seeding strategy. Following strategies are available (as implemented by DBUnit):
     - `CLEAN_INSERT`. Performs insert of the data defined in provided data sets, after removal of all data present in the tables referred in provided files.
     - `INSERT`. Performs insert of the data defined in provided data sets. This is the **default** strategy.
     - `REFRESH`. During this operation existing rows are updated and new ones are inserted. Entries already existing in the database which are not defined in the provided data set are not affected.
@@ -296,7 +296,7 @@ Seeding the database as described above introduces an additional abstraction lev
 
 Both annotation have the following properties:
 
-- value of type `String[]` which needs to be set to reference the required SQL scripts.
+- `value` of type `String[]` which needs to be set to reference the required SQL scripts.
     
 Usage example:
 
