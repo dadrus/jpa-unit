@@ -331,7 +331,7 @@ public class MyTest {
 
 ### CDI integration
 
-To be able to use the JPA Unit with CDI, all you need is to add the following dependency to your Maven project:
+To be able to use the JPA Unit with CDI, all you need in addition to your CDI test dependency, like [DeltaSpike Test-Control Module] https://deltaspike.apache.org/documentation/test-control.html) or [Gunnar's CDI Test](https://github.com/guhilling/cdi-test), is to add the following dependency to your Maven project :
 
 ```xml
 <dependency>
