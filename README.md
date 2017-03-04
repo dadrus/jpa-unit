@@ -15,6 +15,7 @@ Implements [JUnit](http://junit.org) runner and rule to enable easy testing of j
     - verify contents of the database after test execution
 - Enables bootstrapping of the database schema and contents using plain SQL statements or arbitrary frameworks, like e.g. [FlywayDB](https://flywaydb.org) or [Liquibase](http://www.liquibase.org) before the starting of JPA provider
 - Close to [Arquillian Persistence Extension](http://arquillian.org/modules/persistence-extension) on the annotation API level
+- Implements seamless integration with CDI.
 	
 ## Credits
 
@@ -327,6 +328,43 @@ public class MyTest {
 ### Controlling second level cache
 
 ### Bootstrapping of DB schema & contents
+
+### CDI integration
+
+To be able to use the JPA Unit with CDI, all you need is to add the following dependency to your Maven project:
+
+```xml
+<dependency>
+  <groupId>eu.drus.test</groupId>
+  <artifactId>jpa-unit-cdi</artifactId>
+  <version>${jpa-unit.version}</version>
+  <scope>test</scope>
+</dependency>
+```
+
+This dependecy implements a CDI extension, which proxies the configured `EntityManager` producer. During a JPA Unit test run it uses the `EntityManager` configured in the test class instance. In all other cases it just uses the proxied producer.
+
+Usage example:
+
+```.java
+@RunWith(CdiTestRunner.class)
+public class CdiEnabledJpaUnitTest {
+
+    @Rule
+    public JpaUnitRule rule = new JpaUnitRule(getClass());
+
+    @PersistenceContext(unitName = "my-test-unit")
+    private static EntityManager manager;
+
+    @Inject
+    private SomeRepository repo;
+
+    @Test
+    public void someTest() {
+        // use CDI managed objects, like the repo from above
+    }
+}
+```
 
 ## Examples
 
