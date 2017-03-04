@@ -13,6 +13,7 @@ Implements [JUnit](http://junit.org) runner and rule to enable easy testing of j
     - cleanup the database before or after the actual test execution based on data sets or arbitrary SQL script
     - execute arbitrary SQL statements before and/or after test execution
     - verify contents of the database after test execution
+- Enables bootstrapping of the database schema and contents using plain SQL statements or arbitrary frameworks, like e.g. [FlywayDB](https://flywaydb.org) or [Liquibase](http://www.liquibase.org) before the starting of JPA provider
 - Close to [Arquillian Persistence Extension](http://arquillian.org/modules/persistence-extension) on the annotation API level
 	
 ## Credits
@@ -324,6 +325,8 @@ public class MyTest {
 ### Cleaning database
 
 ### Controlling second level cache
+
+### Bootstrapping of DB schema & contents
 
 ## Examples
 
