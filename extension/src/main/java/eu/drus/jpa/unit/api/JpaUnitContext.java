@@ -42,13 +42,15 @@ class JpaUnitContext implements ExecutionContext {
     private static final Map<TestClass, JpaUnitContext> CTX_MAP = new HashMap<>();
 
     private Field persistenceField;
-    private Map<String, Object> properties;
 
     private BasicDataSource ds;
 
     private String driverClass;
 
+    private Map<String, Object> cache;
+
     private JpaUnitContext(final TestClass testClass) {
+        cache = new HashMap<>();
         try {
             final MetadataExtractor extractor = new MetadataExtractor(testClass);
             final AnnotationInspector<PersistenceContext> pcInspector = extractor.persistenceContext();
@@ -67,6 +69,7 @@ class JpaUnitContext implements ExecutionContext {
             checkArgument(pcFields.size() <= 1, "Only single field is allowed to be annotated with @PersistenceContext");
 
             String unitName;
+            Map<String, Object> properties;
 
             if (!puFields.isEmpty()) {
                 persistenceField = puFields.get(0);
@@ -84,6 +87,9 @@ class JpaUnitContext implements ExecutionContext {
                 properties = getPersistenceContextProperties(persistenceContext);
             }
 
+            cache.put("unitName", unitName);
+            cache.put("properties", properties);
+
             final PersistenceUnitDescriptorLoader pudLoader = new PersistenceUnitDescriptorLoader();
             List<PersistenceUnitDescriptor> descriptors = pudLoader.loadPersistenceUnitDescriptors(properties);
 
@@ -96,7 +102,6 @@ class JpaUnitContext implements ExecutionContext {
             }
 
             properties = descriptors.get(0).getProperties();
-            properties.put("unitName", unitName);
 
             driverClass = (String) properties.get("javax.persistence.jdbc.driver");
             final String connectionUrl = (String) properties.get("javax.persistence.jdbc.url");
@@ -152,12 +157,12 @@ class JpaUnitContext implements ExecutionContext {
 
     @Override
     public void storeData(final String key, final Object value) {
-        properties.put(key, value);
+        cache.put(key, value);
     }
 
     @Override
     public Object getData(final String key) {
-        return properties.get(key);
+        return cache.get(key);
     }
 
     @Override
