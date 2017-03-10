@@ -5,8 +5,6 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import eu.drus.jpa.unit.decorator.BootstrappingDecorator;
-
 public class BootstrappingDecoratorTest {
 
     @Test
@@ -18,6 +16,6 @@ public class BootstrappingDecoratorTest {
         final int priority = fixture.getPriority();
 
         // THEN
-        assertThat(priority, equalTo(0));
+        assertThat(priority, equalTo(1));
     }
 }

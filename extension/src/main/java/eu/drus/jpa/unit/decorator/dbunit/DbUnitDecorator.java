@@ -1,5 +1,6 @@
 package eu.drus.jpa.unit.decorator.dbunit;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.IDatabaseConnection;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
@@ -20,7 +21,9 @@ public class DbUnitDecorator implements TestMethodDecorator {
 
         final DbFeatureFactory featureFactory = new DbFeatureFactory(featureResolver);
 
-        final IDatabaseConnection connection = invocation.getContext().openConnection();
+        final BasicDataSource ds = (BasicDataSource) invocation.getContext().getData("ds");
+
+        final IDatabaseConnection connection = DatabaseConnectionFactory.openConnection(ds);
         try {
             featureFactory.getCleanUpBeforeFeature().execute(connection);
             featureFactory.getCleanupUsingScriptBeforeFeature().execute(connection);
@@ -39,5 +42,4 @@ public class DbUnitDecorator implements TestMethodDecorator {
             connection.close();
         }
     }
-
 }

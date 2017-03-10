@@ -17,7 +17,7 @@ public class BootstrappingDecorator implements TestClassDecorator {
 
     @Override
     public int getPriority() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -32,7 +32,8 @@ public class BootstrappingDecorator implements TestClassDecorator {
             checkArgument(parameterTypes.length == 1, "A bootstrapping method is required to have a single parameter of type DataSource");
             checkArgument(parameterTypes[0].equals(DataSource.class),
                     "A bootstrapping method is required to have a single parameter of type DataSource");
-            tmp.invoke(target, ctx.getDataSource());
+
+            tmp.invoke(target, (DataSource) ctx.getData("ds"));
         }
     }
 

@@ -7,22 +7,26 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.lang.reflect.Method;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.DatabaseConnection;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(DatabaseConnectionFactory.class)
 public class DbUnitDecoratorTest {
 
     @Mock
@@ -39,9 +43,11 @@ public class DbUnitDecoratorTest {
 
     @Before
     public void prepareMocks() throws Throwable {
+        mockStatic(DatabaseConnectionFactory.class);
+        when(DatabaseConnectionFactory.openConnection(any(BasicDataSource.class))).thenReturn(connection);
+
         when(invocation.getContext()).thenReturn(ctx);
         when(invocation.getTarget()).thenReturn(this);
-        when(ctx.openConnection()).thenReturn(connection);
         when(ctx.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
         when(resolver.shouldCleanupBefore()).thenReturn(Boolean.FALSE);
         when(resolver.shouldCleanupUsingScriptBefore()).thenReturn(Boolean.FALSE);
@@ -63,7 +69,6 @@ public class DbUnitDecoratorTest {
         fixture.apply(invocation);
 
         // THEN
-        order.verify(ctx).openConnection();
         order.verify(resolver).shouldCleanupBefore();
         order.verify(resolver).shouldCleanupUsingScriptBefore();
         order.verify(resolver).shouldApplyCustomScriptBefore();
@@ -92,7 +97,6 @@ public class DbUnitDecoratorTest {
         }
 
         // THEN
-        order.verify(ctx).openConnection();
         order.verify(resolver).shouldCleanupBefore();
         order.verify(resolver).shouldCleanupUsingScriptBefore();
         order.verify(resolver).shouldApplyCustomScriptBefore();
