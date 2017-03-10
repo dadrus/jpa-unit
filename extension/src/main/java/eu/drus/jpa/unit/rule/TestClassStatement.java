@@ -32,12 +32,16 @@ public class TestClassStatement extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-        beforeAll();
+        synchronized (ctx) {
+            beforeAll();
+        }
 
         try {
             base.evaluate();
         } finally {
-            afterAll();
+            synchronized (ctx) {
+                afterAll();
+            }
         }
     }
 
