@@ -38,9 +38,6 @@ import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
 
-import eu.drus.jpa.unit.api.JpaUnitException;
-import eu.drus.jpa.unit.api.JpaUnitRule;
-
 public class JpaUnitRuleTest {
 
     @ClassRule
@@ -279,70 +276,6 @@ public class JpaUnitRuleTest {
         ruleField.init(instance);
         final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
         emField.annotate(PersistenceUnit.class);
-        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
-        jMethod.annotate(Test.class);
-
-        buildModel(testFolder.getRoot(), jCodeModel);
-        compileModel(testFolder.getRoot());
-
-        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-
-        try {
-            // WHEN
-            new JpaUnitRule(cut);
-            fail("JpaUnitException expected");
-        } catch (final JpaUnitException e) {
-
-            // THEN
-            assertThat(e.getMessage(), containsString("No Persistence"));
-        }
-    }
-
-    @Test
-    public void testClassWithPersistenceContextWithUnknownUnitNameSpecified() throws Exception {
-        // GIVEN
-        final JCodeModel jCodeModel = new JCodeModel();
-        final JPackage jp = jCodeModel.rootPackage();
-        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
-        ruleField.annotate(Rule.class);
-        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
-        ruleField.init(instance);
-        final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManager.class, "em");
-        final JAnnotationUse jAnnotation = emField.annotate(PersistenceContext.class);
-        jAnnotation.param("unitName", "foo");
-        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
-        jMethod.annotate(Test.class);
-
-        buildModel(testFolder.getRoot(), jCodeModel);
-        compileModel(testFolder.getRoot());
-
-        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
-
-        try {
-            // WHEN
-            new JpaUnitRule(cut);
-            fail("JpaUnitException expected");
-        } catch (final JpaUnitException e) {
-
-            // THEN
-            assertThat(e.getMessage(), containsString("No Persistence"));
-        }
-    }
-
-    @Test
-    public void testClassWithPersistenceUnitWithUnknownUnitNameSpecified() throws Exception {
-        // GIVEN
-        final JCodeModel jCodeModel = new JCodeModel();
-        final JPackage jp = jCodeModel.rootPackage();
-        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
-        final JFieldVar ruleField = jClass.field(JMod.PUBLIC, JpaUnitRule.class, "rule");
-        ruleField.annotate(Rule.class);
-        final JInvocation instance = JExpr._new(jCodeModel.ref(JpaUnitRule.class)).arg(JExpr.direct("getClass()"));
-        ruleField.init(instance);
-        final JFieldVar emField = jClass.field(JMod.PRIVATE, EntityManagerFactory.class, "emf");
-        final JAnnotationUse jAnnotation = emField.annotate(PersistenceUnit.class);
-        jAnnotation.param("unitName", "foo");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
         jMethod.annotate(Test.class);
 
