@@ -12,7 +12,7 @@ public class EntityManagerFactoryDecorator implements TestClassDecorator {
 
     @Override
     public int getPriority() {
-        return 1;
+        return 2;
     }
 
     @Override

@@ -53,7 +53,7 @@ public class EntityManagerFactoryDecoratorTest {
         final int priority = decorator.getPriority();
 
         // THEN
-        assertThat(priority, equalTo(1));
+        assertThat(priority, equalTo(2));
     }
 
     @Test
