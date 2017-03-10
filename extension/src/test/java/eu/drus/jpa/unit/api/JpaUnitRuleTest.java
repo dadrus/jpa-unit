@@ -17,7 +17,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -40,8 +39,8 @@ import com.sun.codemodel.JPackage;
 
 public class JpaUnitRuleTest {
 
-    @ClassRule
-    public static TemporaryFolder testFolder = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder();
 
     @Test
     public void testClassWithoutPersistenceContextField() throws Exception {
