@@ -4,6 +4,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.IDatabaseConnection;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
+import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -16,7 +17,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
 
     @Override
     public void apply(final TestMethodInvocation invocation) throws Throwable {
-        final FeatureResolver featureResolver = invocation.getContext().createFeatureResolver(invocation.getMethod(),
+        final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
                 invocation.getTarget().getClass());
 
         final DbFeatureFactory featureFactory = new DbFeatureFactory(featureResolver);

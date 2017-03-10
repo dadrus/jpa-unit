@@ -8,6 +8,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.lang.reflect.Method;
 
@@ -19,14 +20,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.decorator.jpa.SecondLevelCacheDecorator;
+import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(FeatureResolverFactory.class)
 public class SecondLevelCacheDecoratorTest {
 
     @Mock
@@ -46,10 +49,12 @@ public class SecondLevelCacheDecoratorTest {
 
     @Before
     public void setupMocks() {
+        mockStatic(FeatureResolverFactory.class);
+        when(FeatureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
+
         when(invocation.getContext()).thenReturn(ctx);
         when(invocation.getTarget()).thenReturn(this);
         when(ctx.getData(eq("emf"))).thenReturn(emf);
-        when(ctx.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
         when(emf.getCache()).thenReturn(cache);
     }
 

@@ -22,11 +22,14 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
+import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(DatabaseConnectionFactory.class)
+@PrepareForTest({
+        DatabaseConnectionFactory.class, FeatureResolverFactory.class
+})
 public class DbUnitDecoratorTest {
 
     @Mock
@@ -43,12 +46,12 @@ public class DbUnitDecoratorTest {
 
     @Before
     public void prepareMocks() throws Throwable {
-        mockStatic(DatabaseConnectionFactory.class);
+        mockStatic(DatabaseConnectionFactory.class, FeatureResolverFactory.class);
         when(DatabaseConnectionFactory.openConnection(any(BasicDataSource.class))).thenReturn(connection);
+        when(FeatureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
 
         when(invocation.getContext()).thenReturn(ctx);
         when(invocation.getTarget()).thenReturn(this);
-        when(ctx.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
         when(resolver.shouldCleanupBefore()).thenReturn(Boolean.FALSE);
         when(resolver.shouldCleanupUsingScriptBefore()).thenReturn(Boolean.FALSE);
         when(resolver.shouldApplyCustomScriptBefore()).thenReturn(Boolean.FALSE);

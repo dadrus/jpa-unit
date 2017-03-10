@@ -29,7 +29,7 @@ public class FeatureResolver {
 
     private final Method testMethod;
 
-    public FeatureResolver(final Method testMethod, final Class<?> clazz) {
+    FeatureResolver(final Method testMethod, final Class<?> clazz) {
         metadataExtractor = new MetadataExtractor(new TestClass(clazz));
         this.testMethod = testMethod;
     }

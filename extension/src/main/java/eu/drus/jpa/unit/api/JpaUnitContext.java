@@ -3,7 +3,6 @@ package eu.drus.jpa.unit.api;
 import static eu.drus.jpa.unit.util.Preconditions.checkArgument;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,6 @@ import javax.persistence.PersistenceUnit;
 import org.junit.runners.model.TestClass;
 
 import eu.drus.jpa.unit.core.metadata.AnnotationInspector;
-import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 
@@ -95,11 +93,6 @@ class JpaUnitContext implements ExecutionContext {
     @Override
     public Field getPersistenceField() {
         return persistenceField;
-    }
-
-    @Override
-    public FeatureResolver createFeatureResolver(final Method testMethod, final Class<?> clazz) {
-        return new FeatureResolver(testMethod, clazz);
     }
 
     @Override

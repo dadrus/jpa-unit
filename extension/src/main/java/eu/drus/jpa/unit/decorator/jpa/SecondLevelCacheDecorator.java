@@ -3,6 +3,7 @@ package eu.drus.jpa.unit.decorator.jpa;
 import javax.persistence.EntityManagerFactory;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
+import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -15,7 +16,7 @@ public class SecondLevelCacheDecorator implements TestMethodDecorator {
 
     @Override
     public void apply(final TestMethodInvocation invocation) throws Throwable {
-        final FeatureResolver resolver = invocation.getContext().createFeatureResolver(invocation.getMethod(),
+        final FeatureResolver resolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
                 invocation.getTarget().getClass());
 
         final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext().getData("emf");

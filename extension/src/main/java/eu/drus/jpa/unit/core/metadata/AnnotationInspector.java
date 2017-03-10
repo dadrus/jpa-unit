@@ -23,7 +23,7 @@ public class AnnotationInspector<T extends Annotation> {
 
     private final Class<T> annotationClass;
 
-    public AnnotationInspector(final TestClass testClass, final Class<T> annotationClass) {
+    AnnotationInspector(final TestClass testClass, final Class<T> annotationClass) {
         this.testClass = testClass;
         this.annotationClass = annotationClass;
         this.annotatedMethods = fetchMethods(annotationClass);
