@@ -1,5 +1,7 @@
 package eu.drus.jpa.unit.decorator.jpa;
 
+import java.util.Map;
+
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -15,8 +17,11 @@ public class EntityManagerFactoryDecorator implements TestClassDecorator {
 
     @Override
     public void beforeAll(final ExecutionContext ctx, final Object target) throws Throwable {
+        @SuppressWarnings("rawtypes")
+        final Map properties = (Map) ctx.getData("properties");
         final String unitName = (String) ctx.getData("unitName");
-        final EntityManagerFactory emf = Persistence.createEntityManagerFactory(unitName); // FIXME
+
+        final EntityManagerFactory emf = Persistence.createEntityManagerFactory(unitName, properties);
         ctx.storeData("emf", emf);
     }
 
