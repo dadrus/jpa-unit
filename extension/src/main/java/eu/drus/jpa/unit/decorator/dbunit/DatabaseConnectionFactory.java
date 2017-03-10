@@ -4,8 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ServiceLoader;
 
-import javax.sql.DataSource;
-
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -13,25 +12,18 @@ import org.dbunit.database.IDatabaseConnection;
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.decorator.dbunit.ext.DbUnitConnectionFactory;
 
-public class DatabaseConnectionFactory {
+public final class DatabaseConnectionFactory {
 
     private static final ServiceLoader<DbUnitConnectionFactory> SERVICE_LOADER = ServiceLoader.load(DbUnitConnectionFactory.class);
 
-    private final DataSource dataSource;
+    private DatabaseConnectionFactory() {}
 
-    private final String driverClass;
-
-    public DatabaseConnectionFactory(final DataSource dataSource, final String driverClass) {
-        this.dataSource = dataSource;
-        this.driverClass = driverClass;
-    }
-
-    public IDatabaseConnection openConnection() {
+    public static IDatabaseConnection openConnection(final BasicDataSource ds) {
         try {
-            final Connection connection = dataSource.getConnection();
+            final Connection connection = ds.getConnection();
 
             for (final DbUnitConnectionFactory impl : SERVICE_LOADER) {
-                if (impl.supportsDriver(driverClass)) {
+                if (impl.supportsDriver(ds.getDriverClassName())) {
                     return impl.createConnection(connection);
                 }
             }

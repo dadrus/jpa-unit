@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
-import eu.drus.jpa.unit.decorator.dbunit.DatabaseConnectionFactory;
 
 // @Ignore("FIXME")
 public class DatabaseConnectionFactoryTest {
@@ -54,10 +53,8 @@ public class DatabaseConnectionFactoryTest {
         ds.setPassword(PASSWORD_PROP_VALUE);
         ds.setUrl(H2_CONNECTION_URL_PROP_VALUE);
 
-        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(ds, H2_DRIVER_CLASS_PROP_VALUE);
-
         // WHEN
-        connection = factory.openConnection();
+        connection = DatabaseConnectionFactory.openConnection(ds);
 
         // THEN
         assertThat(connection, notNullValue());
@@ -71,10 +68,8 @@ public class DatabaseConnectionFactoryTest {
         ds.setDriverClassName(H2_DRIVER_CLASS_PROP_VALUE);
         ds.setUrl(H2_CONNECTION_URL_PROP_VALUE + ";USER=" + USERNAME_PROP_VALUE + ";PASSWORD=" + PASSWORD_PROP_VALUE);
 
-        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(ds, H2_DRIVER_CLASS_PROP_VALUE);
-
         // WHEN
-        connection = factory.openConnection();
+        connection = DatabaseConnectionFactory.openConnection(ds);
 
         // THEN
         assertThat(connection, notNullValue());
@@ -87,11 +82,9 @@ public class DatabaseConnectionFactoryTest {
         final BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("unknown");
 
-        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(ds, "unknown");
-
         // WHEN
         try {
-            connection = factory.openConnection();
+            connection = DatabaseConnectionFactory.openConnection(ds);
             fail("JpaTestException is expected");
         } catch (final JpaUnitException e) {
             // THEN
@@ -111,10 +104,8 @@ public class DatabaseConnectionFactoryTest {
         ds.setPassword(PASSWORD_PROP_VALUE);
         ds.setUrl(SQLITE_CONNECTION_URL_PROP_PREFIX + dbFile.getAbsolutePath());
 
-        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(ds, SQLITE_DRIVER_CLASS_PROP_VALUE);
-
         // WHEN
-        connection = factory.openConnection();
+        connection = DatabaseConnectionFactory.openConnection(ds);
 
         // THEN
         assertThat(connection, notNullValue());
@@ -130,10 +121,8 @@ public class DatabaseConnectionFactoryTest {
         ds.setDriverClassName(SQLITE_DRIVER_CLASS_PROP_VALUE);
         ds.setUrl(SQLITE_CONNECTION_URL_PROP_PREFIX + dbFile.getAbsolutePath());
 
-        final DatabaseConnectionFactory factory = new DatabaseConnectionFactory(ds, SQLITE_DRIVER_CLASS_PROP_VALUE);
-
         // WHEN
-        connection = factory.openConnection();
+        connection = DatabaseConnectionFactory.openConnection(ds);
 
         // THEN
         assertThat(connection, notNullValue());
