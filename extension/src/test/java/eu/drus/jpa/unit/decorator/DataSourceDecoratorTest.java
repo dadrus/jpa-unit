@@ -56,6 +56,7 @@ public class DataSourceDecoratorTest {
     }
 
     @Before
+    @SuppressWarnings("unchecked")
     public void prepareMocks() throws Exception {
         whenNew(PersistenceUnitDescriptorLoader.class).withAnyArguments().thenReturn(descriptorLoader);
 
@@ -93,6 +94,7 @@ public class DataSourceDecoratorTest {
     }
 
     @Test(expected = JpaUnitException.class)
+    @SuppressWarnings("unchecked")
     public void testCantCreateDataSourceDueToPersistenceUnitNameAmbiguity() throws Throwable {
         // GIVEN
         when(descriptorLoader.loadPersistenceUnitDescriptors(any(Map.class))).thenReturn(Arrays.asList(descriptor, descriptor));
