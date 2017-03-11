@@ -347,7 +347,7 @@ public class FlywaydbTest {
         // creates db schema and puts some data
         final Flyway flyway = new Flyway();
         flyway.setDataSource(ds);
-        flyway.setBaselineOnMigrate(true);
+        flyway.clean();
         flyway.migrate();
     }
 
@@ -432,7 +432,6 @@ You can find working examples in the `integration-test` subproject. As for today
 - `jpa2.1-eclipselink`
 - `jpa2.0-hibernate`
 - `jpa2.1-hibernate`
-
 
 ## TODOs
 
