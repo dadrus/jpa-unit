@@ -48,7 +48,8 @@ public class DataSourceDecorator implements TestClassDecorator {
         ds.setUsername(username);
         ds.setPassword(password);
         ds.setUrl(connectionUrl);
-        ds.setMinIdle(2);
+        ds.setMinIdle(1);
+        ds.setMaxIdle(2);
         ds.setTimeBetweenEvictionRunsMillis(1000);
         ds.setTestOnBorrow(true);
         ds.setTestWhileIdle(true);
