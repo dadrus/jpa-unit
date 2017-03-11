@@ -116,6 +116,7 @@ public class InitialDataSetsTest {
     }
 
     @Test
+    @Cleanup
     @InitialDataSets(value = "datasets/initial-data2.json", seedStrategy = DataSeedStrategy.UPDATE)
     public void test6() {
         // Since the given data is already present (thanks to the disabled cleanup) usage of UPDATE

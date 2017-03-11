@@ -71,6 +71,7 @@ public class ApplyCustomScripsTest {
     }
 
     @Test
+    @Cleanup
     public void test2() {
         final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='Max'", Depositor.class);
         final Depositor entity = query.getSingleResult();
