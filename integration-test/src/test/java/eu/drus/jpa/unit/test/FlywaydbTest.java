@@ -36,7 +36,7 @@ public class FlywaydbTest {
         // creates db schema and puts some data
         final Flyway flyway = new Flyway();
         flyway.setDataSource(ds);
-        flyway.setBaselineOnMigrate(true);
+        flyway.clean();
         flyway.migrate();
     }
 
