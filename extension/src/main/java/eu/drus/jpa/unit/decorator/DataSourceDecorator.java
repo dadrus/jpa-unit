@@ -52,7 +52,6 @@ public class DataSourceDecorator implements TestClassDecorator {
         ds.setMaxIdle(2);
         ds.setTimeBetweenEvictionRunsMillis(1000);
         ds.setTestOnBorrow(true);
-        ds.setTestWhileIdle(true);
 
         ctx.storeData("ds", ds);
     }
