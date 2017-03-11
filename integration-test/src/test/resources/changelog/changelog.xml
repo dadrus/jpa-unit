@@ -97,39 +97,6 @@
             <column name="VERSION" type="BIGINT(19)"/>
         </createTable>
     </changeSet>
-    <changeSet author="ddrus" id="1487984229488-7">
-        <createTable catalogName="TESTDB" schemaName="PUBLIC" tableName="schema_version">
-            <column name="installed_rank" type="INT(10)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="version" type="VARCHAR(50)"/>
-            <column name="description" type="VARCHAR(200)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="type" type="VARCHAR(20)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="script" type="VARCHAR(1000)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="checksum" type="INT(10)"/>
-            <column name="installed_by" type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column defaultValueComputed="CURRENT_TIMESTAMP()" name="installed_on" type="TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-            <column name="execution_time" type="INT(10)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="success" type="BOOLEAN(1)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-    <changeSet author="ddrus" id="1487984229488-8">
-        <addPrimaryKey catalogName="TESTDB" columnNames="installed_rank" constraintName="schema_version_pk" schemaName="PUBLIC" tableName="schema_version"/>
-    </changeSet>
     <changeSet author="ddrus" id="1487984229488-9">
         <createIndex catalogName="TESTDB" indexName="FK_3MW83KHHTR5RJ10MXTCLBH6JT_INDEX_E" schemaName="PUBLIC" tableName="ADDRESS">
             <column name="DEPOSITOR_ID"/>
@@ -148,11 +115,6 @@
     <changeSet author="ddrus" id="1487984229488-12">
         <createIndex catalogName="TESTDB" indexName="FK_FKTO0JGAS0ORTRJCDIRBNOTWA_INDEX_D" schemaName="PUBLIC" tableName="ACCOUNT_ENTRY">
             <column name="ACCOUNT_ID"/>
-        </createIndex>
-    </changeSet>
-    <changeSet author="ddrus" id="1487984229488-13">
-        <createIndex catalogName="TESTDB" indexName="schema_version_s_idx" schemaName="PUBLIC" tableName="schema_version">
-            <column name="success"/>
         </createIndex>
     </changeSet>
     <changeSet author="ddrus" id="1487984229488-14">
