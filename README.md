@@ -14,12 +14,11 @@ Implements [JUnit](http://junit.org) runner and rule to enable easy testing of j
     - execute arbitrary SQL statements before and/or after test execution
     - verify contents of the database after test execution
 - Enables bootstrapping of the database schema and contents using plain SQL statements or arbitrary frameworks, like e.g. [FlywayDB](https://flywaydb.org) or [Liquibase](http://www.liquibase.org) before the starting of JPA provider
-- Close to [Arquillian Persistence Extension](http://arquillian.org/modules/persistence-extension) on the annotation API level
 - Implements seamless integration with CDI.
 	
 ## Credits
 
-The implementation is inspired by the arquillian persistence extension. Some of the code fragments are extracted out of it and adopted to suit the needs.
+The implementation is inspired by the [Arquillian Persistence Extension](http://arquillian.org/modules/persistence-extension). Some of the code fragments are extracted out of it and adopted to suit the needs.
 
 ## Maven Integraton
 
@@ -140,6 +139,7 @@ To control the test behavior, JPA Unit comes with a handful of annotations and s
 
 - `@ApplyScriptsAfter`, which can be used to define arbitrary SQL scripts which shall be executed before running the test method.
 - `@ApplyScriptsBefore`, which can be used to define arbitrary SQL scripts which shall be executed after running the test method.
+- `@Bootstrapping`, which can be used to define a method executed only once before the bootstrapping of a JPA provider happens. This can be handy e.g. to setup a test specific DB schema. 
 - `@Cleanup`, which can be used to define when the database cleanup should be triggered.
 - `@CleanupUsingScripts`, which can be used to define arbitrary SQL scripts which shall be used for cleaning the database.
 - `@ExpectedDataSets`, which provides the ability to verify the state of underlying database using data sets. Verification is invoked after test's execution.
@@ -328,6 +328,33 @@ public class MyTest {
 ### Controlling second level cache
 
 ### Bootstrapping of DB schema & contents
+
+Bootstrapping of the data base schema, as well as the handling of its evolution over a period of time is a crucial topic. To enable a data base schema & contents setup close to the productive environment in which the JPA provider usually relies on this given DB setup, the corresponding data base specific actions need to be done before the JPA provider is loaded by accessing the data base directly. JPA Unit enables this by the usage of the `@Bootstrapping` annotation. A dedicated method of a test class, which implements a data base scheme & contents setup can be annotated with this annotation and is required to have one parameter of type `DataSource`. JPA Unit will execute this method very early in its bootstrapping process. Because of this neither `EntityManager` nor `EntityManagerFactory` cannot be used at this time.
+
+Usage example (bootstrapping with FlywayDB):
+
+```.java
+@RunWith(JpaUnitRunner.class)
+public class FlywaydbTest {
+
+    @PersistenceContext(unitName = "my-verification-unit")
+    private EntityManager manager;
+
+    @Bootstrapping
+    public void prepareDataBase(final DataSource ds) {
+        // creates db schema and puts some data
+        final Flyway flyway = new Flyway();
+        flyway.setDataSource(ds);
+        flyway.setBaselineOnMigrate(true);
+        flyway.migrate();
+    }
+
+    @Test
+    public void someTest() {
+        // your test specific code here
+    }
+}
+```
 
 ### CDI integration
 
