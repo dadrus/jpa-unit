@@ -130,6 +130,7 @@ public class CleanupTest {
     }
 
     @Test
+    @Cleanup
     public void test8() {
         // depositor table is empty (and all related tables as well)
         final TypedQuery<Depositor> depositorQuery = manager.createQuery("SELECT d FROM Depositor d", Depositor.class);
