@@ -23,7 +23,7 @@
       <property name="hibernate.format_sql" value="true" />
 
       <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB;DB_CLOSE_DELAY=0" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB" />
       <property name="javax.persistence.jdbc.user" value="test" />
       <property name="javax.persistence.jdbc.password" value="test" />
     </properties>
@@ -51,7 +51,7 @@
       <property name="hibernate.format_sql" value="true" />
 
       <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB;DB_CLOSE_DELAY=0" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB" />
       <property name="javax.persistence.jdbc.user" value="test" />
       <property name="javax.persistence.jdbc.password" value="test" />
     </properties>
@@ -79,7 +79,7 @@
       <property name="hibernate.format_sql" value="true" />
 
       <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB;DB_CLOSE_DELAY=0" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB" />
       <property name="javax.persistence.jdbc.user" value="test" />
       <property name="javax.persistence.jdbc.password" value="test" />
 

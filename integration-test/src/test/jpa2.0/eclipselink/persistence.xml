@@ -20,7 +20,7 @@
       <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
       <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform" />
       <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB;DB_CLOSE_DELAY=0" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB" />
       <property name="javax.persistence.jdbc.user" value="test" />
       <property name="javax.persistence.jdbc.password" value="test" />
 
@@ -53,7 +53,7 @@
       <property name="eclipselink.ddl-generation" value="none" />
       <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform" />
       <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB;DB_CLOSE_DELAY=0" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB" />
       <property name="javax.persistence.jdbc.user" value="test" />
       <property name="javax.persistence.jdbc.password" value="test" />
 
@@ -86,7 +86,7 @@
       <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
       <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform" />
       <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB;DB_CLOSE_DELAY=0" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB" />
       <property name="javax.persistence.jdbc.user" value="test" />
       <property name="javax.persistence.jdbc.password" value="test" />
 
