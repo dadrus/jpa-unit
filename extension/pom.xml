@@ -13,106 +13,62 @@
   <name>JPA Unit - JUnit Extension</name>
   <description>JUnit extension to run tests for JPA entities using EntityManagerFactory or EntityManager</description>
 
-  <properties>
-    <version.slf4j>1.7.21</version.slf4j>
-    <version.gson>2.7</version.gson>
-    <version.dbunit>2.5.3</version.dbunit>
-    <version.hibernate-jpa-2.1-api>1.0.0.Final</version.hibernate-jpa-2.1-api>
-    <version.snakeyaml>1.10</version.snakeyaml>
-    <version.codemodel>2.6</version.codemodel>
-    <version.h2>1.4.192</version.h2>
-    <version.logback>1.1.7</version.logback>
-    <version.eclipselink>2.5.2</version.eclipselink>
-    <version.h2>1.4.191</version.h2>
-    <version.sqlite>3.15.1</version.sqlite>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.hibernate.javax.persistence</groupId>
       <artifactId>hibernate-jpa-2.1-api</artifactId>
-      <version>${version.hibernate-jpa-2.1-api}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.dbunit</groupId>
       <artifactId>dbunit</artifactId>
-      <version>${version.dbunit}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>${version.slf4j}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>${version.gson}</version>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>${version.snakeyaml}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-dbcp2</artifactId>
-      <version>2.1.1</version>
     </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-      <version>1.6.4</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
-      <version>1.6.4</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
-      <scope>test</scope>
-    </dependency>
+    
+    <!-- TEST DEPENDENCIES -->
     <dependency>
       <groupId>com.sun.codemodel</groupId>
       <artifactId>codemodel</artifactId>
-      <version>${version.codemodel}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>${version.h2}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
-      <version>${version.sqlite}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>${version.logback}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>eclipselink</artifactId>
-      <version>${version.eclipselink}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -122,7 +78,6 @@
       <plugin>
         <groupId>eu.somatik.serviceloader-maven-plugin</groupId>
         <artifactId>serviceloader-maven-plugin</artifactId>
-        <version>1.0.7</version>
         <configuration>
           <services>
             <param>eu.drus.jpa.unit.decorator.dbunit.ext.DbUnitConnectionFactory</param>
