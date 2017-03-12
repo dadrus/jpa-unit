@@ -16,7 +16,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void apply(final TestMethodInvocation invocation) throws Throwable {
+    public void apply(final TestMethodInvocation invocation) throws Exception {
         final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
                 invocation.getTarget().getClass());
 

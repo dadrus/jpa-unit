@@ -4,5 +4,5 @@ public interface TestMethodDecorator {
 
     int getPriority();
 
-    void apply(TestMethodInvocation ctx) throws Throwable;
+    void apply(TestMethodInvocation ctx) throws Exception;
 }

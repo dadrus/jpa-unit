@@ -17,8 +17,8 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
     private final FrameworkMethod method;
     private final Object target;
 
-    public TestMethodStatement(final ExecutionContext ctx, final TestMethodDecorator decorator, final Statement base, final FrameworkMethod method,
-            final Object target) {
+    public TestMethodStatement(final ExecutionContext ctx, final TestMethodDecorator decorator, final Statement base,
+            final FrameworkMethod method, final Object target) {
         this.ctx = ctx;
         this.decorator = decorator;
         this.base = base;
@@ -32,8 +32,12 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
     }
 
     @Override
-    public void proceed() throws Throwable {
-        base.evaluate();
+    public void proceed() throws Exception {
+        try {
+            base.evaluate();
+        } catch (final Throwable e) {
+            throw new Exception(e);
+        }
     }
 
     @Override

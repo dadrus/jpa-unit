@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 public interface TestMethodInvocation {
 
-    void proceed() throws Throwable;
+    void proceed() throws Exception;
 
     Method getMethod();
 

@@ -21,7 +21,7 @@ public class BootstrappingDecorator implements TestClassDecorator {
     }
 
     @Override
-    public void beforeAll(final ExecutionContext ctx, final Object target) throws Throwable {
+    public void beforeAll(final ExecutionContext ctx, final Object target) throws Exception {
         final MetadataExtractor extractor = new MetadataExtractor(new TestClass(target.getClass()));
         final List<Method> bootstrappingMethods = extractor.bootstrapping().getAnnotatedMethods();
         checkArgument(bootstrappingMethods.size() <= 1, "Only single method is allowed to be annotated with @Bootstrapping");
@@ -38,7 +38,7 @@ public class BootstrappingDecorator implements TestClassDecorator {
     }
 
     @Override
-    public void afterAll(final ExecutionContext ctx, final Object target) throws Throwable {
+    public void afterAll(final ExecutionContext ctx, final Object target) throws Exception {
         // nothing to do here
     }
 
