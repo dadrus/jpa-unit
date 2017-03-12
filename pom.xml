@@ -87,6 +87,7 @@
 
   <modules>
     <module>extension</module>
+    <module>junit5</module>
     <module>cdi</module>
     <module>integration-test</module>
   </modules>
