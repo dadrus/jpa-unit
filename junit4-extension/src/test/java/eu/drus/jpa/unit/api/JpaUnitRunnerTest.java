@@ -1,8 +1,8 @@
 package eu.drus.jpa.unit.api;
 
-import static eu.drus.jpa.unit.core.metadata.TestCodeUtils.buildModel;
-import static eu.drus.jpa.unit.core.metadata.TestCodeUtils.compileModel;
-import static eu.drus.jpa.unit.core.metadata.TestCodeUtils.loadClass;
+import static eu.drus.jpa.unit.api.TestCodeUtils.buildModel;
+import static eu.drus.jpa.unit.api.TestCodeUtils.compileModel;
+import static eu.drus.jpa.unit.api.TestCodeUtils.loadClass;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
