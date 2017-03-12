@@ -9,8 +9,8 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>jpa-unit</artifactId>
-  <name>JPA Unit - JUnit Extension</name>
+  <artifactId>jpa-unit4</artifactId>
+  <name>JPA Unit - JUnit 4 Extension</name>
   <description>JUnit extension to run tests for JPA entities using EntityManagerFactory or EntityManager</description>
 
   <dependencies>
