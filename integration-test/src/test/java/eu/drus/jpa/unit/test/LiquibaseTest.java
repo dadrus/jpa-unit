@@ -22,7 +22,7 @@ public class LiquibaseTest {
     private EntityManager manager;
 
     @Bootstrapping
-    public void prepareDataBase(final DataSource ds) throws Exception {
+    public static void prepareDataBase(final DataSource ds) throws Exception {
         final Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(ds.getConnection()));
         final Liquibase liquibase = new Liquibase("changelog/changelog.xml", new ClassLoaderResourceAccessor(), database);
         liquibase.dropAll();

@@ -87,7 +87,7 @@ public class DataSourceDecoratorTest {
         final DataSourceDecorator decorator = new DataSourceDecorator();
 
         // WHEN
-        decorator.beforeAll(ctx, this);
+        decorator.beforeAll(ctx, getClass());
 
         // THEN
         // JpaUnitException due to unknown unitName
@@ -101,7 +101,7 @@ public class DataSourceDecoratorTest {
         final DataSourceDecorator decorator = new DataSourceDecorator();
 
         // WHEN
-        decorator.beforeAll(ctx, this);
+        decorator.beforeAll(ctx, getClass());
 
         // THEN
         // JpaUnitException due to ambiguity
@@ -113,7 +113,7 @@ public class DataSourceDecoratorTest {
         final DataSourceDecorator decorator = new DataSourceDecorator();
 
         // WHEN
-        decorator.beforeAll(ctx, this);
+        decorator.beforeAll(ctx, getClass());
 
         // THEN
         final ArgumentCaptor<BasicDataSource> dsCaptor = ArgumentCaptor.forClass(BasicDataSource.class);
@@ -133,7 +133,7 @@ public class DataSourceDecoratorTest {
         final DataSourceDecorator decorator = new DataSourceDecorator();
 
         // WHEN
-        decorator.afterAll(ctx, this);
+        decorator.afterAll(ctx, getClass());
 
         // THEN
         verify(ds).close();

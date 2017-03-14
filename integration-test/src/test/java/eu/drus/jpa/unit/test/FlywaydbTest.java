@@ -32,7 +32,7 @@ public class FlywaydbTest {
     private EntityManager manager;
 
     @Bootstrapping
-    public void prepareDataBase(final DataSource ds) {
+    public static void prepareDataBase(final DataSource ds) {
         // creates db schema and puts some data
         final Flyway flyway = new Flyway();
         flyway.setDataSource(ds);

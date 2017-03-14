@@ -16,7 +16,7 @@ public class EntityManagerFactoryDecorator implements TestClassDecorator {
     }
 
     @Override
-    public void beforeAll(final ExecutionContext ctx, final Object target) throws Exception {
+    public void beforeAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
         @SuppressWarnings("rawtypes")
         final Map properties = (Map) ctx.getData("properties");
         final String unitName = (String) ctx.getData("unitName");
@@ -26,7 +26,7 @@ public class EntityManagerFactoryDecorator implements TestClassDecorator {
     }
 
     @Override
-    public void afterAll(final ExecutionContext ctx, final Object target) throws Exception {
+    public void afterAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
         final EntityManagerFactory emf = (EntityManagerFactory) ctx.getData("emf");
         ctx.storeData("emf", null);
         emf.close();

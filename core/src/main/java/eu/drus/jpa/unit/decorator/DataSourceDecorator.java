@@ -20,7 +20,7 @@ public class DataSourceDecorator implements TestClassDecorator {
     }
 
     @Override
-    public void beforeAll(final ExecutionContext ctx, final Object target) throws Exception {
+    public void beforeAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
         @SuppressWarnings("unchecked")
         final Map<String, Object> properties = (Map<String, Object>) ctx.getData("properties");
         final String unitName = (String) ctx.getData("unitName");
@@ -55,7 +55,7 @@ public class DataSourceDecorator implements TestClassDecorator {
     }
 
     @Override
-    public void afterAll(final ExecutionContext ctx, final Object target) throws Exception {
+    public void afterAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
         final BasicDataSource ds = (BasicDataSource) ctx.getData("ds");
         ds.close();
         ctx.storeData("ds", null);

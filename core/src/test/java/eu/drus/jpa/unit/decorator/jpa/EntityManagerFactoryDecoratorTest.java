@@ -62,7 +62,7 @@ public class EntityManagerFactoryDecoratorTest {
         final EntityManagerFactoryDecorator decorator = new EntityManagerFactoryDecorator();
 
         // WHEN
-        decorator.beforeAll(ctx, this);
+        decorator.beforeAll(ctx, getClass());
 
         // THEN
         verify(ctx).storeData(eq("emf"), eq(factory));
@@ -76,7 +76,7 @@ public class EntityManagerFactoryDecoratorTest {
         final EntityManagerFactoryDecorator decorator = new EntityManagerFactoryDecorator();
 
         // WHEN
-        decorator.afterAll(ctx, this);
+        decorator.afterAll(ctx, getClass());
 
         // THEN
         verify(ctx).storeData(eq("emf"), eq(null));

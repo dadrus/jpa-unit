@@ -3,9 +3,8 @@ package eu.drus.jpa.unit.decorator;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.lang.reflect.Method;
@@ -26,7 +25,9 @@ import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(BootstrappingDecorator.class)
+@PrepareForTest({
+        BootstrappingDecorator.class, BootstrappingDecoratorTest.class
+})
 public class BootstrappingDecoratorTest {
 
     @Mock
@@ -41,9 +42,11 @@ public class BootstrappingDecoratorTest {
     @Mock
     private AnnotationInspector<Bootstrapping> bootstrappingInpector;
 
-    public void bootstrappingMethodOne(final DataSource ds) {}
+    public static void bootstrappingMethodOne(final DataSource ds) {}
 
-    public void bootstrappingMethodTwo() {}
+    public static void bootstrappingMethodTwo() {}
+
+    public void nonstaticMethod() {}
 
     @Before
     public void prepareMocks() throws Exception {
@@ -74,7 +77,7 @@ public class BootstrappingDecoratorTest {
         final BootstrappingDecorator decorator = new BootstrappingDecorator();
 
         // WHEN
-        decorator.beforeAll(ctx, this);
+        decorator.beforeAll(ctx, getClass());
 
         // THEN
         // IllegalArgumentException is thrown. A bootstrapping method is required to have a single
@@ -91,7 +94,7 @@ public class BootstrappingDecoratorTest {
         final BootstrappingDecorator decorator = new BootstrappingDecorator();
 
         // WHEN
-        decorator.beforeAll(ctx, this);
+        decorator.beforeAll(ctx, getClass());
 
         // THEN
         // IllegalArgumentException is thrown. Only single method is allowed
@@ -102,14 +105,29 @@ public class BootstrappingDecoratorTest {
         // GIVEN
         final Method bootstrappingMethodOne = getClass().getMethod("bootstrappingMethodOne", DataSource.class);
         when(bootstrappingInpector.getAnnotatedMethods()).thenReturn(Arrays.asList(bootstrappingMethodOne));
-        final BootstrappingDecoratorTest thisSpy = spy(this);
 
         final BootstrappingDecorator decorator = new BootstrappingDecorator();
 
         // WHEN
-        decorator.beforeAll(ctx, thisSpy);
+        decorator.beforeAll(ctx, getClass());
 
         // THEN
-        verify(thisSpy).bootstrappingMethodOne(eq(ds));
+        verifyStatic();
+        BootstrappingDecoratorTest.bootstrappingMethodOne(eq(ds));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testBootstrappingMethodIsRequiredToBeStatic() throws Exception {
+        // GIVEN
+        final Method nonstaticMethod = getClass().getMethod("nonstaticMethod");
+        when(bootstrappingInpector.getAnnotatedMethods()).thenReturn(Arrays.asList(nonstaticMethod));
+
+        final BootstrappingDecorator decorator = new BootstrappingDecorator();
+
+        // WHEN
+        decorator.beforeAll(ctx, getClass());
+
+        // THEN
+        // IllegalArgumentException is thrown. Method must be static
     }
 }

@@ -4,7 +4,7 @@ public interface TestClassDecorator {
 
     int getPriority();
 
-    void beforeAll(ExecutionContext ctx, Object target) throws Exception;
+    void beforeAll(ExecutionContext ctx, Class<?> testClass) throws Exception;
 
-    void afterAll(ExecutionContext ctx, Object target) throws Exception;
+    void afterAll(ExecutionContext ctx, Class<?> testClass) throws Exception;
 }
