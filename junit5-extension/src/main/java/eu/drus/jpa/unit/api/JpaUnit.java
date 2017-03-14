@@ -16,7 +16,7 @@ import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestClassDecorator;
 
-public class JpaUnitExtension
+public class JpaUnit
         implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, TestInstancePostProcessor {
 
     private static final ServiceLoader<TestClassDecorator> GLOBAL_FIXTURES = ServiceLoader.load(TestClassDecorator.class);

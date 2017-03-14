@@ -13,11 +13,11 @@ import org.junit.runner.RunWith;
 
 import eu.drus.jpa.unit.api.Cleanup;
 import eu.drus.jpa.unit.api.CleanupPhase;
-import eu.drus.jpa.unit.api.JpaUnitExtension;
+import eu.drus.jpa.unit.api.JpaUnit;
 
 @Ignore
 @RunWith(JUnitPlatform.class)
-@ExtendWith(JpaUnitExtension.class)
+@ExtendWith(JpaUnit.class)
 public class Junit5Test {
 
     @PersistenceContext(unitName = "test-unit-1")
