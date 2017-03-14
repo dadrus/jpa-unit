@@ -11,23 +11,58 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.runners.model.FrameworkField;
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.TestClass;
-
 public class AnnotationInspector<T extends Annotation> {
 
-    private final TestClass testClass;
+    private final Class<?> testClass;
+    private final Class<T> annotationClass;
     private final Map<Method, T> annotatedMethods;
     private final Map<Field, T> annotatedFields;
 
-    private final Class<T> annotationClass;
-
-    AnnotationInspector(final TestClass testClass, final Class<T> annotationClass) {
+    AnnotationInspector(final Class<?> testClass, final Class<T> annotationClass) {
         this.testClass = testClass;
         this.annotationClass = annotationClass;
-        this.annotatedMethods = fetchMethods(annotationClass);
-        this.annotatedFields = fetchFields(annotationClass);
+        annotatedMethods = new HashMap<>();
+        annotatedFields = new HashMap<>();
+
+        final List<Class<?>> allClasses = getAllClasses(testClass);
+        for (final Class<?> clazz : allClasses) {
+            annotatedMethods.putAll(fetchMethods(clazz, annotationClass));
+            annotatedFields.putAll(fetchFields(clazz, annotationClass));
+        }
+    }
+
+    private static List<Class<?>> getAllClasses(final Class<?> testClass) {
+        final ArrayList<Class<?>> results = new ArrayList<>();
+        Class<?> current = testClass;
+        while (current != null) {
+            results.add(current);
+            current = current.getSuperclass();
+        }
+        return results;
+    }
+
+    private Map<Method, T> fetchMethods(final Class<?> clazz, final Class<T> annotation) {
+        final Map<Method, T> map = new HashMap<>();
+
+        for (final Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(annotation)) {
+                map.put(method, method.getAnnotation(annotation));
+            }
+        }
+
+        return map;
+    }
+
+    private Map<Field, T> fetchFields(final Class<?> clazz, final Class<T> annotation) {
+        final Map<Field, T> map = new HashMap<>();
+
+        for (final Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(annotation)) {
+                map.put(field, field.getAnnotation(annotation));
+            }
+        }
+
+        return map;
     }
 
     public Collection<T> fetchAll() {
@@ -94,25 +129,5 @@ public class AnnotationInspector<T extends Annotation> {
         }
 
         return usedAnnotation;
-    }
-
-    private Map<Method, T> fetchMethods(final Class<T> annotation) {
-        final Map<Method, T> map = new HashMap<>();
-
-        for (final FrameworkMethod testMethod : testClass.getAnnotatedMethods(annotation)) {
-            map.put(testMethod.getMethod(), testMethod.getAnnotation(annotation));
-        }
-
-        return map;
-    }
-
-    private Map<Field, T> fetchFields(final Class<T> annotation) {
-        final Map<Field, T> map = new HashMap<>();
-
-        for (final FrameworkField testField : testClass.getAnnotatedFields(annotation)) {
-            map.put(testField.getField(), testField.getAnnotation(annotation));
-        }
-
-        return map;
     }
 }

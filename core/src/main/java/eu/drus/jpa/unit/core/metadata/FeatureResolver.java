@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.dbunit.dataset.filter.IColumnFilter;
-import org.junit.runners.model.TestClass;
 
 import eu.drus.jpa.unit.api.ApplyScriptsAfter;
 import eu.drus.jpa.unit.api.ApplyScriptsBefore;
@@ -30,7 +29,7 @@ public class FeatureResolver {
     private final Method testMethod;
 
     FeatureResolver(final Method testMethod, final Class<?> clazz) {
-        metadataExtractor = new MetadataExtractor(new TestClass(clazz));
+        metadataExtractor = new MetadataExtractor(clazz);
         this.testMethod = testMethod;
     }
 

@@ -7,8 +7,6 @@ import java.util.Map;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
-import org.junit.runners.model.TestClass;
-
 import eu.drus.jpa.unit.api.ApplyScriptsAfter;
 import eu.drus.jpa.unit.api.ApplyScriptsBefore;
 import eu.drus.jpa.unit.api.Bootstrapping;
@@ -20,15 +18,15 @@ import eu.drus.jpa.unit.api.InitialDataSets;
 import eu.drus.jpa.unit.api.Transactional;
 
 public class MetadataExtractor {
-    private final TestClass testClass;
+    private final Class<?> testClass;
 
     private final Map<Class<?>, AnnotationInspector<?>> inspectors = new HashMap<>();
 
-    public MetadataExtractor(final TestClass testClass) {
+    public MetadataExtractor(final Class<?> testClass) {
         this.testClass = testClass;
     }
 
-    private <K extends Annotation> void register(final TestClass testClass, final Class<K> annotation) {
+    private <K extends Annotation> void register(final Class<?> testClass, final Class<K> annotation) {
         inspectors.put(annotation, new AnnotationInspector<>(testClass, annotation));
     }
 

@@ -18,7 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runners.model.TestClass;
 
 import com.sun.codemodel.JAnnotationUse;
 import com.sun.codemodel.JCodeModel;
@@ -31,7 +30,6 @@ import com.sun.codemodel.JPackage;
 import eu.drus.jpa.unit.api.ApplyScriptsAfter;
 import eu.drus.jpa.unit.api.Cleanup;
 import eu.drus.jpa.unit.api.InitialDataSets;
-import eu.drus.jpa.unit.core.metadata.AnnotationInspector;
 
 public class AnnotationInspectorTest {
 
@@ -70,7 +68,7 @@ public class AnnotationInspectorTest {
         final Method method = cut.getDeclaredMethod("testMethod");
 
         // WHEN
-        final AnnotationInspector<PersistenceContext> ai = new AnnotationInspector<>(new TestClass(cut), PersistenceContext.class);
+        final AnnotationInspector<PersistenceContext> ai = new AnnotationInspector<>(cut, PersistenceContext.class);
 
         // THEN
         assertThat(ai.fetchFromField(field), notNullValue());
@@ -95,7 +93,7 @@ public class AnnotationInspectorTest {
         final Method method = cut.getDeclaredMethod("testMethod");
 
         // WHEN
-        final AnnotationInspector<ApplyScriptsAfter> ai = new AnnotationInspector<>(new TestClass(cut), ApplyScriptsAfter.class);
+        final AnnotationInspector<ApplyScriptsAfter> ai = new AnnotationInspector<>(cut, ApplyScriptsAfter.class);
 
         // THEN
         assertThat(ai.fetchFromField(field), nullValue());
@@ -120,7 +118,7 @@ public class AnnotationInspectorTest {
         final Method method = cut.getDeclaredMethod("testMethod");
 
         // WHEN
-        final AnnotationInspector<Cleanup> ai = new AnnotationInspector<>(new TestClass(cut), Cleanup.class);
+        final AnnotationInspector<Cleanup> ai = new AnnotationInspector<>(cut, Cleanup.class);
 
         // THEN
         assertThat(ai.fetchFromField(field), nullValue());
@@ -144,7 +142,7 @@ public class AnnotationInspectorTest {
         final Method method = cut.getDeclaredMethod("testMethod");
 
         // WHEN
-        final AnnotationInspector<InitialDataSets> ai = new AnnotationInspector<>(new TestClass(cut), InitialDataSets.class);
+        final AnnotationInspector<InitialDataSets> ai = new AnnotationInspector<>(cut, InitialDataSets.class);
 
         // THEN
         assertThat(ai.fetchFromField(field), nullValue());

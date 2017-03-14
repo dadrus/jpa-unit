@@ -7,7 +7,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
 import org.junit.Test;
-import org.junit.runners.model.TestClass;
 
 import eu.drus.jpa.unit.api.ApplyScriptsAfter;
 import eu.drus.jpa.unit.api.ApplyScriptsBefore;
@@ -19,7 +18,7 @@ import eu.drus.jpa.unit.api.Transactional;
 
 public class MetadataExtractorTest {
 
-    private MetadataExtractor metadataExtractor = new MetadataExtractor(new TestClass(MetadataExtractorTest.class));
+    private MetadataExtractor metadataExtractor = new MetadataExtractor(MetadataExtractorTest.class);
 
     @Test
     public void testApplyScriptsAfter() {
