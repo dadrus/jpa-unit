@@ -48,7 +48,7 @@ public class TestClassStatement extends Statement {
     private void beforeAll() throws Throwable {
         final Boolean isBeforeAllRun = (Boolean) ctx.getData(beforeAllKey);
         if (isBeforeAllRun == null || !isBeforeAllRun) {
-            decorator.beforeAll(ctx, target);
+            decorator.beforeAll(ctx, target.getClass());
         }
         ctx.storeData(beforeAllKey, Boolean.TRUE);
     }
@@ -61,7 +61,7 @@ public class TestClassStatement extends Statement {
         ctx.storeData(counterKey, ++counter);
         final List<FrameworkMethod> testMethods = new TestClass(target.getClass()).getAnnotatedMethods(Test.class);
         if (counter >= testMethods.size()) {
-            decorator.afterAll(ctx, target);
+            decorator.afterAll(ctx, target.getClass());
         }
     }
 }
