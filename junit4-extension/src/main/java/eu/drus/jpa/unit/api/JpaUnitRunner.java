@@ -14,10 +14,10 @@ public class JpaUnitRunner extends BlockJUnit4ClassRunner {
 
     private JpaUnitContext ctx;
 
-    public JpaUnitRunner(final Class<?> klass) throws InitializationError {
-        super(klass);
+    public JpaUnitRunner(final Class<?> clazz) throws InitializationError {
+        super(clazz);
 
-        ctx = JpaUnitContext.getInstance(getTestClass());
+        ctx = JpaUnitContext.getInstance(clazz);
 
         final List<FrameworkField> ruleFields = getTestClass().getAnnotatedFields(Rule.class);
         if (ruleFields.stream().anyMatch(f -> f.getType().equals(JpaUnitRule.class))) {

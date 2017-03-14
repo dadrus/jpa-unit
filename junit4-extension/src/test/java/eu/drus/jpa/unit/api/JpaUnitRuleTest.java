@@ -9,7 +9,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -332,8 +331,6 @@ public class JpaUnitRuleTest {
         verify(listener).testFinished(descriptionCaptor.capture());
         assertThat(descriptionCaptor.getValue().getClassName(), equalTo("ClassUnderTest"));
         assertThat(descriptionCaptor.getValue().getMethodName(), equalTo("testMethod"));
-
-        verifyNoMoreInteractions(listener);
     }
 
     @Test
@@ -374,8 +371,6 @@ public class JpaUnitRuleTest {
         verify(listener).testFinished(descriptionCaptor.capture());
         assertThat(descriptionCaptor.getValue().getClassName(), equalTo("ClassUnderTest"));
         assertThat(descriptionCaptor.getValue().getMethodName(), equalTo("testMethod"));
-
-        verifyNoMoreInteractions(listener);
     }
 
     @Test
@@ -422,7 +417,5 @@ public class JpaUnitRuleTest {
         verify(listener).testFinished(descriptionCaptor.capture());
         assertThat(descriptionCaptor.getValue().getClassName(), equalTo("ClassUnderTest"));
         assertThat(descriptionCaptor.getValue().getMethodName(), equalTo("testMethod"));
-
-        verifyNoMoreInteractions(listener);
     }
 }

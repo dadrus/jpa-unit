@@ -14,21 +14,19 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
 import javax.persistence.PersistenceUnit;
 
-import org.junit.runners.model.TestClass;
-
 import eu.drus.jpa.unit.core.metadata.AnnotationInspector;
 import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 
 class JpaUnitContext implements ExecutionContext {
 
-    private static final Map<TestClass, JpaUnitContext> CTX_MAP = new HashMap<>();
+    private static final Map<Class<?>, JpaUnitContext> CTX_MAP = new HashMap<>();
 
     private Field persistenceField;
 
     private Map<String, Object> cache;
 
-    private JpaUnitContext(final TestClass testClass) {
+    private JpaUnitContext(final Class<?> testClass) {
         final MetadataExtractor extractor = new MetadataExtractor(testClass);
         final AnnotationInspector<PersistenceContext> pcInspector = extractor.persistenceContext();
         final AnnotationInspector<PersistenceUnit> puInspector = extractor.persistenceUnit();
@@ -73,7 +71,7 @@ class JpaUnitContext implements ExecutionContext {
         cache.put("properties", properties);
     }
 
-    static synchronized JpaUnitContext getInstance(final TestClass testClass) {
+    static synchronized JpaUnitContext getInstance(final Class<?> testClass) {
         JpaUnitContext ctx = CTX_MAP.get(testClass);
         if (ctx == null) {
             ctx = new JpaUnitContext(testClass);

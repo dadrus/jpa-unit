@@ -8,14 +8,13 @@ import java.util.List;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestClass;
 
 public class JpaUnitRule implements MethodRule {
 
     private final JpaUnitContext ctx;
 
     public JpaUnitRule(final Class<?> clazz) {
-        ctx = JpaUnitContext.getInstance(new TestClass(clazz));
+        ctx = JpaUnitContext.getInstance(clazz);
     }
 
     @Override
