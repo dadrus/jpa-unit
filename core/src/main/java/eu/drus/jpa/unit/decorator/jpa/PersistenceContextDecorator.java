@@ -19,7 +19,7 @@ public class PersistenceContextDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void apply(final TestMethodInvocation invocation) throws Exception {
+    public void apply(final TestMethodInvocation invocation) throws Throwable {
         final ExecutionContext context = invocation.getContext();
 
         final EntityManagerFactory emf = (EntityManagerFactory) context.getData("emf");

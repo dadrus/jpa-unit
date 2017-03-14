@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.ContainerExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestExtensionContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
-import org.junit.runners.model.TestClass;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestClassDecorator;
@@ -31,7 +30,7 @@ public class JpaUnitExtension
     @Override
     public void beforeAll(final ContainerExtensionContext context) throws Exception {
         System.out.println("beforeAll");
-        final JpaUnitContext ctx = JpaUnitContext.getInstance(new TestClass(context.getTestClass().get()));
+        final JpaUnitContext ctx = JpaUnitContext.getInstance(context.getTestClass().get());
 
         final List<TestClassDecorator> globalFixtures = getGlobalTestFixtureRules(ctx);
 
@@ -49,7 +48,7 @@ public class JpaUnitExtension
     @Override
     public void afterAll(final ContainerExtensionContext context) throws Exception {
         System.out.println("afterAll");
-        final JpaUnitContext ctx = JpaUnitContext.getInstance(new TestClass(context.getTestClass().get()));
+        final JpaUnitContext ctx = JpaUnitContext.getInstance(context.getTestClass().get());
 
         final List<TestClassDecorator> globalFixtures = getGlobalTestFixtureRules(ctx);
 

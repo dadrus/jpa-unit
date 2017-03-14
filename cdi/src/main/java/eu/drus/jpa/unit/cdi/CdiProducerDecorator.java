@@ -19,7 +19,7 @@ public class CdiProducerDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void apply(final TestMethodInvocation invocation) throws Exception {
+    public void apply(final TestMethodInvocation invocation) throws Throwable {
         try {
             final EntityManager em = (EntityManager) invocation.getContext().getData("em");
             emh.setEntityManager(em);

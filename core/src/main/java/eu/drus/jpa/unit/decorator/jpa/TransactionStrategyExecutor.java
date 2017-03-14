@@ -4,5 +4,5 @@ import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 @FunctionalInterface
 interface TransactionStrategyExecutor {
-    void execute(final TestMethodInvocation invocation) throws Exception;
+    void execute(final TestMethodInvocation invocation) throws Throwable;
 }

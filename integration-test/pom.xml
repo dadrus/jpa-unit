@@ -14,7 +14,7 @@
   <dependencies>
     <dependency>
       <groupId>eu.drus.test</groupId>
-      <artifactId>jpa-unit</artifactId>
+      <artifactId>jpa-unit4</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

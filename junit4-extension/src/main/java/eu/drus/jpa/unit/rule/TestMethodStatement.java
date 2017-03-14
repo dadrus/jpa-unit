@@ -32,12 +32,8 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
     }
 
     @Override
-    public void proceed() throws Exception {
-        try {
-            base.evaluate();
-        } catch (final Throwable e) {
-            throw new Exception(e);
-        }
+    public void proceed() throws Throwable {
+        base.evaluate();
     }
 
     @Override

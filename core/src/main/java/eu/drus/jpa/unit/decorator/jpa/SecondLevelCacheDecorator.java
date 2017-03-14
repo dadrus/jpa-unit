@@ -15,7 +15,7 @@ public class SecondLevelCacheDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void apply(final TestMethodInvocation invocation) throws Exception {
+    public void apply(final TestMethodInvocation invocation) throws Throwable {
         final FeatureResolver resolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
                 invocation.getTarget().getClass());
 
