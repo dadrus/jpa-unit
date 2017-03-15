@@ -19,6 +19,11 @@
       <artifactId>jpa-unit-api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>eu.drus.test</groupId>
+      <artifactId>jpa-unit-spi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.hibernate.javax.persistence</groupId>

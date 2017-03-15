@@ -16,7 +16,7 @@
   <dependencies>
     <dependency>
       <groupId>eu.drus.test</groupId>
-      <artifactId>jpa-unit-core</artifactId>
+      <artifactId>jpa-unit-spi</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
