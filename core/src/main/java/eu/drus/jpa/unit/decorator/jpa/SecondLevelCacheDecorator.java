@@ -14,26 +14,51 @@ public class SecondLevelCacheDecorator implements TestMethodDecorator {
         return 0;
     }
 
-    @Override
-    public void apply(final TestMethodInvocation invocation) throws Throwable {
-        final FeatureResolver resolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
-                invocation.getTarget().getClass());
-
-        final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext().getData("emf");
-
-        evictCache(resolver.shouldEvictCacheBefore(), emf);
-
-        try {
-            invocation.proceed();
-        } finally {
-            evictCache(resolver.shouldEvictCacheAfter(), emf);
-        }
-    }
+    // @Override
+    // public void apply(final TestMethodInvocation invocation) throws Throwable {
+    // final FeatureResolver resolver =
+    // FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
+    // invocation.getTarget().getClass());
+    //
+    // final EntityManagerFactory emf = (EntityManagerFactory)
+    // invocation.getContext().getData("emf");
+    //
+    // evictCache(resolver.shouldEvictCacheBefore(), emf);
+    //
+    // try {
+    // invocation.proceed();
+    // } finally {
+    // evictCache(resolver.shouldEvictCacheAfter(), emf);
+    // }
+    // }
 
     private void evictCache(final boolean doEvict, final EntityManagerFactory emf) {
         if (doEvict) {
             emf.getCache().evictAll();
         }
+    }
+
+    @Override
+    public void processInstance(final Object instance, final TestMethodInvocation invocation) throws Exception {
+        // nothing to do
+    }
+
+    @Override
+    public void beforeTest(final TestMethodInvocation invocation) throws Exception {
+        final FeatureResolver resolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(), invocation.getTestClass());
+
+        final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext().getData("emf");
+
+        evictCache(resolver.shouldEvictCacheBefore(), emf);
+    }
+
+    @Override
+    public void afterTest(final TestMethodInvocation invocation) throws Exception {
+        final FeatureResolver resolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(), invocation.getTestClass());
+
+        final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext().getData("emf");
+
+        evictCache(resolver.shouldEvictCacheAfter(), emf);
     }
 
 }

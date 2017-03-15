@@ -15,23 +15,40 @@ public class TransactionDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void apply(final TestMethodInvocation invocation) throws Throwable {
-        final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
-                invocation.getTarget().getClass());
+    public void processInstance(final Object instance, final TestMethodInvocation invocation) throws Exception {
+        // nothing to do
+    }
 
+    @Override
+    public void beforeTest(final TestMethodInvocation invocation) throws Exception {
         final EntityManager em = (EntityManager) invocation.getContext().getData("em");
-
         if (em == null) {
-            invocation.proceed();
-        } else {
-            try {
-                final TransactionStrategyExecutor executor = featureResolver.getTransactionMode()
-                        .provide(new TransactionStrategyProvider(em.getTransaction()));
-                executor.execute(invocation);
-            } finally {
-                em.clear();
-            }
+            return;
         }
+
+        final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
+                invocation.getTestClass());
+
+        final TransactionStrategyExecutor executor = featureResolver.getTransactionMode()
+                .provide(new TransactionStrategyProvider(em.getTransaction()));
+        executor.begin();
+    }
+
+    @Override
+    public void afterTest(final TestMethodInvocation invocation) throws Exception {
+        final EntityManager em = (EntityManager) invocation.getContext().getData("em");
+        if (em == null) {
+            return;
+        }
+
+        final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
+                invocation.getTestClass());
+
+        final TransactionStrategyExecutor executor = featureResolver.getTransactionMode()
+                .provide(new TransactionStrategyProvider(em.getTransaction()));
+        executor.commit();
+
+        em.clear();
     }
 
 }

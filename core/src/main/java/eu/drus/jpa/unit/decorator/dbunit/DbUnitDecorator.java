@@ -5,6 +5,7 @@ import org.dbunit.database.IDatabaseConnection;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
+import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -16,29 +17,47 @@ public class DbUnitDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void apply(final TestMethodInvocation invocation) throws Throwable {
+    public void processInstance(final Object instance, final TestMethodInvocation invocation) throws Exception {
+        // nothing to do
+    }
+
+    @Override
+    public void beforeTest(final TestMethodInvocation invocation) throws Exception {
+        final ExecutionContext context = invocation.getContext();
         final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
-                invocation.getTarget().getClass());
+                invocation.getTestClass());
 
         final DbFeatureFactory featureFactory = new DbFeatureFactory(featureResolver);
 
         final BasicDataSource ds = (BasicDataSource) invocation.getContext().getData("ds");
 
         final IDatabaseConnection connection = DatabaseConnectionFactory.openConnection(ds);
-        try {
-            featureFactory.getCleanUpBeforeFeature().execute(connection);
-            featureFactory.getCleanupUsingScriptBeforeFeature().execute(connection);
-            featureFactory.getApplyCustomScriptBeforeFeature().execute(connection);
-            featureFactory.getSeedDataFeature().execute(connection);
+        context.storeData("connection", connection);
 
-            try {
-                invocation.proceed();
+        featureFactory.getCleanUpBeforeFeature().execute(connection);
+        featureFactory.getCleanupUsingScriptBeforeFeature().execute(connection);
+        featureFactory.getApplyCustomScriptBeforeFeature().execute(connection);
+        featureFactory.getSeedDataFeature().execute(connection);
+    }
+
+    @Override
+    public void afterTest(final TestMethodInvocation invocation) throws Exception {
+        final ExecutionContext context = invocation.getContext();
+        final IDatabaseConnection connection = (IDatabaseConnection) context.getData("connection");
+
+        final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
+                invocation.getTestClass());
+
+        final DbFeatureFactory featureFactory = new DbFeatureFactory(featureResolver);
+
+        try {
+            if (!invocation.hasErrors()) {
                 featureFactory.getVerifyDataAfterFeature().execute(connection);
-            } finally {
-                featureFactory.getApplyCustomScriptAfterFeature().execute(connection);
-                featureFactory.getCleanupUsingScriptAfterFeature().execute(connection);
-                featureFactory.getCleanUpAfterFeature().execute(connection);
             }
+
+            featureFactory.getApplyCustomScriptAfterFeature().execute(connection);
+            featureFactory.getCleanupUsingScriptAfterFeature().execute(connection);
+            featureFactory.getCleanUpAfterFeature().execute(connection);
         } finally {
             connection.close();
         }

@@ -19,28 +19,33 @@ public class PersistenceContextDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void apply(final TestMethodInvocation invocation) throws Throwable {
+    public void processInstance(final Object instance, final TestMethodInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
 
         final EntityManagerFactory emf = (EntityManagerFactory) context.getData("emf");
-        EntityManager em = null;
+        EntityManager em;
 
         final Field field = context.getPersistenceField();
+        if (field.getType().equals(EntityManager.class)) {
+            // create EntityManager and inject it
+            em = emf.createEntityManager();
+            injectValue(field, instance, em);
+            context.storeData("em", em);
+        }
+    }
 
-        try {
-            if (field.getType().equals(EntityManager.class)) {
-                // create EntityManager and inject it
-                em = emf.createEntityManager();
-                injectValue(field, invocation.getTarget(), em);
-                context.storeData("em", em);
-            }
+    @Override
+    public void beforeTest(final TestMethodInvocation invocation) throws Exception {
+        // nothing to do
+    }
 
-            invocation.proceed();
-        } finally {
-            if (em != null) {
-                context.storeData("em", null);
-                em.close();
-            }
+    @Override
+    public void afterTest(final TestMethodInvocation invocation) throws Exception {
+        final ExecutionContext context = invocation.getContext();
+        final EntityManager em = (EntityManager) context.getData("em");
+        if (em != null) {
+            context.storeData("em", null);
+            em.close();
         }
     }
 }

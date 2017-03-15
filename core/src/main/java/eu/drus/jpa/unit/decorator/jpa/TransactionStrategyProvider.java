@@ -3,7 +3,6 @@ package eu.drus.jpa.unit.decorator.jpa;
 import javax.persistence.EntityTransaction;
 
 import eu.drus.jpa.unit.api.TransactionMode.StrategyProvider;
-import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 class TransactionStrategyProvider implements StrategyProvider<TransactionStrategyExecutor> {
 
@@ -15,11 +14,15 @@ class TransactionStrategyProvider implements StrategyProvider<TransactionStrateg
 
     @Override
     public TransactionStrategyExecutor rollbackStrategy() {
-        return (final TestMethodInvocation invocation) -> {
-            tx.begin();
-            try {
-                invocation.proceed();
-            } finally {
+        return new TransactionStrategyExecutor() {
+
+            @Override
+            public void begin() {
+                tx.begin();
+            }
+
+            @Override
+            public void commit() {
                 if (tx.isActive()) {
                     tx.rollback();
                 }
@@ -29,11 +32,15 @@ class TransactionStrategyProvider implements StrategyProvider<TransactionStrateg
 
     @Override
     public TransactionStrategyExecutor commitStrategy() {
-        return (final TestMethodInvocation invocation) -> {
-            tx.begin();
-            try {
-                invocation.proceed();
-            } finally {
+        return new TransactionStrategyExecutor() {
+
+            @Override
+            public void begin() {
+                tx.begin();
+            }
+
+            @Override
+            public void commit() {
                 if (tx.isActive()) {
                     tx.commit();
                 }
@@ -43,6 +50,17 @@ class TransactionStrategyProvider implements StrategyProvider<TransactionStrateg
 
     @Override
     public TransactionStrategyExecutor disabledStrategy() {
-        return TestMethodInvocation::proceed;
+        return new TransactionStrategyExecutor() {
+
+            @Override
+            public void commit() {
+                // nothing to do
+            }
+
+            @Override
+            public void begin() {
+                // nothing to do
+            }
+        };
     }
 }

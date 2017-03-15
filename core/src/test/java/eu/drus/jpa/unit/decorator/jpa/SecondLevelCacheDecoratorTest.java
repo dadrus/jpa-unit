@@ -4,9 +4,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
@@ -18,7 +18,6 @@ import javax.persistence.EntityManagerFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -53,7 +52,6 @@ public class SecondLevelCacheDecoratorTest {
         when(FeatureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
 
         when(invocation.getContext()).thenReturn(ctx);
-        when(invocation.getTarget()).thenReturn(this);
         when(ctx.getData(eq("emf"))).thenReturn(emf);
         when(emf.getCache()).thenReturn(cache);
     }
@@ -64,44 +62,77 @@ public class SecondLevelCacheDecoratorTest {
         final SecondLevelCacheDecorator fixture = new SecondLevelCacheDecorator();
 
         // WHEN
-        fixture.apply(invocation);
+        fixture.beforeTest(invocation);
+        fixture.afterTest(invocation);
 
         // THEN
-        verify(invocation).proceed();
-        verify(cache, times(0)).evictAll();
-        verify(emf, times(0)).close();
+        verifyNoMoreInteractions(cache, emf);
     }
 
     @Test
-    public void testEvictionOfSecondLevelCacheIsRunBeforeBaseStatementExecution() throws Throwable {
+    public void testEvictionOfSecondLevelCacheIsRunInBeforeTestPhaseIfConfiguredForIt() throws Throwable {
         // GIVEN
         when(resolver.shouldEvictCacheBefore()).thenReturn(Boolean.TRUE);
         final SecondLevelCacheDecorator fixture = new SecondLevelCacheDecorator();
 
         // WHEN
-        fixture.apply(invocation);
+        fixture.beforeTest(invocation);
 
         // THEN
-        final InOrder order = inOrder(invocation, cache);
-        order.verify(cache).evictAll();
-        order.verify(invocation).proceed();
+        verify(cache).evictAll();
         verify(emf, times(0)).close();
     }
 
     @Test
-    public void testEvictionOfSecondLevelCacheIsRunAfterBaseStatementExecution() throws Throwable {
+    public void testEvictionOfSecondLevelCacheIsNotRunInBeforeTestPhaseIfNotConfiguredForIt() throws Throwable {
+        // GIVEN
+        when(resolver.shouldEvictCacheBefore()).thenReturn(Boolean.FALSE);
+        final SecondLevelCacheDecorator fixture = new SecondLevelCacheDecorator();
+
+        // WHEN
+        fixture.beforeTest(invocation);
+
+        // THEN
+        verifyNoMoreInteractions(cache, emf);
+    }
+
+    @Test
+    public void testEvictionOfSecondLevelCacheIsRunInAfterTestPhaseIfConfiguredForIt() throws Throwable {
         // GIVEN
         when(resolver.shouldEvictCacheAfter()).thenReturn(Boolean.TRUE);
         final SecondLevelCacheDecorator fixture = new SecondLevelCacheDecorator();
 
         // WHEN
-        fixture.apply(invocation);
+        fixture.afterTest(invocation);
 
         // THEN
-        final InOrder order = inOrder(invocation, cache);
-        order.verify(invocation).proceed();
-        order.verify(cache).evictAll();
+        verify(cache).evictAll();
         verify(emf, times(0)).close();
+    }
+
+    @Test
+    public void testEvictionOfSecondLevelCacheIsNotRunInAfterTestPhaseIfNotConfiguredForIt() throws Throwable {
+        // GIVEN
+        when(resolver.shouldEvictCacheAfter()).thenReturn(Boolean.FALSE);
+        final SecondLevelCacheDecorator fixture = new SecondLevelCacheDecorator();
+
+        // WHEN
+        fixture.afterTest(invocation);
+
+        // THEN
+        verifyNoMoreInteractions(cache, emf);
+    }
+
+    @Test
+    public void testProcessInstanceDoesNotHaveAnyEffect() throws Exception {
+        // GIVEN
+        final SecondLevelCacheDecorator fixture = new SecondLevelCacheDecorator();
+
+        // WHEN
+        fixture.processInstance(this, invocation);
+
+        // THEN
+        verifyNoMoreInteractions(cache, emf);
     }
 
     @Test

@@ -16,6 +16,7 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
     private final Statement base;
     private final FrameworkMethod method;
     private final Object target;
+    private boolean isExceptionThrown;
 
     public TestMethodStatement(final ExecutionContext ctx, final TestMethodDecorator decorator, final Statement base,
             final FrameworkMethod method, final Object target) {
@@ -24,16 +25,21 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
         this.base = base;
         this.method = method;
         this.target = target;
+        isExceptionThrown = false;
     }
 
     @Override
     public void evaluate() throws Throwable {
-        decorator.apply(this);
-    }
-
-    @Override
-    public void proceed() throws Throwable {
-        base.evaluate();
+        decorator.processInstance(target, this);
+        decorator.beforeTest(this);
+        try {
+            base.evaluate();
+        } catch (final Throwable t) {
+            isExceptionThrown = true;
+            throw t;
+        } finally {
+            decorator.afterTest(this);
+        }
     }
 
     @Override
@@ -42,13 +48,18 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
     }
 
     @Override
-    public Object getTarget() {
-        return target;
+    public ExecutionContext getContext() {
+        return ctx;
     }
 
     @Override
-    public ExecutionContext getContext() {
-        return ctx;
+    public Class<?> getTestClass() {
+        return target.getClass();
+    }
+
+    @Override
+    public boolean hasErrors() {
+        return isExceptionThrown;
     }
 
 }

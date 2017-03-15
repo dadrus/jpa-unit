@@ -3,9 +3,10 @@ package eu.drus.jpa.unit.decorator.dbunit;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
@@ -51,7 +52,7 @@ public class DbUnitDecoratorTest {
         when(FeatureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
 
         when(invocation.getContext()).thenReturn(ctx);
-        when(invocation.getTarget()).thenReturn(this);
+        when(ctx.getData(eq("connection"))).thenReturn(connection);
         when(resolver.shouldCleanupBefore()).thenReturn(Boolean.FALSE);
         when(resolver.shouldCleanupUsingScriptBefore()).thenReturn(Boolean.FALSE);
         when(resolver.shouldApplyCustomScriptBefore()).thenReturn(Boolean.FALSE);
@@ -69,14 +70,15 @@ public class DbUnitDecoratorTest {
         final DbUnitDecorator fixture = new DbUnitDecorator();
 
         // WHEN
-        fixture.apply(invocation);
+        fixture.beforeTest(invocation);
+        fixture.afterTest(invocation);
 
         // THEN
         order.verify(resolver).shouldCleanupBefore();
         order.verify(resolver).shouldCleanupUsingScriptBefore();
         order.verify(resolver).shouldApplyCustomScriptBefore();
         order.verify(resolver).shouldSeedData();
-        order.verify(invocation).proceed();
+
         order.verify(resolver).shouldVerifyDataAfter();
         order.verify(resolver).shouldApplyCustomScriptAfter();
         order.verify(resolver).shouldCleanupUsingScriptAfter();
@@ -87,29 +89,37 @@ public class DbUnitDecoratorTest {
     @Test
     public void testDataVerificationIsSkippedButAllAfterTestFeaturesAreExecutedIfInvocationProcessingFails() throws Throwable {
         // GIVEN
+        when(invocation.hasErrors()).thenReturn(Boolean.TRUE);
         final InOrder order = inOrder(ctx, invocation, resolver, connection);
         final DbUnitDecorator fixture = new DbUnitDecorator();
 
-        doThrow(new Exception()).when(invocation).proceed();
-
         // WHEN
-        try {
-            fixture.apply(invocation);
-        } catch (final Exception e) {
-
-        }
+        fixture.beforeTest(invocation);
+        fixture.afterTest(invocation);
 
         // THEN
         order.verify(resolver).shouldCleanupBefore();
         order.verify(resolver).shouldCleanupUsingScriptBefore();
         order.verify(resolver).shouldApplyCustomScriptBefore();
         order.verify(resolver).shouldSeedData();
-        order.verify(invocation).proceed();
+
         order.verify(resolver, times(0)).shouldVerifyDataAfter();
         order.verify(resolver).shouldApplyCustomScriptAfter();
         order.verify(resolver).shouldCleanupUsingScriptAfter();
         order.verify(resolver).shouldCleanupAfter();
         order.verify(connection).close();
+    }
+
+    @Test
+    public void testProcessInstanceDoesNotHaveAnyEffect() throws Exception {
+        // GIVEN
+        final DbUnitDecorator fixture = new DbUnitDecorator();
+
+        // WHEN
+        fixture.processInstance(this, invocation);
+
+        // THEN
+        verifyNoMoreInteractions(invocation, connection, ctx, resolver);
     }
 
     @Test

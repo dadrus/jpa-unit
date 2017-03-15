@@ -2,10 +2,9 @@ package eu.drus.jpa.unit.cdi;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import javax.persistence.EntityManager;
@@ -13,7 +12,6 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -42,7 +40,6 @@ public class CdiProducerDecoratorTest {
     @Before
     public void setUp() throws Exception {
         when(invocation.getContext()).thenReturn(ctx);
-        when(invocation.getTarget()).thenReturn(this);
         when(ctx.getData(eq("em"))).thenReturn(em);
     }
 
@@ -58,36 +55,38 @@ public class CdiProducerDecoratorTest {
     }
 
     @Test
-    public void testApplyFixture() throws Throwable {
+    public void testProcessInstance() throws Exception {
         // GIVEN
 
         // WHEN
-        fixture.apply(invocation);
+        fixture.processInstance(this, invocation);
 
         // THEN
-        final InOrder order = inOrder(emh, invocation);
-        order.verify(emh).setEntityManager(eq(em));
-        order.verify(invocation).proceed();
-        order.verify(emh).setEntityManager(eq(null));
+        // nothing should happen
+        verifyNoMoreInteractions(invocation, emh);
     }
 
     @Test
-    public void testApplyFixtureWithErrorInProceedInvocation() throws Throwable {
+    public void testBeforeInstance() throws Exception {
         // GIVEN
-        doThrow(new Exception("some reason")).when(invocation).proceed();
 
         // WHEN
-        try {
-            fixture.apply(invocation);
-            fail("Exception expected");
-        } catch (final Exception e) {
-            // expected
-        }
+        fixture.beforeTest(invocation);
 
         // THEN
-        final InOrder order = inOrder(emh, invocation);
-        order.verify(emh).setEntityManager(eq(em));
-        order.verify(invocation).proceed();
-        order.verify(emh).setEntityManager(eq(null));
+        verify(emh).setEntityManager(eq(em));
+        verifyNoMoreInteractions(emh, em);
+    }
+
+    @Test
+    public void testAfterTest() throws Throwable {
+        // GIVEN
+
+        // WHEN
+        fixture.afterTest(invocation);
+
+        // THEN
+        verify(emh).setEntityManager(eq(null));
+        verifyNoMoreInteractions(invocation, emh, em);
     }
 }

@@ -14,16 +14,37 @@ public class PersistenceUnitDecorator implements TestMethodDecorator {
         return 1;
     }
 
+    // @Override
+    // public void apply(final TestMethodInvocation invocation) throws Throwable {
+    // final EntityManagerFactory emf = (EntityManagerFactory)
+    // invocation.getContext().getData("emf");
+    //
+    // final Class<?> fieldType = invocation.getContext().getPersistenceField().getType();
+    // if (fieldType.equals(EntityManagerFactory.class)) {
+    // injectValue(invocation.getContext().getPersistenceField(), invocation.getTarget(), emf);
+    // }
+    //
+    // invocation.proceed();
+    // }
+
     @Override
-    public void apply(final TestMethodInvocation invocation) throws Throwable {
+    public void processInstance(final Object instance, final TestMethodInvocation invocation) throws Exception {
         final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext().getData("emf");
 
         final Class<?> fieldType = invocation.getContext().getPersistenceField().getType();
         if (fieldType.equals(EntityManagerFactory.class)) {
-            injectValue(invocation.getContext().getPersistenceField(), invocation.getTarget(), emf);
+            injectValue(invocation.getContext().getPersistenceField(), instance, emf);
         }
+    }
 
-        invocation.proceed();
+    @Override
+    public void beforeTest(final TestMethodInvocation invocation) throws Exception {
+        // nothing to do
+    }
+
+    @Override
+    public void afterTest(final TestMethodInvocation invocation) throws Exception {
+        // nothing to do
     }
 
 }

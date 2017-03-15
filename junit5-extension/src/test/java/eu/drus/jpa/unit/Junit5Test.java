@@ -4,7 +4,6 @@ import javax.naming.OperationNotSupportedException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,7 @@ import eu.drus.jpa.unit.api.Cleanup;
 import eu.drus.jpa.unit.api.CleanupPhase;
 import eu.drus.jpa.unit.api.JpaUnit;
 
-@Ignore
+// @Ignore
 @RunWith(JUnitPlatform.class)
 @ExtendWith(JpaUnit.class)
 public class Junit5Test {
@@ -33,6 +32,5 @@ public class Junit5Test {
     @DisplayName("my test 2")
     public void test2() {
 
-        throw new RuntimeException();
     }
 }

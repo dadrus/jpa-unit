@@ -4,8 +4,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
@@ -48,7 +50,6 @@ public class TransactionDecoratorTest {
         when(FeatureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
 
         when(invocation.getContext()).thenReturn(ctx);
-        when(invocation.getTarget()).thenReturn(this);
         when(resolver.getTransactionMode()).thenReturn(TransactionMode.DISABLED);
     }
 
@@ -58,10 +59,10 @@ public class TransactionDecoratorTest {
         final TransactionDecorator fixture = new TransactionDecorator();
 
         // WHEN
-        fixture.apply(invocation);
+        fixture.beforeTest(invocation);
+        fixture.afterTest(invocation);
 
         // THEN
-        verify(invocation).proceed();
         verify(resolver, times(0)).getTransactionMode();
         verify(em, times(0)).clear();
     }
@@ -73,12 +74,24 @@ public class TransactionDecoratorTest {
         final TransactionDecorator fixture = new TransactionDecorator();
 
         // WHEN
-        fixture.apply(invocation);
+        fixture.beforeTest(invocation);
+        fixture.afterTest(invocation);
 
         // THEN
-        verify(invocation).proceed();
-        verify(resolver).getTransactionMode();
+        verify(resolver, atLeastOnce()).getTransactionMode();
         verify(em).clear();
+    }
+
+    @Test
+    public void testProcessInstanceDoesNotHaveAnyEffect() throws Exception {
+        // GIVEN
+        final TransactionDecorator fixture = new TransactionDecorator();
+
+        // WHEN
+        fixture.processInstance(this, invocation);
+
+        // THEN
+        verifyNoMoreInteractions(invocation, em, ctx, resolver);
     }
 
     @Test
