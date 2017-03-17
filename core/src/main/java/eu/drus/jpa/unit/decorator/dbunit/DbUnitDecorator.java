@@ -54,12 +54,14 @@ public class DbUnitDecorator implements TestMethodDecorator {
             if (!invocation.hasErrors()) {
                 featureFactory.getVerifyDataAfterFeature().execute(connection);
             }
-
-            featureFactory.getApplyCustomScriptAfterFeature().execute(connection);
-            featureFactory.getCleanupUsingScriptAfterFeature().execute(connection);
-            featureFactory.getCleanUpAfterFeature().execute(connection);
         } finally {
-            connection.close();
+            try {
+                featureFactory.getApplyCustomScriptAfterFeature().execute(connection);
+                featureFactory.getCleanupUsingScriptAfterFeature().execute(connection);
+                featureFactory.getCleanUpAfterFeature().execute(connection);
+            } finally {
+                connection.close();
+            }
         }
     }
 }
