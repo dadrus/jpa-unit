@@ -9,12 +9,10 @@ import javax.persistence.PersistenceContext;
 import org.dbunit.dataset.Column;
 import org.dbunit.dataset.filter.IColumnFilter;
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.JpaUnitRunner;
@@ -27,7 +25,6 @@ import eu.drus.jpa.unit.test.model.InstantAccessAccount;
 import eu.drus.jpa.unit.test.model.OperationNotSupportedException;
 
 @RunWith(JpaUnitRunner.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ExpectedDataSetsTest {
 
     @Rule
