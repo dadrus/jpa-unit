@@ -178,6 +178,7 @@ To control the test behavior, JPA Unit comes with a handful of annotations and s
 - `@ApplyScriptsBefore`, which can be used to define arbitrary SQL scripts which shall be executed after running the test method.
 - `@Bootstrapping`, which can be used to define a method executed only once before the bootstrapping of a JPA provider happens. This can be handy e.g. to setup a test specific DB schema. 
 - `@Cleanup`, which can be used to define when the database cleanup should be triggered.
+- `@CleanupCache`, which can be used to define whether and when the JPA L2 cache should be evicted.
 - `@CleanupUsingScripts`, which can be used to define arbitrary SQL scripts which shall be used for cleaning the database.
 - `@ExpectedDataSets`, which provides the ability to verify the state of underlying database using data sets. Verification is invoked after test's execution.
 - `@InitialDataSets`, which provides the ability to seed the database using data sets before test method execution.
@@ -363,6 +364,30 @@ public class MyTest {
 ### Cleaning database
 
 ### Controlling second level cache
+
+The JPA L2 cache can be a two-edged sword if configured or used improperly. Therefore it is crucial to test the corresponding behavior as early as possible. JPA Unit enables this by the usage of the `@CleanupCache` annotation either on a test class, to apply the same behavior for all tests, or on a single test level to define whether and when the JPA L2 cache should be evicted . Please note: The behavior of the second level can be configured in the `persistence.xml`. If `@CleanupCache` is used and the defined `phase` (see below) is not `NONE`, the second level cache will be evicted regardless the settings defined in the `persistence.xml`. This annotation has following properties:
+
+- `phase` of type `CleanupPhase`. Defines the phase when the second level cache cleanup should be triggered. Default phase is `CleanupPhase#AFTER`. Following phases are available:
+    - `BEFORE`. The L2 cache is evicted before the test method is executed.
+    - `AFTER`. The L2 cache is evicted after the test method is executed.
+    - `NONE`. The eviction of the L2 cache is disabled.
+    
+Example which evicts the JPA L2 cache before the execution of each test method implemented by a given class:
+
+```java
+@RunWith(JpaUnitRunner.class)
+@CleanupCache(TransactionMode.BEFORE)
+public class MyTest {
+
+    @PersistenceContext(unitName = "my-test-unit")
+    private EntityManager manager;
+	
+    @Test
+    public void someTest() {
+		// your code here
+    }
+}
+```
 
 ### Bootstrapping of DB schema & contents
 

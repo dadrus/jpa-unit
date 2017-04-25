@@ -133,21 +133,16 @@ public class FeatureResolver {
         return cleanupUsingScript == null ? CleanupPhase.AFTER : cleanupUsingScript.phase();
     }
 
-    private boolean shouldCleanupCache() {
-        final CleanupCache cleanupCache = metadataExtractor.cleanupCache().fetchUsingFirst(testMethod);
-        return cleanupCache == null ? false : cleanupCache.value();
-    }
-
     private CleanupPhase getCleanupCachePhase() {
         final CleanupCache cleanupCache = metadataExtractor.cleanupCache().fetchUsingFirst(testMethod);
-        return cleanupCache == null ? CleanupPhase.AFTER : cleanupCache.phase();
+        return cleanupCache == null ? CleanupPhase.NONE : cleanupCache.phase();
     }
 
     public boolean shouldEvictCacheBefore() {
-        return shouldCleanupCache() && getCleanupCachePhase() == CleanupPhase.BEFORE;
+        return getCleanupCachePhase() == CleanupPhase.BEFORE;
     }
 
     public boolean shouldEvictCacheAfter() {
-        return shouldCleanupCache() && getCleanupCachePhase() == CleanupPhase.AFTER;
+        return getCleanupCachePhase() == CleanupPhase.AFTER;
     }
 }

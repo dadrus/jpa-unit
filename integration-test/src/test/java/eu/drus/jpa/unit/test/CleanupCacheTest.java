@@ -58,7 +58,7 @@ public class CleanupCacheTest {
     }
 
     @Test
-    @CleanupCache(value = true, phase = CleanupPhase.BEFORE)
+    @CleanupCache(phase = CleanupPhase.BEFORE)
     public void test3() {
         // Cleaning the second level cache will make it now impossible to find the entity
         final Depositor entity = manager.find(Depositor.class, 100L);
@@ -74,7 +74,7 @@ public class CleanupCacheTest {
     }
 
     @Test
-    @CleanupCache(value = true, phase = CleanupPhase.AFTER)
+    @CleanupCache(phase = CleanupPhase.AFTER)
     public void test5() {
         // Even the DB is implicitly deleted after the previous test, we can still find our
         // entity thanks to the used second level cache

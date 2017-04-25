@@ -22,16 +22,12 @@ import java.lang.annotation.Target;
 public @interface CleanupCache {
 
     /**
-     * Whether the second level cache should be evicted. Default is true. The behavior of the second
-     * level can be configured in the <code>persistence.xml</code>. If set to <code>true</code> the
-     * setting here will clear the second level cache regardless the settings defined in the
-     * <code>persistence.xml</code>
-     */
-    boolean value() default true;
-
-    /**
      * Phase when the second level cache cleanup should be triggered. Default phase is
      * {@link CleanupPhase#AFTER}.
+     *
+     * The behavior of the second level can be configured in the <code>persistence.xml</code>. If
+     * not set to {@link CleanupPhase#NONE} the second level cache will be evicted regardless the
+     * settings defined in the <code>persistence.xml</code>
      */
     CleanupPhase phase() default CleanupPhase.AFTER;
 }
