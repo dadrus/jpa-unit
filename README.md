@@ -1,6 +1,6 @@
 # JPA Unit [![Build Status](https://travis-ci.org/dadrus/jpa-unit.svg?branch=master)](https://travis-ci.org/dadrus/jpa-unit) [![Quality Gate](https://sonarqube.com/api/badges/gate?key=eu.drus.test:jpa-unit-parent)](https://sonarqube.com/dashboard?id=eu.drus.test%3Ajpa-unit-parent) [![Coverage Status](https://sonarqube.com/api/badges/measure?key=eu.drus.test:jpa-unit-parent&metric=coverage)](https://sonarqube.com/dashboard?id=eu.drus.test%3Ajpa-unit-parent) [![Technical Debt](https://sonarqube.com/api/badges/measure?key=eu.drus.test:jpa-unit-parent&metric=sqale_debt_ratio)](https://sonarqube.com/component_measures/?id=eu.drus.test%3Ajpa-unit-parent)
 
-Implements [JUnit](http://junit.org) runner and rule to enable easy testing of javax.persistence entities with an arbitrary persistence provider. Both JPA 2.0, as well as JPA 2.1 is supported (See [Issues](https://github.com/dadrus/jpa-unit/issues) for limitations).
+Implements [JUnit 4](http://junit.org/junit4) runner and rule, as well as [JUnit 5](http://junit.org/junit5) extension to enable easy testing of javax.persistence entities with an arbitrary persistence provider. Both JPA 2.0, as well as JPA 2.1 is supported (See [Issues](https://github.com/dadrus/jpa-unit/issues) for limitations).
 
 ## Features
 
@@ -22,18 +22,31 @@ The implementation is inspired by the [Arquillian Persistence Extension](http://
 
 ## Maven Integraton
 
-To be able to use the JPA Unit you'll need to add the following dependency to your Maven project:
+To be able to use the JPA Unit you'll need to add a dependency to your Maven project.
+
+For JUnit 4:
 
 ```xml
 <dependency>
   <groupId>eu.drus.test</groupId>
-  <artifactId>jpa-unit</artifactId>
+  <artifactId>jpa-unit4</artifactId>
   <version>${jpa-unit.version}</version>
   <scope>test</scope>
 </dependency>
 ```
 
-In addition you'll want to add the dependencies for your JPA provider (e.g. [EclipseLink](http://www.eclipse.org/eclipselink) and the database JDBC driver. JPA Unit will does not impose any JPA provider dependencies by itself.
+For JUnit 5:
+
+```xml
+<dependency>
+  <groupId>eu.drus.test</groupId>
+  <artifactId>jpa-unit5</artifactId>
+  <version>${jpa-unit.version}</version>
+  <scope>test</scope>
+</dependency>
+```
+
+In addition you'll want to add the dependencies for your JPA provider (e.g. [EclipseLink](http://www.eclipse.org/eclipselink) and the database JDBC driver.
 E.g.:
 
 ```xml
@@ -50,6 +63,8 @@ E.g.:
   <scope>test</scope>
 </dependency>
 ```
+
+JPA Unit does not impose any JPA provider dependencies by itself.
 
 ## Usage
 
@@ -81,21 +96,27 @@ Like in any JPA application, you have to define a `persistence.xml` file in the 
 </persistence>
 ```
 
-### JPA Unit Runner & Rule
+### JPA Unit integration with Junit
 
 JPA Unit follows the concept of configuration by exception whenever possible. To support this concept its API consists mainly of annotations with meaningful defaults (if the annotation is not present) used to drive the test. 
 
-The basic requirements on the code level are the presence of either
+For JUnit 4, the basic requirements on the code level are the presence of either
 
 - the `@RunWith(JpaUnitRunner.class)` annotation on the class level, or
 - the `JpaUnitRule` property, annotated with `@Rule`
 
-and the presence of either
+For JUnit 5, there is no much choice
+
+- the test class needs to be annotated with `@ExtendWith(JpaUnit.class)` annotation.
+
+Irrespectively the JUnit version, the presence of either
 
 - an `EntityManager` property annotated with `@PersistenceContext`. In this case a new `EntityManager` instance is acquired for each test case. On test case exit it is cleared and closed. Furthermore the usage of an `EntityManager` instance managed by JPA Unit, enables automatic transaction management, where a new transaction is started before each test case and committed after the test case returns, respectively the method annotated with `@After`. The `@Transactional` annotation (see below) can be used to overwrite and configure the required behavior.
 - or an `EntityManagerFactory` property annotated with `@PersistenceUnit`. In this case the user is responsible for obtaining and closing the required `EntityManager` instance including the corresponding transaction management. There are however some utility functions which can ease the test implementation (see `TransactionSupport` class).
 
-In both cases the reference to the persistence unit is required (e.g. `@PersistenceContext(unitName = "my-test-unit")` or `@PersistenceUnit(unitName = "my-test-unit")`). Thus, given the presence of a persistence provider configuration, like given above, the following examples implement full functional tests.
+is required.
+
+In both cases the reference to the persistence unit is required as well (e.g. `@PersistenceContext(unitName = "my-test-unit")` or `@PersistenceUnit(unitName = "my-test-unit")`). Thus, given the presence of a persistence provider configuration, like given above, the following examples implement full functional tests.
 
 Example using `JpaUnitRunner`:
 
@@ -120,6 +141,22 @@ public class MyTest {
 
     @Rule
     public JpaUnitRule rule = new JpaUnitRule(getClass());
+
+    @PersistenceContext(unitName = "my-test-unit")
+    private EntityManager manager;
+	
+    @Test
+    public void someTest() {
+		// your code here
+    }
+}
+```
+
+Example using `JpaUnit`:
+
+```java
+@ExtendWith(JpaUnit.class)
+public class MyTest {
 
     @PersistenceContext(unitName = "my-test-unit")
     private EntityManager manager;
