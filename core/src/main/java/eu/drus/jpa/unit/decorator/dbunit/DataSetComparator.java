@@ -108,10 +108,18 @@ public class DataSetComparator {
             final List<String> currentTableNames = new ArrayList<>(Arrays.asList(currentDataSet.getTableNames()));
             currentTableNames.removeAll(Arrays.asList(expectedTableNames));
             for (final String notExpectedTableName : currentTableNames) {
-                final int rowCount = currentDataSet.getTable(notExpectedTableName).getRowCount();
-                if (rowCount > 0) {
-                    errorCollector
-                            .collect(notExpectedTableName + " was not expected, but is present and contains <" + rowCount + "> entries.");
+                try {
+                    final int rowCount = currentDataSet.getTable(notExpectedTableName).getRowCount();
+                    if (rowCount > 0) {
+                        errorCollector.collect(
+                                notExpectedTableName + " was not expected, but is present and contains <" + rowCount + "> entries.");
+                    }
+                } catch (final NoSuchTableException e) {
+                    // This should usually not happen. But it looks some persistence provider do not
+                    // close the connection pool immediately so that if in-memory DB is used a new
+                    // entity context manager is created before the previous active DB instance
+                    // could be dropped.
+                    // TODO: This needs further investigations
                 }
             }
         }
