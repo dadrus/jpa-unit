@@ -45,7 +45,7 @@ public class TestClassStatement extends Statement {
         }
     }
 
-    private void beforeAll() throws Throwable {
+    private void beforeAll() throws Exception {
         final Boolean isBeforeAllRun = (Boolean) ctx.getData(beforeAllKey);
         if (isBeforeAllRun == null || !isBeforeAllRun) {
             decorator.beforeAll(ctx, target.getClass());
@@ -53,7 +53,7 @@ public class TestClassStatement extends Statement {
         ctx.storeData(beforeAllKey, Boolean.TRUE);
     }
 
-    private void afterAll() throws Throwable {
+    private void afterAll() throws Exception {
         Integer counter = (Integer) ctx.getData(counterKey);
         if (counter == null) {
             counter = 0;
