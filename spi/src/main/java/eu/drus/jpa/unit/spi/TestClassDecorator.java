@@ -1,8 +1,6 @@
 package eu.drus.jpa.unit.spi;
 
-public interface TestClassDecorator {
-
-    int getPriority();
+public interface TestClassDecorator extends TestDecorator {
 
     void beforeAll(ExecutionContext ctx, Class<?> testClass) throws Exception;
 

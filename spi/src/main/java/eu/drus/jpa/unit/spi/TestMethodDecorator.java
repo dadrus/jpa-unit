@@ -1,8 +1,6 @@
 package eu.drus.jpa.unit.spi;
 
-public interface TestMethodDecorator {
-
-    int getPriority();
+public interface TestMethodDecorator extends TestDecorator {
 
     void processInstance(Object instance, TestMethodInvocation invocation) throws Exception;
 
