@@ -20,6 +20,12 @@
     </dependency>
     <dependency>
       <groupId>eu.drus.test</groupId>
+      <artifactId>jpa-unit5</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>eu.drus.test</groupId>
       <artifactId>jpa-unit-cdi</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -98,6 +104,21 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-runner</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

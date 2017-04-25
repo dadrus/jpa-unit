@@ -9,6 +9,8 @@ import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+import eu.drus.jpa.unit.core.JpaUnitContext;
+
 public class JpaUnitRule implements MethodRule {
 
     private final JpaUnitContext ctx;

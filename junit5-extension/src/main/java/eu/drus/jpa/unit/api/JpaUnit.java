@@ -1,10 +1,10 @@
 package eu.drus.jpa.unit.api;
 
+import static eu.drus.jpa.unit.core.DecoratorRegistrar.getClassDecorators;
+import static eu.drus.jpa.unit.core.DecoratorRegistrar.getMethodDecorators;
+
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ServiceLoader;
+import java.util.Iterator;
 
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestExtensionContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
+import eu.drus.jpa.unit.core.JpaUnitContext;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestClassDecorator;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
@@ -22,46 +23,29 @@ import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback, TestInstancePostProcessor {
 
-    private static final ServiceLoader<TestClassDecorator> CLASS_DECORATORS = ServiceLoader.load(TestClassDecorator.class);
-    private static final ServiceLoader<TestMethodDecorator> METHOD_DECORATORS = ServiceLoader.load(TestMethodDecorator.class);
-
-    private static List<TestClassDecorator> getClassDecorators(final Comparator<? super TestClassDecorator> c) {
-        final List<TestClassDecorator> decorators = new ArrayList<>();
-        CLASS_DECORATORS.iterator().forEachRemaining(decorators::add);
-        decorators.sort(c);
-        return decorators;
-    }
-
-    private static List<TestMethodDecorator> getMethodDecorators(final Comparator<? super TestMethodDecorator> c) {
-        final List<TestMethodDecorator> decorators = new ArrayList<>();
-        METHOD_DECORATORS.iterator().forEachRemaining(decorators::add);
-        decorators.sort(c);
-        return decorators;
-    }
-
     @Override
     public void beforeAll(final ContainerExtensionContext context) throws Exception {
-        Class<?> testClass = context.getTestClass().get();
+        final Class<?> testClass = context.getTestClass().get();
         final JpaUnitContext ctx = JpaUnitContext.getInstance(testClass);
 
-        final List<TestClassDecorator> globalFixtures = getClassDecorators(
-                (a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1);
+        final Iterator<TestClassDecorator> it = getClassDecorators().stream()
+                .sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() > b.getPriority() ? 1 : -1).iterator();
 
-        for (final TestClassDecorator d : globalFixtures) {
-            d.beforeAll(ctx, testClass);
+        while (it.hasNext()) {
+            it.next().beforeAll(ctx, testClass);
         }
     }
 
     @Override
     public void afterAll(final ContainerExtensionContext context) throws Exception {
-        Class<?> testClass = context.getTestClass().get();
+        final Class<?> testClass = context.getTestClass().get();
         final JpaUnitContext ctx = JpaUnitContext.getInstance(testClass);
 
-        final List<TestClassDecorator> globalFixtures = getClassDecorators(
-                (a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() > b.getPriority() ? 1 : -1);
+        final Iterator<TestClassDecorator> it = getClassDecorators().stream()
+                .sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1).iterator();
 
-        for (final TestClassDecorator d : globalFixtures) {
-            d.afterAll(ctx, testClass);
+        while (it.hasNext()) {
+            it.next().afterAll(ctx, testClass);
         }
     }
 
@@ -69,8 +53,8 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
     public void beforeEach(final TestExtensionContext context) throws Exception {
         final JpaUnitContext ctx = JpaUnitContext.getInstance(context.getTestClass().get());
 
-        final List<TestMethodDecorator> decorators = getMethodDecorators(
-                (a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1);
+        final Iterator<TestMethodDecorator> it = getMethodDecorators().stream()
+                .sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() > b.getPriority() ? 1 : -1).iterator();
 
         final TestMethodInvocation invocation = new TestMethodInvocation() {
 
@@ -95,8 +79,8 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
             }
         };
 
-        for (final TestMethodDecorator d : decorators) {
-            d.beforeTest(invocation);
+        while (it.hasNext()) {
+            it.next().beforeTest(invocation);
         }
     }
 
@@ -104,8 +88,8 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
     public void afterEach(final TestExtensionContext context) throws Exception {
         final JpaUnitContext ctx = JpaUnitContext.getInstance(context.getTestClass().get());
 
-        final List<TestMethodDecorator> decorators = getMethodDecorators(
-                (a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() > b.getPriority() ? 1 : -1);
+        final Iterator<TestMethodDecorator> it = getMethodDecorators().stream()
+                .sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1).iterator();
 
         final TestMethodInvocation invocation = new TestMethodInvocation() {
             @Override
@@ -129,8 +113,8 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
             }
         };
 
-        for (final TestMethodDecorator d : decorators) {
-            d.afterTest(invocation);
+        while (it.hasNext()) {
+            it.next().afterTest(invocation);
         }
     }
 
@@ -138,8 +122,8 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
     public void postProcessTestInstance(final Object testInstance, final ExtensionContext context) throws Exception {
         final JpaUnitContext ctx = JpaUnitContext.getInstance(context.getTestClass().get());
 
-        final List<TestMethodDecorator> decorators = getMethodDecorators(
-                (a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() < b.getPriority() ? 1 : -1);
+        final Iterator<TestMethodDecorator> it = getMethodDecorators().stream()
+                .sorted((a, b) -> a.getPriority() == b.getPriority() ? 0 : a.getPriority() > b.getPriority() ? 1 : -1).iterator();
 
         final TestMethodInvocation invocation = new TestMethodInvocation() {
 
@@ -164,8 +148,8 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
             }
         };
 
-        for (final TestMethodDecorator d : decorators) {
-            d.processInstance(testInstance, invocation);
+        while (it.hasNext()) {
+            it.next().processInstance(testInstance, invocation);
         }
     }
 }

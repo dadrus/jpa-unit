@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.api;
+package eu.drus.jpa.unit.core;
 
 import static eu.drus.jpa.unit.util.Preconditions.checkArgument;
 
@@ -19,7 +19,7 @@ import eu.drus.jpa.unit.core.metadata.AnnotationInspector;
 import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 
-class JpaUnitContext implements ExecutionContext {
+public class JpaUnitContext implements ExecutionContext {
 
     private static final Map<Class<?>, JpaUnitContext> CTX_MAP = new HashMap<>();
 
@@ -72,7 +72,7 @@ class JpaUnitContext implements ExecutionContext {
         cache.put("properties", properties);
     }
 
-    static synchronized JpaUnitContext getInstance(final Class<?> testClass) {
+    public static synchronized JpaUnitContext getInstance(final Class<?> testClass) {
         JpaUnitContext ctx = CTX_MAP.get(testClass);
         if (ctx == null) {
             ctx = new JpaUnitContext(testClass);

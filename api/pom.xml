@@ -23,7 +23,7 @@
       <groupId>org.dbunit</groupId>
       <artifactId>dbunit</artifactId>
     </dependency>
-    
+
     <!-- TEST DEPENDENCIES -->
     <dependency>
       <groupId>junit</groupId>

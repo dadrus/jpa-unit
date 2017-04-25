@@ -10,6 +10,8 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.InitializationError;
 
+import eu.drus.jpa.unit.core.JpaUnitContext;
+
 public class JpaUnitRunner extends BlockJUnit4ClassRunner {
 
     private JpaUnitContext ctx;

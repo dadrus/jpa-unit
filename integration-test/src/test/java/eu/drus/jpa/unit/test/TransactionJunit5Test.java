@@ -7,12 +7,14 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.InitialDataSets;
-import eu.drus.jpa.unit.api.JpaUnitRunner;
+import eu.drus.jpa.unit.api.JpaUnit;
 import eu.drus.jpa.unit.api.TransactionMode;
 import eu.drus.jpa.unit.api.Transactional;
 import eu.drus.jpa.unit.test.model.Account;
@@ -21,8 +23,9 @@ import eu.drus.jpa.unit.test.model.GiroAccount;
 import eu.drus.jpa.unit.test.model.InstantAccessAccount;
 import eu.drus.jpa.unit.test.model.OperationNotSupportedException;
 
-@RunWith(JpaUnitRunner.class)
-public class TransactionTest {
+@RunWith(JUnitPlatform.class)
+@ExtendWith(JpaUnit.class)
+public class TransactionJunit5Test {
 
     @PersistenceContext(unitName = "my-test-unit")
     private EntityManager manager;
@@ -68,5 +71,4 @@ public class TransactionTest {
         giroAccount.deposit(100.0f);
         giroAccount.transfer(150.0f, accessAcount);
     }
-
 }
