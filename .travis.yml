@@ -7,5 +7,10 @@ addons:
 
 env:
   - secure: "DOj1ZX3K9TB0hSL4lw56xKDRV8g7k/vs1lw54EZ3r3HbJFL94AcakASnLvFofBq58Zl8T5qGqhXT81aMPxjRgdtgfFAB7gga3+2RccuaKdO5H319IoDPebsFRSV76K3V0qx0dXGRlNsZxtE4yGEHDYmTpxbz0nIB/FWMy6r56Dmqp8QUxCDv/vdmsXQdHE+ZMI9XhNcPQ8SGd+iLmR1nbweGOPzuSVS+bCWS+oordoYo++mLX8p/EGdYRj8iks6uPKfq6mhvhX6bNfbC1iyR7YOY/LY5HKKFFEdv71zqPqwhuqAyns9bncWgBnwir1/xgcC2ZrVoS3TnNc/Rb8F4zl3+tt1HHUZLXEI2cq3G44EUkw8NVTV5HzKL2/RExUl/Ijt68ONClifISqumzxzXMnyV6T51KBCbKmIJoiYCrrhhZJQ6p+zigB8BILGWcr4WFyBoxzibINjuBABAaFxSjZJlpO//LACqPUA89Mlz2UOLT6pCMJemvyiZ3ZWgrnfuHXstqAdwRfK2PbDd435sJ6gqRI3XQzlNcbQdfsT1P9CI/Ce+OlOS2zgmGZKaTsEnDge0CtrRPtA1DIv7NyI6nKtTyq1rkSE+kfknxQsCw7+euWDlcxBuE5UaFzeGfb1kEpH6ZLwQDPo/+mgrXoMUAEwv62wD/5ppEnrEU+bfBTM="
+  - TEST_PROFILE=jpa2.0-eclipselink
+  - TEST_PROFILE=jpa2.1-eclipselink
+  - TEST_PROFILE=jpa2.0-hibernate
+  - TEST_PROFILE=jpa2.1-hibernate
+
 script:
-  - mvn clean test sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN
+  - mvn clean test -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN
