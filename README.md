@@ -1,4 +1,4 @@
-# JPA Unit [![Build Status](https://travis-ci.org/dadrus/jpa-unit.svg?branch=master)](https://travis-ci.org/dadrus/jpa-unit) [![Quality Gate](https://sonarqube.com/api/badges/gate?key=eu.drus.test:jpa-unit-parent)](https://sonarqube.com/dashboard?id=eu.drus.test%3Ajpa-unit-parent) [![Coverage Status](https://sonarqube.com/api/badges/measure?key=eu.drus.test:jpa-unit-parent&metric=coverage)](https://sonarqube.com/dashboard?id=eu.drus.test%3Ajpa-unit-parent) [![Technical Debt](https://sonarqube.com/api/badges/measure?key=eu.drus.test:jpa-unit-parent&metric=sqale_debt_ratio)](https://sonarqube.com/component_measures/?id=eu.drus.test%3Ajpa-unit-parent)
+# JPA Unit [![Build Status](https://travis-ci.org/dadrus/jpa-unit.svg?branch=master)](https://travis-ci.org/dadrus/jpa-unit) [![Quality Gate](https://sonarqube.com/api/badges/gate?key=com.github.dadrus:jpa-unit-parent)](https://sonarqube.com/dashboard?id=com.github.dadrus%3Ajpa-unit-parent) [![Coverage Status](https://sonarqube.com/api/badges/measure?key=com.github.dadrus:jpa-unit-parent&metric=coverage)](https://sonarqube.com/dashboard?id=com.github.dadrus%3Ajpa-unit-parent) [![Technical Debt](https://sonarqube.com/api/badges/measure?key=com.github.dadrus:jpa-unit-parent&metric=sqale_debt_ratio)](https://sonarqube.com/component_measures/?id=com.github.dadrus%3Ajpa-unit-parent)
 
 Implements [JUnit 4](http://junit.org/junit4) runner and rule, as well as [JUnit 5](http://junit.org/junit5) extension to enable easy testing of javax.persistence entities with an arbitrary persistence provider. Both JPA 2.0, as well as JPA 2.1 is supported (See [Issues](https://github.com/dadrus/jpa-unit/issues) for limitations).
 
@@ -28,7 +28,7 @@ For JUnit 4:
 
 ```xml
 <dependency>
-  <groupId>eu.drus.test</groupId>
+  <groupId>com.github.dadrus</groupId>
   <artifactId>jpa-unit4</artifactId>
   <version>${jpa-unit.version}</version>
   <scope>test</scope>
@@ -39,7 +39,7 @@ For JUnit 5:
 
 ```xml
 <dependency>
-  <groupId>eu.drus.test</groupId>
+  <groupId>com.github.dadrus</groupId>
   <artifactId>jpa-unit5</artifactId>
   <version>${jpa-unit.version}</version>
   <scope>test</scope>
@@ -426,7 +426,7 @@ To be able to use the JPA Unit with CDI, all you need in addition to your CDI te
 
 ```xml
 <dependency>
-  <groupId>eu.drus.test</groupId>
+  <groupId>com.github.dadrus</groupId>
   <artifactId>jpa-unit-cdi</artifactId>
   <version>${jpa-unit.version}</version>
   <scope>test</scope>
