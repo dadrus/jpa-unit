@@ -17,7 +17,7 @@ env:
     - TEST_PROFILE=jpa2.1-hibernate
 
 script:
-  - mvn clean test -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN
+  - mvn clean test -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN -Dgpg.skip
   
 after_success:
   - mvn --settings .travis/settings.xml deploy -DskipTests
