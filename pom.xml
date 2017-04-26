@@ -17,6 +17,8 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <snapshotDependencyAllowed>true</snapshotDependencyAllowed>
+
     <plugin.version.compiler>3.3</plugin.version.compiler>
     <plugin.version.resources>3.0.1</plugin.version.resources>
     <plugin.version.source>3.0.1</plugin.version.source>
@@ -25,6 +27,8 @@
     <plugin.version.javadoc>2.10.4</plugin.version.javadoc>
     <plugin.version.jacoco>0.7.7.201606060606</plugin.version.jacoco>
     <plugin.version.serviceloader>1.0.7</plugin.version.serviceloader>
+    <plugin.version.enforcer>1.4.1</plugin.version.enforcer>
+    <plugin.maven.pgp>1.6</plugin.maven.pgp>
 
     <version.hibernate-jpa-2.1-api>1.0.0.Final</version.hibernate-jpa-2.1-api>
     <version.cdi-api>1.2</version.cdi-api>
@@ -88,6 +92,17 @@
     </developer>
   </developers>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
   <modules>
     <module>api</module>
     <module>spi</module>
@@ -136,6 +151,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>${plugin.version.javadoc}</version>
+          <configuration>
+            <detectJavaApiLink>true</detectJavaApiLink>
+            <detectLinks>true</detectLinks>
+            <quiet>true</quiet>
+          </configuration>
           <executions>
             <execution>
               <id>attach-javadocs</id>
@@ -176,6 +196,62 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <inherited>true</inherited>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${plugin.version.enforcer}</version>
+          <executions>
+            <execution>
+              <!-- Make sure maven 3 is used -->
+              <id>enforce-maven-3</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requireMavenVersion>
+                    <version>[3.0,)</version>
+                  </requireMavenVersion>
+                </rules>
+                <fail>true</fail>
+              </configuration>
+            </execution>
+            <execution>
+              <!-- Make sure no SNAPSHOT dependencies are used. Only active if snapshotDependencyAllowed is set to false -->
+              <id>enforce-no-snapshots</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <skip>${snapshotDependencyAllowed}</skip>
+                <rules>
+                  <requireReleaseDeps>
+                    <message>No Snapshots Allowed!</message>
+                  </requireReleaseDeps>
+                  <requireReleaseVersion>
+                    <message>No Snapshots Allowed!</message>
+                  </requireReleaseVersion>
+                </rules>
+                <fail>true</fail>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${plugin.maven.pgp}</version>
+          <executions>
+            <execution>
+              <id>sign-artifacts</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -203,6 +279,14 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
