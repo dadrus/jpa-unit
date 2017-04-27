@@ -16,6 +16,9 @@ env:
     - TEST_PROFILE=jpa2.0-hibernate
     - TEST_PROFILE=jpa2.1-hibernate
 
+install:
+  - mvn org.apache.maven.plugins:maven-dependency-plugin:go-offline
+
 script:
   - mvn clean test -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN
   
