@@ -20,8 +20,8 @@ install:
   - mvn org.apache.maven.plugins:maven-dependency-plugin:go-offline
 
 script:
-  - mvn clean test -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN
+  - mvn clean test -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=${SONAR_TOKEN}
   
-after_success:
-  - mvn --settings .travis/settings.xml deploy -e -Dpgp.skip=false -DskipTests
+after_deploy:
+  - mvn --settings .travis/settings.xml clean deploy -Dpgp.skip=false -DskipTests
 
