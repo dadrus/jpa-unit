@@ -23,5 +23,5 @@ script:
   - mvn clean test -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=$SONAR_TOKEN
   
 after_success:
-  - mvn --settings .travis/settings.xml deploy -Dpgp.skip=false -DskipTests
+  - mvn --settings .travis/settings.xml deploy -e -Dpgp.skip=false -DskipTests
 
