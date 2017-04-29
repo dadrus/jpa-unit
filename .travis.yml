@@ -20,8 +20,7 @@ env:
     - TEST_PROFILE=jpa2.0-hibernate
     - TEST_PROFILE=jpa2.1-hibernate
 
-install:
-  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+install: true
 
 script:
   - mvn clean test -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=${SONAR_TOKEN}
