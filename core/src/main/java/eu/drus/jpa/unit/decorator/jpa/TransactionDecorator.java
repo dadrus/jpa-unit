@@ -11,7 +11,7 @@ public class TransactionDecorator implements TestMethodDecorator {
 
     @Override
     public int getPriority() {
-        return 4;
+        return 100;
     }
 
     @Override

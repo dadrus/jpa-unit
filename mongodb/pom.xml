@@ -9,34 +9,26 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>jpa-unit-core</artifactId>
-  <name>JPA Unit - Core</name>
-  <description>Core classes and SPI of JPA Unit</description>
+  <artifactId>jpa-unit-mongodb</artifactId>
+  <name>JPA Unit - MongoDB Extension</name>
 
   <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jpa-unit-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jpa-unit-spi</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.1-api</artifactId>
-      <optional>true</optional>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jpa-unit-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>3.4.1</version>
     </dependency>
     
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-dbcp2</artifactId>
-    </dependency>
-
-
     <!-- TEST DEPENDENCIES -->
     <dependency>
       <groupId>junit</groupId>
@@ -63,22 +55,6 @@
       <artifactId>powermock-api-mockito</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.sun.codemodel</groupId>
-      <artifactId>codemodel</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.persistence</groupId>
-      <artifactId>eclipselink</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -88,7 +64,6 @@
         <artifactId>serviceloader-maven-plugin</artifactId>
         <configuration>
           <services>
-            <param>eu.drus.jpa.unit.spi.TestClassDecorator</param>
             <param>eu.drus.jpa.unit.spi.TestMethodDecorator</param>
           </services>
         </configuration>
@@ -102,4 +77,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>

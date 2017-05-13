@@ -78,27 +78,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>eu.somatik.serviceloader-maven-plugin</groupId>
-        <artifactId>serviceloader-maven-plugin</artifactId>
-        <configuration>
-          <services>
-            <param>eu.drus.jpa.unit.decorator.dbunit.ext.DbUnitConnectionFactory</param>
-            <param>eu.drus.jpa.unit.spi.TestClassDecorator</param>
-            <param>eu.drus.jpa.unit.spi.TestMethodDecorator</param>
-          </services>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 </project>

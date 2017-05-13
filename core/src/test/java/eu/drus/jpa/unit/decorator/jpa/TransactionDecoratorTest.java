@@ -103,6 +103,6 @@ public class TransactionDecoratorTest {
         final int priority = fixture.getPriority();
 
         // THEN
-        assertThat(priority, equalTo(4));
+        assertThat(priority, equalTo(100));
     }
 }
