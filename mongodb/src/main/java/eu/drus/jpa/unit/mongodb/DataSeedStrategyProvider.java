@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.mongodb;
+package eu.drus.jpa.unit.mongodb;
 
 import eu.drus.jpa.unit.api.DataSeedStrategy.StrategyProvider;
 

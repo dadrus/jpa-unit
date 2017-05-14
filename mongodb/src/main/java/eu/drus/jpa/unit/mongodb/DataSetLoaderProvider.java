@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.mongodb;
+package eu.drus.jpa.unit.mongodb;
 
 import java.io.File;
 
