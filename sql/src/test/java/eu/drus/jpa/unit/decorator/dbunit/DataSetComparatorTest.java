@@ -31,7 +31,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.core.AssertionErrorCollector;
-import eu.drus.jpa.unit.decorator.dbunit.DataSetComparator;
+import eu.drus.jpa.unit.sql.dbunit.DataSetComparator;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataSetComparatorTest {

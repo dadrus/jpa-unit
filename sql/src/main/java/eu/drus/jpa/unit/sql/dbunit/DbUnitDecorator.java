@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit;
+package eu.drus.jpa.unit.sql.dbunit;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.IDatabaseConnection;

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Test;
 
-import eu.drus.jpa.unit.decorator.dbunit.DataSeedStrategyProvider;
+import eu.drus.jpa.unit.sql.dbunit.DataSeedStrategyProvider;
 
 public class DataSeedStrategyProviderTest {
 

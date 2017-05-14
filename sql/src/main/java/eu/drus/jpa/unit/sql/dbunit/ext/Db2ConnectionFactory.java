@@ -1,20 +1,20 @@
-package eu.drus.jpa.unit.decorator.dbunit.ext;
+package eu.drus.jpa.unit.sql.dbunit.ext;
 
 import java.sql.Connection;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.ext.h2.H2Connection;
+import org.dbunit.ext.db2.Db2Connection;
 
-public class H2ConnectionFactory implements DbUnitConnectionFactory {
+public class Db2ConnectionFactory implements DbUnitConnectionFactory {
 
     @Override
     public boolean supportsDriver(final String driverClass) {
-        return "org.h2.Driver".equals(driverClass);
+        return "com.ibm.db2.jcc.DB2Driver".equals(driverClass);
     }
 
     @Override
     public IDatabaseConnection createConnection(final Connection connection) throws DatabaseUnitException {
-        return new H2Connection(connection, null);
+        return new Db2Connection(connection, null);
     }
 }

@@ -35,6 +35,10 @@ import eu.drus.jpa.unit.core.CleanupStrategyExecutor;
 import eu.drus.jpa.unit.core.DbFeature;
 import eu.drus.jpa.unit.core.DbFeatureException;
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
+import eu.drus.jpa.unit.sql.dbunit.CleanupStrategyProvider;
+import eu.drus.jpa.unit.sql.dbunit.DataSeedStrategyProvider;
+import eu.drus.jpa.unit.sql.dbunit.DbFeatureFactory;
+import eu.drus.jpa.unit.sql.dbunit.StrategyProviderFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DbFeatureFactoryTest {

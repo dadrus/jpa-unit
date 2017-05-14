@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import eu.drus.jpa.unit.decorator.dbunit.ColumnsHolder;
+import eu.drus.jpa.unit.sql.dbunit.ColumnsHolder;
 
 public class ColumnsHolderTest {
 

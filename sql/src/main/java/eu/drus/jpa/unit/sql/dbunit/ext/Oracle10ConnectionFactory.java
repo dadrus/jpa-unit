@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit.ext;
+package eu.drus.jpa.unit.sql.dbunit.ext;
 
 import java.sql.Connection;
 
@@ -6,20 +6,21 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.ext.netezza.NetezzaDataTypeFactory;
+import org.dbunit.ext.oracle.Oracle10DataTypeFactory;
 
-public class NetezzaConnectionFactory implements DbUnitConnectionFactory {
+public class Oracle10ConnectionFactory implements DbUnitConnectionFactory {
 
     @Override
     public boolean supportsDriver(final String driverClass) {
-        return "org.netezza.Driver".equals(driverClass);
+        return "oracle.jdbc.OracleDriver".equals(driverClass) || "oracle.jdbc.driver.OracleDriver".equals(driverClass);
     }
 
     @Override
     public IDatabaseConnection createConnection(final Connection connection) throws DatabaseUnitException {
         final IDatabaseConnection dbUnitConnection = new DatabaseConnection(connection);
-        dbUnitConnection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new NetezzaDataTypeFactory());
+        dbUnitConnection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new Oracle10DataTypeFactory());
 
         return dbUnitConnection;
     }
+
 }

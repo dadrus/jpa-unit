@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 import org.apache.commons.collections.IteratorUtils;
 import org.junit.Test;
 
-import eu.drus.jpa.unit.decorator.dbunit.SqlScript;
+import eu.drus.jpa.unit.sql.dbunit.SqlScript;
 
 public class SqlScriptTest {
     //@formatter:off

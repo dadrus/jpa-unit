@@ -18,6 +18,7 @@ import org.dbunit.dataset.ITable;
 import org.junit.Test;
 
 import eu.drus.jpa.unit.core.DataSetLoader;
+import eu.drus.jpa.unit.sql.dbunit.dataset.DataSetLoaderProvider;
 
 public class DataSetLoaderProviderTest {
 

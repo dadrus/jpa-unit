@@ -1,20 +1,20 @@
-package eu.drus.jpa.unit.decorator.dbunit.ext;
+package eu.drus.jpa.unit.sql.dbunit.ext;
 
 import java.sql.Connection;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.ext.mckoi.MckoiConnection;
+import org.dbunit.ext.h2.H2Connection;
 
-public class McKoiConnectionFactory implements DbUnitConnectionFactory {
+public class H2ConnectionFactory implements DbUnitConnectionFactory {
 
     @Override
     public boolean supportsDriver(final String driverClass) {
-        return "com.mckoi.JDBCDriver".equals(driverClass);
+        return "org.h2.Driver".equals(driverClass);
     }
 
     @Override
     public IDatabaseConnection createConnection(final Connection connection) throws DatabaseUnitException {
-        return new MckoiConnection(connection, null);
+        return new H2Connection(connection, null);
     }
 }

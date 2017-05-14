@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit.dataset;
+package eu.drus.jpa.unit.sql.dbunit.dataset;
 
 import java.io.InputStream;
 import java.util.Collections;

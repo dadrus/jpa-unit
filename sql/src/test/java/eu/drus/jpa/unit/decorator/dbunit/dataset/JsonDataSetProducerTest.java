@@ -30,7 +30,7 @@ import org.mockito.ArgumentCaptor;
 
 import com.google.gson.JsonSyntaxException;
 
-import eu.drus.jpa.unit.decorator.dbunit.dataset.JsonDataSetProducer;
+import eu.drus.jpa.unit.sql.dbunit.dataset.JsonDataSetProducer;
 
 public class JsonDataSetProducerTest {
 

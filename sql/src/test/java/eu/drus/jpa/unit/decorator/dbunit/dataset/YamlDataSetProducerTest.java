@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.yaml.snakeyaml.scanner.ScannerException;
 
-import eu.drus.jpa.unit.decorator.dbunit.dataset.YamlDataSetProducer;
+import eu.drus.jpa.unit.sql.dbunit.dataset.YamlDataSetProducer;
 
 public class YamlDataSetProducerTest {
 

@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit;
+package eu.drus.jpa.unit.sql.dbunit;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +34,7 @@ import eu.drus.jpa.unit.core.DataSetLoader;
 import eu.drus.jpa.unit.core.DbFeature;
 import eu.drus.jpa.unit.core.DbFeatureException;
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.decorator.dbunit.dataset.DataSetLoaderProvider;
+import eu.drus.jpa.unit.sql.dbunit.dataset.DataSetLoaderProvider;
 
 public class DbFeatureFactory {
 

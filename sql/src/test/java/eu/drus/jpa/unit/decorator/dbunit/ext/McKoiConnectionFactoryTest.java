@@ -15,8 +15,8 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
 import org.junit.Test;
 
-import eu.drus.jpa.unit.decorator.dbunit.ext.DbUnitConnectionFactory;
-import eu.drus.jpa.unit.decorator.dbunit.ext.McKoiConnectionFactory;
+import eu.drus.jpa.unit.sql.dbunit.ext.DbUnitConnectionFactory;
+import eu.drus.jpa.unit.sql.dbunit.ext.McKoiConnectionFactory;
 
 public class McKoiConnectionFactoryTest {
     private static final DbUnitConnectionFactory FACTORY = new McKoiConnectionFactory();

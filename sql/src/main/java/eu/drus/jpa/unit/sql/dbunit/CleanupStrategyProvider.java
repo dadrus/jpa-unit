@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit;
+package eu.drus.jpa.unit.sql.dbunit;
 
 import java.sql.SQLException;
 import java.util.List;

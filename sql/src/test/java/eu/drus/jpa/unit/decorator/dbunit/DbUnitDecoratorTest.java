@@ -26,6 +26,8 @@ import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
+import eu.drus.jpa.unit.sql.dbunit.DatabaseConnectionFactory;
+import eu.drus.jpa.unit.sql.dbunit.DbUnitDecorator;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({

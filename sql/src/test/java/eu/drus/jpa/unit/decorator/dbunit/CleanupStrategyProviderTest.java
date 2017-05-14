@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import eu.drus.jpa.unit.core.CleanupStrategyExecutor;
 import eu.drus.jpa.unit.core.DbFeatureException;
+import eu.drus.jpa.unit.sql.dbunit.CleanupStrategyProvider;
 
 public class CleanupStrategyProviderTest {
 

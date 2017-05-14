@@ -23,6 +23,7 @@ import eu.drus.jpa.unit.api.Bootstrapping;
 import eu.drus.jpa.unit.core.metadata.AnnotationInspector;
 import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.sql.BootstrappingDecorator;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({

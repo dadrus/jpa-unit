@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit;
+package eu.drus.jpa.unit.sql.dbunit;
 
 import org.dbunit.dataset.AbstractTable;
 import org.dbunit.dataset.DataSetException;

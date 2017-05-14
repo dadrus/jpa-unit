@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit.dataset;
+package eu.drus.jpa.unit.sql.dbunit.dataset;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;

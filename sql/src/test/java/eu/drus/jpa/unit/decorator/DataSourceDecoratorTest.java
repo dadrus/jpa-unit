@@ -25,6 +25,7 @@ import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.core.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.core.PersistenceUnitDescriptorLoader;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.sql.DataSourceDecorator;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DataSourceDecorator.class)

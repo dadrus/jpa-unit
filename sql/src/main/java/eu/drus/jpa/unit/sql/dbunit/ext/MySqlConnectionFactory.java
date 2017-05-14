@@ -1,20 +1,20 @@
-package eu.drus.jpa.unit.decorator.dbunit.ext;
+package eu.drus.jpa.unit.sql.dbunit.ext;
 
 import java.sql.Connection;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.ext.db2.Db2Connection;
+import org.dbunit.ext.mysql.MySqlConnection;
 
-public class Db2ConnectionFactory implements DbUnitConnectionFactory {
+public class MySqlConnectionFactory implements DbUnitConnectionFactory {
 
     @Override
     public boolean supportsDriver(final String driverClass) {
-        return "com.ibm.db2.jcc.DB2Driver".equals(driverClass);
+        return "com.mysql.jdbc.Driver".equals(driverClass);
     }
 
     @Override
     public IDatabaseConnection createConnection(final Connection connection) throws DatabaseUnitException {
-        return new Db2Connection(connection, null);
+        return new MySqlConnection(connection, null);
     }
 }

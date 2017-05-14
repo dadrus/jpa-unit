@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator;
+package eu.drus.jpa.unit.sql;
 
 import static eu.drus.jpa.unit.util.Preconditions.checkArgument;
 

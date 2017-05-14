@@ -1,20 +1,20 @@
-package eu.drus.jpa.unit.decorator.dbunit.ext;
+package eu.drus.jpa.unit.sql.dbunit.ext;
 
 import java.sql.Connection;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.ext.mysql.MySqlConnection;
+import org.dbunit.ext.mckoi.MckoiConnection;
 
-public class MySqlConnectionFactory implements DbUnitConnectionFactory {
+public class McKoiConnectionFactory implements DbUnitConnectionFactory {
 
     @Override
     public boolean supportsDriver(final String driverClass) {
-        return "com.mysql.jdbc.Driver".equals(driverClass);
+        return "com.mckoi.JDBCDriver".equals(driverClass);
     }
 
     @Override
     public IDatabaseConnection createConnection(final Connection connection) throws DatabaseUnitException {
-        return new MySqlConnection(connection, null);
+        return new MckoiConnection(connection, null);
     }
 }

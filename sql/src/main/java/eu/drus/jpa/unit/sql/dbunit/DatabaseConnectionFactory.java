@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit;
+package eu.drus.jpa.unit.sql.dbunit;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -10,7 +10,7 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
-import eu.drus.jpa.unit.decorator.dbunit.ext.DbUnitConnectionFactory;
+import eu.drus.jpa.unit.sql.dbunit.ext.DbUnitConnectionFactory;
 
 public final class DatabaseConnectionFactory {
 

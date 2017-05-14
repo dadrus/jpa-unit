@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator;
+package eu.drus.jpa.unit.sql;
 
 import java.util.List;
 import java.util.Map;

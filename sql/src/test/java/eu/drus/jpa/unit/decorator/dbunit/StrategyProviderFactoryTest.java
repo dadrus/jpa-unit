@@ -5,9 +5,9 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import eu.drus.jpa.unit.decorator.dbunit.CleanupStrategyProvider;
-import eu.drus.jpa.unit.decorator.dbunit.DataSeedStrategyProvider;
-import eu.drus.jpa.unit.decorator.dbunit.StrategyProviderFactory;
+import eu.drus.jpa.unit.sql.dbunit.CleanupStrategyProvider;
+import eu.drus.jpa.unit.sql.dbunit.DataSeedStrategyProvider;
+import eu.drus.jpa.unit.sql.dbunit.StrategyProviderFactory;
 
 public class StrategyProviderFactoryTest {
 

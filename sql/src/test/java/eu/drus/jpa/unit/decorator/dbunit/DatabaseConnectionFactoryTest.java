@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
+import eu.drus.jpa.unit.sql.dbunit.DatabaseConnectionFactory;
 
 // @Ignore("FIXME")
 public class DatabaseConnectionFactoryTest {
