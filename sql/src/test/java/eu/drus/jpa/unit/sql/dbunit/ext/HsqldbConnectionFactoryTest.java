@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit.ext;
+package eu.drus.jpa.unit.sql.dbunit.ext;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
@@ -16,14 +16,15 @@ import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
 import org.junit.Test;
 
 import eu.drus.jpa.unit.sql.dbunit.ext.DbUnitConnectionFactory;
-import eu.drus.jpa.unit.sql.dbunit.ext.NetezzaConnectionFactory;
+import eu.drus.jpa.unit.sql.dbunit.ext.HsqldbConnectionFactory;
 
-public class NetezzaConnectionFactoryTest {
-    private static final DbUnitConnectionFactory FACTORY = new NetezzaConnectionFactory();
+public class HsqldbConnectionFactoryTest {
+    private static final DbUnitConnectionFactory FACTORY = new HsqldbConnectionFactory();
 
     @Test
     public void testDriverClassSupport() {
-        assertTrue(FACTORY.supportsDriver("org.netezza.Driver"));
+        assertTrue(FACTORY.supportsDriver("org.hsqldb.jdbc.JDBCDriver"));
+        assertTrue(FACTORY.supportsDriver("org.hsqldb.jdbcDriver"));
     }
 
     @Test

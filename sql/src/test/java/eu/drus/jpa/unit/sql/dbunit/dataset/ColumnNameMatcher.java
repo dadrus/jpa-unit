@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit.dataset;
+package eu.drus.jpa.unit.sql.dbunit.dataset;
 
 import org.dbunit.dataset.Column;
 import org.hamcrest.BaseMatcher;

@@ -1,6 +1,6 @@
-package eu.drus.jpa.unit.decorator.dbunit.dataset;
+package eu.drus.jpa.unit.sql.dbunit.dataset;
 
-import static eu.drus.jpa.unit.decorator.dbunit.dataset.ColumnNameMatcher.columnWithName;
+import static eu.drus.jpa.unit.sql.dbunit.dataset.ColumnNameMatcher.columnWithName;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;

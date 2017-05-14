@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit.ext;
+package eu.drus.jpa.unit.sql.dbunit.ext;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
@@ -16,14 +16,14 @@ import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
 import org.junit.Test;
 
 import eu.drus.jpa.unit.sql.dbunit.ext.DbUnitConnectionFactory;
-import eu.drus.jpa.unit.sql.dbunit.ext.H2ConnectionFactory;
+import eu.drus.jpa.unit.sql.dbunit.ext.McKoiConnectionFactory;
 
-public class H2ConnectionFactoryTest {
-    private static final DbUnitConnectionFactory FACTORY = new H2ConnectionFactory();
+public class McKoiConnectionFactoryTest {
+    private static final DbUnitConnectionFactory FACTORY = new McKoiConnectionFactory();
 
     @Test
     public void testDriverClassSupport() {
-        assertTrue(FACTORY.supportsDriver("org.h2.Driver"));
+        assertTrue(FACTORY.supportsDriver("com.mckoi.JDBCDriver"));
     }
 
     @Test

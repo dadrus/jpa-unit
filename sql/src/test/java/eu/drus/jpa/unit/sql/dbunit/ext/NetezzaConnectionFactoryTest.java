@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit.ext;
+package eu.drus.jpa.unit.sql.dbunit.ext;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
@@ -16,14 +16,14 @@ import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
 import org.junit.Test;
 
 import eu.drus.jpa.unit.sql.dbunit.ext.DbUnitConnectionFactory;
-import eu.drus.jpa.unit.sql.dbunit.ext.PostgresqlConnectionFactory;
+import eu.drus.jpa.unit.sql.dbunit.ext.NetezzaConnectionFactory;
 
-public class PostgresqlConnectionFactoryTest {
-    private static final DbUnitConnectionFactory FACTORY = new PostgresqlConnectionFactory();
+public class NetezzaConnectionFactoryTest {
+    private static final DbUnitConnectionFactory FACTORY = new NetezzaConnectionFactory();
 
     @Test
     public void testDriverClassSupport() {
-        assertTrue(FACTORY.supportsDriver("org.postgresql.Driver"));
+        assertTrue(FACTORY.supportsDriver("org.netezza.Driver"));
     }
 
     @Test

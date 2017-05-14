@@ -21,6 +21,8 @@ public class BootstrappingDecorator implements TestClassDecorator {
 
     @Override
     public void beforeAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
+        final DataSource ds = (DataSource) ctx.getData("ds");
+
         final MetadataExtractor extractor = new MetadataExtractor(testClass);
         final List<Method> bootstrappingMethods = extractor.bootstrapping().getAnnotatedMethods();
         checkArgument(bootstrappingMethods.size() <= 1, "Only single method is allowed to be annotated with @Bootstrapping");
@@ -34,7 +36,7 @@ public class BootstrappingDecorator implements TestClassDecorator {
             checkArgument(parameterTypes[0].equals(DataSource.class),
                     "A bootstrapping method is required to have a single parameter of type DataSource");
 
-            tmp.invoke(null, (DataSource) ctx.getData("ds"));
+            tmp.invoke(null, ds);
         }
     }
 

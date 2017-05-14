@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator.dbunit.ext;
+package eu.drus.jpa.unit.sql.dbunit.ext;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
@@ -13,20 +13,23 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import eu.drus.jpa.unit.sql.dbunit.ext.DbUnitConnectionFactory;
-import eu.drus.jpa.unit.sql.dbunit.ext.MySqlConnectionFactory;
+import eu.drus.jpa.unit.sql.dbunit.ext.Oracle10ConnectionFactory;
 
-public class MySqlConnectionFactoryTest {
-    private static final DbUnitConnectionFactory FACTORY = new MySqlConnectionFactory();
+public class Oracle10ConnectionFactoryTest {
+    private static final DbUnitConnectionFactory FACTORY = new Oracle10ConnectionFactory();
 
     @Test
     public void testDriverClassSupport() {
-        assertTrue(FACTORY.supportsDriver("com.mysql.jdbc.Driver"));
+        assertTrue(FACTORY.supportsDriver("oracle.jdbc.OracleDriver"));
+        assertTrue(FACTORY.supportsDriver("oracle.jdbc.driver.OracleDriver"));
     }
 
     @Test
+    @Ignore("oracle jdbc required in classpath")
     public void testCreateConnection() throws DatabaseUnitException {
         // WHEN
         final IDatabaseConnection connection = FACTORY.createConnection(mock(Connection.class));

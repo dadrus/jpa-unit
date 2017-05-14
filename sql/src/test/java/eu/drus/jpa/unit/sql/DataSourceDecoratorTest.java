@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.decorator;
+package eu.drus.jpa.unit.sql;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
