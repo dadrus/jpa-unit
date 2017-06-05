@@ -57,7 +57,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
         for (final Document doc : collections) {
             if (!isSeedDocument(doc)) {
                 final String collectionName = (String) doc.get("name");
-                if (!toRetain.contains(collectionName)) {
+                if (!toRetain.contains(collectionName) && !isSystemCollection(collectionName)) {
                     toDelete.put(collectionName, doc);
                 }
             } else {
@@ -70,6 +70,10 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
         }
 
         return toDelete;
+    }
+
+    private boolean isSystemCollection(final String collectionName) {
+        return collectionName.startsWith("system.");
     }
 
     private boolean isSeedDocument(final Document doc) {

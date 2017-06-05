@@ -43,7 +43,7 @@ public class InsertOperationTest {
     @Captor
     private ArgumentCaptor<List<Document>> documentCaptor;
 
-    final InsertOperation operation = new InsertOperation();
+    private InsertOperation operation = new InsertOperation();
 
     @Before
     public void prepareMocks() {

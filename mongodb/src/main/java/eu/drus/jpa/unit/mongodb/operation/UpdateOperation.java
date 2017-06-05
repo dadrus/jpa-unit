@@ -13,9 +13,10 @@ public class UpdateOperation implements MongoDbOperation {
     @Override
     public void execute(final MongoDatabase connection, final Document data) {
         for (final String collectionName : data.keySet()) {
-            final MongoCollection<Document> collection = connection.getCollection(collectionName);
-
+            @SuppressWarnings("unchecked")
             final List<Document> documents = data.get(collectionName, List.class);
+
+            final MongoCollection<Document> collection = connection.getCollection(collectionName);
             documents.forEach(d -> collection.replaceOne(Filters.eq(d.get("_id")), d));
         }
     }

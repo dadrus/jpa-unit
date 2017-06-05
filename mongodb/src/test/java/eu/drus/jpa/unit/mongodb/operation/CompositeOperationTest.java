@@ -28,7 +28,7 @@ public class CompositeOperationTest {
     private MongoDbOperation operation3;
 
     @Test
-    public void testOperationsAreExecutedInOrder() {
+    public void testOperationExecution() {
         // GIVEN
         final CompositeOperation operation = new CompositeOperation(operation1, operation2, operation3);
         final Document data = new Document();

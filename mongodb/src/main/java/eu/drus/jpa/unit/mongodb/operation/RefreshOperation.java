@@ -16,6 +16,7 @@ public class RefreshOperation implements MongoDbOperation {
         for (final String collectionName : data.keySet()) {
             final MongoCollection<Document> collection = connection.getCollection(collectionName);
 
+            @SuppressWarnings("unchecked")
             final List<Document> documents = data.get(collectionName, List.class);
 
             for (final Document doc : documents) {

@@ -36,7 +36,7 @@ public class DeleteOperationTest {
     @Mock
     private MongoCollection<Document> collection;
 
-    final DeleteOperation operation = new DeleteOperation();
+    private DeleteOperation operation = new DeleteOperation();
 
     @Before
     public void prepareMocks() {
