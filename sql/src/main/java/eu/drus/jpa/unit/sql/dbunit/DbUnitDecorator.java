@@ -1,15 +1,20 @@
 package eu.drus.jpa.unit.sql.dbunit;
 
+import java.util.Map;
+
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.IDatabaseConnection;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 public class DbUnitDecorator implements TestMethodDecorator {
+
+    private static final String KEY_CONNECTION = "connection";
 
     @Override
     public int getPriority() {
@@ -32,7 +37,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
         final BasicDataSource ds = (BasicDataSource) invocation.getContext().getData("ds");
 
         final IDatabaseConnection connection = DatabaseConnectionFactory.openConnection(ds);
-        context.storeData("connection", connection);
+        context.storeData(KEY_CONNECTION, connection);
 
         featureFactory.getCleanUpBeforeFeature().execute(connection);
         featureFactory.getCleanupUsingScriptBeforeFeature().execute(connection);
@@ -43,7 +48,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
     @Override
     public void afterTest(final TestMethodInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
-        final IDatabaseConnection connection = (IDatabaseConnection) context.getData("connection");
+        final IDatabaseConnection connection = (IDatabaseConnection) context.getData(KEY_CONNECTION);
 
         final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
                 invocation.getTestClass());
@@ -63,5 +68,14 @@ public class DbUnitDecorator implements TestMethodDecorator {
                 connection.close();
             }
         }
+    }
+
+    @Override
+    public boolean isConfigurationSupported(final ExecutionContext ctx) {
+        final PersistenceUnitDescriptor descriptor = ctx.getDescriptor();
+        final Map<String, Object> dbConfig = descriptor.getProperties();
+
+        return dbConfig.containsKey("javax.persistence.jdbc.driver") && dbConfig.containsKey("javax.persistence.jdbc.url")
+                && dbConfig.containsKey("javax.persistence.jdbc.user") && dbConfig.containsKey("javax.persistence.jdbc.password");
     }
 }

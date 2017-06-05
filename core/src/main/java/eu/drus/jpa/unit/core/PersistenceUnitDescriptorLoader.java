@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import eu.drus.jpa.unit.api.JpaUnitException;
+import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
 public class PersistenceUnitDescriptorLoader {
 
@@ -36,7 +36,7 @@ public class PersistenceUnitDescriptorLoader {
             for (int i = 0; i < children.getLength(); i++) {
                 final Node node = children.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE && "persistence-unit".equals(((Element) node).getTagName())) {
-                    units.add(new PersistenceUnitDescriptor((Element) node, properties));
+                    units.add(new PersistenceUnitDescriptorImpl((Element) node, properties));
                 }
             }
         }
@@ -51,7 +51,7 @@ public class PersistenceUnitDescriptorLoader {
         try (InputStream in = conn.getInputStream()) {
             return getDocumentBuilderFactory().newDocumentBuilder().parse(new InputSource(in));
         } catch (final SAXException | ParserConfigurationException e) {
-            throw new JpaUnitException("Error parsing [" + url.toExternalForm() + "]", e);
+            throw new IOException("Error parsing [" + url.toExternalForm() + "]", e);
         }
     }
 

@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.sql.dbunit;
+package eu.drus.jpa.unit.core;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -2,11 +2,13 @@ package eu.drus.jpa.unit.core;
 
 import static eu.drus.jpa.unit.util.Preconditions.checkArgument;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -18,6 +20,7 @@ import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.core.metadata.AnnotationInspector;
 import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
 public class JpaUnitContext implements ExecutionContext {
 
@@ -25,7 +28,9 @@ public class JpaUnitContext implements ExecutionContext {
 
     private Field persistenceField;
 
-    private Map<String, Object> cache;
+    private Map<String, Object> cache = new HashMap<>();
+
+    private PersistenceUnitDescriptor descriptor;
 
     private JpaUnitContext(final Class<?> testClass) {
         final MetadataExtractor extractor = new MetadataExtractor(testClass);
@@ -44,8 +49,8 @@ public class JpaUnitContext implements ExecutionContext {
 
         checkArgument(pcFields.size() <= 1, "Only single field is allowed to be annotated with @PersistenceContext");
 
-        String unitName;
         Map<String, Object> properties;
+        String unitName;
 
         if (!puFields.isEmpty()) {
             persistenceField = puFields.get(0);
@@ -67,9 +72,23 @@ public class JpaUnitContext implements ExecutionContext {
             throw new JpaUnitException("No Persistence Unit found for given unit name");
         }
 
-        cache = new HashMap<>();
-        cache.put("unitName", unitName);
-        cache.put("properties", properties);
+        final PersistenceUnitDescriptorLoader pudLoader = new PersistenceUnitDescriptorLoader();
+        List<PersistenceUnitDescriptor> descriptors;
+        try {
+            descriptors = pudLoader.loadPersistenceUnitDescriptors(properties);
+        } catch (final IOException e) {
+            throw new JpaUnitException("Could not load persistence unit definition", e);
+        }
+
+        descriptors = descriptors.stream().filter(u -> unitName.equals(u.getUnitName())).collect(Collectors.toList());
+
+        if (descriptors.isEmpty()) {
+            throw new JpaUnitException("No Persistence Unit found for given unit name");
+        } else if (descriptors.size() > 1) {
+            throw new JpaUnitException("Multiple Persistence Units found for given name");
+        }
+
+        descriptor = descriptors.get(0);
     }
 
     public static synchronized JpaUnitContext getInstance(final Class<?> testClass) {
@@ -102,5 +121,10 @@ public class JpaUnitContext implements ExecutionContext {
     @Override
     public Object getData(final String key) {
         return cache.get(key);
+    }
+
+    @Override
+    public PersistenceUnitDescriptor getDescriptor() {
+        return descriptor;
     }
 }

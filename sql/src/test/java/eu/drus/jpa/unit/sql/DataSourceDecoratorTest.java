@@ -21,11 +21,9 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import eu.drus.jpa.unit.api.JpaUnitException;
-import eu.drus.jpa.unit.core.PersistenceUnitDescriptor;
+import eu.drus.jpa.unit.core.PersistenceUnitDescriptorImpl;
 import eu.drus.jpa.unit.core.PersistenceUnitDescriptorLoader;
 import eu.drus.jpa.unit.spi.ExecutionContext;
-import eu.drus.jpa.unit.sql.DataSourceDecorator;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DataSourceDecorator.class)
@@ -40,7 +38,7 @@ public class DataSourceDecoratorTest {
     private PersistenceUnitDescriptorLoader descriptorLoader;
 
     @Mock
-    private PersistenceUnitDescriptor descriptor;
+    private PersistenceUnitDescriptorImpl descriptor;
 
     @Mock
     private BasicDataSource ds;
@@ -63,9 +61,10 @@ public class DataSourceDecoratorTest {
 
         when(ctx.getData("properties")).thenReturn(PROPS);
         when(ctx.getData("unitName")).thenReturn("foo");
+        when(ctx.getData("ds")).thenReturn(ds);
+        when(ctx.getDescriptor()).thenReturn(descriptor);
         when(descriptor.getUnitName()).thenReturn("foo");
         when(descriptor.getProperties()).thenReturn(PROPS);
-        when(ctx.getData("ds")).thenReturn(ds);
         when(descriptorLoader.loadPersistenceUnitDescriptors(any(Map.class))).thenReturn(Arrays.asList(descriptor));
     }
 
@@ -79,33 +78,6 @@ public class DataSourceDecoratorTest {
 
         // THEN
         assertThat(priority, equalTo(0));
-    }
-
-    @Test(expected = JpaUnitException.class)
-    public void testCantCreateDataSourceDueToUnknownPersistenceUnitName() throws Throwable {
-        // GIVEN
-        when(descriptor.getUnitName()).thenReturn("someName");
-        final DataSourceDecorator decorator = new DataSourceDecorator();
-
-        // WHEN
-        decorator.beforeAll(ctx, getClass());
-
-        // THEN
-        // JpaUnitException due to unknown unitName
-    }
-
-    @Test(expected = JpaUnitException.class)
-    @SuppressWarnings("unchecked")
-    public void testCantCreateDataSourceDueToPersistenceUnitNameAmbiguity() throws Throwable {
-        // GIVEN
-        when(descriptorLoader.loadPersistenceUnitDescriptors(any(Map.class))).thenReturn(Arrays.asList(descriptor, descriptor));
-        final DataSourceDecorator decorator = new DataSourceDecorator();
-
-        // WHEN
-        decorator.beforeAll(ctx, getClass());
-
-        // THEN
-        // JpaUnitException due to ambiguity
     }
 
     @Test

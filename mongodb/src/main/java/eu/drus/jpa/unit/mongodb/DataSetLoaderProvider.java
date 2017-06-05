@@ -1,7 +1,11 @@
 package eu.drus.jpa.unit.mongodb;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 
 import eu.drus.jpa.unit.core.DataSetFormat.LoaderProvider;
@@ -22,7 +26,13 @@ public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader<Docum
 
     @Override
     public DataSetLoader<Document> jsonLoader() {
-        return (final File path) -> null;
+        return (final File path) -> {
+            try (InputStream in = new FileInputStream(path)) {
+                return Document.parse(IOUtils.toString(in));
+            } catch (final RuntimeException e) {
+                throw new IOException(e);
+            }
+        };
     }
 
     @Override

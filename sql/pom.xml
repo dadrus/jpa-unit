@@ -94,7 +94,7 @@
         <artifactId>serviceloader-maven-plugin</artifactId>
         <configuration>
           <services>
-            <param>eu.drus.jpa.unit.decorator.dbunit.ext.DbUnitConnectionFactory</param>
+            <param>eu.drus.jpa.unit.sql.dbunit.ext.DbUnitConnectionFactory</param>
             <param>eu.drus.jpa.unit.spi.TestClassDecorator</param>
             <param>eu.drus.jpa.unit.spi.TestMethodDecorator</param>
           </services>

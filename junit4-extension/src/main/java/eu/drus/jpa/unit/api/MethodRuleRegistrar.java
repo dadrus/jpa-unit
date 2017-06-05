@@ -16,13 +16,13 @@ final class MethodRuleRegistrar {
     private MethodRuleRegistrar() {}
 
     private static List<MethodRule> getGlobalTestFixtureRules(final ExecutionContext ctx) {
-        return getClassDecorators().stream().sorted((a, b) -> b.getPriority() - a.getPriority()).map(gf -> createRule(ctx, gf))
-                .collect(Collectors.toList());
+        return getClassDecorators().stream().filter(d -> d.isConfigurationSupported(ctx))
+                .sorted((a, b) -> b.getPriority() - a.getPriority()).map(gf -> createRule(ctx, gf)).collect(Collectors.toList());
     }
 
     private static List<MethodRule> getTestFixtureRules(final ExecutionContext ctx) {
-        return getMethodDecorators().stream().sorted((a, b) -> b.getPriority() - a.getPriority()).map(f -> createRule(ctx, f))
-                .collect(Collectors.toList());
+        return getMethodDecorators().stream().filter(d -> d.isConfigurationSupported(ctx))
+                .sorted((a, b) -> b.getPriority() - a.getPriority()).map(f -> createRule(ctx, f)).collect(Collectors.toList());
     }
 
     public static List<MethodRule> registerRules(final List<MethodRule> rules, final ExecutionContext ctx) {

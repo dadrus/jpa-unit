@@ -7,7 +7,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class PersistenceUnitDescriptor {
+import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
+
+public class PersistenceUnitDescriptorImpl implements PersistenceUnitDescriptor {
 
     private static final String ENTRY_PROPERTY = "property";
     private static final String ENTRY_VALUE = "value";
@@ -18,7 +20,7 @@ public class PersistenceUnitDescriptor {
     private Map<String, Object> properties;
     private String providerClassName;
 
-    public PersistenceUnitDescriptor(final Element element, final Map<String, Object> properties) {
+    public PersistenceUnitDescriptorImpl(final Element element, final Map<String, Object> properties) {
         this.properties = new HashMap<>(properties);
         parse(element);
     }
@@ -76,14 +78,17 @@ public class PersistenceUnitDescriptor {
         return result.toString().trim();
     }
 
+    @Override
     public String getUnitName() {
         return unitName;
     }
 
+    @Override
     public String getProviderClassName() {
         return providerClassName;
     }
 
+    @Override
     public Map<String, Object> getProperties() {
         return properties;
     }

@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.mongodb;
 
-import org.bson.conversions.Bson;
+import org.bson.Document;
 
 import com.mongodb.client.MongoDatabase;
 
@@ -18,5 +18,5 @@ public abstract class AbstractDbOperation {
 
     public static final AbstractDbOperation CLEAN_INSERT = new CompositeDbOperation(DELETE_ALL, INSERT);
 
-    public abstract void execute(MongoDatabase connection, Bson data);
+    public abstract void execute(MongoDatabase connection, Document data);
 }

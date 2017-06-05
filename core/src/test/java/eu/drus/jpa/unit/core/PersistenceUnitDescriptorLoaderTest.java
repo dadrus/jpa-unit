@@ -13,8 +13,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import eu.drus.jpa.unit.core.PersistenceUnitDescriptor;
-import eu.drus.jpa.unit.core.PersistenceUnitDescriptorLoader;
+import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
 public class PersistenceUnitDescriptorLoaderTest {
 

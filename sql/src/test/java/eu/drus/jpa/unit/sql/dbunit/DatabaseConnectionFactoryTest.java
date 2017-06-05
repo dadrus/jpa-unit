@@ -19,9 +19,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
-import eu.drus.jpa.unit.sql.dbunit.DatabaseConnectionFactory;
 
-// @Ignore("FIXME")
 public class DatabaseConnectionFactoryTest {
 
     private static final String H2_CONNECTION_URL_PROP_VALUE = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";

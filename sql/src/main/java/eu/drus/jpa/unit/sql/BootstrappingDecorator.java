@@ -5,11 +5,13 @@ import static eu.drus.jpa.unit.util.Preconditions.checkArgument;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
 import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestClassDecorator;
 
 public class BootstrappingDecorator implements TestClassDecorator {
@@ -43,6 +45,15 @@ public class BootstrappingDecorator implements TestClassDecorator {
     @Override
     public void afterAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
         // nothing to do here
+    }
+
+    @Override
+    public boolean isConfigurationSupported(final ExecutionContext ctx) {
+        final PersistenceUnitDescriptor descriptor = ctx.getDescriptor();
+        final Map<String, Object> dbConfig = descriptor.getProperties();
+
+        return dbConfig.containsKey("javax.persistence.jdbc.driver") && dbConfig.containsKey("javax.persistence.jdbc.url")
+                && dbConfig.containsKey("javax.persistence.jdbc.user") && dbConfig.containsKey("javax.persistence.jdbc.password");
     }
 
 }

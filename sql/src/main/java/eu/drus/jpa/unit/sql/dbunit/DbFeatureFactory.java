@@ -5,15 +5,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
@@ -27,6 +25,7 @@ import eu.drus.jpa.unit.api.CleanupStrategy;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.JpaUnitException;
+import eu.drus.jpa.unit.core.AbstractDbFeatureFactory;
 import eu.drus.jpa.unit.core.AssertionErrorCollector;
 import eu.drus.jpa.unit.core.CleanupStrategyExecutor;
 import eu.drus.jpa.unit.core.DataSetFormat;
@@ -36,33 +35,22 @@ import eu.drus.jpa.unit.core.DbFeatureException;
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.sql.dbunit.dataset.DataSetLoaderProvider;
 
-public class DbFeatureFactory {
+public class DbFeatureFactory extends AbstractDbFeatureFactory<IDataSet, IDatabaseConnection> {
 
-    private final FeatureResolver featureResolver;
-    private List<IDataSet> initialDataSets;
     private StrategyProviderFactory providerFactory;
 
     public DbFeatureFactory(final FeatureResolver featureResolver) {
-        this.featureResolver = featureResolver;
+        super(featureResolver);
         providerFactory = new StrategyProviderFactory();
+    }
+
+    // for tests
+    void setProviderFactory(final StrategyProviderFactory providerFactory) {
+        this.providerFactory = providerFactory;
     }
 
     private static IDataSet mergeDataSets(final List<IDataSet> dataSets) throws DataSetException {
         return new CompositeDataSet(dataSets.toArray(new IDataSet[dataSets.size()]));
-    }
-
-    private static List<IDataSet> loadDataSets(final List<String> paths) {
-        final List<IDataSet> dataSets = new ArrayList<>();
-        try {
-            for (final String path : paths) {
-                final File file = new File(toUri(path));
-                final DataSetLoader<IDataSet> loader = DataSetFormat.inferFromFile(file).select(new DataSetLoaderProvider());
-                dataSets.add(loader.load(file));
-            }
-        } catch (final IOException e) {
-            throw new JpaUnitException("Could not load initial data sets", e);
-        }
-        return dataSets;
     }
 
     private static URI toUri(final String path) {
@@ -78,125 +66,34 @@ public class DbFeatureFactory {
         }
     }
 
-    // for tests
-    void setProviderFactory(final StrategyProviderFactory providerFactory) {
-        this.providerFactory = providerFactory;
+    @Override
+    protected List<IDataSet> loadDataSets(final List<String> paths) {
+        final List<IDataSet> dataSets = new ArrayList<>();
+        try {
+            for (final String path : paths) {
+                final File file = new File(toUri(path));
+                final DataSetLoader<IDataSet> loader = DataSetFormat.inferFromFile(file).select(new DataSetLoaderProvider());
+                dataSets.add(loader.load(file));
+            }
+        } catch (final IOException e) {
+            throw new JpaUnitException("Could not load initial data sets", e);
+        }
+        return dataSets;
     }
 
-    private List<IDataSet> getInitialDataSets() {
-        if (initialDataSets == null) {
-            initialDataSets = loadDataSets(featureResolver.getSeedData());
-        }
-        return initialDataSets;
-    }
-
-    public DbFeature<IDatabaseConnection> getCleanUpBeforeFeature() {
-        if (featureResolver.shouldCleanupBefore()) {
-            return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
-                    getInitialDataSets());
-        } else {
-            return NopFeature.INSTANCE;
-        }
-    }
-
-    public DbFeature<IDatabaseConnection> getCleanUpAfterFeature() {
-        if (featureResolver.shouldCleanupAfter()) {
-            return new CleanupFeature(providerFactory.createCleanupStrategyProvider(), featureResolver.getCleanupStrategy(),
-                    getInitialDataSets());
-        } else {
-            return NopFeature.INSTANCE;
-        }
-    }
-
-    public DbFeature<IDatabaseConnection> getCleanupUsingScriptBeforeFeature() {
-        if (featureResolver.shouldCleanupUsingScriptBefore()) {
-            return new ApplyCustomScriptFeature(featureResolver.getCleanupScripts());
-        } else {
-            return NopFeature.INSTANCE;
-        }
-    }
-
-    public DbFeature<IDatabaseConnection> getCleanupUsingScriptAfterFeature() {
-        if (featureResolver.shouldCleanupUsingScriptAfter()) {
-            return new ApplyCustomScriptFeature(featureResolver.getCleanupScripts());
-        } else {
-            return NopFeature.INSTANCE;
-        }
-    }
-
-    public DbFeature<IDatabaseConnection> getApplyCustomScriptBeforeFeature() {
-        if (featureResolver.shouldApplyCustomScriptBefore()) {
-            return new ApplyCustomScriptFeature(featureResolver.getPreExecutionScripts());
-        } else {
-            return NopFeature.INSTANCE;
-        }
-    }
-
-    public DbFeature<IDatabaseConnection> getApplyCustomScriptAfterFeature() {
-        if (featureResolver.shouldApplyCustomScriptAfter()) {
-            return new ApplyCustomScriptFeature(featureResolver.getPostExecutionScripts());
-        } else {
-            return NopFeature.INSTANCE;
-        }
-    }
-
-    public DbFeature<IDatabaseConnection> getSeedDataFeature() {
-        if (featureResolver.shouldSeedData()) {
-            return new SeedDataFeature(providerFactory.createDataSeedStrategyProvider(), featureResolver.getDataSeedStrategy(),
-                    getInitialDataSets());
-        } else {
-            return NopFeature.INSTANCE;
-        }
-    }
-
-    public DbFeature<IDatabaseConnection> getVerifyDataAfterFeature() {
-        if (featureResolver.shouldVerifyDataAfter()) {
-            return new VerifyDataAfterFeature(featureResolver.getExpectedDataSets(), featureResolver.getCustomColumnFilter());
-        } else {
-            return NopFeature.INSTANCE;
-        }
-    }
-
-    private static class NopFeature implements DbFeature<IDatabaseConnection> {
-
-        private static final NopFeature INSTANCE = new NopFeature();
-
-        @Override
-        public void execute(final IDatabaseConnection connection) throws DbFeatureException {
-            // does nothing like the name implies
-        }
-    }
-
-    private static class CleanupFeature implements DbFeature<IDatabaseConnection> {
-
-        private final CleanupStrategy cleanupStrategy;
-        private final List<IDataSet> initialDataSets;
-        private final CleanupStrategyProvider provider;
-
-        private CleanupFeature(final CleanupStrategyProvider provider, final CleanupStrategy cleanupStrategy,
-                final List<IDataSet> initialDataSets) {
-            this.provider = provider;
-            this.cleanupStrategy = cleanupStrategy;
-            this.initialDataSets = initialDataSets;
-        }
-
-        @Override
-        public void execute(final IDatabaseConnection connection) throws DbFeatureException {
-            final CleanupStrategyExecutor<IDatabaseConnection, IDataSet> executor = cleanupStrategy.provide(provider);
+    @Override
+    protected DbFeature<IDatabaseConnection> createCleanupFeature(final CleanupStrategy cleanupStrategy,
+            final List<IDataSet> initialDataSets) {
+        return (final IDatabaseConnection connection) -> {
+            final CleanupStrategyExecutor<IDatabaseConnection, IDataSet> executor = cleanupStrategy
+                    .provide(providerFactory.createCleanupStrategyProvider());
             executor.execute(connection, initialDataSets);
-        }
+        };
     }
 
-    private static class ApplyCustomScriptFeature implements DbFeature<IDatabaseConnection> {
-
-        private final List<String> scriptPaths;
-
-        private ApplyCustomScriptFeature(final List<String> scriptPaths) {
-            this.scriptPaths = scriptPaths;
-        }
-
-        @Override
-        public void execute(final IDatabaseConnection connection) throws DbFeatureException {
+    @Override
+    protected DbFeature<IDatabaseConnection> createApplyCustomScriptFeature(final List<String> scriptPaths) {
+        return (final IDatabaseConnection connection) -> {
             try {
                 for (final String scriptPath : scriptPaths) {
                     executeScript(loadScript(scriptPath), connection.getConnection());
@@ -204,65 +101,31 @@ public class DbFeatureFactory {
             } catch (final SQLException | IOException | URISyntaxException e) {
                 throw new DbFeatureException("Could not apply custom scripts feature", e);
             }
-        }
-
-        private String loadScript(final String path) throws IOException, URISyntaxException {
-            final URL url = Thread.currentThread().getContextClassLoader().getResource(path);
-            return new String(Files.readAllBytes(Paths.get(url.toURI())));
-        }
-
-        private void executeScript(final String script, final Connection connection) throws SQLException {
-            for (final String sqlStatement : new SqlScript(script)) {
-                try (Statement statement = connection.createStatement()) {
-                    statement.execute(sqlStatement);
-                }
-            }
-        }
+        };
     }
 
-    private static class SeedDataFeature implements DbFeature<IDatabaseConnection> {
-
-        private final DataSeedStrategy dataSeedStrategy;
-        private final List<IDataSet> initialDataSets;
-        private final DataSeedStrategyProvider provider;
-
-        public SeedDataFeature(final DataSeedStrategyProvider provider, final DataSeedStrategy dataSeedStrategy,
-                final List<IDataSet> initialDataSets) {
-            this.dataSeedStrategy = dataSeedStrategy;
-            this.initialDataSets = initialDataSets;
-            this.provider = provider;
-        }
-
-        @Override
-        public void execute(final IDatabaseConnection connection) throws DbFeatureException {
+    @Override
+    protected DbFeature<IDatabaseConnection> createSeedDataFeature(final DataSeedStrategy dataSeedStrategy,
+            final List<IDataSet> initialDataSets) {
+        return (final IDatabaseConnection connection) -> {
             try {
-                final DatabaseOperation operation = dataSeedStrategy.provide(provider);
+                final DatabaseOperation operation = dataSeedStrategy.provide(providerFactory.createDataSeedStrategyProvider());
                 operation.execute(connection, mergeDataSets(initialDataSets));
             } catch (DatabaseUnitException | SQLException e) {
                 throw new DbFeatureException("Could not execute DB seed feature", e);
             }
-        }
+        };
     }
 
-    private static class VerifyDataAfterFeature implements DbFeature<IDatabaseConnection> {
-
-        private ExpectedDataSets expectedDataSets;
-        private Set<Class<? extends IColumnFilter>> customColumnFilter;
-
-        public VerifyDataAfterFeature(final ExpectedDataSets expectedDataSets,
-                final Set<Class<? extends IColumnFilter>> customColumnFilter) {
-            this.expectedDataSets = expectedDataSets;
-            this.customColumnFilter = customColumnFilter;
-        }
-
-        @Override
-        public void execute(final IDatabaseConnection connection) throws DbFeatureException {
+    @Override
+    protected DbFeature<IDatabaseConnection> createVerifyDataAfterFeature(final ExpectedDataSets expectedDataSets) {
+        return (final IDatabaseConnection connection) -> {
             try {
                 final IDataSet currentDataSet = connection.createDataSet();
                 final IDataSet expectedDataSet = mergeDataSets(loadDataSets(Arrays.asList(expectedDataSets.value())));
 
                 final DataSetComparator dataSetComparator = new DataSetComparator(expectedDataSets.orderBy(),
-                        expectedDataSets.excludeColumns(), expectedDataSets.strict(), customColumnFilter);
+                        expectedDataSets.excludeColumns(), expectedDataSets.strict(), getColumnFilter(expectedDataSets));
 
                 final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
                 dataSetComparator.compare(currentDataSet, expectedDataSet, errorCollector);
@@ -270,6 +133,19 @@ public class DbFeatureFactory {
                 errorCollector.report();
             } catch (final SQLException | DatabaseUnitException e) {
                 throw new DbFeatureException("Could not execute DB contents verification feature", e);
+            }
+        };
+    }
+
+    private HashSet<Class<? extends IColumnFilter>> getColumnFilter(final ExpectedDataSets expectedDataSets) {
+        final Class<? extends IColumnFilter>[] filter = expectedDataSets.filter();
+        return filter == null ? new HashSet<>() : new HashSet<>(Arrays.asList(filter));
+    }
+
+    private void executeScript(final String script, final Connection connection) throws SQLException {
+        for (final String sqlStatement : new SqlScript(script)) {
+            try (Statement statement = connection.createStatement()) {
+                statement.execute(sqlStatement);
             }
         }
     }

@@ -41,7 +41,7 @@ class TransactionStrategyProvider implements StrategyProvider<TransactionStrateg
 
             @Override
             public void commit() {
-                if (tx.isActive()) {
+                if (tx.isActive() && !tx.getRollbackOnly()) {
                     tx.commit();
                 }
             }

@@ -20,12 +20,13 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Persistence.class)
 public class EntityManagerFactoryDecoratorTest {
 
-    private static final HashMap<Object, Object> PERSISTENCE_PROPERTIES = new HashMap<>();
+    private static final HashMap<String, Object> PERSISTENCE_PROPERTIES = new HashMap<>();
 
     private static final String UNIT_NAME = "MY_UNIT_NAME";
 
@@ -35,13 +36,19 @@ public class EntityManagerFactoryDecoratorTest {
     @Mock
     private EntityManagerFactory factory;
 
+    @Mock
+    private PersistenceUnitDescriptor descriptor;
+
     @Before
     public void prepareMocks() {
         mockStatic(Persistence.class);
+        when(Persistence.createEntityManagerFactory(eq(UNIT_NAME), eq(PERSISTENCE_PROPERTIES))).thenReturn(factory);
 
         when(ctx.getData("unitName")).thenReturn(UNIT_NAME);
         when(ctx.getData("properties")).thenReturn(PERSISTENCE_PROPERTIES);
-        when(Persistence.createEntityManagerFactory(eq(UNIT_NAME), eq(PERSISTENCE_PROPERTIES))).thenReturn(factory);
+        when(ctx.getDescriptor()).thenReturn(descriptor);
+        when(descriptor.getUnitName()).thenReturn(UNIT_NAME);
+        when(descriptor.getProperties()).thenReturn(PERSISTENCE_PROPERTIES);
     }
 
     @Test

@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.core.AssertionErrorCollector;
+import eu.drus.jpa.unit.core.ColumnsHolder;
 
 public class DataSetComparator {
 

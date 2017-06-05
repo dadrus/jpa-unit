@@ -33,7 +33,8 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
         final Class<?> testClass = context.getTestClass().get();
         final JpaUnitContext ctx = JpaUnitContext.getInstance(testClass);
 
-        final Iterator<TestClassDecorator> it = getClassDecorators().stream().sorted(BEFORE_COMPARATOR).iterator();
+        final Iterator<TestClassDecorator> it = getClassDecorators().stream().filter(d -> d.isConfigurationSupported(ctx))
+                .sorted(BEFORE_COMPARATOR).iterator();
         while (it.hasNext()) {
             it.next().beforeAll(ctx, testClass);
         }
@@ -44,7 +45,8 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
         final Class<?> testClass = context.getTestClass().get();
         final JpaUnitContext ctx = JpaUnitContext.getInstance(testClass);
 
-        final Iterator<TestClassDecorator> it = getClassDecorators().stream().sorted(AFTER_COMPARATOR).iterator();
+        final Iterator<TestClassDecorator> it = getClassDecorators().stream().filter(d -> d.isConfigurationSupported(ctx))
+                .sorted(AFTER_COMPARATOR).iterator();
         while (it.hasNext()) {
             it.next().afterAll(ctx, testClass);
         }

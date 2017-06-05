@@ -1,15 +1,11 @@
 package eu.drus.jpa.unit.sql;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import eu.drus.jpa.unit.api.JpaUnitException;
-import eu.drus.jpa.unit.core.PersistenceUnitDescriptor;
-import eu.drus.jpa.unit.core.PersistenceUnitDescriptorLoader;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestClassDecorator;
 
 public class DataSourceDecorator implements TestClassDecorator {
@@ -21,22 +17,9 @@ public class DataSourceDecorator implements TestClassDecorator {
 
     @Override
     public void beforeAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> properties = (Map<String, Object>) ctx.getData("properties");
-        final String unitName = (String) ctx.getData("unitName");
+        final PersistenceUnitDescriptor descriptor = ctx.getDescriptor();
 
-        final PersistenceUnitDescriptorLoader pudLoader = new PersistenceUnitDescriptorLoader();
-        List<PersistenceUnitDescriptor> descriptors = pudLoader.loadPersistenceUnitDescriptors(properties);
-
-        descriptors = descriptors.stream().filter(u -> unitName.equals(u.getUnitName())).collect(Collectors.toList());
-
-        if (descriptors.isEmpty()) {
-            throw new JpaUnitException("No Persistence Unit found for given unit name");
-        } else if (descriptors.size() > 1) {
-            throw new JpaUnitException("Multiple Persistence Units found for given name");
-        }
-
-        final Map<String, Object> dbConfig = descriptors.get(0).getProperties();
+        final Map<String, Object> dbConfig = descriptor.getProperties();
 
         final String driverClass = (String) dbConfig.get("javax.persistence.jdbc.driver");
         final String connectionUrl = (String) dbConfig.get("javax.persistence.jdbc.url");
@@ -59,6 +42,15 @@ public class DataSourceDecorator implements TestClassDecorator {
         final BasicDataSource ds = (BasicDataSource) ctx.getData("ds");
         ds.close();
         ctx.storeData("ds", null);
+    }
+
+    @Override
+    public boolean isConfigurationSupported(final ExecutionContext ctx) {
+        final PersistenceUnitDescriptor descriptor = ctx.getDescriptor();
+        final Map<String, Object> dbConfig = descriptor.getProperties();
+
+        return dbConfig.containsKey("javax.persistence.jdbc.driver") && dbConfig.containsKey("javax.persistence.jdbc.url")
+                && dbConfig.containsKey("javax.persistence.jdbc.user") && dbConfig.containsKey("javax.persistence.jdbc.password");
     }
 
 }

@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
+import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -21,7 +22,7 @@ public class TransactionDecorator implements TestMethodDecorator {
 
     @Override
     public void beforeTest(final TestMethodInvocation invocation) throws Exception {
-        final EntityManager em = (EntityManager) invocation.getContext().getData("em");
+        final EntityManager em = (EntityManager) invocation.getContext().getData(ExecutionContext.KEY_ENTITY_MANAGER);
         if (em == null) {
             return;
         }
@@ -36,7 +37,7 @@ public class TransactionDecorator implements TestMethodDecorator {
 
     @Override
     public void afterTest(final TestMethodInvocation invocation) throws Exception {
-        final EntityManager em = (EntityManager) invocation.getContext().getData("em");
+        final EntityManager em = (EntityManager) invocation.getContext().getData(ExecutionContext.KEY_ENTITY_MANAGER);
         if (em == null) {
             return;
         }
@@ -49,6 +50,11 @@ public class TransactionDecorator implements TestMethodDecorator {
         executor.commit();
 
         em.clear();
+    }
+
+    @Override
+    public boolean isConfigurationSupported(final ExecutionContext ctx) {
+        return true;
     }
 
 }

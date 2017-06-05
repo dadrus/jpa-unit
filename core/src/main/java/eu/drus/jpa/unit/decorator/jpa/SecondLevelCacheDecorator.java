@@ -4,6 +4,7 @@ import javax.persistence.EntityManagerFactory;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
+import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -29,7 +30,8 @@ public class SecondLevelCacheDecorator implements TestMethodDecorator {
     public void beforeTest(final TestMethodInvocation invocation) throws Exception {
         final FeatureResolver resolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(), invocation.getTestClass());
 
-        final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext().getData("emf");
+        final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext()
+                .getData(ExecutionContext.KEY_ENTITY_MANAGER_FACTORY);
 
         evictCache(resolver.shouldEvictCacheBefore(), emf);
     }
@@ -38,9 +40,15 @@ public class SecondLevelCacheDecorator implements TestMethodDecorator {
     public void afterTest(final TestMethodInvocation invocation) throws Exception {
         final FeatureResolver resolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(), invocation.getTestClass());
 
-        final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext().getData("emf");
+        final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext()
+                .getData(ExecutionContext.KEY_ENTITY_MANAGER_FACTORY);
 
         evictCache(resolver.shouldEvictCacheAfter(), emf);
+    }
+
+    @Override
+    public boolean isConfigurationSupported(final ExecutionContext ctx) {
+        return true;
     }
 
 }
