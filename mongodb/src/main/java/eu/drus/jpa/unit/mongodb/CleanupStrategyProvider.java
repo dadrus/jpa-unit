@@ -10,6 +10,7 @@ import com.mongodb.client.MongoDatabase;
 
 import eu.drus.jpa.unit.api.CleanupStrategy.StrategyProvider;
 import eu.drus.jpa.unit.core.CleanupStrategyExecutor;
+import eu.drus.jpa.unit.mongodb.operation.MongoDbOperations;
 
 public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategyExecutor<MongoDatabase, Document>> {
 
@@ -18,7 +19,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
         return (final MongoDatabase connection, final List<Document> initialCollections, final String... collectionsToExclude) -> {
             final Document toDelete = excludeCollections(connection.listCollections(), collectionsToExclude);
 
-            AbstractDbOperation.DELETE_ALL.execute(connection, toDelete);
+            MongoDbOperations.DELETE_ALL.execute(connection, toDelete);
         };
     }
 
@@ -31,7 +32,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
 
             final Document toDelete = excludeCollections(initialCollections, collectionsToExclude);
 
-            AbstractDbOperation.DELETE_ALL.execute(connection, toDelete);
+            MongoDbOperations.DELETE_ALL.execute(connection, toDelete);
         };
     }
 
@@ -44,7 +45,7 @@ public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategy
 
             final Document toDelete = excludeCollections(initialCollections, collectionsToExclude);
 
-            AbstractDbOperation.DELETE.execute(connection, toDelete);
+            MongoDbOperations.DELETE.execute(connection, toDelete);
         };
     }
 

@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.mongodb;
+package eu.drus.jpa.unit.mongodb.integration;
 
 import java.util.Arrays;
 import java.util.List;

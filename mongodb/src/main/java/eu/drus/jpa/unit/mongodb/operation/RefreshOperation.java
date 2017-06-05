@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.mongodb;
+package eu.drus.jpa.unit.mongodb.operation;
 
 import java.util.List;
 
@@ -7,8 +7,9 @@ import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.UpdateResult;
 
-public class UpdateOperation extends AbstractDbOperation {
+public class RefreshOperation implements MongoDbOperation {
 
     @Override
     public void execute(final MongoDatabase connection, final Document data) {
@@ -16,7 +17,14 @@ public class UpdateOperation extends AbstractDbOperation {
             final MongoCollection<Document> collection = connection.getCollection(collectionName);
 
             final List<Document> documents = data.get(collectionName, List.class);
-            documents.forEach(d -> collection.replaceOne(Filters.eq(d.get("_id")), d));
+
+            for (final Document doc : documents) {
+                final UpdateResult result = collection.replaceOne(Filters.eq(doc.get("_id")), doc);
+
+                if (result.getMatchedCount() == 0) {
+                    collection.insertOne(doc);
+                }
+            }
         }
     }
 

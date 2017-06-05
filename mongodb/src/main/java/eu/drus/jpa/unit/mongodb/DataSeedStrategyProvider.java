@@ -1,27 +1,29 @@
 package eu.drus.jpa.unit.mongodb;
 
 import eu.drus.jpa.unit.api.DataSeedStrategy.StrategyProvider;
+import eu.drus.jpa.unit.mongodb.operation.MongoDbOperation;
+import eu.drus.jpa.unit.mongodb.operation.MongoDbOperations;
 
-public class DataSeedStrategyProvider implements StrategyProvider<AbstractDbOperation> {
+public class DataSeedStrategyProvider implements StrategyProvider<MongoDbOperation> {
 
     @Override
-    public AbstractDbOperation insertStrategy() {
-        return AbstractDbOperation.INSERT;
+    public MongoDbOperation insertStrategy() {
+        return MongoDbOperations.INSERT;
     }
 
     @Override
-    public AbstractDbOperation cleanInsertStrategy() {
-        return AbstractDbOperation.CLEAN_INSERT;
+    public MongoDbOperation cleanInsertStrategy() {
+        return MongoDbOperations.CLEAN_INSERT;
     }
 
     @Override
-    public AbstractDbOperation refreshStrategy() {
-        return AbstractDbOperation.REFRESH;
+    public MongoDbOperation refreshStrategy() {
+        return MongoDbOperations.REFRESH;
     }
 
     @Override
-    public AbstractDbOperation updateStrategy() {
-        return AbstractDbOperation.UPDATE;
+    public MongoDbOperation updateStrategy() {
+        return MongoDbOperations.UPDATE;
     }
 
 }

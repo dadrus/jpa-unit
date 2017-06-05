@@ -25,6 +25,7 @@ import eu.drus.jpa.unit.core.DataSetLoader;
 import eu.drus.jpa.unit.core.DbFeature;
 import eu.drus.jpa.unit.core.DbFeatureException;
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
+import eu.drus.jpa.unit.mongodb.operation.MongoDbOperation;
 
 public class MongoDbFeatureFactory extends AbstractDbFeatureFactory<Document, MongoDatabase> {
 
@@ -93,7 +94,7 @@ public class MongoDbFeatureFactory extends AbstractDbFeatureFactory<Document, Mo
     protected DbFeature<MongoDatabase> createSeedDataFeature(final DataSeedStrategy dataSeedStrategy,
             final List<Document> initialDataSets) {
         return (final MongoDatabase connection) -> {
-            final AbstractDbOperation operation = dataSeedStrategy.provide(new DataSeedStrategyProvider());
+            final MongoDbOperation operation = dataSeedStrategy.provide(new DataSeedStrategyProvider());
             operation.execute(connection, mergeDataSets(initialDataSets));
         };
     }

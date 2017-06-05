@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.mongodb;
+package eu.drus.jpa.unit.mongodb.integration;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNotNull;
