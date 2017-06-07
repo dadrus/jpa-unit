@@ -76,7 +76,7 @@ public class CleanupTest {
     public void test4() throws OperationNotSupportedException {
 
         // this entity is from the initial data set
-        final Depositor entity = manager.find(Depositor.class, 100);
+        final Depositor entity = manager.find(Depositor.class, 100l);
         assertNotNull(entity);
 
         // this is created by us
@@ -115,7 +115,7 @@ public class CleanupTest {
     @Cleanup(phase = CleanupPhase.AFTER, strategy = CleanupStrategy.USED_TABLES_ONLY)
     public void test7() throws OperationNotSupportedException {
         // this entity is from the initial data set
-        final Depositor entity = manager.find(Depositor.class, 100);
+        final Depositor entity = manager.find(Depositor.class, 100l);
         assertNotNull(entity);
 
         // this is created by us (rows in tables used by initial data set)

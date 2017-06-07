@@ -1,61 +1,61 @@
 {
 	"DEPOSITOR": [
 		{
-			"_id": 100,
-			"VERSION": 1,
+			"_id": NumberLong(100),
+			"VERSION": NumberLong(1),
 			"NAME": "John",
 			"SURNAME": "Doe"
 		},
 		{
-			"_id": 110,
-			"VERSION": 1,
+			"_id": NumberLong(110),
+			"VERSION": NumberLong(1),
 			"NAME": "Jack",
 			"SURNAME": "Sparrow"
 		}
 	],
 	"ADDRESS": [
 		{
-	        "_id":100,
+	        "_id": NumberLong(100),
 	        "CITY":"SomeCity",
 	        "COUNTRY": "SomeCountry",
 	        "STREET": "SomeStreet 1",
 	        "ZIP_CODE": "12345",
-	        "DEPOSITOR_ID": 100
+	        "DEPOSITOR_ID": NumberLong(100)
         }
     ],
     "CONTACT_DETAIL": [
     	{
-	        "_id": 100,
+	        "_id": NumberLong(100),
 	        "TYPE": "EMAIL",
 	        "VALUE": "john.doe@acme.com",
-	        "DEPOSITOR_ID": 100
+	        "DEPOSITOR_ID": NumberLong(100)
         },
         {
-	        "_id": 101,
+	        "_id": NumberLong(101),
 	        "TYPE": "MOBILE",
 	        "VALUE": "+1 11 1111 1111",
-	        "DEPOSITOR_ID": 100
+	        "DEPOSITOR_ID": NumberLong(100)
         },
         {
-	        "_id": 102,
+	        "_id": NumberLong(102),
 	        "TYPE": "TELEPHONE",
 	        "VALUE": "+1 22 2222 2222",
-	        "DEPOSITOR_ID": 100
+	        "DEPOSITOR_ID": NumberLong(100)
         }
     ],
 	"ACCOUNT": [
 		{
 	        "TYPE": "GIRO_ACCOUNT",
-	        "_id": 100,
-	        "VERSION": 1,
+	        "_id": NumberLong(100),
+	        "VERSION": NumberLong(1),
 	        "CREDIT_LIMIT": 1000.00,
-	        "DEPOSITOR_ID": 100
+	        "DEPOSITOR_ID": NumberLong(100)
         },
         {
 	        "TYPE": "INSTANT_ACCESS_ACCOUNT",
-	        "_id": 101,
-	        "VERSION": 1,
-	        "DEPOSITOR_ID": 100
+	        "_id": NumberLong(101),
+	        "VERSION": NumberLong(1),
+	        "DEPOSITOR_ID": NumberLong(100)
         }
     ]
 }

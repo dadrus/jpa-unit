@@ -1,6 +1,6 @@
 db.ACCOUNT_ENTRY.insertOne({
-	"_id": 3,
-	"ACCOUNT_ID": 1,
+	"_id": NumberLong(3),
+	"ACCOUNT_ID": NumberLong(1),
 	"AMOUNT": -5000.0,
 	"DATE": new Date(),
 	"DETAILS": "cash withdraw",
@@ -9,6 +9,6 @@ db.ACCOUNT_ENTRY.insertOne({
 })
 
 db.ACCOUNT.findAndModify({
-    query: { "_id": 1 },
-    update: { $push: { "entries": 3 } }
+    query: { "_id": NumberLong(1) },
+    update: { $push: { "entries": NumberLong(3) } }
 })

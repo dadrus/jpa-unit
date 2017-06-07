@@ -17,7 +17,7 @@ public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private Integer id;
+    private Long id;
 
     @Column(name = "STREET", length = 50, updatable = false)
     @Basic(optional = false)

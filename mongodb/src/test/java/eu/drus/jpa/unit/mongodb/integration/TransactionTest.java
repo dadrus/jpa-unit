@@ -32,7 +32,7 @@ public class TransactionTest {
     @ExpectedDataSets("datasets/initial-data.json")
     @Transactional(TransactionMode.DISABLED)
     public void transactionDisabledTest() {
-        final Depositor entity = manager.find(Depositor.class, 100);
+        final Depositor entity = manager.find(Depositor.class, 100l);
 
         assertNotNull(entity);
         entity.setName("David");
@@ -43,7 +43,7 @@ public class TransactionTest {
     @ExpectedDataSets("datasets/initial-data.json")
     @Transactional(TransactionMode.ROLLBACK)
     public void transactionRollbackTest() {
-        final Depositor entity = manager.find(Depositor.class, 100);
+        final Depositor entity = manager.find(Depositor.class, 100l);
 
         assertNotNull(entity);
         entity.setName("Alex");
@@ -54,7 +54,7 @@ public class TransactionTest {
     @ExpectedDataSets("datasets/expected-data.json")
     @Transactional(TransactionMode.COMMIT)
     public void transactionCommitTest() throws OperationNotSupportedException {
-        final Depositor entity = manager.find(Depositor.class, 100);
+        final Depositor entity = manager.find(Depositor.class, 100l);
 
         assertNotNull(entity);
         entity.setName("Max");

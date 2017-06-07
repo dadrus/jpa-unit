@@ -28,11 +28,11 @@ public abstract class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private Integer id;
+    private Long id;
 
     @Version
     @Column(name = "VERSION")
-    private Integer version;
+    private Long version;
 
     @ManyToOne(optional = false, cascade = {
             CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH

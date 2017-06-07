@@ -27,11 +27,11 @@ public class Depositor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private Integer id;
+    private Long id;
 
     @Version
     @Column(name = "VERSION")
-    private Integer version;
+    private Long version;
 
     // entity attributes
 

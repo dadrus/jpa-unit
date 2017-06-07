@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.test.model;
 
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -21,7 +21,7 @@ public class AccountEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private Integer id;
+    private Long id;
 
     @Column(name = "DATE", updatable = false)
     @Basic(optional = false)

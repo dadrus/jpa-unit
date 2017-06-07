@@ -1,26 +1,26 @@
 db.DEPOSITOR.insertOne({
-	"_id": 1,
+	"_id": NumberLong(1),
 	"NAME": "Max",
 	"SURNAME": "Payne",
-	"VERSION": 1,
-	"addresses": [ 1 ],
-	"accounts": [ 1 ],
-	"contactDetails" : [ 1 ]
+	"VERSION": NumberLong(1),
+	"addresses": [ NumberLong(1) ],
+	"accounts": [ NumberLong(1) ],
+	"contactDetails" : [ NumberLong(1) ]
 })
 
 db.ACCOUNT.insertOne({
-	"_id": 1,
-	"DEPOSITOR_ID": 1,
-	"VERSION": 1,
+	"_id": NumberLong(1),
+	"DEPOSITOR_ID": NumberLong(1),
+	"VERSION": NumberLong(1),
 	"CREDIT_LIMIT": 100000.0,
 	"TYPE": "GIRO_ACCOUNT",
-	"entries": [1, 2]
+	"entries": [NumberLong(1), NumberLong(2)]
 })
 
 db.ACCOUNT_ENTRY.insertMany([
 	{
-		"_id": 1,
-		"ACCOUNT_ID": 1,
+		"_id": NumberLong(1),
+		"ACCOUNT_ID": NumberLong(1),
 		"AMOUNT": 0.0,
 		"DATE": new Date(),
 		"DETAILS": "deposit",
@@ -28,8 +28,8 @@ db.ACCOUNT_ENTRY.insertMany([
 		"TYPE": "DEBIT"
 	},
 	{
-		"_id": 2,
-		"ACCOUNT_ID": 1,
+		"_id": NumberLong(2),
+		"ACCOUNT_ID": NumberLong(1),
 		"AMOUNT": 100000.0,
 		"DATE": new Date(),
 		"DETAILS": "deposit",
@@ -39,8 +39,8 @@ db.ACCOUNT_ENTRY.insertMany([
 ])
 
 db.ADDRESS.insertOne({
-	"_id": 1,
-	"DEPOSITOR_ID": 1,
+	"_id": NumberLong(1),
+	"DEPOSITOR_ID": NumberLong(1),
 	"CITY": "Unknown",
 	"COUNTRY": "Unknown",
 	"STREET": "Unknown",
@@ -48,8 +48,8 @@ db.ADDRESS.insertOne({
 })
 
 db.CONTACT_DETAIL.insertOne({
-	"_id": 1,
-	"DEPOSITOR_ID": 1,
+	"_id": NumberLong(1),
+	"DEPOSITOR_ID": NumberLong(1),
 	"TYPE": "EMAIL",
 	"VALUE": "max@payne.com"
 })

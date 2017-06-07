@@ -19,7 +19,7 @@ public class ContactDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private Integer id;
+    private Long id;
 
     @Column(name = "TYPE", length = 50, updatable = false)
     @Basic(optional = false)

@@ -31,7 +31,7 @@ public class GiroAccount extends Account {
         }
     }
 
-    public double getCreditLimit() {
+    public float getCreditLimit() {
         return creditLimit;
     }
 

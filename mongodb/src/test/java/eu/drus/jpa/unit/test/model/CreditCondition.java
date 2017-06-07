@@ -15,11 +15,11 @@ public class CreditCondition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private Integer id;
+    private Long id;
 
     @Version
     @Column(name = "VERSION")
-    private Integer version;
+    private Long version;
 
     @Column(name = "DESCRIPTION", length = 1024)
     @Basic(optional = false)

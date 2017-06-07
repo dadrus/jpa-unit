@@ -1,45 +1,45 @@
 {
 	"DEPOSITOR": [
 		{
-			"_id": 100,
-			"VERSION": 2,
+			"_id": NumberLong(100),
+			"VERSION": NumberLong(2),
 			"NAME": "Max",
 			"SURNAME": "Doe"
 		}
 	],
     "CONTACT_DETAIL": [
     	{
-	        "_id": 100,
+	        "_id": NumberLong(100),
 	        "TYPE": "EMAIL",
 	        "VALUE": "john.doe@acme.com",
-	        "DEPOSITOR_ID": 100
+	        "DEPOSITOR_ID": NumberLong(100)
         },
         {
-	        "_id": 101,
+	        "_id": NumberLong(101),
 	        "TYPE": "MOBILE",
 	        "VALUE": "+1 11 1111 1111",
-	        "DEPOSITOR_ID": 100
+	        "DEPOSITOR_ID": NumberLong(100)
         },
         {
-	        "_id": 102,
+	        "_id": NumberLong(102),
 	        "TYPE": "TELEPHONE",
 	        "VALUE": "+1 22 2222 2222",
-	        "DEPOSITOR_ID": 100
+	        "DEPOSITOR_ID": NumberLong(100)
         }
     ],
 	"ACCOUNT": [
 		{
 	        "TYPE": "GIRO_ACCOUNT",
-	        "_id": 100,
-	        "VERSION": 2,
+	        "_id": NumberLong(100),
+	        "VERSION": NumberLong(2),
 	        "CREDIT_LIMIT": 1000,
-	        "DEPOSITOR_ID": 100
+	        "DEPOSITOR_ID": NumberLong(100)
         },
         {
 	        "TYPE": "INSTANT_ACCESS_ACCOUNT",
-	        "_id": 101,
-	        "VERSION": 2,
-	        "DEPOSITOR_ID": 100
+	        "_id": NumberLong(101),
+	        "VERSION": NumberLong(2),
+	        "DEPOSITOR_ID": NumberLong(100)
         }
     ],
     "ACCOUNT_ENTRY": [
@@ -48,21 +48,21 @@
 	        "DETAILS": "deposit",
 	        "REFERENCE": "ACC",
 	        "TYPE": "DEBIT",
-	        "ACCOUNT_ID": 100
+	        "ACCOUNT_ID": NumberLong(100)
     	},
     	{
 	        "AMOUNT": 150,
 	        "DETAILS": "money transfer",
 	        "REFERENCE": "ACC",
 	        "TYPE": "CREDIT",
-	        "ACCOUNT_ID": 100
+	        "ACCOUNT_ID": NumberLong(100)
     	},
     	{
 	        "AMOUNT": 150,
 	        "DETAILS": "money transfer",
 	        "REFERENCE": "ACC",
 	        "TYPE": "DEBIT",
-	        "ACCOUNT_ID": 101
+	        "ACCOUNT_ID": NumberLong(101)
     	}
     ]
 }
