@@ -1,0 +1,6 @@
+db.ACCOUNT_ENTRY.deleteMany({})
+db.ACCOUNT.deleteMany({})
+db.ADDRESS.deleteMany({})
+db.CONTACT_DETAIL.deleteMany({})
+db.CREDIT_CONDITION.deleteMany({})
+db.DEPOSITOR.deleteMany({})
