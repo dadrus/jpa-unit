@@ -1,5 +1,6 @@
 package eu.drus.jpa.unit.core;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -33,6 +34,9 @@ public abstract class AbstractDbFeatureFactory<D, C> {
 
     protected String loadScript(final String path) throws IOException, URISyntaxException {
         final URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+        if (url == null) {
+            throw new FileNotFoundException(path + " not found");
+        }
         return new String(Files.readAllBytes(Paths.get(url.toURI())));
     }
 
