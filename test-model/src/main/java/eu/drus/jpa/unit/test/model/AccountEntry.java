@@ -10,21 +10,26 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @Entity
 @Table(name = "ACCOUNT_ENTRY")
+@SequenceGenerator(name = "ACCOUNT_ENTRY_SEQ")
 public class AccountEntry {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "ACCOUNT_ENTRY_SEQ")
     private Long id;
 
     @Column(name = "DATE", updatable = false)
     @Basic(optional = false)
+    @Temporal(TemporalType.DATE)
     private Date date;
 
     @Column(name = "REFERENCE", updatable = false, length = 50)
@@ -37,7 +42,7 @@ public class AccountEntry {
 
     @Column(name = "AMOUNT", updatable = false)
     @Basic(optional = false)
-    private Float amount;
+    private Double amount;
 
     @Column(name = "TYPE", length = 50, updatable = false)
     @Basic(optional = false)
@@ -48,7 +53,7 @@ public class AccountEntry {
         // for JPA
     }
 
-    public AccountEntry(final Date date, final String reference, final String details, final float amount, final AccountEntryType type) {
+    public AccountEntry(final Date date, final String reference, final String details, final double amount, final AccountEntryType type) {
         this.date = date;
         this.reference = reference;
         this.details = details;
@@ -68,7 +73,7 @@ public class AccountEntry {
         return reference;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
 

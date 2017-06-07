@@ -72,7 +72,7 @@ public class FlywaydbJunit5Test {
         final Account account = accounts.iterator().next();
         assertThat(account, instanceOf(GiroAccount.class));
         final GiroAccount giroAccount = (GiroAccount) account;
-        assertThat(giroAccount.getBalance(), equalTo(100000.0f));
+        assertThat(giroAccount.getBalance(), equalTo(100000.0));
         assertThat(giroAccount.getCreditLimit(), equalTo(100000.0));
     }
 }

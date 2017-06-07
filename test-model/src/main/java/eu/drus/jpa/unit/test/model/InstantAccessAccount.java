@@ -25,8 +25,8 @@ public class InstantAccessAccount extends Account {
 
     @Override
     public float transfer(final float amount, final Account toAccount) {
-        final float balance = getBalance();
-        final float balanceAfterTransfer = balance - amount;
+        final double balance = getBalance();
+        final double balanceAfterTransfer = balance - amount;
         if (balanceAfterTransfer < 0.0f) {
             return 0;
         }

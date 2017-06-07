@@ -13,7 +13,7 @@ public class GiroAccount extends Account {
 
     @Column(name = "CREDIT_LIMIT")
     @Basic(optional = false)
-    private Float creditLimit = 0.0f;
+    private Double creditLimit;
 
     protected GiroAccount() {
         super();
@@ -26,23 +26,24 @@ public class GiroAccount extends Account {
 
     public GiroAccount(final Depositor depositor, final float initialDeposit) throws OperationNotSupportedException {
         super(depositor);
+        creditLimit = 0.0;
         if (initialDeposit != 0) {
             deposit(initialDeposit);
         }
     }
 
-    public float getCreditLimit() {
+    public double getCreditLimit() {
         return creditLimit;
     }
 
-    public void setCreditLimit(final float creditLimit) {
+    public void setCreditLimit(final double creditLimit) {
         this.creditLimit = creditLimit;
     }
 
     @Override
     public float withdraw(final float amount) throws OperationNotSupportedException {
-        final float balance = getBalance();
-        final float balanceAfterWithdraw = balance - amount;
+        final double balance = getBalance();
+        final double balanceAfterWithdraw = balance - amount;
         if (balanceAfterWithdraw < 0.0f) {
             // if (-balanceAfterWithdraw > creditLimit) {
             return 0;
@@ -55,8 +56,8 @@ public class GiroAccount extends Account {
 
     @Override
     public float transfer(final float amount, final Account toAccount) {
-        // final float balance = getBalance();
-        // final float balanceAfterTransfer = balance - amount;
+        // final double balance = getBalance();
+        // final double balanceAfterTransfer = balance - amount;
         // if (balanceAfterTransfer < 0.0f) {
         // if (-balanceAfterTransfer > creditLimit) {
         // return 0;

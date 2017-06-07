@@ -48,6 +48,12 @@
     <!-- TEST DEPENDENCIES -->
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>jpa-unit-test-model</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jpa-unit4</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>

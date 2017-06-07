@@ -1,5 +1,9 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="ddrus" id="1487984229488-0">
+        <createSequence sequenceName="hibernate_sequence" catalogName="TESTDB" schemaName="PUBLIC" startValue="0" incrementBy="50"/>
+        <createSequence sequenceName="hibernate_sequences" catalogName="TESTDB" schemaName="PUBLIC" startValue="0"/>
+    </changeSet>
     <changeSet author="ddrus" id="1487984229488-1">
         <createTable catalogName="TESTDB" schemaName="PUBLIC" tableName="ACCOUNT">
             <column name="TYPE" type="VARCHAR(25)">
