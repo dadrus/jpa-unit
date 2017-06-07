@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.bson.Document;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoDatabase;
 
 import eu.drus.jpa.unit.api.CleanupStrategy;
@@ -115,7 +116,11 @@ public class MongoDbFeatureFactory extends AbstractDbFeatureFactory<Document, Mo
     }
 
     private void executeScript(final String script, final MongoDatabase connection) {
-        final Document command = Document.parse(script);
+        if (script.isEmpty()) {
+            return;
+        }
+        final BasicDBObject command = new BasicDBObject();
+        command.append("$eval", script);
         connection.runCommand(command);
     }
 }
