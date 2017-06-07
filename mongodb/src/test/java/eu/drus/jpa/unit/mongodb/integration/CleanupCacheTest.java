@@ -12,7 +12,6 @@ import javax.persistence.PersistenceContext;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -26,7 +25,6 @@ import eu.drus.jpa.unit.test.model.Depositor;
 
 @RunWith(JpaUnitRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore("net.sf.ehcache.CacheException cannot be resolved")
 public class CleanupCacheTest {
 
     @PersistenceContext(unitName = "my-cache-unit")
