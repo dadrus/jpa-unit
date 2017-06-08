@@ -17,7 +17,7 @@
       <dependency>
         <groupId>org.hibernate.ogm</groupId>
         <artifactId>hibernate-ogm-bom</artifactId>
-        <version>5.1.0.Final</version>
+        <version>${verions.hibernate-ogm}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -72,7 +72,7 @@
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <version>2.7.1</version>
+      <version>${version.ehcache}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -83,7 +83,7 @@
     <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
-      <version>1.1</version>
+      <version>${version.jta}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
