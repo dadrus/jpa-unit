@@ -39,11 +39,6 @@
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
     </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.4</version>
-    </dependency>
 
     <!-- TEST DEPENDENCIES -->
     <dependency>
@@ -69,15 +64,17 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-ehcache</artifactId>
-            <version>5.1.4.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-            <version>2.7.1</version>
-        </dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-ehcache</artifactId>
+      <version>5.1.4.Final</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+      <version>2.7.1</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.hibernate.ogm</groupId>
       <artifactId>hibernate-ogm-mongodb</artifactId>
@@ -87,25 +84,8 @@
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
       <version>1.1</version>
+      <scope>test</scope>
     </dependency>
-<!--     <dependency> -->
-<!--       <groupId>com.lordofthejars</groupId> -->
-<!--       <artifactId>nosqlunit-mongodb</artifactId> -->
-<!--       <version>1.0.0-rc.3</version> -->
-<!--       <scope>test</scope> -->
-<!--     </dependency> -->
-<!--     <dependency> -->
-<!--       <groupId>de.flapdoodle.embed</groupId> -->
-<!--       <artifactId>de.flapdoodle.embed.mongo</artifactId> -->
-<!--       <version>2.0.0</version> -->
-<!--       <scope>test</scope> -->
-<!--     </dependency> -->
-<!--     <dependency> -->
-<!--       <groupId>com.github.fakemongo</groupId> -->
-<!--       <artifactId>fongo</artifactId> -->
-<!--       <scope>test</scope> -->
-<!--     </dependency> -->
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -116,25 +96,11 @@
       <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
-
-<!--     <dependency> -->
-<!--       <groupId>com.google.code.gson</groupId> -->
-<!--       <artifactId>gson</artifactId> -->
-<!--       <scope>test</scope> -->
-<!--     </dependency> -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <scope>test</scope>
     </dependency>
-<!--     <dependency> -->
-<!--       <groupId>nl.jqno.equalsverifier</groupId> -->
-<!--       <artifactId>equalsverifier</artifactId> -->
-<!--       <version>2.2.2</version> -->
-<!--       <scope>test</scope> -->
-<!--     </dependency> -->
-
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -161,12 +127,12 @@
       <scope>test</scope>
     </dependency>
 
-<!--     <dependency> -->
-<!--       <groupId>com.github.dadrus</groupId> -->
-<!--       <artifactId>hibernate-embedd-mongodb-provider</artifactId> -->
-<!--       <version>1.0.0-SNAPSHOT</version> -->
-<!--       <scope>test</scope> -->
-<!--     </dependency> -->
+    <!-- <dependency> -->
+    <!-- <groupId>com.github.dadrus</groupId> -->
+    <!-- <artifactId>hibernate-embedd-mongodb-provider</artifactId> -->
+    <!-- <version>1.0.0-SNAPSHOT</version> -->
+    <!-- <scope>test</scope> -->
+    <!-- </dependency> -->
   </dependencies>
 
   <build>
