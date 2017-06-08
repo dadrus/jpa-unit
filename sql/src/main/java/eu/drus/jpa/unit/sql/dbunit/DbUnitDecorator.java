@@ -6,7 +6,6 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.IDatabaseConnection;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
@@ -29,8 +28,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
     @Override
     public void beforeTest(final TestMethodInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
-        final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
-                invocation.getTestClass());
+        final FeatureResolver featureResolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
 
         final DbFeatureFactory featureFactory = new DbFeatureFactory(featureResolver);
 
@@ -50,8 +48,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
         final ExecutionContext context = invocation.getContext();
         final IDatabaseConnection connection = (IDatabaseConnection) context.getData(KEY_CONNECTION);
 
-        final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
-                invocation.getTestClass());
+        final FeatureResolver featureResolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
 
         final DbFeatureFactory featureFactory = new DbFeatureFactory(featureResolver);
 

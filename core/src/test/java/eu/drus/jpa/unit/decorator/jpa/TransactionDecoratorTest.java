@@ -2,16 +2,13 @@ package eu.drus.jpa.unit.decorator.jpa;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-
-import java.lang.reflect.Method;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import javax.persistence.EntityManager;
 
@@ -24,12 +21,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.api.TransactionMode;
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(FeatureResolverFactory.class)
+@PrepareForTest({
+        TransactionDecorator.class, TransactionDecoratorTest.class
+})
 public class TransactionDecoratorTest {
 
     @Mock
@@ -46,8 +44,7 @@ public class TransactionDecoratorTest {
 
     @Before
     public void setUp() throws Exception {
-        mockStatic(FeatureResolverFactory.class);
-        when(FeatureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
+        whenNew(FeatureResolver.class).withAnyArguments().thenReturn(resolver);
 
         when(invocation.getContext()).thenReturn(ctx);
         when(resolver.getTransactionMode()).thenReturn(TransactionMode.DISABLED);

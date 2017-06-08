@@ -9,8 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-
-import java.lang.reflect.Method;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.DatabaseConnection;
@@ -23,15 +22,12 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
-import eu.drus.jpa.unit.sql.dbunit.DatabaseConnectionFactory;
-import eu.drus.jpa.unit.sql.dbunit.DbUnitDecorator;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
-        DatabaseConnectionFactory.class, FeatureResolverFactory.class
+        DatabaseConnectionFactory.class, DbUnitDecorator.class, DbUnitDecoratorTest.class
 })
 public class DbUnitDecoratorTest {
 
@@ -49,9 +45,9 @@ public class DbUnitDecoratorTest {
 
     @Before
     public void prepareMocks() throws Throwable {
-        mockStatic(DatabaseConnectionFactory.class, FeatureResolverFactory.class);
+        mockStatic(DatabaseConnectionFactory.class);
         when(DatabaseConnectionFactory.openConnection(any(BasicDataSource.class))).thenReturn(connection);
-        when(FeatureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
+        whenNew(FeatureResolver.class).withAnyArguments().thenReturn(resolver);
 
         when(invocation.getContext()).thenReturn(ctx);
         when(ctx.getData(eq("connection"))).thenReturn(connection);

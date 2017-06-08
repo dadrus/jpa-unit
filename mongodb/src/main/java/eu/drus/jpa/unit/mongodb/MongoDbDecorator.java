@@ -7,7 +7,6 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
@@ -40,8 +39,7 @@ public class MongoDbDecorator implements TestMethodDecorator {
 
         context.storeData("mongoClient", client);
 
-        final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
-                invocation.getTestClass());
+        final FeatureResolver featureResolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
         final MongoDbFeatureFactory featureFactory = new MongoDbFeatureFactory(featureResolver);
         featureFactory.getCleanUpBeforeFeature().execute(mongoDb);
         featureFactory.getCleanupUsingScriptBeforeFeature().execute(mongoDb);
@@ -61,8 +59,7 @@ public class MongoDbDecorator implements TestMethodDecorator {
 
         final MongoDatabase mongoDb = client.getDatabase(dataBase);
 
-        final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
-                invocation.getTestClass());
+        final FeatureResolver featureResolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
 
         final MongoDbFeatureFactory featureFactory = new MongoDbFeatureFactory(featureResolver);
 

@@ -26,7 +26,7 @@ public class FeatureResolver {
 
     private final Method testMethod;
 
-    FeatureResolver(final Method testMethod, final Class<?> clazz) {
+    public FeatureResolver(final Method testMethod, final Class<?> clazz) {
         metadataExtractor = new MetadataExtractor(clazz);
         this.testMethod = testMethod;
     }

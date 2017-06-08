@@ -3,7 +3,6 @@ package eu.drus.jpa.unit.decorator.jpa;
 import javax.persistence.EntityManager;
 
 import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
@@ -27,8 +26,7 @@ public class TransactionDecorator implements TestMethodDecorator {
             return;
         }
 
-        final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
-                invocation.getTestClass());
+        final FeatureResolver featureResolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
 
         final TransactionStrategyExecutor executor = featureResolver.getTransactionMode()
                 .provide(new TransactionStrategyProvider(em.getTransaction()));
@@ -42,8 +40,7 @@ public class TransactionDecorator implements TestMethodDecorator {
             return;
         }
 
-        final FeatureResolver featureResolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(),
-                invocation.getTestClass());
+        final FeatureResolver featureResolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
 
         final TransactionStrategyExecutor executor = featureResolver.getTransactionMode()
                 .provide(new TransactionStrategyProvider(em.getTransaction()));
