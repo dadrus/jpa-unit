@@ -31,12 +31,6 @@
       <optional>true</optional>
     </dependency>
     
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-dbcp2</artifactId>
-    </dependency>
-
-
     <!-- TEST DEPENDENCIES -->
     <dependency>
       <groupId>junit</groupId>
@@ -77,6 +71,11 @@
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>eclipselink</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.dbunit</groupId>
+      <artifactId>dbunit</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

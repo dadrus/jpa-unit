@@ -19,10 +19,6 @@
       <artifactId>hibernate-jpa-2.1-api</artifactId>
       <optional>true</optional>
     </dependency>
-    <dependency>
-      <groupId>org.dbunit</groupId>
-      <artifactId>dbunit</artifactId>
-    </dependency>
 
     <!-- TEST DEPENDENCIES -->
     <dependency>
