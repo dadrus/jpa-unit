@@ -1,15 +1,9 @@
 package eu.drus.jpa.unit.mongodb.integration;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.dbunit.dataset.Column;
-import org.dbunit.dataset.filter.IColumnFilter;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -60,16 +54,6 @@ public class ExpectedDataSetsTest {
     }
 
     @Test
-    @ExpectedDataSets(value = "datasets/expected-data.json", orderBy = {
-            "CONTACT_DETAIL.TYPE", "ACCOUNT_ENTRY.TYPE"
-    }, filter = CustomnColumnFilter.class)
-    @Ignore
-    public void test2() throws OperationNotSupportedException {
-        // we can also apply specific filters instead of excluding columns
-        manager.persist(depositor);
-    }
-
-    @Test
     @ExpectedDataSets(value = "datasets/expected-data.json", excludeColumns = {
             "_id", "DEPOSITOR_ID", "ACCOUNT_ID", "VERSION"
     }, orderBy = {
@@ -113,16 +97,5 @@ public class ExpectedDataSetsTest {
         manager.persist(depositor);
 
         expectedException.expect(AssertionError.class);
-    }
-
-    public static class CustomnColumnFilter implements IColumnFilter {
-
-        private static List<String> names = Arrays.asList("ID", "DEPOSITOR_ID", "ACCOUNT_ID", "VERSION");
-
-        @Override
-        public boolean accept(final String tableName, final Column column) {
-            return !names.contains(column.getColumnName());
-        }
-
     }
 }

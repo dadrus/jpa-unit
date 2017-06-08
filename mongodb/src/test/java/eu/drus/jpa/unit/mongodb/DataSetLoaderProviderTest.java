@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.bson.Document;
-import org.dbunit.dataset.DataSetException;
 import org.junit.Test;
 
 import eu.drus.jpa.unit.core.DataSetLoader;
@@ -73,8 +72,8 @@ public class DataSetLoaderProviderTest {
         assertThat(collection2.size(), equalTo(1));
     }
 
-    @Test(expected = IOException.class)
-    public void testJsonLoaderLoadUsingNullFileName() throws IOException, DataSetException {
+    @Test(expected = NullPointerException.class)
+    public void testJsonLoaderLoadUsingNullFileName() throws IOException {
         // WHEN
         final DataSetLoader<Document> loader = LOADER_PROVIDER.jsonLoader();
 
@@ -85,10 +84,10 @@ public class DataSetLoaderProviderTest {
         loader.load(null);
 
         // THEN
-        // IOException is thrown
+        // NullPointerException is thrown
     }
 
-    @Test(expected = IOException.class)
+    @Test(expected = Exception.class)
     public void testJsonLoaderLoadUsingWrongResource() throws Exception {
         // WHEN
         final DataSetLoader<Document> loader = LOADER_PROVIDER.jsonLoader();
@@ -100,6 +99,6 @@ public class DataSetLoaderProviderTest {
         loader.load(getFile("test-data.yaml"));
 
         // THEN
-        // IOException is thrown
+        // Exception from the parser is thrown
     }
 }
