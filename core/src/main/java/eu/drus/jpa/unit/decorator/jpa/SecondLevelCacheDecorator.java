@@ -2,8 +2,8 @@ package eu.drus.jpa.unit.decorator.jpa;
 
 import javax.persistence.EntityManagerFactory;
 
-import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 

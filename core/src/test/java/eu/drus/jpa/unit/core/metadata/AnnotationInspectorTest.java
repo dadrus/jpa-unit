@@ -1,8 +1,8 @@
 package eu.drus.jpa.unit.core.metadata;
 
-import static eu.drus.jpa.unit.core.metadata.TestCodeUtils.buildModel;
-import static eu.drus.jpa.unit.core.metadata.TestCodeUtils.compileModel;
-import static eu.drus.jpa.unit.core.metadata.TestCodeUtils.loadClass;
+import static eu.drus.jpa.unit.test.util.TestCodeUtils.buildModel;
+import static eu.drus.jpa.unit.test.util.TestCodeUtils.compileModel;
+import static eu.drus.jpa.unit.test.util.TestCodeUtils.loadClass;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.notNullValue;

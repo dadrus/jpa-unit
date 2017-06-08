@@ -1,41 +1,41 @@
-package eu.drus.jpa.unit.core;
+package eu.drus.jpa.unit.spi;
 
 import java.io.File;
 
 public enum DataSetFormat {
     XML("xml") {
         @Override
-        public <T> T select(final LoaderProvider<T> provider) {
+        public <T> DataSetLoader<T> select(final LoaderProvider<T> provider) {
             return provider.xmlLoader();
         }
     },
     YAML("yaml") {
         @Override
-        public <T> T select(final LoaderProvider<T> provider) {
+        public <T> DataSetLoader<T> select(final LoaderProvider<T> provider) {
             return provider.yamlLoader();
         }
     },
     JSON("json") {
         @Override
-        public <T> T select(final LoaderProvider<T> provider) {
+        public <T> DataSetLoader<T> select(final LoaderProvider<T> provider) {
             return provider.jsonLoader();
         }
     },
     CSV("csv") {
         @Override
-        public <T> T select(final LoaderProvider<T> provider) {
+        public <T> DataSetLoader<T> select(final LoaderProvider<T> provider) {
             return provider.csvLoader();
         }
     },
     XLS("xls") {
         @Override
-        public <T> T select(final LoaderProvider<T> provider) {
+        public <T> DataSetLoader<T> select(final LoaderProvider<T> provider) {
             return provider.xlsLoader();
         }
     },
     XLSX("xlsx") {
         @Override
-        public <T> T select(final LoaderProvider<T> provider) {
+        public <T> DataSetLoader<T> select(final LoaderProvider<T> provider) {
             return provider.xlsLoader();
         }
     };
@@ -51,7 +51,7 @@ public enum DataSetFormat {
         return fileExtension;
     }
 
-    public abstract <T> T select(LoaderProvider<T> provider);
+    public abstract <T> DataSetLoader<T> select(LoaderProvider<T> provider);
 
     public static DataSetFormat inferFromFile(final File file) {
 
@@ -79,14 +79,14 @@ public enum DataSetFormat {
     }
 
     public interface LoaderProvider<T> {
-        T xmlLoader();
+        DataSetLoader<T> xmlLoader();
 
-        T yamlLoader();
+        DataSetLoader<T> yamlLoader();
 
-        T jsonLoader();
+        DataSetLoader<T> jsonLoader();
 
-        T csvLoader();
+        DataSetLoader<T> csvLoader();
 
-        T xlsLoader();
+        DataSetLoader<T> xlsLoader();
     }
 }

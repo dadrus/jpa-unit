@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.core;
+package eu.drus.jpa.unit.spi;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,7 +11,6 @@ import java.util.List;
 import eu.drus.jpa.unit.api.CleanupStrategy;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
-import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 
 public abstract class AbstractDbFeatureFactory<D, C> {
 

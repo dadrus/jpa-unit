@@ -109,8 +109,6 @@
 
   <modules>
     <module>test-model</module>
-    <module>api</module>
-    <module>spi</module>
     <module>core</module>
     <module>junit4-extension</module>
     <module>junit5-extension</module>

@@ -19,8 +19,8 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 @RunWith(PowerMockRunner.class)

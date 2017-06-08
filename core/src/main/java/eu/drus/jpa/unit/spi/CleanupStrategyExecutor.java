@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.core;
+package eu.drus.jpa.unit.spi;
 
 import java.util.List;
 

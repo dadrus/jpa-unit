@@ -2,17 +2,20 @@ package eu.drus.jpa.unit.mongodb;
 
 import java.util.Map;
 
+import org.bson.Document;
+
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
-import eu.drus.jpa.unit.core.metadata.FeatureResolver;
+import eu.drus.jpa.unit.spi.AbstractDbFeatureFactory;
+import eu.drus.jpa.unit.spi.AbstractDbFeatureMethodDecorator;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
-import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
-public class MongoDbDecorator implements TestMethodDecorator {
+public class MongoDbDecorator extends AbstractDbFeatureMethodDecorator<Document, MongoDatabase> {
 
     @Override
     public int getPriority() {
@@ -39,12 +42,7 @@ public class MongoDbDecorator implements TestMethodDecorator {
 
         context.storeData("mongoClient", client);
 
-        final FeatureResolver featureResolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
-        final MongoDbFeatureFactory featureFactory = new MongoDbFeatureFactory(featureResolver);
-        featureFactory.getCleanUpBeforeFeature().execute(mongoDb);
-        featureFactory.getCleanupUsingScriptBeforeFeature().execute(mongoDb);
-        featureFactory.getApplyCustomScriptBeforeFeature().execute(mongoDb);
-        featureFactory.getSeedDataFeature().execute(mongoDb);
+        beforeTest(invocation, mongoDb);
     }
 
     @Override
@@ -59,22 +57,10 @@ public class MongoDbDecorator implements TestMethodDecorator {
 
         final MongoDatabase mongoDb = client.getDatabase(dataBase);
 
-        final FeatureResolver featureResolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
-
-        final MongoDbFeatureFactory featureFactory = new MongoDbFeatureFactory(featureResolver);
-
         try {
-            if (!invocation.hasErrors()) {
-                featureFactory.getVerifyDataAfterFeature().execute(mongoDb);
-            }
+            afterTest(invocation, mongoDb);
         } finally {
-            try {
-                featureFactory.getApplyCustomScriptAfterFeature().execute(mongoDb);
-                featureFactory.getCleanupUsingScriptAfterFeature().execute(mongoDb);
-                featureFactory.getCleanUpAfterFeature().execute(mongoDb);
-            } finally {
-                client.close();
-            }
+            client.close();
         }
     }
 
@@ -84,6 +70,11 @@ public class MongoDbDecorator implements TestMethodDecorator {
         final Map<String, Object> dbConfig = descriptor.getProperties();
 
         return dbConfig.containsKey("hibernate.ogm.datastore.database");
+    }
+
+    @Override
+    protected AbstractDbFeatureFactory<Document, MongoDatabase> createDbFeatureFactory(final FeatureResolver featureResolver) {
+        return new MongoDbFeatureFactory(featureResolver);
     }
 
 }

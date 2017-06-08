@@ -9,8 +9,8 @@ import org.bson.Document;
 import com.mongodb.client.MongoDatabase;
 
 import eu.drus.jpa.unit.api.CleanupStrategy.StrategyProvider;
-import eu.drus.jpa.unit.core.CleanupStrategyExecutor;
 import eu.drus.jpa.unit.mongodb.operation.MongoDbOperations;
+import eu.drus.jpa.unit.spi.CleanupStrategyExecutor;
 
 public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategyExecutor<MongoDatabase, Document>> {
 

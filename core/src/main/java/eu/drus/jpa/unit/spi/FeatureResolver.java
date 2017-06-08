@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.core.metadata;
+package eu.drus.jpa.unit.spi;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -19,6 +19,7 @@ import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.InitialDataSets;
 import eu.drus.jpa.unit.api.TransactionMode;
 import eu.drus.jpa.unit.api.Transactional;
+import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
 
 public class FeatureResolver {
 

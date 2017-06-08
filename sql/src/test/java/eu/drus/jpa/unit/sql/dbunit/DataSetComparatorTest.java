@@ -30,7 +30,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
-import eu.drus.jpa.unit.core.AssertionErrorCollector;
+import eu.drus.jpa.unit.spi.AssertionErrorCollector;
 import eu.drus.jpa.unit.sql.dbunit.DataSetComparator;
 
 @RunWith(MockitoJUnitRunner.class)

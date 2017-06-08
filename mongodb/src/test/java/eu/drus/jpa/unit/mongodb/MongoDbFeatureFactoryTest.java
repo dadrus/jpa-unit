@@ -31,11 +31,11 @@ import eu.drus.jpa.unit.api.CleanupStrategy;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.JpaUnitException;
-import eu.drus.jpa.unit.core.CleanupStrategyExecutor;
-import eu.drus.jpa.unit.core.DbFeature;
-import eu.drus.jpa.unit.core.DbFeatureException;
-import eu.drus.jpa.unit.core.metadata.FeatureResolver;
 import eu.drus.jpa.unit.mongodb.operation.MongoDbOperation;
+import eu.drus.jpa.unit.spi.CleanupStrategyExecutor;
+import eu.drus.jpa.unit.spi.DbFeature;
+import eu.drus.jpa.unit.spi.DbFeatureException;
+import eu.drus.jpa.unit.spi.FeatureResolver;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MongoDbFeatureFactoryTest {

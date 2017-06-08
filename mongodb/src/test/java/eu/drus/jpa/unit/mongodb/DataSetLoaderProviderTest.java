@@ -15,8 +15,8 @@ import java.util.Set;
 import org.bson.Document;
 import org.junit.Test;
 
-import eu.drus.jpa.unit.core.DataSetLoader;
-import eu.drus.jpa.unit.core.UnsupportedDataSetFormatException;
+import eu.drus.jpa.unit.spi.DataSetLoader;
+import eu.drus.jpa.unit.spi.UnsupportedDataSetFormatException;
 
 public class DataSetLoaderProviderTest {
 

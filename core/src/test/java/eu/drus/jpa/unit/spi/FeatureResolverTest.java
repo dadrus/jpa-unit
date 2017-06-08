@@ -1,8 +1,8 @@
-package eu.drus.jpa.unit.core.metadata;
+package eu.drus.jpa.unit.spi;
 
-import static eu.drus.jpa.unit.core.metadata.TestCodeUtils.buildModel;
-import static eu.drus.jpa.unit.core.metadata.TestCodeUtils.compileModel;
-import static eu.drus.jpa.unit.core.metadata.TestCodeUtils.loadClass;
+import static eu.drus.jpa.unit.test.util.TestCodeUtils.buildModel;
+import static eu.drus.jpa.unit.test.util.TestCodeUtils.compileModel;
+import static eu.drus.jpa.unit.test.util.TestCodeUtils.loadClass;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
@@ -35,6 +35,7 @@ import eu.drus.jpa.unit.api.CleanupUsingScripts;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.InitialDataSets;
+import eu.drus.jpa.unit.spi.FeatureResolver;
 
 public class FeatureResolverTest {
 

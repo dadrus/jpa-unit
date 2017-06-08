@@ -11,8 +11,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
-import eu.drus.jpa.unit.core.AssertionErrorCollector;
-import eu.drus.jpa.unit.core.ColumnsHolder;
+import eu.drus.jpa.unit.spi.AssertionErrorCollector;
+import eu.drus.jpa.unit.spi.ColumnsHolder;
 
 public class DataSetComparator {
 

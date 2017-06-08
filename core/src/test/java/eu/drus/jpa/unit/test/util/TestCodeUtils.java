@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.core.metadata;
+package eu.drus.jpa.unit.test.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

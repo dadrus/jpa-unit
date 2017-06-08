@@ -13,10 +13,10 @@ import org.dbunit.dataset.csv.CsvDataSet;
 import org.dbunit.dataset.excel.XlsDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 
-import eu.drus.jpa.unit.core.DataSetLoader;
-import eu.drus.jpa.unit.core.DataSetFormat.LoaderProvider;
+import eu.drus.jpa.unit.spi.DataSetFormat.LoaderProvider;
+import eu.drus.jpa.unit.spi.DataSetLoader;
 
-public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader<IDataSet>> {
+public class DataSetLoaderProvider implements LoaderProvider<IDataSet> {
 
     private IDataSet defineReplaceableExpressions(final IDataSet dataSet) {
         final ReplacementDataSet replacementDataSet = new ReplacementDataSet(dataSet);

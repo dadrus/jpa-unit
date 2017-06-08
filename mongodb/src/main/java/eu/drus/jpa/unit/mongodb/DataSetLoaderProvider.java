@@ -6,11 +6,11 @@ import java.nio.file.Files;
 
 import org.bson.Document;
 
-import eu.drus.jpa.unit.core.DataSetFormat.LoaderProvider;
-import eu.drus.jpa.unit.core.DataSetLoader;
-import eu.drus.jpa.unit.core.UnsupportedDataSetFormatException;
+import eu.drus.jpa.unit.spi.DataSetFormat.LoaderProvider;
+import eu.drus.jpa.unit.spi.DataSetLoader;
+import eu.drus.jpa.unit.spi.UnsupportedDataSetFormatException;
 
-public class DataSetLoaderProvider implements LoaderProvider<DataSetLoader<Document>> {
+public class DataSetLoaderProvider implements LoaderProvider<Document> {
 
     @Override
     public DataSetLoader<Document> xmlLoader() {

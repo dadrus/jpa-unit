@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.core;
+package eu.drus.jpa.unit.spi;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -13,8 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.drus.jpa.unit.core.DataSetFormat;
-import eu.drus.jpa.unit.core.UnsupportedDataSetFormatException;
+import eu.drus.jpa.unit.spi.DataSetFormat;
+import eu.drus.jpa.unit.spi.UnsupportedDataSetFormatException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataSetFormatTest {

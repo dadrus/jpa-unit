@@ -14,8 +14,8 @@ import org.dbunit.dataset.filter.ExcludeTableFilter;
 import org.dbunit.operation.DatabaseOperation;
 
 import eu.drus.jpa.unit.api.CleanupStrategy.StrategyProvider;
-import eu.drus.jpa.unit.core.CleanupStrategyExecutor;
-import eu.drus.jpa.unit.core.DbFeatureException;
+import eu.drus.jpa.unit.spi.CleanupStrategyExecutor;
+import eu.drus.jpa.unit.spi.DbFeatureException;
 
 public class CleanupStrategyProvider implements StrategyProvider<CleanupStrategyExecutor<IDatabaseConnection, IDataSet>> {
 

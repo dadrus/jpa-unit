@@ -16,7 +16,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jpa-unit-spi</artifactId>
+      <artifactId>jpa-unit-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

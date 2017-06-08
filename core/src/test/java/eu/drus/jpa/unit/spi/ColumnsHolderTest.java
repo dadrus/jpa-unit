@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.core;
+package eu.drus.jpa.unit.spi;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import eu.drus.jpa.unit.core.ColumnsHolder;
+import eu.drus.jpa.unit.spi.ColumnsHolder;
 
 public class ColumnsHolderTest {
 

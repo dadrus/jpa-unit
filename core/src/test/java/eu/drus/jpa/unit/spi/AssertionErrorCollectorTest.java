@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.core;
+package eu.drus.jpa.unit.spi;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -7,7 +7,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import eu.drus.jpa.unit.core.AssertionErrorCollector;
+import eu.drus.jpa.unit.spi.AssertionErrorCollector;
 
 public class AssertionErrorCollectorTest {
 
