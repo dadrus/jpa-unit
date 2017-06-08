@@ -473,7 +473,7 @@ public class FeatureResolverTest {
         // WHEN
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
-        final Set<Class<? extends IColumnFilter>> filterSet = resolver.getCustomColumnFilter();
+        final Set<Class<?>> filterSet = resolver.getCustomColumnFilter();
         assertThat(filterSet.size(), equalTo(1));
     }
 
@@ -504,7 +504,7 @@ public class FeatureResolverTest {
         // WHEN
         final FeatureResolver resolver = new FeatureResolver(method, cut);
 
-        final Set<Class<? extends IColumnFilter>> filterSet = resolver.getCustomColumnFilter();
+        final Set<Class<?>> filterSet = resolver.getCustomColumnFilter();
         assertThat(filterSet.size(), equalTo(1));
     }
 

@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.dbunit.dataset.filter.IColumnFilter;
-
 import eu.drus.jpa.unit.api.ApplyScriptsAfter;
 import eu.drus.jpa.unit.api.ApplyScriptsBefore;
 import eu.drus.jpa.unit.api.Cleanup;
@@ -72,7 +70,7 @@ public class FeatureResolver {
         return metadataExtractor.expectedDataSets().fetchUsingFirst(testMethod);
     }
 
-    public Set<Class<? extends IColumnFilter>> getCustomColumnFilter() {
+    public Set<Class<?>> getCustomColumnFilter() {
         final ExpectedDataSets expectedDataSets = getExpectedDataSets();
         return expectedDataSets == null ? Collections.emptySet() : new HashSet<>(Arrays.asList(expectedDataSets.filter()));
     }

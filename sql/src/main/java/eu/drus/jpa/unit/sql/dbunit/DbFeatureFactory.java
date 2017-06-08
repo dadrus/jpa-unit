@@ -138,7 +138,7 @@ public class DbFeatureFactory extends AbstractDbFeatureFactory<IDataSet, IDataba
     }
 
     private HashSet<Class<? extends IColumnFilter>> getColumnFilter(final ExpectedDataSets expectedDataSets) {
-        final Class<? extends IColumnFilter>[] filter = expectedDataSets.filter();
+        final Class<? extends IColumnFilter>[] filter = (Class<? extends IColumnFilter>[]) expectedDataSets.filter();
         return filter == null ? new HashSet<>() : new HashSet<>(Arrays.asList(filter));
     }
 
