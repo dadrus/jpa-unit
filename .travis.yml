@@ -24,7 +24,7 @@ env:
 install: true
 
 script:
-  - mvn clean test -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=${SONAR_TOKEN}
+  - mvn clean verify -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=${SONAR_TOKEN}
   
 deploy:
   provider: script
