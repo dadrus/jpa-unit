@@ -1,18 +1,14 @@
 package eu.drus.jpa.unit.mongodb;
 
-import java.util.Map;
-
 import org.bson.Document;
 
 import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
 import eu.drus.jpa.unit.spi.AbstractDbFeatureFactory;
 import eu.drus.jpa.unit.spi.AbstractDbFeatureMethodDecorator;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
-import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 public class MongoDbDecorator extends AbstractDbFeatureMethodDecorator<Document, MongoDatabase> {
@@ -27,32 +23,16 @@ public class MongoDbDecorator extends AbstractDbFeatureMethodDecorator<Document,
         // nothing to do
     }
 
-    private MongoClient createMongoClient(final PersistenceUnitDescriptor descriptor) {
-        // TODO: implement support for replica
-        // TODO: implement dedicated strategy class which performs the lookup of the required
-        // properties (to be independent from any JPA provider)
-        final Map<String, Object> dbConfig = descriptor.getProperties();
-        final String host = (String) dbConfig.get("hibernate.ogm.datastore.host");
-
-        return new MongoClient(new ServerAddress(host));
-    }
-
-    private String getDatabaseName(final PersistenceUnitDescriptor descriptor) {
-        // TODO: see above
-        final Map<String, Object> dbConfig = descriptor.getProperties();
-        final String dataBase = (String) dbConfig.get("hibernate.ogm.datastore.database");
-
-        return dataBase;
-    }
-
     @Override
     public void beforeTest(final TestMethodInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
 
-        final MongoClient client = createMongoClient(context.getDescriptor());
-        final MongoDatabase mongoDb = client.getDatabase(getDatabaseName(context.getDescriptor()));
+        final MongoDbConfiguration config = new MongoDbConfiguration(context.getDescriptor());
+        final MongoClient client = new MongoClient(config.getServerAddresses(), config.getCredentials(), config.getClientOptions());
+        final MongoDatabase mongoDb = client.getDatabase(config.getDatabaseName());
 
         context.storeData("mongoClient", client);
+        context.storeData("mongoDb", mongoDb);
 
         beforeTest(invocation, mongoDb);
     }
@@ -62,11 +42,11 @@ public class MongoDbDecorator extends AbstractDbFeatureMethodDecorator<Document,
         final ExecutionContext context = invocation.getContext();
 
         final MongoClient client = (MongoClient) context.getData("mongoClient");
+        final MongoDatabase mongoDb = (MongoDatabase) context.getData("mongoDb");
         context.storeData("mongoClient", null);
+        context.storeData("mongoDb", null);
 
         try {
-            final MongoDatabase mongoDb = client.getDatabase(getDatabaseName(context.getDescriptor()));
-
             afterTest(invocation, mongoDb);
         } finally {
             client.close();
@@ -75,11 +55,7 @@ public class MongoDbDecorator extends AbstractDbFeatureMethodDecorator<Document,
 
     @Override
     public boolean isConfigurationSupported(final ExecutionContext ctx) {
-        final PersistenceUnitDescriptor descriptor = ctx.getDescriptor();
-        final Map<String, Object> dbConfig = descriptor.getProperties();
-
-        // TODO: see above
-        return dbConfig.containsKey("hibernate.ogm.datastore.database");
+        return MongoDbConfiguration.isSupported(ctx.getDescriptor());
     }
 
     @Override
