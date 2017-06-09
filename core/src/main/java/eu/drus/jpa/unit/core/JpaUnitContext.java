@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.core;
 
-import static eu.drus.jpa.unit.util.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

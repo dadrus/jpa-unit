@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.sql;
 
-import static eu.drus.jpa.unit.util.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
