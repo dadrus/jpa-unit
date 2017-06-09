@@ -26,6 +26,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.lordofthejars</groupId>
+      <artifactId>nosqlunit-mongodb</artifactId>
+      <version>1.0.0-rc.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jpa-unit-spi</artifactId>
       <version>${project.version}</version>
@@ -86,6 +92,24 @@
       <version>${version.jta}</version>
       <scope>test</scope>
     </dependency>
+    <!-- <dependency> -->
+    <!-- <groupId>com.lordofthejars</groupId> -->
+    <!-- <artifactId>nosqlunit-mongodb</artifactId> -->
+    <!-- <version>1.0.0-rc.3</version> -->
+    <!-- <scope>test</scope> -->
+    <!-- </dependency> -->
+    <!-- <dependency> -->
+    <!-- <groupId>de.flapdoodle.embed</groupId> -->
+    <!-- <artifactId>de.flapdoodle.embed.mongo</artifactId> -->
+    <!-- <version>2.0.0</version> -->
+    <!-- <scope>test</scope> -->
+    <!-- </dependency> -->
+    <!-- <dependency> -->
+    <!-- <groupId>com.github.fakemongo</groupId> -->
+    <!-- <artifactId>fongo</artifactId> -->
+    <!-- <scope>test</scope> -->
+    <!-- </dependency> -->
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -149,6 +173,32 @@
           <execution>
             <goals>
               <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.joelittlejohn.embedmongo</groupId>
+        <artifactId>embedmongo-maven-plugin</artifactId>
+        <version>0.3.4</version>
+
+        <executions>
+          <execution>
+            <id>start</id>
+            <goals>
+              <goal>start</goal>
+            </goals>
+            <configuration>
+              <version>3.4.2</version>
+              <logging>none</logging>
+              <bindIp>127.0.0.1</bindIp>
+              <skip>false</skip>
+            </configuration>
+          </execution>
+          <execution>
+            <id>stop</id>
+            <goals>
+              <goal>stop</goal>
             </goals>
           </execution>
         </executions>

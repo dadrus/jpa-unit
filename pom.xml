@@ -17,12 +17,16 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <skipUnitTests>${skipTests}</skipUnitTests>
+    <skipIntegrationTests>${skipTests}</skipIntegrationTests>
+    <integrationSourceDirectory>src\integrationtest</integrationSourceDirectory>
     <snapshotDependencyAllowed>true</snapshotDependencyAllowed>
 
     <plugin.version.compiler>3.3</plugin.version.compiler>
     <plugin.version.resources>3.0.1</plugin.version.resources>
     <plugin.version.source>3.0.1</plugin.version.source>
     <plugin.version.surefire>2.19.1</plugin.version.surefire>
+    <plugin.version.failsafe>2.19.1</plugin.version.failsafe>
     <plugin.version.jar>2.6</plugin.version.jar>
     <plugin.version.javadoc>2.10.4</plugin.version.javadoc>
     <plugin.version.jacoco>0.7.7.201606060606</plugin.version.jacoco>
@@ -135,6 +139,69 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${plugin.version.surefire}</version>
+          <configuration>
+            <argLine>${argLine} -Xms256m -Xmx1024m</argLine>
+            <aggregate>true</aggregate>
+            <skipTests>${skipUnitTests}</skipTests>
+            <forkCount>1</forkCount>
+            <reuseForks>false</reuseForks>
+            <!-- Specific to generate mapping between tests and covered code -->
+            <!-- <properties> -->
+            <!-- <property> -->
+            <!-- <name>listener</name> -->
+            <!-- <value>org.sonar.java.jacoco.JUnitListener</value> -->
+            <!-- </property> -->
+            <!-- </properties> -->
+            <excludes>
+              <exclude>**/manual/**</exclude>
+              <exclude>**/integration/**</exclude>
+              <exclude>**/*IT.java</exclude>
+              <exclude>**/*ITCase.java</exclude>
+              <exclude>**/*IntegrationTest.java</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${plugin.version.failsafe}</version>
+          <configuration>
+            <argLine>${argLine} -Xms256m -Xmx1024m</argLine>
+            <skipTests>${skipIntegrationTests}</skipTests>
+            <forkCount>1</forkCount>
+            <reuseForks>false</reuseForks>
+            <includes>
+              <!-- <include>**/*Test.java</include> -->
+              <include>**/*IT.java</include>
+              <include>**/*ITCase.java</include>
+            </includes>
+            <!-- Specific to generate mapping between tests and covered code -->
+            <!-- <properties> -->
+            <!-- <property> -->
+            <!-- <name>listener</name> -->
+            <!-- <value>org.sonar.java.jacoco.JUnitListener</value> -->
+            <!-- </property> -->
+            <!-- </properties> -->
+            <excludes>
+              <exclude>**/manual/**</exclude>
+            </excludes>
+            <includes>
+              <include>**/integration/*Test.java</include>
+              <include>**/*IT.java</include>
+              <include>**/*ITCase.java</include>
+              <include>**/*IntegrationTest.java</include>
+            </includes>
+            <!-- Let's put failsafe reports with surefire to have access to tests failures/success reports in sonar -->
+            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -275,6 +342,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
