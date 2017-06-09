@@ -33,11 +33,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jpa-unit-spi</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>jpa-unit-core</artifactId>
       <version>${project.version}</version>
     </dependency>
