@@ -61,11 +61,11 @@ public class MongoDbFeatureFactoryTest {
     @Mock
     private ExpectedDataSets expectedDataSets;
 
-    private MongoDbFeatureFactory factory;
+    private MongoDbFeatureExecutor factory;
 
     @Before
     public void createMongoDbFeatureFactory() {
-        factory = new MongoDbFeatureFactory(featureResolver);
+        factory = new MongoDbFeatureExecutor(featureResolver);
     }
 
     @Test

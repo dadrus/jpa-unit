@@ -25,7 +25,7 @@ import eu.drus.jpa.unit.api.CleanupStrategy;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.JpaUnitException;
-import eu.drus.jpa.unit.spi.AbstractDbFeatureFactory;
+import eu.drus.jpa.unit.spi.AbstractDbFeatureExecutor;
 import eu.drus.jpa.unit.spi.AssertionErrorCollector;
 import eu.drus.jpa.unit.spi.CleanupStrategyExecutor;
 import eu.drus.jpa.unit.spi.DataSetFormat;
@@ -35,11 +35,11 @@ import eu.drus.jpa.unit.spi.DbFeatureException;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.sql.dbunit.dataset.DataSetLoaderProvider;
 
-public class DbFeatureFactory extends AbstractDbFeatureFactory<IDataSet, IDatabaseConnection> {
+public class SqlDbFeatureExecutor extends AbstractDbFeatureExecutor<IDataSet, IDatabaseConnection> {
 
     private StrategyProviderFactory providerFactory;
 
-    public DbFeatureFactory(final FeatureResolver featureResolver) {
+    public SqlDbFeatureExecutor(final FeatureResolver featureResolver) {
         super(featureResolver);
         providerFactory = new StrategyProviderFactory();
     }

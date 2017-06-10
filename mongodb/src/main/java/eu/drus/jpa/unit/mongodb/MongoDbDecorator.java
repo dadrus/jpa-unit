@@ -1,17 +1,14 @@
 package eu.drus.jpa.unit.mongodb;
 
-import org.bson.Document;
-
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
-import eu.drus.jpa.unit.spi.AbstractDbFeatureFactory;
-import eu.drus.jpa.unit.spi.AbstractDbFeatureMethodDecorator;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
+import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
-public class MongoDbDecorator extends AbstractDbFeatureMethodDecorator<Document, MongoDatabase> {
+public class MongoDbDecorator implements TestMethodDecorator {
 
     @Override
     public int getPriority() {
@@ -34,7 +31,10 @@ public class MongoDbDecorator extends AbstractDbFeatureMethodDecorator<Document,
         context.storeData("mongoClient", client);
         context.storeData("mongoDb", mongoDb);
 
-        beforeTest(invocation, mongoDb);
+        final MongoDbFeatureExecutor dbFeatureExecutor = new MongoDbFeatureExecutor(
+                new FeatureResolver(invocation.getMethod(), invocation.getTestClass()));
+
+        dbFeatureExecutor.executeBeforeTest(mongoDb);
     }
 
     @Override
@@ -46,8 +46,11 @@ public class MongoDbDecorator extends AbstractDbFeatureMethodDecorator<Document,
         context.storeData("mongoClient", null);
         context.storeData("mongoDb", null);
 
+        final MongoDbFeatureExecutor dbFeatureExecutor = new MongoDbFeatureExecutor(
+                new FeatureResolver(invocation.getMethod(), invocation.getTestClass()));
+
         try {
-            afterTest(invocation, mongoDb);
+            dbFeatureExecutor.executeAfterTest(mongoDb, invocation.hasErrors());
         } finally {
             client.close();
         }
@@ -56,11 +59,6 @@ public class MongoDbDecorator extends AbstractDbFeatureMethodDecorator<Document,
     @Override
     public boolean isConfigurationSupported(final ExecutionContext ctx) {
         return MongoDbConfiguration.isSupported(ctx.getDescriptor());
-    }
-
-    @Override
-    protected AbstractDbFeatureFactory<Document, MongoDatabase> createDbFeatureFactory(final FeatureResolver featureResolver) {
-        return new MongoDbFeatureFactory(featureResolver);
     }
 
 }

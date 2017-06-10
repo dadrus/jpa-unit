@@ -12,13 +12,32 @@ import eu.drus.jpa.unit.api.CleanupStrategy;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 
-public abstract class AbstractDbFeatureFactory<D, C> {
+public abstract class AbstractDbFeatureExecutor<D, C> {
 
     private final FeatureResolver featureResolver;
     private List<D> initialDataSets;
 
-    protected AbstractDbFeatureFactory(final FeatureResolver featureResolver) {
+    protected AbstractDbFeatureExecutor(final FeatureResolver featureResolver) {
         this.featureResolver = featureResolver;
+    }
+
+    public void executeBeforeTest(final C connection) throws DbFeatureException {
+        getCleanUpBeforeFeature().execute(connection);
+        getCleanupUsingScriptBeforeFeature().execute(connection);
+        getApplyCustomScriptBeforeFeature().execute(connection);
+        getSeedDataFeature().execute(connection);
+    }
+
+    public void executeAfterTest(final C connection, final boolean testHasErrors) throws DbFeatureException {
+        try {
+            if (!testHasErrors) {
+                getVerifyDataAfterFeature().execute(connection);
+            }
+        } finally {
+            getApplyCustomScriptAfterFeature().execute(connection);
+            getCleanupUsingScriptAfterFeature().execute(connection);
+            getCleanUpAfterFeature().execute(connection);
+        }
     }
 
     protected abstract List<D> loadDataSets(final List<String> paths);
@@ -46,71 +65,71 @@ public abstract class AbstractDbFeatureFactory<D, C> {
         return initialDataSets;
     }
 
-    public DbFeature<C> getCleanUpBeforeFeature() {
+    protected DbFeature<C> getCleanUpBeforeFeature() {
         if (featureResolver.shouldCleanupBefore()) {
             return createCleanupFeature(featureResolver.getCleanupStrategy(), getInitialDataSets());
         } else {
-            return new NopFeature();
+            return new NopFeature<>();
         }
     }
 
-    public DbFeature<C> getCleanUpAfterFeature() {
+    protected DbFeature<C> getCleanUpAfterFeature() {
         if (featureResolver.shouldCleanupAfter()) {
             return createCleanupFeature(featureResolver.getCleanupStrategy(), getInitialDataSets());
         } else {
-            return new NopFeature();
+            return new NopFeature<>();
         }
     }
 
-    public DbFeature<C> getCleanupUsingScriptBeforeFeature() {
+    protected DbFeature<C> getCleanupUsingScriptBeforeFeature() {
         if (featureResolver.shouldCleanupUsingScriptBefore()) {
             return createApplyCustomScriptFeature(featureResolver.getCleanupScripts());
         } else {
-            return new NopFeature();
+            return new NopFeature<>();
         }
     }
 
-    public DbFeature<C> getCleanupUsingScriptAfterFeature() {
+    protected DbFeature<C> getCleanupUsingScriptAfterFeature() {
         if (featureResolver.shouldCleanupUsingScriptAfter()) {
             return createApplyCustomScriptFeature(featureResolver.getCleanupScripts());
         } else {
-            return new NopFeature();
+            return new NopFeature<>();
         }
     }
 
-    public DbFeature<C> getApplyCustomScriptBeforeFeature() {
+    protected DbFeature<C> getApplyCustomScriptBeforeFeature() {
         if (featureResolver.shouldApplyCustomScriptBefore()) {
             return createApplyCustomScriptFeature(featureResolver.getPreExecutionScripts());
         } else {
-            return new NopFeature();
+            return new NopFeature<>();
         }
     }
 
-    public DbFeature<C> getApplyCustomScriptAfterFeature() {
+    protected DbFeature<C> getApplyCustomScriptAfterFeature() {
         if (featureResolver.shouldApplyCustomScriptAfter()) {
             return createApplyCustomScriptFeature(featureResolver.getPostExecutionScripts());
         } else {
-            return new NopFeature();
+            return new NopFeature<>();
         }
     }
 
-    public DbFeature<C> getSeedDataFeature() {
+    protected DbFeature<C> getSeedDataFeature() {
         if (featureResolver.shouldSeedData()) {
             return createSeedDataFeature(featureResolver.getDataSeedStrategy(), getInitialDataSets());
         } else {
-            return new NopFeature();
+            return new NopFeature<>();
         }
     }
 
-    public DbFeature<C> getVerifyDataAfterFeature() {
+    protected DbFeature<C> getVerifyDataAfterFeature() {
         if (featureResolver.shouldVerifyDataAfter()) {
             return createVerifyDataAfterFeature(featureResolver.getExpectedDataSets());
         } else {
-            return new NopFeature();
+            return new NopFeature<>();
         }
     }
 
-    private class NopFeature implements DbFeature<C> {
+    protected static class NopFeature<C> implements DbFeature<C> {
 
         @Override
         public void execute(final C connection) throws DbFeatureException {

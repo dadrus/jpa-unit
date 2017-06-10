@@ -4,16 +4,14 @@ import java.util.Map;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.IDataSet;
 
-import eu.drus.jpa.unit.spi.AbstractDbFeatureFactory;
-import eu.drus.jpa.unit.spi.AbstractDbFeatureMethodDecorator;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
+import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
-public class DbUnitDecorator extends AbstractDbFeatureMethodDecorator<IDataSet, IDatabaseConnection> {
+public class DbUnitDecorator implements TestMethodDecorator {
 
     private static final String KEY_CONNECTION = "connection";
 
@@ -35,7 +33,10 @@ public class DbUnitDecorator extends AbstractDbFeatureMethodDecorator<IDataSet, 
         final IDatabaseConnection connection = DatabaseConnectionFactory.openConnection(ds);
         context.storeData(KEY_CONNECTION, connection);
 
-        beforeTest(invocation, connection);
+        final SqlDbFeatureExecutor dbFeatureExecutor = new SqlDbFeatureExecutor(
+                new FeatureResolver(invocation.getMethod(), invocation.getTestClass()));
+
+        dbFeatureExecutor.executeBeforeTest(connection);
     }
 
     @Override
@@ -43,8 +44,11 @@ public class DbUnitDecorator extends AbstractDbFeatureMethodDecorator<IDataSet, 
         final ExecutionContext context = invocation.getContext();
         final IDatabaseConnection connection = (IDatabaseConnection) context.getData(KEY_CONNECTION);
 
+        final SqlDbFeatureExecutor dbFeatureExecutor = new SqlDbFeatureExecutor(
+                new FeatureResolver(invocation.getMethod(), invocation.getTestClass()));
+
         try {
-            afterTest(invocation, connection);
+            dbFeatureExecutor.executeAfterTest(connection, invocation.hasErrors());
         } finally {
             connection.close();
         }
@@ -57,10 +61,5 @@ public class DbUnitDecorator extends AbstractDbFeatureMethodDecorator<IDataSet, 
 
         return dbConfig.containsKey("javax.persistence.jdbc.driver") && dbConfig.containsKey("javax.persistence.jdbc.url")
                 && dbConfig.containsKey("javax.persistence.jdbc.user") && dbConfig.containsKey("javax.persistence.jdbc.password");
-    }
-
-    @Override
-    protected AbstractDbFeatureFactory<IDataSet, IDatabaseConnection> createDbFeatureFactory(final FeatureResolver featureResolver) {
-        return new DbFeatureFactory(featureResolver);
     }
 }

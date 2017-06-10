@@ -19,7 +19,7 @@ import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.mongodb.operation.MongoDbOperation;
-import eu.drus.jpa.unit.spi.AbstractDbFeatureFactory;
+import eu.drus.jpa.unit.spi.AbstractDbFeatureExecutor;
 import eu.drus.jpa.unit.spi.AssertionErrorCollector;
 import eu.drus.jpa.unit.spi.CleanupStrategyExecutor;
 import eu.drus.jpa.unit.spi.DataSetFormat;
@@ -28,9 +28,9 @@ import eu.drus.jpa.unit.spi.DbFeature;
 import eu.drus.jpa.unit.spi.DbFeatureException;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 
-public class MongoDbFeatureFactory extends AbstractDbFeatureFactory<Document, MongoDatabase> {
+public class MongoDbFeatureExecutor extends AbstractDbFeatureExecutor<Document, MongoDatabase> {
 
-    public MongoDbFeatureFactory(final FeatureResolver featureResolver) {
+    public MongoDbFeatureExecutor(final FeatureResolver featureResolver) {
         super(featureResolver);
     }
 
