@@ -24,7 +24,7 @@ env:
 install: true
 
 script:
-  - mvn clean verify -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=${SONAR_TOKEN} sonar.branch=$TRAVIS_BRANCH
+  - mvn clean verify -P=${TEST_PROFILE} sonar:sonar -Dsonar.host.url=https://sonarqube.com -Dsonar.login=${SONAR_TOKEN} -Dsonar.branch=$TRAVIS_BRANCH
   
 deploy:
   provider: script
