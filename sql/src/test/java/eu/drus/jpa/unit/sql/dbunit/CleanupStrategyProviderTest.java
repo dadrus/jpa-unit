@@ -24,7 +24,6 @@ import org.junit.Test;
 
 import eu.drus.jpa.unit.spi.CleanupStrategyExecutor;
 import eu.drus.jpa.unit.spi.DbFeatureException;
-import eu.drus.jpa.unit.sql.dbunit.CleanupStrategyProvider;
 
 public class CleanupStrategyProviderTest {
 
@@ -66,7 +65,7 @@ public class CleanupStrategyProviderTest {
 
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_1"), equalTo(4));
         assertThat(getRecordCountFromTable(connection, "XML_TABLE_2"), equalTo(1));
-        assertThat(getRecordCountFromTable(connection, "XML_TABLE_2"), equalTo(1));
+        assertThat(getRecordCountFromTable(connection, "XML_TABLE_3"), equalTo(1));
     }
 
     public void tearDown() throws SQLException {
