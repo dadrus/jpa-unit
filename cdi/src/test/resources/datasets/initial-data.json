@@ -1,0 +1,55 @@
+{
+	"DEPOSITOR": [
+		{
+			"ID": "100",
+			"VERSION": "1",
+			"NAME": "John",
+			"SURNAME": "Doe"
+		}
+	],
+	"ADDRESS": [
+		{
+	        "ID":"100",
+	        "CITY":"SomeCity",
+	        "COUNTRY": "SomeCountry",
+	        "STREET": "SomeStreet 1",
+	        "ZIP_CODE": "12345",
+	        "DEPOSITOR_ID": "100"
+        }
+    ],
+    "CONTACT_DETAIL": [
+    	{
+	        "ID": "100",
+	        "TYPE": "EMAIL",
+	        "VALUE": "john.doe@acme.com",
+	        "DEPOSITOR_ID": "100"
+        },
+        {
+	        "ID": "101",
+	        "TYPE": "MOBILE",
+	        "VALUE": "+1 11 1111 1111",
+	        "DEPOSITOR_ID": "100"
+        },
+        {
+	        "ID": "102",
+	        "TYPE": "TELEPHONE",
+	        "VALUE": "+1 22 2222 2222",
+	        "DEPOSITOR_ID": "100"
+        }
+    ],
+	"ACCOUNT": [
+		{
+	        "TYPE": "GIRO_ACCOUNT",
+	        "ID": "100",
+	        "VERSION": "1",
+	        "CREDIT_LIMIT": "1000.00",
+	        "DEPOSITOR_ID": "100"
+        },
+        {
+	        "TYPE": "INSTANT_ACCESS_ACCOUNT",
+	        "ID": "101",
+	        "VERSION": "1",
+	        "DEPOSITOR_ID": "100"
+        }
+    ]
+}

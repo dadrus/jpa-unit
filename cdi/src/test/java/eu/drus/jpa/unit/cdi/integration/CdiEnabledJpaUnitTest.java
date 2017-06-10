@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.test;
+package eu.drus.jpa.unit.cdi.integration;
 
 import static org.junit.Assert.assertNotNull;
 
