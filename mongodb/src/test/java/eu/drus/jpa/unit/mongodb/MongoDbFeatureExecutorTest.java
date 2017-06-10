@@ -38,7 +38,7 @@ import eu.drus.jpa.unit.spi.DbFeatureException;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MongoDbFeatureFactoryTest {
+public class MongoDbFeatureExecutorTest {
 
     @Mock
     private FeatureResolver featureResolver;
@@ -53,7 +53,7 @@ public class MongoDbFeatureFactoryTest {
     private DataSeedStrategy dataSeedStrategy;
 
     @Mock
-    private CleanupStrategyExecutor<MongoDatabase, Document> executor;
+    private CleanupStrategyExecutor<MongoDatabase, Document> cleanupStrategyExecutor;
 
     @Mock
     private MongoDbOperation operation;
@@ -61,11 +61,11 @@ public class MongoDbFeatureFactoryTest {
     @Mock
     private ExpectedDataSets expectedDataSets;
 
-    private MongoDbFeatureExecutor factory;
+    private MongoDbFeatureExecutor featureExecutor;
 
     @Before
     public void createMongoDbFeatureFactory() {
-        factory = new MongoDbFeatureExecutor(featureResolver);
+        featureExecutor = new MongoDbFeatureExecutor(featureResolver);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class MongoDbFeatureFactoryTest {
         // GIVEN
 
         // WHEN
-        final List<Document> dataSetList = factory.loadDataSets(Arrays.asList("test-data.json", "test-data.json"));
+        final List<Document> dataSetList = featureExecutor.loadDataSets(Arrays.asList("test-data.json", "test-data.json"));
 
         // THEN
         assertNotNull(dataSetList);
@@ -95,7 +95,7 @@ public class MongoDbFeatureFactoryTest {
         // GIVEN
 
         // WHEN
-        factory.loadDataSets(Arrays.asList("test-data1.json"));
+        featureExecutor.loadDataSets(Arrays.asList("test-data1.json"));
 
         // THEN
         // JpaUnitException is thrown
@@ -105,16 +105,16 @@ public class MongoDbFeatureFactoryTest {
     @Test
     public void testCleanupFeatureExecution() throws DbFeatureException {
         // GIVEN
-        when(cleanupStrategy.provide(any(CleanupStrategy.StrategyProvider.class))).thenReturn(executor);
+        when(cleanupStrategy.provide(any(CleanupStrategy.StrategyProvider.class))).thenReturn(cleanupStrategyExecutor);
         final List<Document> initialDataSets = Arrays.asList(new Document());
 
         // WHEN
-        final DbFeature<MongoDatabase> feature = factory.createCleanupFeature(cleanupStrategy, initialDataSets);
+        final DbFeature<MongoDatabase> feature = featureExecutor.createCleanupFeature(cleanupStrategy, initialDataSets);
         assertThat(feature, notNullValue());
         feature.execute(connection);
 
         // THEN
-        verify(executor).execute(eq(connection), eq(initialDataSets));
+        verify(cleanupStrategyExecutor).execute(eq(connection), eq(initialDataSets));
     }
 
     @Test
@@ -122,7 +122,7 @@ public class MongoDbFeatureFactoryTest {
         // GIVEN
 
         // WHEN
-        final DbFeature<MongoDatabase> feature = factory.createApplyCustomScriptFeature(Arrays.asList("test-data.json", "test-data.json"));
+        final DbFeature<MongoDatabase> feature = featureExecutor.createApplyCustomScriptFeature(Arrays.asList("test-data.json", "test-data.json"));
         assertThat(feature, notNullValue());
         feature.execute(connection);
 
@@ -135,7 +135,7 @@ public class MongoDbFeatureFactoryTest {
         // GIVEN
 
         // WHEN
-        final DbFeature<MongoDatabase> feature = factory.createApplyCustomScriptFeature(Arrays.asList("test-data1.json"));
+        final DbFeature<MongoDatabase> feature = featureExecutor.createApplyCustomScriptFeature(Arrays.asList("test-data1.json"));
         assertThat(feature, notNullValue());
         feature.execute(connection);
 
@@ -150,7 +150,7 @@ public class MongoDbFeatureFactoryTest {
         when(dataSeedStrategy.provide(any(DataSeedStrategy.StrategyProvider.class))).thenReturn(operation);
 
         // WHEN
-        final DbFeature<MongoDatabase> feature = factory.createSeedDataFeature(dataSeedStrategy,
+        final DbFeature<MongoDatabase> feature = featureExecutor.createSeedDataFeature(dataSeedStrategy,
                 Arrays.asList(new Document(), new Document()));
         assertThat(feature, notNullValue());
         feature.execute(connection);
@@ -174,7 +174,7 @@ public class MongoDbFeatureFactoryTest {
         when(iterator.hasNext()).thenReturn(Boolean.FALSE);
 
         // WHEN
-        final DbFeature<MongoDatabase> feature = factory.createVerifyDataAfterFeature(expectedDataSets);
+        final DbFeature<MongoDatabase> feature = featureExecutor.createVerifyDataAfterFeature(expectedDataSets);
         assertThat(feature, notNullValue());
         feature.execute(connection);
 
