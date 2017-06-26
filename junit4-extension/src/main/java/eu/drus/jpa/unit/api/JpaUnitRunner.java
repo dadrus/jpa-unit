@@ -14,12 +14,8 @@ import eu.drus.jpa.unit.core.JpaUnitContext;
 
 public class JpaUnitRunner extends BlockJUnit4ClassRunner {
 
-    private JpaUnitContext ctx;
-
     public JpaUnitRunner(final Class<?> clazz) throws InitializationError {
         super(clazz);
-
-        ctx = JpaUnitContext.getInstance(clazz);
 
         final List<FrameworkField> ruleFields = getTestClass().getAnnotatedFields(Rule.class);
         if (ruleFields.stream().anyMatch(f -> f.getType().equals(JpaUnitRule.class))) {
@@ -29,6 +25,6 @@ public class JpaUnitRunner extends BlockJUnit4ClassRunner {
 
     @Override
     protected List<MethodRule> rules(final Object target) {
-        return registerRules(super.rules(target), ctx);
+        return registerRules(super.rules(target), JpaUnitContext.getInstance(getTestClass().getJavaClass()));
     }
 }

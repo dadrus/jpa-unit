@@ -76,6 +76,8 @@ public class JpaUnitTest {
 
         when(firstClassDecorator.isConfigurationSupported(any(ExecutionContext.class))).thenReturn(Boolean.TRUE);
         when(secondClassDecorator.isConfigurationSupported(any(ExecutionContext.class))).thenReturn(Boolean.TRUE);
+        when(firstMethodDecorator.isConfigurationSupported(any(ExecutionContext.class))).thenReturn(Boolean.TRUE);
+        when(secondMethodDecorator.isConfigurationSupported(any(ExecutionContext.class))).thenReturn(Boolean.TRUE);
 
         when(firstClassDecorator.getPriority()).thenReturn(1);
         when(secondClassDecorator.getPriority()).thenReturn(2);

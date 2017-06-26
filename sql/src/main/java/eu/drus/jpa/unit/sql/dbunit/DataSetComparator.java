@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.dbunit.Assertion;
 import org.dbunit.DatabaseUnitException;
@@ -33,6 +34,7 @@ import eu.drus.jpa.unit.spi.ColumnsHolder;
 
 public class DataSetComparator {
 
+    private static final Function<String, String> ID_MAPPER = (final String name) -> name;
     private static final String DIFF_ERROR = "%s | In row %d: expected value of %s \"%s\" but was \"%s\".";
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSetComparator.class);
@@ -47,8 +49,8 @@ public class DataSetComparator {
 
     public DataSetComparator(final String[] orderBy, final String[] toExclude, final boolean isStrict,
             final Set<Class<? extends IColumnFilter>> columnFilters) {
-        this.toExclude = new ColumnsHolder(toExclude);
-        this.orderBy = new ColumnsHolder(orderBy);
+        this.toExclude = new ColumnsHolder(toExclude, ID_MAPPER);
+        this.orderBy = new ColumnsHolder(orderBy, ID_MAPPER);
         this.isStrict = isStrict;
         this.columnFilters = columnFilters;
     }

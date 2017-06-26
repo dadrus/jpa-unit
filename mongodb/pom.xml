@@ -172,32 +172,32 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>com.github.joelittlejohn.embedmongo</groupId>
-        <artifactId>embedmongo-maven-plugin</artifactId>
-        <version>0.3.4</version>
+<!--       <plugin> -->
+<!--         <groupId>com.github.joelittlejohn.embedmongo</groupId> -->
+<!--         <artifactId>embedmongo-maven-plugin</artifactId> -->
+<!--         <version>0.3.4</version> -->
 
-        <executions>
-          <execution>
-            <id>start</id>
-            <goals>
-              <goal>start</goal>
-            </goals>
-            <configuration>
-              <version>3.4.2</version>
-              <logging>none</logging>
-              <bindIp>127.0.0.1</bindIp>
-              <skip>false</skip>
-            </configuration>
-          </execution>
-          <execution>
-            <id>stop</id>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+<!--         <executions> -->
+<!--           <execution> -->
+<!--             <id>start</id> -->
+<!--             <goals> -->
+<!--               <goal>start</goal> -->
+<!--             </goals> -->
+<!--             <configuration> -->
+<!--               <version>3.4.2</version> -->
+<!--               <logging>none</logging> -->
+<!--               <bindIp>127.0.0.1</bindIp> -->
+<!--               <skip>false</skip> -->
+<!--             </configuration> -->
+<!--           </execution> -->
+<!--           <execution> -->
+<!--             <id>stop</id> -->
+<!--             <goals> -->
+<!--               <goal>stop</goal> -->
+<!--             </goals> -->
+<!--           </execution> -->
+<!--         </executions> -->
+<!--       </plugin> -->
     </plugins>
   </build>
 

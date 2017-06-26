@@ -9,15 +9,13 @@ import java.util.List;
 
 import org.junit.Test;
 
-import eu.drus.jpa.unit.spi.ColumnsHolder;
-
 public class ColumnsHolderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreateColmnHolderForAnEmptyColumnName() {
         new ColumnsHolder(new String[] {
                 ""
-        });
+        }, (final String n) -> n);
     }
 
     @Test
@@ -29,7 +27,7 @@ public class ColumnsHolderTest {
         // WHEN
         final ColumnsHolder columnsHolder = new ColumnsHolder(new String[] {
                 column1, column2
-        });
+        }, (final String n) -> n);
 
         // THEN
         final List<String> columns = columnsHolder.getColumns("foo");
@@ -49,7 +47,7 @@ public class ColumnsHolderTest {
         // WHEN
         final ColumnsHolder columnsHolder = new ColumnsHolder(new String[] {
                 column1, column2
-        });
+        }, (final String n) -> n);
 
         // THEN
         List<String> columns = columnsHolder.getColumns("tab");
@@ -74,7 +72,7 @@ public class ColumnsHolderTest {
         // WHEN
         final ColumnsHolder columnsHolder = new ColumnsHolder(new String[] {
                 column1, column2, column3
-        });
+        }, (final String n) -> n);
 
         // THEN
         List<String> columns = columnsHolder.getColumns("tab");
@@ -99,7 +97,7 @@ public class ColumnsHolderTest {
         // WHEN
         new ColumnsHolder(new String[] {
                 column1
-        });
+        }, (final String n) -> n);
 
         // THEN
         // exception is thrown

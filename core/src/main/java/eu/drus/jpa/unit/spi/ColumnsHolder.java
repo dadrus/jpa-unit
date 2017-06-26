@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class ColumnsHolder {
 
@@ -12,36 +13,36 @@ public class ColumnsHolder {
 
     private final Map<String, List<String>> columnsInTable = new HashMap<>();
 
-    public ColumnsHolder(final String[] columns) {
-        for (final String column : columns) {
-            if (column.length() == 0) {
+    public ColumnsHolder(final String[] columnNames, final Function<String, String> idMapper) {
+        for (final String columnName : columnNames) {
+            if (columnName.length() == 0) {
                 throw new IllegalArgumentException("Column name can not be an empty string");
             }
-            if (!column.contains(".")) {
-                this.columns.add(column);
+            if (!columnName.contains(".")) {
+                columns.add(idMapper.apply(columnName));
             } else {
-                splitTableAndColumn(column);
+                splitTableAndColumn(columnName, idMapper);
             }
         }
     }
 
-    private void splitTableAndColumn(final String columnToExclude) {
-        final String[] splittedTableAndColumn = columnToExclude.split("\\.");
+    private void splitTableAndColumn(final String columnNameToExclude, final Function<String, String> idMapper) {
+        final String[] splittedTableAndColumnNames = columnNameToExclude.split("\\.");
 
-        if (splittedTableAndColumn.length != 2) {
+        if (splittedTableAndColumnNames.length != 2) {
             throw new IllegalArgumentException(
-                    "Cannot associated table with column for [" + columnToExclude + "]. Expected format: 'tableName.columnName'");
+                    "Cannot associated table with column for [" + columnNameToExclude + "]. Expected format: 'tableName.columnName'");
         }
 
-        final String tableName = splittedTableAndColumn[0];
-        List<String> tableColumns = columnsInTable.get(tableName);
+        final String tableName = splittedTableAndColumnNames[0];
+        List<String> tableColumnNames = columnsInTable.get(tableName);
 
-        if (tableColumns == null) {
-            tableColumns = new ArrayList<>();
-            columnsInTable.put(tableName, tableColumns);
+        if (tableColumnNames == null) {
+            tableColumnNames = new ArrayList<>();
+            columnsInTable.put(tableName, tableColumnNames);
         }
 
-        tableColumns.add(splittedTableAndColumn[1]);
+        tableColumnNames.add(idMapper.apply(splittedTableAndColumnNames[1]));
     }
 
     public List<String> getColumns(final String tableName) {
