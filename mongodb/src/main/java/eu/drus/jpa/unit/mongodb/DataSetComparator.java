@@ -20,12 +20,10 @@ public class DataSetComparator {
     private static final Function<String, String> ID_MAPPER = (final String name) -> name.equalsIgnoreCase("ID") ? "_id" : name;
 
     private ColumnsHolder toExclude;
-    private ColumnsHolder orderBy;
     private boolean isStrict;
 
-    public DataSetComparator(final String[] orderBy, final String[] toExclude, final boolean isStrict) {
+    public DataSetComparator(final String[] toExclude, final boolean isStrict) {
         this.toExclude = new ColumnsHolder(toExclude, ID_MAPPER);
-        this.orderBy = new ColumnsHolder(orderBy, ID_MAPPER);
         this.isStrict = isStrict;
     }
 

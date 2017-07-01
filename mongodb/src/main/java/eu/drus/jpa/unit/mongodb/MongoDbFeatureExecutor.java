@@ -105,8 +105,7 @@ public class MongoDbFeatureExecutor extends AbstractDbFeatureExecutor<Document, 
         return (final MongoDatabase connection) -> {
             final Document expectedDataSet = mergeDataSets(loadDataSets(Arrays.asList(expectedDataSets.value())));
 
-            final DataSetComparator dataSetComparator = new DataSetComparator(expectedDataSets.orderBy(), expectedDataSets.excludeColumns(),
-                    expectedDataSets.strict());
+            final DataSetComparator dataSetComparator = new DataSetComparator(expectedDataSets.excludeColumns(), expectedDataSets.strict());
 
             final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
             dataSetComparator.compare(connection, expectedDataSet, errorCollector);
