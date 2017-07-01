@@ -77,7 +77,8 @@ public class DataSetComparator {
 
     private void verifyCollectionContent(final MongoDatabase connection, final Document expectedDataSet, final String collectionName,
             final AssertionErrorCollector errorCollector) {
-        final List<Document> expectedCollectionEntries = expectedDataSet.get(collectionName, List.class);
+
+        final List<Document> expectedCollectionEntries = getCollectionData(expectedDataSet.get(collectionName));
         final List<String> columnsToExclude = toExclude.getColumns(collectionName);
         final List<Document> foundEntries = new ArrayList<>();
 
@@ -108,5 +109,14 @@ public class DataSetComparator {
             }
         }
         return filtered;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Document> getCollectionData(final Object obj) {
+        if (List.class.isAssignableFrom(obj.getClass())) {
+            return (List<Document>) obj;
+        } else {
+            return ((Document) obj).get("data", List.class);
+        }
     }
 }
