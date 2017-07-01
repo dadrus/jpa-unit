@@ -11,6 +11,10 @@
   <artifactId>jpa-unit-test-model</artifactId>
   <name>JPA Unit - Test Model</name>
 
+  <properties>
+    <sonar.skip>true</sonar.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
