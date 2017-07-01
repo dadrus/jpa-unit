@@ -21,9 +21,9 @@
         /> -->
 
       <!-- The fully-qualified class name or an instance of a programmatic option configurator (see Programmatic configuration) -->
-<!--       <property name="hibernate.ogm.datastore.provider" value="org.hibernate.ogm.datastore.mongodb.impl.MongoDBDatastoreProvider" />  -->
+      <property name="hibernate.ogm.datastore.provider" value="org.hibernate.ogm.datastore.mongodb.impl.MongoDBDatastoreProvider" /> 
 <!--       <property name="hibernate.ogm.datastore.provider" value="org.hibernate.ogm.datastore.mongodb.impl.FongoDBDatastoreProvider" /> -->
-      <property name="hibernate.ogm.datastore.provider" value="com.github.dadrus.hibernate.ogm.mongodb.EmbeddMongoDBDataStoreProvider"/>
+<!--       <property name="hibernate.ogm.datastore.provider" value="com.github.dadrus.hibernate.ogm.mongodb.EmbeddMongoDBDataStoreProvider"/> -->
 
       <!-- The fully-qualified class name or an instance of a programmatic option configurator (see Programmatic configuration) -->
       <!-- <property name="hibernate.ogm.option.configurator" value="" /> -->
@@ -34,7 +34,7 @@
         (IPv6 with port requires the IPv6 to be surrounded by square brackets) - www.example.com, www2.example.com:123, 192.0.2.1, 
         192.0.2.2:123, 2001:db8::ff00:42:8329, [2001:db8::ff00:42:8329]:123 (replica set) The default value is 127.0.0.1:27017. If 
         left undefined, the default port is 27017. -->
-      <!-- <property name="hibernate.ogm.datastore.host" value="localhost" /> -->
+      <property name="hibernate.ogm.datastore.host" value="127.0.0.1:27017" />
 
       <!-- The database to connect to. This property has no default value. -->
       <property name="hibernate.ogm.datastore.database" value="test" />
@@ -120,8 +120,8 @@
     <shared-cache-mode>ALL</shared-cache-mode>
 
     <properties>
-<!--       <property name="hibernate.ogm.datastore.provider" value="org.hibernate.ogm.datastore.mongodb.impl.MongoDBDatastoreProvider" /> -->
-      <property name="hibernate.ogm.datastore.provider" value="com.github.dadrus.hibernate.ogm.mongodb.EmbeddMongoDBDataStoreProvider"/>
+      <property name="hibernate.ogm.datastore.provider" value="org.hibernate.ogm.datastore.mongodb.impl.MongoDBDatastoreProvider" />
+<!--       <property name="hibernate.ogm.datastore.provider" value="com.github.dadrus.hibernate.ogm.mongodb.EmbeddMongoDBDataStoreProvider"/> -->
       <property name="hibernate.ogm.datastore.database" value="test" />
       <property name="hibernate.ogm.datastore.create_database" value="true" />
       
