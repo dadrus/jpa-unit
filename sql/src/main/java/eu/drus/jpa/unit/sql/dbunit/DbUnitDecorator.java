@@ -10,10 +10,11 @@ import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
+import eu.drus.jpa.unit.sql.Constants;
 
 public class DbUnitDecorator implements TestMethodDecorator {
 
-    private static final String KEY_CONNECTION = "connection";
+    private static final String KEY_CONNECTION = "eu.drus.jpa.unit.sql.DatabaseConnection";
 
     @Override
     public int getPriority() {
@@ -28,7 +29,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
     @Override
     public void beforeTest(final TestMethodInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
-        final BasicDataSource ds = (BasicDataSource) invocation.getContext().getData("ds");
+        final BasicDataSource ds = (BasicDataSource) invocation.getContext().getData(Constants.KEY_DATA_SOURCE);
 
         final IDatabaseConnection connection = DatabaseConnectionFactory.openConnection(ds);
         context.storeData(KEY_CONNECTION, connection);

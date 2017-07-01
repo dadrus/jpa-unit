@@ -2,6 +2,7 @@ package eu.drus.jpa.unit.decorator.jpa;
 
 import javax.persistence.EntityManagerFactory;
 
+import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
@@ -30,7 +31,7 @@ public class SecondLevelCacheDecorator implements TestMethodDecorator {
         final FeatureResolver resolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
 
         final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext()
-                .getData(ExecutionContext.KEY_ENTITY_MANAGER_FACTORY);
+                .getData(Constants.KEY_ENTITY_MANAGER_FACTORY);
 
         evictCache(resolver.shouldEvictCacheBefore(), emf);
     }
@@ -40,7 +41,7 @@ public class SecondLevelCacheDecorator implements TestMethodDecorator {
         final FeatureResolver resolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
 
         final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext()
-                .getData(ExecutionContext.KEY_ENTITY_MANAGER_FACTORY);
+                .getData(Constants.KEY_ENTITY_MANAGER_FACTORY);
 
         evictCache(resolver.shouldEvictCacheAfter(), emf);
     }

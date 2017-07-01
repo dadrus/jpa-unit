@@ -2,6 +2,7 @@ package eu.drus.jpa.unit.cdi;
 
 import javax.persistence.EntityManager;
 
+import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
@@ -26,7 +27,7 @@ public class CdiProducerDecorator implements TestMethodDecorator {
 
     @Override
     public void beforeTest(final TestMethodInvocation invocation) throws Exception {
-        final EntityManager em = (EntityManager) invocation.getContext().getData(ExecutionContext.KEY_ENTITY_MANAGER);
+        final EntityManager em = (EntityManager) invocation.getContext().getData(Constants.KEY_ENTITY_MANAGER);
         emh.setEntityManager(em);
     }
 

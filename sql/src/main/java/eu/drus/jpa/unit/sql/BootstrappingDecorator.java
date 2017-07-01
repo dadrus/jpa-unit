@@ -23,7 +23,7 @@ public class BootstrappingDecorator implements TestClassDecorator {
 
     @Override
     public void beforeAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
-        final DataSource ds = (DataSource) ctx.getData("ds");
+        final DataSource ds = (DataSource) ctx.getData(Constants.KEY_DATA_SOURCE);
 
         final MetadataExtractor extractor = new MetadataExtractor(testClass);
         final List<Method> bootstrappingMethods = extractor.bootstrapping().getAnnotatedMethods();

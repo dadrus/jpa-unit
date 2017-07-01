@@ -34,14 +34,14 @@ public class DataSourceDecorator implements TestClassDecorator {
         ds.setMinIdle(1);
         ds.setMaxIdle(2);
 
-        ctx.storeData("ds", ds);
+        ctx.storeData(Constants.KEY_DATA_SOURCE, ds);
     }
 
     @Override
     public void afterAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
-        final BasicDataSource ds = (BasicDataSource) ctx.getData("ds");
+        final BasicDataSource ds = (BasicDataSource) ctx.getData(Constants.KEY_DATA_SOURCE);
         ds.close();
-        ctx.storeData("ds", null);
+        ctx.storeData(Constants.KEY_DATA_SOURCE, null);
     }
 
     @Override
