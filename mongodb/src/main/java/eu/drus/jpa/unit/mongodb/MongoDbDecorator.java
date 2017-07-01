@@ -10,6 +10,9 @@ import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 public class MongoDbDecorator implements TestMethodDecorator {
 
+    private static final String KEY_MONGO_DB = "eu.drus.jpa.unit.mongodb.MongoDatabase";
+    private static final String KEY_MONGO_CLIENT = "eu.drus.jpa.unit.mongodb.MongoClient";
+
     @Override
     public int getPriority() {
         return 4;
@@ -28,8 +31,8 @@ public class MongoDbDecorator implements TestMethodDecorator {
         final MongoClient client = config.createMongoClient();
         final MongoDatabase mongoDb = client.getDatabase(config.getDatabaseName());
 
-        context.storeData("mongoClient", client);
-        context.storeData("mongoDb", mongoDb);
+        context.storeData(KEY_MONGO_CLIENT, client);
+        context.storeData(KEY_MONGO_DB, mongoDb);
 
         final MongoDbFeatureExecutor dbFeatureExecutor = new MongoDbFeatureExecutor(
                 new FeatureResolver(invocation.getMethod(), invocation.getTestClass()));
@@ -41,10 +44,10 @@ public class MongoDbDecorator implements TestMethodDecorator {
     public void afterTest(final TestMethodInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
 
-        final MongoClient client = (MongoClient) context.getData("mongoClient");
-        final MongoDatabase mongoDb = (MongoDatabase) context.getData("mongoDb");
-        context.storeData("mongoClient", null);
-        context.storeData("mongoDb", null);
+        final MongoClient client = (MongoClient) context.getData(KEY_MONGO_CLIENT);
+        final MongoDatabase mongoDb = (MongoDatabase) context.getData(KEY_MONGO_DB);
+        context.storeData(KEY_MONGO_CLIENT, null);
+        context.storeData(KEY_MONGO_DB, null);
 
         final MongoDbFeatureExecutor dbFeatureExecutor = new MongoDbFeatureExecutor(
                 new FeatureResolver(invocation.getMethod(), invocation.getTestClass()));
