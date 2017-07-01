@@ -7,18 +7,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.common.net.HostAndPort;
+import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
+import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
 public class MongoDbConfiguration {
 
     private Map<String, Object> dbConfig;
+    private String providerClassName;
 
     public MongoDbConfiguration(final PersistenceUnitDescriptor descriptor) {
         dbConfig = descriptor.getProperties();
+        providerClassName = descriptor.getProviderClassName();
     }
 
     public static boolean isSupported(final PersistenceUnitDescriptor descriptor) {
@@ -61,6 +65,16 @@ public class MongoDbConfiguration {
     public MongoClientOptions getClientOptions() {
         // TODO: implement support for options
         return MongoClientOptions.builder().build();
+    }
+
+    public MongoClient createMongoClient() {
+        if (providerClassName.equals("org.hibernate.ogm.datastore.mongodb.impl.FongoDBDatastoreProvider")) {
+            // inmemory db is used.
+
+            throw new JpaUnitException("In-memory data base is not supported");
+        }
+
+        return new MongoClient(getServerAddresses(), getCredentials(), getClientOptions());
     }
 
     public List<MongoCredential> getCredentials() {

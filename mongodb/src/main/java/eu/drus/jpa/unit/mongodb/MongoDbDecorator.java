@@ -25,7 +25,7 @@ public class MongoDbDecorator implements TestMethodDecorator {
         final ExecutionContext context = invocation.getContext();
 
         final MongoDbConfiguration config = new MongoDbConfiguration(context.getDescriptor());
-        final MongoClient client = new MongoClient(config.getServerAddresses(), config.getCredentials(), config.getClientOptions());
+        final MongoClient client = config.createMongoClient();
         final MongoDatabase mongoDb = client.getDatabase(config.getDatabaseName());
 
         context.storeData("mongoClient", client);
