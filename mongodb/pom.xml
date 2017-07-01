@@ -12,25 +12,7 @@
   <artifactId>jpa-unit-mongodb</artifactId>
   <name>JPA Unit - MongoDB Extension</name>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.hibernate.ogm</groupId>
-        <artifactId>hibernate-ogm-bom</artifactId>
-        <version>${verions.hibernate-ogm}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
-    <dependency>
-      <groupId>com.lordofthejars</groupId>
-      <artifactId>nosqlunit-mongodb</artifactId>
-      <version>1.0.0-rc.3</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jpa-unit-core</artifactId>
@@ -39,6 +21,7 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
+      <version>3.4.2</version>
     </dependency>
 
     <!-- TEST DEPENDENCIES -->
@@ -55,56 +38,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-ehcache</artifactId>
-      <version>5.1.4.Final</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-      <version>${version.ehcache}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate.ogm</groupId>
-      <artifactId>hibernate-ogm-mongodb</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.transaction</groupId>
-      <artifactId>jta</artifactId>
-      <version>${version.jta}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- <dependency> -->
-    <!-- <groupId>com.lordofthejars</groupId> -->
-    <!-- <artifactId>nosqlunit-mongodb</artifactId> -->
-    <!-- <version>1.0.0-rc.3</version> -->
-    <!-- <scope>test</scope> -->
-    <!-- </dependency> -->
-    <dependency>
       <groupId>de.flapdoodle.embed</groupId>
       <artifactId>de.flapdoodle.embed.mongo</artifactId>
       <version>2.0.0</version>
       <scope>test</scope>
     </dependency>
-    <!-- <dependency> -->
-    <!-- <groupId>com.github.fakemongo</groupId> -->
-    <!-- <artifactId>fongo</artifactId> -->
-    <!-- <scope>test</scope> -->
-    <!-- </dependency> -->
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -145,13 +83,6 @@
       <artifactId>powermock-api-mockito</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <!-- <dependency> -->
-    <!-- <groupId>com.github.dadrus</groupId> -->
-    <!-- <artifactId>hibernate-embedd-mongodb-provider</artifactId> -->
-    <!-- <version>1.0.0-SNAPSHOT</version> -->
-    <!-- <scope>test</scope> -->
-    <!-- </dependency> -->
   </dependencies>
 
   <build>
@@ -172,32 +103,6 @@
           </execution>
         </executions>
       </plugin>
-<!--       <plugin> -->
-<!--         <groupId>com.github.joelittlejohn.embedmongo</groupId> -->
-<!--         <artifactId>embedmongo-maven-plugin</artifactId> -->
-<!--         <version>0.3.4</version> -->
-
-<!--         <executions> -->
-<!--           <execution> -->
-<!--             <id>start</id> -->
-<!--             <goals> -->
-<!--               <goal>start</goal> -->
-<!--             </goals> -->
-<!--             <configuration> -->
-<!--               <version>3.4.2</version> -->
-<!--               <logging>none</logging> -->
-<!--               <bindIp>127.0.0.1</bindIp> -->
-<!--               <skip>false</skip> -->
-<!--             </configuration> -->
-<!--           </execution> -->
-<!--           <execution> -->
-<!--             <id>stop</id> -->
-<!--             <goals> -->
-<!--               <goal>stop</goal> -->
-<!--             </goals> -->
-<!--           </execution> -->
-<!--         </executions> -->
-<!--       </plugin> -->
     </plugins>
   </build>
 
