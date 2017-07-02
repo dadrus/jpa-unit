@@ -59,9 +59,7 @@ public class DataSourceDecoratorTest {
     public void prepareMocks() throws Exception {
         whenNew(PersistenceUnitDescriptorLoader.class).withAnyArguments().thenReturn(descriptorLoader);
 
-        when(ctx.getData("properties")).thenReturn(PROPS);
-        when(ctx.getData("unitName")).thenReturn("foo");
-        when(ctx.getData("ds")).thenReturn(ds);
+        when(ctx.getData(Constants.KEY_DATA_SOURCE)).thenReturn(ds);
         when(ctx.getDescriptor()).thenReturn(descriptor);
         when(descriptor.getUnitName()).thenReturn("foo");
         when(descriptor.getProperties()).thenReturn(PROPS);
@@ -90,7 +88,7 @@ public class DataSourceDecoratorTest {
 
         // THEN
         final ArgumentCaptor<BasicDataSource> dsCaptor = ArgumentCaptor.forClass(BasicDataSource.class);
-        verify(ctx).storeData(eq("ds"), dsCaptor.capture());
+        verify(ctx).storeData(eq(Constants.KEY_DATA_SOURCE), dsCaptor.capture());
 
         final BasicDataSource dataSource = dsCaptor.getValue();
 
@@ -110,6 +108,6 @@ public class DataSourceDecoratorTest {
 
         // THEN
         verify(ds).close();
-        verify(ctx).storeData(eq("ds"), eq(null));
+        verify(ctx).storeData(eq(Constants.KEY_DATA_SOURCE), eq(null));
     }
 }

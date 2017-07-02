@@ -14,7 +14,7 @@ import eu.drus.jpa.unit.sql.Constants;
 
 public class DbUnitDecorator implements TestMethodDecorator {
 
-    private static final String KEY_CONNECTION = "eu.drus.jpa.unit.sql.DatabaseConnection";
+    protected static final String KEY_CONNECTION = "eu.drus.jpa.unit.sql.DatabaseConnection";
 
     @Override
     public int getPriority() {

@@ -50,7 +50,7 @@ public class DbUnitDecoratorTest {
         whenNew(FeatureResolver.class).withAnyArguments().thenReturn(resolver);
 
         when(invocation.getContext()).thenReturn(ctx);
-        when(ctx.getData(eq("connection"))).thenReturn(connection);
+        when(ctx.getData(eq(DbUnitDecorator.KEY_CONNECTION))).thenReturn(connection);
         when(resolver.shouldCleanupBefore()).thenReturn(Boolean.FALSE);
         when(resolver.shouldCleanupUsingScriptBefore()).thenReturn(Boolean.FALSE);
         when(resolver.shouldApplyCustomScriptBefore()).thenReturn(Boolean.FALSE);

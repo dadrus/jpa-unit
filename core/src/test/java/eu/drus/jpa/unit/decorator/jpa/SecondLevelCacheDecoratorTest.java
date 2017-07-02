@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
@@ -49,7 +50,7 @@ public class SecondLevelCacheDecoratorTest {
         whenNew(FeatureResolver.class).withAnyArguments().thenReturn(resolver);
 
         when(invocation.getContext()).thenReturn(ctx);
-        when(ctx.getData(eq("emf"))).thenReturn(emf);
+        when(ctx.getData(eq(Constants.KEY_ENTITY_MANAGER_FACTORY))).thenReturn(emf);
         when(emf.getCache()).thenReturn(cache);
     }
 
