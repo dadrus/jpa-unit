@@ -110,4 +110,9 @@ public class DataSourceDecoratorTest {
         verify(ds).close();
         verify(ctx).storeData(eq(Constants.KEY_DATA_SOURCE), eq(null));
     }
+
+    @Test
+    public void testSupportedConfiguration() {
+
+    }
 }

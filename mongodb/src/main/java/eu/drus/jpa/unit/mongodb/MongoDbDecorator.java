@@ -10,8 +10,8 @@ import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 public class MongoDbDecorator implements TestMethodDecorator {
 
-    private static final String KEY_MONGO_DB = "eu.drus.jpa.unit.mongodb.MongoDatabase";
-    private static final String KEY_MONGO_CLIENT = "eu.drus.jpa.unit.mongodb.MongoClient";
+    protected static final String KEY_MONGO_DB = "eu.drus.jpa.unit.mongodb.MongoDatabase";
+    protected static final String KEY_MONGO_CLIENT = "eu.drus.jpa.unit.mongodb.MongoClient";
 
     @Override
     public int getPriority() {

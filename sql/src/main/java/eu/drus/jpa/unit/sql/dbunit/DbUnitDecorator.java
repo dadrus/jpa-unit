@@ -44,6 +44,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
     public void afterTest(final TestMethodInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
         final IDatabaseConnection connection = (IDatabaseConnection) context.getData(KEY_CONNECTION);
+        context.storeData(KEY_CONNECTION, null);
 
         final SqlDbFeatureExecutor dbFeatureExecutor = new SqlDbFeatureExecutor(
                 new FeatureResolver(invocation.getMethod(), invocation.getTestClass()));

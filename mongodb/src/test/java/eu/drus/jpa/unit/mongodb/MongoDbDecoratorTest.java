@@ -1,22 +1,19 @@
-package eu.drus.jpa.unit.sql.dbunit;
+package eu.drus.jpa.unit.mongodb;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-import org.apache.commons.dbcp2.BasicDataSource;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,15 +21,18 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
+
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
-        DatabaseConnectionFactory.class, DbUnitDecorator.class, DbUnitDecoratorTest.class
+        MongoDbDecorator.class, MongoDbDecoratorTest.class
 })
-public class DbUnitDecoratorTest {
+public class MongoDbDecoratorTest {
 
     @Mock
     private TestMethodInvocation invocation;
@@ -41,24 +41,32 @@ public class DbUnitDecoratorTest {
     private ExecutionContext ctx;
 
     @Mock
-    private DatabaseConnection connection;
+    private MongoDatabase mongoDataBase;
 
     @Mock
-    private SqlDbFeatureExecutor executor;
+    private MongoClient mongoClient;
 
-    private DbUnitDecorator decorator;
+    @Mock
+    private MongoDbConfiguration config;
+
+    @Mock
+    private MongoDbFeatureExecutor executor;
+
+    private MongoDbDecorator decorator;
 
     @Before
-    public void prepareMocks() throws Throwable {
-        mockStatic(DatabaseConnectionFactory.class);
-        when(DatabaseConnectionFactory.openConnection(any(BasicDataSource.class))).thenReturn(connection);
+    public void prepareTest() throws Exception {
+        whenNew(MongoDbConfiguration.class).withAnyArguments().thenReturn(config);
         whenNew(FeatureResolver.class).withAnyArguments().thenReturn(null);
-        whenNew(SqlDbFeatureExecutor.class).withAnyArguments().thenReturn(executor);
+        whenNew(MongoDbFeatureExecutor.class).withAnyArguments().thenReturn(executor);
 
         when(invocation.getContext()).thenReturn(ctx);
-        when(ctx.getData(eq(DbUnitDecorator.KEY_CONNECTION))).thenReturn(connection);
+        when(ctx.getData(eq(MongoDbDecorator.KEY_MONGO_CLIENT))).thenReturn(mongoClient);
+        when(ctx.getData(eq(MongoDbDecorator.KEY_MONGO_DB))).thenReturn(mongoDataBase);
+        when(config.createMongoClient()).thenReturn(mongoClient);
+        when(mongoClient.getDatabase(anyString())).thenReturn(mongoDataBase);
 
-        decorator = new DbUnitDecorator();
+        decorator = new MongoDbDecorator();
     }
 
     @Test
@@ -69,8 +77,9 @@ public class DbUnitDecoratorTest {
         decorator.beforeTest(invocation);
 
         // THEN
-        verify(executor).executeBeforeTest(eq(connection));
-        verify(ctx).storeData(eq(DbUnitDecorator.KEY_CONNECTION), eq(connection));
+        verify(executor).executeBeforeTest(eq(mongoDataBase));
+        verify(ctx).storeData(eq(MongoDbDecorator.KEY_MONGO_CLIENT), eq(mongoClient));
+        verify(ctx).storeData(eq(MongoDbDecorator.KEY_MONGO_DB), eq(mongoDataBase));
     }
 
     @Test
@@ -82,15 +91,16 @@ public class DbUnitDecoratorTest {
         decorator.afterTest(invocation);
 
         // THEN
-        verify(executor).executeAfterTest(eq(connection), eq(Boolean.FALSE));
-        verify(ctx).storeData(eq(DbUnitDecorator.KEY_CONNECTION), isNull());
+        verify(executor).executeAfterTest(eq(mongoDataBase), eq(Boolean.FALSE));
+        verify(ctx).storeData(eq(MongoDbDecorator.KEY_MONGO_CLIENT), isNull());
+        verify(ctx).storeData(eq(MongoDbDecorator.KEY_MONGO_DB), isNull());
     }
 
     @Test
-    public void testDataVerificationIsSkippedButAllAfterTestFeaturesAreExecutedIfInvocationProcessingFails() throws Throwable {
+    public void testMongoClientIsClosedEvenIfExecuteAfterTestFails() throws Throwable {
         // GIVEN
         when(invocation.hasErrors()).thenReturn(Boolean.TRUE);
-        doThrow(RuntimeException.class).when(executor).executeAfterTest(any(IDatabaseConnection.class), anyBoolean());
+        doThrow(RuntimeException.class).when(executor).executeAfterTest(any(MongoDatabase.class), anyBoolean());
 
         // WHEN
         try {
@@ -101,7 +111,7 @@ public class DbUnitDecoratorTest {
         }
 
         // THEN
-        verify(connection).close();
+        verify(mongoClient).close();
     }
 
     @Test
@@ -112,7 +122,7 @@ public class DbUnitDecoratorTest {
         decorator.processInstance(this, invocation);
 
         // THEN
-        verifyNoMoreInteractions(invocation, connection, ctx, executor);
+        verifyNoMoreInteractions(invocation, mongoDataBase, mongoClient, ctx, executor);
     }
 
     @Test
@@ -123,6 +133,6 @@ public class DbUnitDecoratorTest {
         final int priority = decorator.getPriority();
 
         // THEN
-        assertThat(priority, equalTo(3));
+        assertThat(priority, equalTo(4));
     }
 }

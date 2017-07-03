@@ -8,7 +8,6 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,10 +42,10 @@ public class TestClassStatementTest {
 
     @Before
     public void setUp() {
-        when(ctx.getData(anyString())).thenAnswer((final InvocationOnMock invocation) -> {
+        doAnswer((final InvocationOnMock invocation) -> {
             final String key = (String) invocation.getArguments()[0];
             return map.get(key);
-        });
+        }).when(ctx).getData(anyString());
 
         doAnswer((final InvocationOnMock invocation) -> {
             final String key = (String) invocation.getArguments()[0];
