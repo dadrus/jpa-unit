@@ -1,6 +1,7 @@
 package eu.drus.jpa.unit.spi;
 
-import java.io.FileNotFoundException;
+import static eu.drus.jpa.unit.util.ResourceLocator.getResource;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -50,11 +51,8 @@ public abstract class AbstractDbFeatureExecutor<D, C> {
 
     protected abstract DbFeature<C> createVerifyDataAfterFeature(ExpectedDataSets expectedDataSets);
 
-    protected String loadScript(final String path) throws IOException, URISyntaxException {
-        final URL url = Thread.currentThread().getContextClassLoader().getResource(path);
-        if (url == null) {
-            throw new FileNotFoundException(path + " not found");
-        }
+    protected String loadScript(final String scriptPath) throws IOException, URISyntaxException {
+        final URL url = getResource(scriptPath);
         return new String(Files.readAllBytes(Paths.get(url.toURI())));
     }
 
