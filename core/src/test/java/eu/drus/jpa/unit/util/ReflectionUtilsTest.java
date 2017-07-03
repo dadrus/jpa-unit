@@ -7,8 +7,6 @@ import java.lang.reflect.Field;
 
 import org.junit.Test;
 
-import eu.drus.jpa.unit.util.ReflectionUtils;
-
 public class ReflectionUtilsTest {
 
     private Long privateField;
@@ -21,6 +19,19 @@ public class ReflectionUtilsTest {
 
         // WHEN
         ReflectionUtils.injectValue(toi, this, value);
+
+        // THEN
+        assertThat(privateField, equalTo(value));
+    }
+
+    @Test
+    public void testGetValeOfAPrivateField() throws Exception {
+        // GIVEN
+        privateField = 10l;
+        final Field toi = getClass().getDeclaredField("privateField");
+
+        // WHEN
+        final Object value = ReflectionUtils.getValue(toi, this);
 
         // THEN
         assertThat(privateField, equalTo(value));
