@@ -1,7 +1,9 @@
 package eu.drus.jpa.unit.sql;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -113,6 +115,31 @@ public class DataSourceDecoratorTest {
 
     @Test
     public void testSupportedConfiguration() {
+        // GIVEN
+        final DataSourceDecorator decorator = new DataSourceDecorator();
 
+        // WHEN
+        final boolean isSupported = decorator.isConfigurationSupported(ctx);
+
+        // THEN
+        assertTrue(isSupported);
+    }
+
+    @Test
+    public void testUnsupportedConfiguration() {
+        // GIVEN
+        final Map<String, Object> props = new HashMap<>();
+        props.put("javax.persistence.jdbc.driver", "driver");
+        props.put("javax.persistence.jdbc.url", "url");
+        props.put("javax.persistence.jdbc.user", "user");
+        when(descriptor.getProperties()).thenReturn(props);
+
+        final DataSourceDecorator decorator = new DataSourceDecorator();
+
+        // WHEN
+        final boolean isSupported = decorator.isConfigurationSupported(ctx);
+
+        // THEN
+        assertFalse(isSupported);
     }
 }

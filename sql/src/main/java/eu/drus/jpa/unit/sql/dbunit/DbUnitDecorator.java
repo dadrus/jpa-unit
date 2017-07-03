@@ -1,16 +1,14 @@
 package eu.drus.jpa.unit.sql.dbunit;
 
-import java.util.Map;
-
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.IDatabaseConnection;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
-import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 import eu.drus.jpa.unit.sql.Constants;
+import eu.drus.jpa.unit.sql.SqlDbConfiguration;
 
 public class DbUnitDecorator implements TestMethodDecorator {
 
@@ -58,10 +56,6 @@ public class DbUnitDecorator implements TestMethodDecorator {
 
     @Override
     public boolean isConfigurationSupported(final ExecutionContext ctx) {
-        final PersistenceUnitDescriptor descriptor = ctx.getDescriptor();
-        final Map<String, Object> dbConfig = descriptor.getProperties();
-
-        return dbConfig.containsKey("javax.persistence.jdbc.driver") && dbConfig.containsKey("javax.persistence.jdbc.url")
-                && dbConfig.containsKey("javax.persistence.jdbc.user") && dbConfig.containsKey("javax.persistence.jdbc.password");
+        return SqlDbConfiguration.isSupported(ctx.getDescriptor());
     }
 }
