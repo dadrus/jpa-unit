@@ -42,17 +42,13 @@ public class MongoDbFeatureExecutor extends AbstractDbFeatureExecutor<Document, 
         return dataSet;
     }
 
-    private static URI toUri(final String path) {
+    private static URI toUri(final String path) throws URISyntaxException {
         final URL url = Thread.currentThread().getContextClassLoader().getResource(path);
         if (url == null) {
             throw new JpaUnitException(path + " not found");
         }
 
-        try {
-            return url.toURI();
-        } catch (final URISyntaxException e) {
-            throw new JpaUnitException("Could not convert " + path + " to URI.", e);
-        }
+        return url.toURI();
     }
 
     @Override
@@ -64,7 +60,7 @@ public class MongoDbFeatureExecutor extends AbstractDbFeatureExecutor<Document, 
                 final DataSetLoader<Document> loader = DataSetFormat.inferFromFile(file).select(new DataSetLoaderProvider());
                 dataSets.add(loader.load(file));
             }
-        } catch (final IOException e) {
+        } catch (final IOException | URISyntaxException e) {
             throw new JpaUnitException("Could not load initial data sets", e);
         }
         return dataSets;
