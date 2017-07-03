@@ -13,22 +13,27 @@ import javax.persistence.Cache;
 import javax.persistence.EntityManagerFactory;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.rule.PowerMockRule;
 
 import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @PrepareForTest({
         SecondLevelCacheDecorator.class, SecondLevelCacheDecoratorTest.class
 })
 public class SecondLevelCacheDecoratorTest {
+
+    @Rule
+    public PowerMockRule rule = new PowerMockRule();
 
     @Mock
     private TestMethodInvocation invocation;
