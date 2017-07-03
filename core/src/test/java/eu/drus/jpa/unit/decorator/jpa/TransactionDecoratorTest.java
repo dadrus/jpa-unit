@@ -13,13 +13,11 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 import javax.persistence.EntityManager;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.api.TransactionMode;
 import eu.drus.jpa.unit.spi.Constants;
@@ -27,14 +25,11 @@ import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
 @PrepareForTest({
         TransactionDecorator.class, TransactionDecoratorTest.class
 })
 public class TransactionDecoratorTest {
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
 
     @Mock
     private TestMethodInvocation invocation;

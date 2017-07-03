@@ -13,28 +13,23 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
 @PrepareForTest(Persistence.class)
 public class EntityManagerFactoryDecoratorTest {
 
     private static final HashMap<String, Object> PERSISTENCE_PROPERTIES = new HashMap<>();
 
     private static final String UNIT_NAME = "MY_UNIT_NAME";
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
 
     @Mock
     private ExecutionContext ctx;

@@ -23,18 +23,6 @@
     <integrationSourceDirectory>src\integrationtest</integrationSourceDirectory>
     <snapshotDependencyAllowed>true</snapshotDependencyAllowed>
 
-    <plugin.version.compiler>3.3</plugin.version.compiler>
-    <plugin.version.resources>3.0.1</plugin.version.resources>
-    <plugin.version.source>3.0.1</plugin.version.source>
-    <plugin.version.surefire>2.19.1</plugin.version.surefire>
-    <plugin.version.failsafe>2.19.1</plugin.version.failsafe>
-    <plugin.version.jar>2.6</plugin.version.jar>
-    <plugin.version.javadoc>2.10.4</plugin.version.javadoc>
-    <plugin.version.jacoco>0.7.7.201606060606</plugin.version.jacoco>
-    <plugin.version.serviceloader>1.0.7</plugin.version.serviceloader>
-    <plugin.version.enforcer>1.4.1</plugin.version.enforcer>
-    <plugin.maven.pgp>1.6</plugin.maven.pgp>
-
     <version.hibernate-jpa-2.1-api>1.0.0.Final</version.hibernate-jpa-2.1-api>
     <version.cdi-api>1.2</version.cdi-api>
     <version.logback>1.1.7</version.logback>
@@ -66,6 +54,19 @@
     <version.junit-jupiter>5.0.0-M4</version.junit-jupiter>
     <version.junit-vintage>4.12.0-M4</version.junit-vintage>
     <version.junit-platform>1.0.0-M4</version.junit-platform>
+    <version.jacoco>0.7.9</version.jacoco>
+
+    <plugin.version.compiler>3.3</plugin.version.compiler>
+    <plugin.version.resources>3.0.1</plugin.version.resources>
+    <plugin.version.source>3.0.1</plugin.version.source>
+    <plugin.version.surefire>2.19.1</plugin.version.surefire>
+    <plugin.version.failsafe>2.19.1</plugin.version.failsafe>
+    <plugin.version.jar>2.6</plugin.version.jar>
+    <plugin.version.javadoc>2.10.4</plugin.version.javadoc>
+    <plugin.version.jacoco>${version.jacoco}</plugin.version.jacoco>
+    <plugin.version.serviceloader>1.0.7</plugin.version.serviceloader>
+    <plugin.version.enforcer>1.4.1</plugin.version.enforcer>
+    <plugin.maven.pgp>1.6</plugin.maven.pgp>
   </properties>
 
   <scm>
@@ -261,9 +262,22 @@
           <version>${plugin.version.jacoco}</version>
           <executions>
             <execution>
-              <id>prepare-agent</id>
+              <id>default-instrument</id>
               <goals>
-                <goal>prepare-agent</goal>
+                <goal>instrument</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>default-restore-instrumented-classes</id>
+              <goals>
+                <goal>restore-instrumented-classes</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>report</goal>
               </goals>
             </execution>
           </executions>
@@ -534,7 +548,19 @@
         <artifactId>junit-platform-runner</artifactId>
         <version>${version.junit-platform}</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.jacoco</groupId>
+        <artifactId>org.jacoco.agent</artifactId>
+        <version>${version.jacoco}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jacoco</groupId>
+      <artifactId>org.jacoco.agent</artifactId>
+    </dependency>
+  </dependencies>
 </project>

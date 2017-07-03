@@ -15,28 +15,23 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.api.CleanupStrategy;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.spi.AbstractDbFeatureExecutor.NopFeature;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
 @PrepareForTest({
         AbstractDbFeatureExecutor.class, AbstractDbFeatureExecutorTest.class
 })
 public class AbstractDbFeatureExecutorTest {
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
 
     private static class Connection {}
 
