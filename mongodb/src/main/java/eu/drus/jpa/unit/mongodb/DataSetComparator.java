@@ -39,7 +39,7 @@ public class DataSetComparator {
         for (final String collectionName : connection.listCollectionNames()) {
             final long rowCount = connection.getCollection(collectionName).count();
             if (rowCount != 0) {
-                errorCollector.collect(collectionName + " is expected to be empty, but has <" + rowCount + "> entries.");
+                errorCollector.collect(collectionName + " was expected to be empty, but has <" + rowCount + "> entries.");
             }
         }
     }
@@ -56,7 +56,7 @@ public class DataSetComparator {
         if (isStrict) {
             for (final String collectionName : connection.listCollectionNames()) {
                 if (!expectedDataSet.keySet().contains(collectionName)) {
-                    errorCollector.collect(collectionName + " is not expected, but present");
+                    errorCollector.collect(collectionName + " was not expected, but is present");
                 }
             }
         }
@@ -68,7 +68,7 @@ public class DataSetComparator {
         connection.listCollectionNames().iterator().forEachRemaining(currentCollections::add);
         for (final String expectedCollectionName : expectedCollectionNames) {
             if (!currentCollections.contains(expectedCollectionName)) {
-                errorCollector.collect(expectedCollectionName + " is expected, but not present");
+                errorCollector.collect(expectedCollectionName + " was expected to be present, but not found");
             }
         }
     }
@@ -85,7 +85,7 @@ public class DataSetComparator {
 
             final FindIterable<Document> resultIt = currentCollection.find(filterRequest(expectedEntry, columnsToExclude));
             if (!resultIt.iterator().hasNext()) {
-                errorCollector.collect(expectedEntry + " is expected in [" + collectionName + "], but not present");
+                errorCollector.collect(expectedEntry + " was expected in [" + collectionName + "], but is not present");
             }
 
             resultIt.iterator().forEachRemaining(foundEntries::add);
@@ -94,7 +94,7 @@ public class DataSetComparator {
         final FindIterable<Document> allEntries = currentCollection.find();
         for (final Document d : allEntries) {
             if (!foundEntries.contains(d)) {
-                errorCollector.collect(d + " is not expected in [" + collectionName + "], but present");
+                errorCollector.collect(d + " was not expected in [" + collectionName + "], but is present");
             }
         }
     }
