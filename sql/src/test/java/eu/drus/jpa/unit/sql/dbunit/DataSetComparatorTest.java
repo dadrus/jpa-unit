@@ -31,7 +31,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.spi.AssertionErrorCollector;
-import eu.drus.jpa.unit.sql.dbunit.DataSetComparator;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataSetComparatorTest {
@@ -87,8 +86,12 @@ public class DataSetComparatorTest {
     @Mock
     private ITableMetaData table4MetaData;
 
+    private AssertionErrorCollector errorCollector;
+
     @Before
-    public void prepareMocks() throws DataSetException {
+    public void prepareTest() throws DataSetException {
+        errorCollector = new AssertionErrorCollector();
+
         when(table1.getRowCount()).thenReturn(TABLE_1_ENTRIES);
         when(table1.getTableMetaData()).thenReturn(table1MetaData);
         when(table1MetaData.getTableName()).thenReturn(TABLE_1_NAME);
@@ -167,7 +170,6 @@ public class DataSetComparatorTest {
     @Test
     public void testCurrentDataSetContainsDataAndExpectedDataSetIsEmpty() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
@@ -207,7 +209,6 @@ public class DataSetComparatorTest {
     @Test
     public void testCurrentDataSetIsEmptyAndExpectedDataContainsData() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
@@ -247,7 +248,6 @@ public class DataSetComparatorTest {
     @Test
     public void testCurrentDataSetAndExpectedDataSetContainDataButAreFullyDisjunctiveUsingNotStrictMode() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
@@ -294,7 +294,6 @@ public class DataSetComparatorTest {
     @Test
     public void testCurrentDataSetAndExpectedDataSetContainDataButAreFullyDisjunctiveUsingStrictMode() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
@@ -343,7 +342,6 @@ public class DataSetComparatorTest {
     @Test
     public void testCurrentDataSetAndExpectedDataSetHaveOnlyOneTableInCommonUsingNotStrictMode() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
@@ -396,7 +394,6 @@ public class DataSetComparatorTest {
     @Test
     public void testCurrentDataSetAndExpectedDataSetHaveOnlyOneTableInCommonUsingStrictMode() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
@@ -451,7 +448,6 @@ public class DataSetComparatorTest {
     @Test
     public void testCurrentDataSetIsASubsetOfExpectedDataSet() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
@@ -502,7 +498,6 @@ public class DataSetComparatorTest {
     @Test
     public void testExpectedDataSetIsASubsetOfCurrentDataSetUsingNotStringMode() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
@@ -546,7 +541,6 @@ public class DataSetComparatorTest {
     @Test
     public void testExpectedDataSetIsASubsetOfCurrentDataSetUsingStringMode() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
@@ -597,7 +591,6 @@ public class DataSetComparatorTest {
     @Test
     public void testCurrentDataSetAndExpectedDataSetDifferInTableRecords() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
@@ -654,7 +647,6 @@ public class DataSetComparatorTest {
     @Test
     public void testCurrentDataSetAndExpectedDataSetAreEqual() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
@@ -706,7 +698,6 @@ public class DataSetComparatorTest {
     @Test
     public void testCustomFilter() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = new HashSet<>(Arrays.asList(MyCustomFilter.class));
@@ -756,7 +747,6 @@ public class DataSetComparatorTest {
     @Test
     public void testCustomFilterImplementedNotAccordingToTheRequirements() throws Exception {
         // GIVEN
-        final AssertionErrorCollector errorCollector = new AssertionErrorCollector();
         final String[] orderBy = new String[] {};
         final String[] toExclude = new String[] {};
         final Set<Class<? extends IColumnFilter>> columnFilters = new HashSet<>(Arrays.asList(BadCustomFilter.class));
