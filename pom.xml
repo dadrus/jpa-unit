@@ -123,6 +123,7 @@
     <module>cdi</module>
     <module>mongodb</module>
     <module>integration-test</module>
+    <module>bom</module>
   </modules>
 
   <build>
