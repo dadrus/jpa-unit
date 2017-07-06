@@ -3,6 +3,8 @@ package eu.drus.jpa.unit.mongodb;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
+import eu.drus.jpa.unit.mongodb.ext.Configuration;
+import eu.drus.jpa.unit.mongodb.ext.ConfigurationRegistry;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
@@ -12,6 +14,8 @@ public class MongoDbDecorator implements TestMethodDecorator {
 
     protected static final String KEY_MONGO_DB = "eu.drus.jpa.unit.mongodb.MongoDatabase";
     protected static final String KEY_MONGO_CLIENT = "eu.drus.jpa.unit.mongodb.MongoClient";
+
+    private ConfigurationRegistry configurationRegistry = new ConfigurationRegistry();
 
     @Override
     public int getPriority() {
@@ -27,9 +31,11 @@ public class MongoDbDecorator implements TestMethodDecorator {
     public void beforeTest(final TestMethodInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
 
-        final MongoDbConfiguration config = new MongoDbConfiguration(context.getDescriptor());
-        final MongoClient client = config.createMongoClient();
-        final MongoDatabase mongoDb = client.getDatabase(config.getDatabaseName());
+        final Configuration configuration = configurationRegistry.getConfiguration(context.getDescriptor());
+
+        final MongoClient client = new MongoClient(configuration.getServerAddresses(), configuration.getCredentials(),
+                configuration.getClientOptions());
+        final MongoDatabase mongoDb = client.getDatabase(configuration.getDatabaseName());
 
         context.storeData(KEY_MONGO_CLIENT, client);
         context.storeData(KEY_MONGO_DB, mongoDb);
@@ -61,7 +67,7 @@ public class MongoDbDecorator implements TestMethodDecorator {
 
     @Override
     public boolean isConfigurationSupported(final ExecutionContext ctx) {
-        return MongoDbConfiguration.isSupported(ctx.getDescriptor());
+        return configurationRegistry.hasConfiguration(ctx.getDescriptor());
     }
 
 }

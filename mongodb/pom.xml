@@ -100,6 +100,7 @@
         <configuration>
           <services>
             <param>eu.drus.jpa.unit.spi.TestMethodDecorator</param>
+            <param>eu.drus.jpa.unit.mongodb.ext.ConfigurationFactory</param>
           </services>
         </configuration>
         <executions>

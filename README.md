@@ -145,9 +145,9 @@ Irrespectively the JUnit version, the presence of either
 
 is required.
 
-In both cases the reference to the persistence unit is required as well (e.g. `@PersistenceContext(unitName = "my-test-unit")` or `@PersistenceUnit(unitName = "my-test-unit")`). Thus, given the presence of a persistence provider configuration, like given above, the following examples implement full functional tests.
+In both cases the reference to the persistence unit is required as well (e.g. `@PersistenceContext(unitName = "my-test-unit")` or `@PersistenceUnit(unitName = "my-test-unit")`). Thus, given the presence of a persistence provider configuration, the examples, shown above, already implement full functional tests.
 
-Like in any JPA application, you have to define a `persistence.xml` file in the `META-INF` directory which includes the JPA provider and persistence unit configuration. 
+Like in any JPA application, you have to define a `persistence.xml` file in the `META-INF` directory which includes the JPA provider and `persistence-unit` configuration. 
 For test purposes the `transaction-type` of the configured `persistence-unit` must be `RESOURCE_LOCAL`. 
 
 ## Control the behavior
@@ -353,7 +353,7 @@ public class FlywaydbTest {
 
 ## Database integration
 
-Depending on the used database, you will have to add a dependency for a database specific JPA-Unit plugin (see corresponding sections below).
+Depending on the used database, you will have to add a dependency for a database specific JPA-Unit plugin.
 
 ### SQL Databases
 
@@ -368,7 +368,7 @@ For all SQL databases the `jpa-unit-sql` dependency needs to be added:
 </dependency>
 ```
 
-In case of SQL databases JPA Unit makes use of the standard 
+For SQL databases JPA Unit makes use of the standard 
 - `javax.persistence.jdbc.driver`,
 - `javax.persistence.jdbc.url`,
 - `javax.persistence.jdbc.user` and
@@ -402,7 +402,9 @@ Here an example of a `persistence.xml` file which configures [EclipseLink](http:
 </persistence>
 ```
 
-#### Supported data set types
+#### Data Set Format
+
+For SQL databases JPA Unit uses [DBUnit](http://dbunit.sourceforge.net/) initernally. Thanks to DBUnit, following data set formats are supported:
 
 - XML (Flat XML Data Set). A simple XML structure, where each element represents a single row in a given table and attribute names correspond to the table columns as illustrated below.
 - YAML.
@@ -411,7 +413,7 @@ Here an example of a `persistence.xml` file which configures [EclipseLink](http:
 - CSV
 
 
-Here some data set examples to seed an SQL database:
+Here some data set examples:
 
 ```xml
 <dataset>
@@ -461,7 +463,7 @@ ADDRESS:
 
 ### MongoDB
 
-For each NoSQL database, there is a dedicated dependency. E.g. for MongoDB, this would be `jpa-unit-mongodb`:
+For [MongoDB](https://www.mongodb.com), the `jpa-unit-mongodb` dependency needs to be added:
 
 ```xml
 <dependency>
@@ -472,11 +474,72 @@ For each NoSQL database, there is a dedicated dependency. E.g. for MongoDB, this
 </dependency>
 ```
 
-In case of a NoSQL database JPA provider specific properties are used. These properties are also the only dependencies to a specific JPA provider implementation.
+JPA Unit needs to connect to a running MongoDB instance. This is done using [mongo-java-driver](https://mongodb.github.io/mongo-java-driver/). Usage of an in-process, in-memory MongoDB implementations, like [Fongo](https://github.com/fakemongo/fongo) is not possible.
+To overcome this limitation, or made it at least less painful, one can use 
+
+- [Flapdoodle Embedded MongoDB](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo) for the lifecycle management of a MongoDB instance from code, e.g. from `@BeforeClass` and `@AfterClass` annotated methods. You can find working example within the JPA Unit integration test project for MongoDB. 
+- [embedmongo-maven-plugin](https://github.com/joelittlejohn/embedmongo-maven-plugin) for the lifecycle management of a MongoDB instance through Maven.
+
+#### JPA Provider Dependencies
+
+Sonce JPA does not address NoSQL databses, each JPA provider defines its own properties. These properties are also the only dependencies to a specific JPA provider implementation. As of todays JPA Unit supports Hibernate OGM MongoDB specific properties only.
 
 #### Data Set Format
 
-Default data set format for MongoDB is _JSON_.
+Default data set format for MongoDB is _JSON_. In a simple case it must comply with the following example structure:
+
+```.json
+{
+  "collection_name_1": [
+    {
+      "property_1": "value_1",
+      "property_2": "value_2"
+    },
+    {
+      "property_3": NumberLong(10),
+      "property_4": { "$date": "2017-06-07T15:19:10.460Z" }
+    }
+  ],
+  
+  "collection_name_2": [
+    {
+      "property_5": 4,
+      "property_7": "value_7"
+    }
+  ]
+}
+```
+
+If indexes need to be included as well, the following structure applies:
+
+```.json
+{
+  "collection_name_1": {
+    "indexes": [
+      {
+        "index": {
+        },
+        "index": {
+        }
+      },
+      {
+        "index": {
+        }
+      }
+    ],
+    "data": [
+      {
+        "property_1": "value_1",
+        "property_2": "value_2"
+      },
+      {
+        "property_3": NumberLong(10),
+        "property_4": { "$date": "2017-06-07T15:19:10.460Z" }
+      }
+    ]
+  }
+}
+``` 
 
 ## CDI integration
 
