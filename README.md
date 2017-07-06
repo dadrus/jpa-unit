@@ -4,17 +4,19 @@ Implements [JUnit 4](http://junit.org/junit4) runner and rule, as well as [JUnit
 
 ## Features
 
-- Makes use of standard `@PersistenceContext` and `@PersistenceUnit` annotations to inject the `EntityManager`, respectively `EntityManagerFactory`.
-- Solely relies on the JPA configuration (`persistence.xml`). No further configuration required.
+- Makes use of standard `@PersistenceContext` and `@PersistenceUnit` annotations to inject the `EntityManager`, respectively `EntityManagerFactory`. Irrespective of the used configuration, the `EntityManagerFactory` instance is acquired once and lives for the duration of the entire test suite implemented by the given test class.
+- Solely relies on the JPA configuration (`persistence.xml`). No further JPA Unit specific configuration required. 
+- Does not impose any JPA provider dependencies.
 - Implements automatic transaction management.
 - Enables JPA second level cache control 
-- Incorporates [DbUnit](http://dbunit.sourceforge.net) to
-    - seed the database using predefined data sets (defined in XML, JSON or YAML) or SQL statements
-    - cleanup the database before or after the actual test execution based on data sets or arbitrary SQL script
-    - execute arbitrary SQL statements before and/or after test execution
+- Offers different strategies to
+    - seed the database using predefined data sets (depending on the used data base - defined in XML, JSON, YAML or SQL statements)
+    - cleanup the database before or after the actual test execution based on data sets or arbitrary scripts
+    - execute arbitrary scripts before and/or after test execution
     - verify contents of the database after test execution
-- Enables bootstrapping of the database schema and contents using plain SQL statements or arbitrary frameworks, like e.g. [FlywayDB](https://flywaydb.org) or [Liquibase](http://www.liquibase.org) before the starting of JPA provider
+- Enables bootstrapping of the database schema and contents using plain data base statements (e.g. SQL) or arbitrary frameworks, like e.g. [FlywayDB](https://flywaydb.org) or [Liquibase](http://www.liquibase.org) before the starting of JPA provider
 - Implements seamless integration with CDI.
+- Supports SQL and NoSQL (see below for a list of supported NoSQL databases and known limitations) databases (based on what is possible with the chosen JPA provider).
 	
 ## Credits
 
@@ -22,9 +24,35 @@ The implementation is inspired by the [Arquillian Persistence Extension](http://
 
 ## Maven Integraton
 
-To be able to use the JPA Unit you'll need to add a dependency to your Maven project.
+To be able to use the JPA Unit you will have to add some dependencies to your Maven project. For easier dependency management, there is a bom available which you can add to your `dependencyManagement` section:
 
-For JUnit 4:
+```xml
+<dependencyManagement>
+  <dependency>
+    <groupId>com.github.dadrus</groupId>
+    <artifactId>jpa-unit-bom</artifactId>
+    <version>${jpa-unit.version}</version>
+    <type>pom</type>
+    <scope>import</scope>
+  </dependency>
+</dependencyManagement>
+```
+
+The actual dependencies are listed below in sections addressing the different possible integration types. In addition you'll want to add the dependencies for your JPA provider (e.g. [EclipseLink](http://www.eclipse.org/eclipselink) and the database specific driver.
+E.g.:
+
+```xml
+<dependency>
+  <groupId>org.eclipse.persistence</groupId>
+  <artifactId>eclipselink</artifactId>
+  <version>${eclipselink.version}</version>
+  <scope>test</scope>
+</dependency>
+```
+
+## JPA Unit integration with JUnit 4
+
+To work with JUnit 4, you would need to add `jpa-unit4` to your test dependencies:
 
 ```xml
 <dependency>
@@ -35,88 +63,10 @@ For JUnit 4:
 </dependency>
 ```
 
-For JUnit 5:
-
-```xml
-<dependency>
-  <groupId>com.github.dadrus</groupId>
-  <artifactId>jpa-unit5</artifactId>
-  <version>${jpa-unit.version}</version>
-  <scope>test</scope>
-</dependency>
-```
-
-In addition you'll want to add the dependencies for your JPA provider (e.g. [EclipseLink](http://www.eclipse.org/eclipselink) and the database JDBC driver.
-E.g.:
-
-```xml
-<dependency>
-  <groupId>org.eclipse.persistence</groupId>
-  <artifactId>eclipselink</artifactId>
-  <version>${eclipselink.version}</version>
-  <scope>test</scope>
-</dependency>
-<dependency>
-  <groupId>com.h2database</groupId>
-  <artifactId>h2</artifactId>
-  <version>${h2.version}</version>
-  <scope>test</scope>
-</dependency>
-```
-
-JPA Unit does not impose any JPA provider dependencies by itself.
-
-## Usage
-
-### Persistence provider configuration
-
-Like in any JPA application, you have to define a `persistence.xml` file in the `META-INF` directory which includes the configuration of your entities and the used JPA provider. For test purposes the `transaction-type` of the configured `persistence-unit` must be `RESOURCE_LOCAL`. The test runner, as well as the rule implementation make use of the standard `javax.persistence.jdbc.driver`, `javax.persistence.jdbc.url`, `javax.persistence.jdbc.user` and `javax.persistence.jdbc.password` properties to access the database directly. Here an example of a `persistence.xml` file which configures [EclipseLink](http://www.eclipse.org/eclipselink) and [H2](http://www.h2database.com/html/main.html) database:
-
-```xml
-<persistence version="2.1"
-  xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence 
-    http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/persistence/persistence_2_1.xsd">
-	
-  <persistence-unit name="my-test-unit" transaction-type="RESOURCE_LOCAL">
-    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-
-    <!-- your classes converters, etc -->
-
-    <properties>
-      <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
-      <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform" />
-      <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:serviceEnablerDB;DB_CLOSE_DELAY=-1" />
-      <property name="javax.persistence.jdbc.user" value="test" />
-      <property name="javax.persistence.jdbc.password" value="test" />
-    </properties>
-  </persistence-unit>
-</persistence>
-```
-
-### JPA Unit integration with Junit
-
-JPA Unit follows the concept of configuration by exception whenever possible. To support this concept its API consists mainly of annotations with meaningful defaults (if the annotation is not present) used to drive the test. 
-
-For JUnit 4, the basic requirements on the code level are the presence of either
+The basic requirements on the code level are the presence of either
 
 - the `@RunWith(JpaUnitRunner.class)` annotation on the class level, or
 - the `JpaUnitRule` property, annotated with `@Rule`
-
-For JUnit 5, there is no much choice
-
-- the test class needs to be annotated with `@ExtendWith(JpaUnit.class)` annotation.
-
-Irrespectively the JUnit version, the presence of either
-
-- an `EntityManager` property annotated with `@PersistenceContext`. In this case a new `EntityManager` instance is acquired for each test case. On test case exit it is cleared and closed. Furthermore the usage of an `EntityManager` instance managed by JPA Unit, enables automatic transaction management, where a new transaction is started before each test case and committed after the test case returns, respectively the method annotated with `@After`. The `@Transactional` annotation (see below) can be used to overwrite and configure the required behavior.
-- or an `EntityManagerFactory` property annotated with `@PersistenceUnit`. In this case the user is responsible for obtaining and closing the required `EntityManager` instance including the corresponding transaction management. There are however some utility functions which can ease the test implementation (see `TransactionSupport` class).
-
-is required.
-
-In both cases the reference to the persistence unit is required as well (e.g. `@PersistenceContext(unitName = "my-test-unit")` or `@PersistenceUnit(unitName = "my-test-unit")`). Thus, given the presence of a persistence provider configuration, like given above, the following examples implement full functional tests.
 
 Example using `JpaUnitRunner`:
 
@@ -152,7 +102,24 @@ public class MyTest {
 }
 ```
 
-Example using `JpaUnit`:
+## JPA Unit integration with JUnit 5
+
+To work with JUnit 5, you would need to add `jpa-unit5` to your test dependencies:
+
+```xml
+<dependency>
+  <groupId>com.github.dadrus</groupId>
+  <artifactId>jpa-unit5</artifactId>
+  <version>${jpa-unit.version}</version>
+  <scope>test</scope>
+</dependency>
+```
+
+On the code leven, there is no much choice for JUnit 5
+
+- the test class needs to be annotated with `@ExtendWith(JpaUnit.class)` annotation.
+
+Example:
 
 ```java
 @ExtendWith(JpaUnit.class)
@@ -168,22 +135,36 @@ public class MyTest {
 }
 ```
 
-Irrespective of the used configuration, the `EntityManagerFactory` instance is acquired once and lives for the duration of the entire test suite implemented by the given test class. That also means one can test the behavior given by the JPA second level cache.
 
-### Control the behavior
+## Basic configuration
+
+Irrespectively the JUnit version, the presence of either
+
+- an `EntityManager` property annotated with `@PersistenceContext`. In this case a new `EntityManager` instance is acquired for each test case. On test case exit it is cleared and closed. Furthermore the usage of an `EntityManager` instance managed by JPA Unit, enables automatic transaction management, where a new transaction is started before each test case and committed after the test case returns, respectively the method annotated with `@After`. The `@Transactional` annotation (see below) can be used to overwrite and configure the required behavior.
+- or an `EntityManagerFactory` property annotated with `@PersistenceUnit`. In this case the user is responsible for obtaining and closing the required `EntityManager` instance including the corresponding transaction management. There are however some utility functions which can ease the test implementation (see `TransactionSupport` class).
+
+is required.
+
+In both cases the reference to the persistence unit is required as well (e.g. `@PersistenceContext(unitName = "my-test-unit")` or `@PersistenceUnit(unitName = "my-test-unit")`). Thus, given the presence of a persistence provider configuration, like given above, the following examples implement full functional tests.
+
+Like in any JPA application, you have to define a `persistence.xml` file in the `META-INF` directory which includes the JPA provider and persistence unit configuration. 
+For test purposes the `transaction-type` of the configured `persistence-unit` must be `RESOURCE_LOCAL`. 
+
+## Control the behavior
 
 To control the test behavior, JPA Unit comes with a handful of annotations and some utility classes. All these annotations can be applied on class and method level, where the latter always takes precedence over the former.
+JPA Unit follows the concept of configuration by exception whenever possible. To support this concept its API consists mainly of annotations with meaningful defaults (if the annotation is not present) used to drive the test. 
 
-- `@ApplyScriptsAfter`, which can be used to define arbitrary SQL scripts which shall be executed before running the test method.
-- `@ApplyScriptsBefore`, which can be used to define arbitrary SQL scripts which shall be executed after running the test method.
+- `@ApplyScriptsAfter`, which can be used to define arbitrary scripts which shall be executed before running the test method.
+- `@ApplyScriptsBefore`, which can be used to define arbitrary scripts which shall be executed after running the test method.
 - `@Bootstrapping`, which can be used to define a method executed only once before the bootstrapping of a JPA provider happens. This can be handy e.g. to setup a test specific DB schema. 
 - `@Cleanup`, which can be used to define when the database cleanup should be triggered.
 - `@CleanupCache`, which can be used to define whether and when the JPA L2 cache should be evicted.
-- `@CleanupUsingScripts`, which can be used to define arbitrary SQL scripts which shall be used for cleaning the database.
+- `@CleanupUsingScripts`, which can be used to define arbitrary scripts which shall be used for cleaning the database.
 - `@ExpectedDataSets`, which provides the ability to verify the state of underlying database using data sets. Verification is invoked after test's execution.
 - `@InitialDataSets`, which provides the ability to seed the database using data sets before test method execution.
-- `@Transactional`, which can be used to control the automatic transaction management for a test.
-- `TransactionSupport`, comes in handy when fine graned transaction management is required or automatic transaction management is disabled.
+- `@Transactional`, which can be used to control the automatic transaction management for a test if supported by the chosen JPA provider for the chosen database. Otherwise it does not have any effect.
+- `TransactionSupport`, comes in handy when fine graned transaction management is required or automatic transaction management is disabled. As for the `@Transactional` annotation, if not supported by the chosen JPA provider for the chosen database, the usage of these functions has no effect.
 
 All these elements are described in more detail below.
 
@@ -221,7 +202,7 @@ public class MyTest {
 - `execute(<Expression>)` executes the given expression and wraps it in a new transaction. If the expression returns a result, it is returned to the caller. Following behavior is implemented:
     - Before the execution of `<Expression>`: If an active transaction is already running, it is committed and a new transaction is started. Otherwise just a new transaction is started.
     - After the execution of `<Expression>`: The transaction wrapping the `<Expression>` is committed. If an active transaction was running and was committed before the `<Expression>` wrapping transaction was started, a new transaction is started. 
-    
+
 Here a usage example:
 
 ```java
@@ -250,64 +231,14 @@ public class MyTest {
 
 ### Seeding the database
 
-Creating ad-hoc object graphs in a test to seed the database can be a complex task on the one hand and made the test less readable. On the other hand it is usually not the goal of a test case, rather a prerequisite. To address this, JPA Unit provides an alternative way in a form of database fixtures, which are easy configurable and can be applied for all tests or for a single test. To achieve this JPA Unit uses the concept of data sets from [DbUnit](http://dbunit.sourceforge.net). In essence, data sets are files containing rows to be inserted into the database. JPA Unit supports following data set formats:
-
-- XML (Flat XML Data Set). A simple XML structure, where each element represents a single row in a given table and attribute names correspond to the table columns as illustrated below.
-- YAML.
-- JSON.
-- XSL(X)
-- CSV
-
-Here some data set examples:
-
-```xml
-<dataset>
-	<DEPOSITOR id="100" version="1" name="John" surname="Doe" />
-	<ADDRESS id="100" city="SomeCity" country="SomeCountry" street="SomeStreet 1" 
-	         zip_code="12345" owner_id="100"/>
-	<ADDRESS id="101" city="SomeOtherCity" country="SomeOtherCountry" street="SomeStreet 2" 
-	         zip_code="54321" owner_id="100"/>
-<dataset>
-```
-
-```yaml
-DEPOSITOR:
-  - id: 100
-    version: 1
-    name: John
-    surname: Doe
-
-ADDRESS:
-  - id: 100
-    city: SomeCity
-    country: SomeCountry
-    street: SomeStreet 1
-    zip_code: 12345
-    owner_id: 100
-  - id: 101
-    city: SomeOtherCity
-    country: SomeOtherCountry
-    street: SomeStreet 2
-    zip_code: 54321
-    owner_id: 100
-```
-
-```json
-"DEPOSITOR": [
-	{ "id": "100", "version": "1", "name": "John", "surname": "Doe" }
-],
-"ADDRESS": [
-	{ "id":"100", "city":"SomeCity", "country": "SomeCountry", "street": "SomeStreet 1", 
-	  "zip_code": "12345", "owner_id": "100" },
-	{ "id":"101", "city":"SomeOtherCity", "country": "SomeOtherCountry", "street": "SomeStreet 2", 
-	  "zip_code": "54321", "owner_id": "100" }
-]
-```
+Creating ad-hoc object graphs in a test to seed the database can be a complex task on the one hand and made the test less readable. On the other hand it is usually not the goal of a test case, rather a prerequisite. 
+To address this, JPA Unit provides an alternative way in a form of database fixtures, which are easy configurable and can be applied for all tests or for a single test. To achieve this JPA Unit uses the concept of data sets.
+In essence, data sets are files containing data to be inserted into the database. Since data sets are database specific, see the corresponding database specific sections for details on supported types and formats.
 
 To seed the database using data set files put the `@InitialDataSets` annotation either on the test itself or on the test class. This annotation has following properties:
 
 - `value` of type `String[]` which takes a list of data set files used to seed the database.
-- `seedStrategy` of type `DataSeedStrategy` which can be used to defined the seeding strategy. Following strategies are available (as implemented by DBUnit):
+- `seedStrategy` of type `DataSeedStrategy` which can be used to defined the seeding strategy. Following strategies are available:
     - `CLEAN_INSERT`. Performs insert of the data defined in provided data sets, after removal of all data present in the tables referred in provided files.
     - `INSERT`. Performs insert of the data defined in provided data sets. This is the **default** strategy.
     - `REFRESH`. During this operation existing rows are updated and new ones are inserted. Entries already existing in the database which are not defined in the provided data set are not affected.
@@ -330,19 +261,19 @@ public class MyTest {
 }
 ```
 
-### Running custom SQL scripts
+### Running custom database scripts
 
-Seeding the database as described above introduces an additional abstraction level, which is not always desired on one hand. On other hand, there might be a need to disable specific database constraint checks before a database cleanup might be performed (latter only possible in a post test execution step). Usage of plain SQL comes in handy here to execute any action directly on the database level. Simply put `@ApplyScriptBefore` and/or `@ApplyScriptAfter` annotation either on your test class or directly on your test method. Corresponding scripts will be executed before and/or after test method accordingly. If there is definition on both, test method level annotation takes precedence.
+Seeding the database as described above introduces an additional abstraction level, which is not always desired on one hand. On other hand, there might be a need to disable specific database constraint checks before a database cleanup might be performed (latter only possible in a post test execution step). Usage of plain scripts (e.g. SQL) comes in handy here to execute any action directly on the database level. Simply put `@ApplyScriptBefore` and/or `@ApplyScriptAfter` annotation either on your test class or directly on your test method. Corresponding scripts will be executed before and/or after test method accordingly. If there is definition on both, test method level annotation takes precedence.
 
 Both annotation have the following properties:
 
-- `value` of type `String[]` which needs to be set to reference the required SQL scripts.
+- `value` of type `String[]` which needs to be set to reference the required database specific scripts (e.g. SQL for an SQL database).
     
 Usage example:
 
 ```java
 @RunWith(JpaUnitRunner.class)
-@ApplyScriptBefore("scrips/some-sql-script.sql")
+@ApplyScriptBefore("scrips/some-sql-script.script")
 public class MyTest {
 
     @PersistenceContext(unitName = "my-test-unit")
@@ -391,7 +322,7 @@ public class MyTest {
 
 ### Bootstrapping of DB schema & contents
 
-Bootstrapping of the data base schema, as well as the handling of its evolution over a period of time is a crucial topic. To enable a data base schema & contents setup close to the productive environment in which the JPA provider usually relies on this given DB setup, the corresponding data base specific actions need to be done before the JPA provider is loaded by accessing the data base directly. JPA Unit enables this by the usage of the `@Bootstrapping` annotation. A dedicated method of a test class, which implements a data base scheme & contents setup can be annotated with this annotation and is required to have one parameter of type `DataSource`. JPA Unit will execute this method very early in its bootstrapping process. Because of this neither `EntityManager` nor `EntityManagerFactory` cannot be used at this time.
+Bootstrapping of the data base schema, as well as the handling of its evolution over a period of time is a crucial topic. To enable a data base schema & contents setup close to the productive environment in which the JPA provider usually relies on this given DB setup, the corresponding database specific actions need to be done before the JPA provider is loaded by accessing the data base directly. JPA Unit enables this by the usage of the `@Bootstrapping` annotation. A dedicated method of a test class, which implements a data base scheme & contents setup can be annotated with this annotation and is required to have one parameter of type `DataSource`. JPA Unit will execute this method very early in its bootstrapping process. Because of this neither `EntityManager` nor `EntityManagerFactory` cannot be used at this time.
 
 For tests, which use this feature, the JPA provider should be configured not to drop and create the data base schema on start, rather to verify it. For e.g. Hibernate this can be achieved by setting the `hibernate.hbm2ddl.auto` property to the value `validate`.
 
@@ -420,7 +351,134 @@ public class FlywaydbTest {
 }
 ```
 
-### CDI integration
+## Database integration
+
+Depending on the used database, you will have to add a dependency for a database specific JPA-Unit plugin (see corresponding sections below).
+
+### SQL Databases
+
+For all SQL databases the `jpa-unit-sql` dependency needs to be added:
+
+```xml
+<dependency>
+  <groupId>com.github.dadrus</groupId>
+  <artifactId>jpa-unit-sql</artifactId>
+  <version>${jpa-unit.version}</version>
+  <scope>test</scope>
+</dependency>
+```
+
+In case of SQL databases JPA Unit makes use of the standard 
+- `javax.persistence.jdbc.driver`,
+- `javax.persistence.jdbc.url`,
+- `javax.persistence.jdbc.user` and
+- `javax.persistence.jdbc.password` 
+
+properties to access the database directly.
+
+Here an example of a `persistence.xml` file which configures [EclipseLink](http://www.eclipse.org/eclipselink) and [H2](http://www.h2database.com/html/main.html) database:
+
+```xml
+<persistence version="2.1"
+  xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence 
+    http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/persistence/persistence_2_1.xsd">
+	
+  <persistence-unit name="my-test-unit" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+    <!-- your classes converters, etc -->
+
+    <properties>
+      <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
+      <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform" />
+      <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:serviceEnablerDB;DB_CLOSE_DELAY=-1" />
+      <property name="javax.persistence.jdbc.user" value="test" />
+      <property name="javax.persistence.jdbc.password" value="test" />
+    </properties>
+  </persistence-unit>
+</persistence>
+```
+
+#### Supported data set types
+
+- XML (Flat XML Data Set). A simple XML structure, where each element represents a single row in a given table and attribute names correspond to the table columns as illustrated below.
+- YAML.
+- JSON.
+- XSL(X)
+- CSV
+
+
+Here some data set examples to seed an SQL database:
+
+```xml
+<dataset>
+	<DEPOSITOR id="100" version="1" name="John" surname="Doe" />
+	<ADDRESS id="100" city="SomeCity" country="SomeCountry" street="SomeStreet 1" 
+	         zip_code="12345" owner_id="100"/>
+	<ADDRESS id="101" city="SomeOtherCity" country="SomeOtherCountry" street="SomeStreet 2" 
+	         zip_code="54321" owner_id="100"/>
+<dataset>
+```
+
+```yaml
+DEPOSITOR:
+  - id: 100
+    version: 1
+    name: John
+    surname: Doe
+
+ADDRESS:
+  - id: 100
+    city: SomeCity
+    country: SomeCountry
+    street: SomeStreet 1
+    zip_code: 12345
+    owner_id: 100
+  - id: 101
+    city: SomeOtherCity
+    country: SomeOtherCountry
+    street: SomeStreet 2
+    zip_code: 54321
+    owner_id: 100
+```
+
+```json
+"DEPOSITOR": [
+	{ "id": "100", "version": "1", "name": "John", "surname": "Doe" }
+],
+"ADDRESS": [
+	{ "id":"100", "city":"SomeCity", "country": "SomeCountry", "street": "SomeStreet 1", 
+	  "zip_code": "12345", "owner_id": "100" },
+	{ "id":"101", "city":"SomeOtherCity", "country": "SomeOtherCountry", "street": "SomeStreet 2", 
+	  "zip_code": "54321", "owner_id": "100" }
+]
+```
+
+
+
+### MongoDB
+
+For each NoSQL database, there is a dedicated dependency. E.g. for MongoDB, this would be `jpa-unit-mongodb`:
+
+```xml
+<dependency>
+  <groupId>com.github.dadrus</groupId>
+  <artifactId>jpa-unit-mongodb</artifactId>
+  <version>${jpa-unit.version}</version>
+  <scope>test</scope>
+</dependency>
+```
+
+In case of a NoSQL database JPA provider specific properties are used. These properties are also the only dependencies to a specific JPA provider implementation.
+
+#### Data Set Format
+
+Default data set format for MongoDB is _JSON_.
+
+## CDI integration
 
 To be able to use the JPA Unit with CDI, all you need in addition to your CDI test dependency, like [DeltaSpike Test-Control Module](https://deltaspike.apache.org/documentation/test-control.html) or [Gunnar's CDI Test](https://github.com/guhilling/cdi-test), is to add the following dependency to your Maven project :
 
