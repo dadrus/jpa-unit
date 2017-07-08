@@ -2,17 +2,20 @@ package eu.drus.jpa.unit.mongodb.ext;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
+import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
-public class EclipseLinkConfiguration implements Configuration {
+public class EclipseLinkConfiguration extends AbstractConfiguration {
 
+    private static final String ECLIPSELINK_NOSQL_PROPERTY_MONGO_READ_PREFERENCE = "eclipselink.nosql.property.mongo.read-preference";
+    private static final String ECLIPSELINK_NOSQL_PROPERTY_MONGO_WRITE_CONCERN = "eclipselink.nosql.property.mongo.write-concern";
     private static final String ECLIPSELINK_NOSQL_PROPERTY_PASSWORD = "eclipselink.nosql.property.password";
     private static final String ECLIPSELINK_NOSQL_PROPERTY_USER = "eclipselink.nosql.property.user";
     private static final String ECLIPSELINK_NOSQL_PROPERTY_MONGO_DB = "eclipselink.nosql.property.mongo.db";
@@ -36,11 +39,6 @@ public class EclipseLinkConfiguration implements Configuration {
         }
     }
 
-    private List<ServerAddress> serverAddresses;
-    private String databaseName;
-    private List<MongoCredential> mongoCredentialList;
-    private MongoClientOptions mongoClientOptions;
-
     private EclipseLinkConfiguration(final PersistenceUnitDescriptor descriptor) {
         final Map<String, Object> properties = descriptor.getProperties();
 
@@ -63,37 +61,23 @@ public class EclipseLinkConfiguration implements Configuration {
         final String password = (String) properties.get(ECLIPSELINK_NOSQL_PROPERTY_PASSWORD);
         if (userName != null) {
             mongoCredentialList = Collections
-                    .singletonList(MongoCredential.createPlainCredential(userName, databaseName, toCharArray(password)));
+                    .singletonList(MongoCredential.createPlainCredential(userName, "admin", password.toCharArray()));
         } else {
             mongoCredentialList = Collections.emptyList();
         }
 
-        // TODO: build MongoClientOptions properly
-        mongoClientOptions = MongoClientOptions.builder().build();
-    }
+        final MongoClientOptions.Builder builder = MongoClientOptions.builder();
+        final String writeConcern = (String) properties.get(ECLIPSELINK_NOSQL_PROPERTY_MONGO_WRITE_CONCERN);
+        final String readPreference = (String) properties.get(ECLIPSELINK_NOSQL_PROPERTY_MONGO_READ_PREFERENCE);
 
-    private char[] toCharArray(final String value) {
-        return value == null ? null : value.toCharArray();
-    }
+        if (writeConcern != null) {
+            builder.writeConcern(WriteConcern.valueOf(writeConcern));
+        }
+        if (readPreference != null) {
+            builder.readPreference(ReadPreference.valueOf(readPreference));
+        }
 
-    @Override
-    public List<ServerAddress> getServerAddresses() {
-        return serverAddresses;
-    }
+        mongoClientOptions = builder.build();
 
-    @Override
-    public String getDatabaseName() {
-        return databaseName;
     }
-
-    @Override
-    public MongoClientOptions getClientOptions() {
-        return mongoClientOptions;
-    }
-
-    @Override
-    public List<MongoCredential> getCredentials() {
-        return mongoCredentialList;
-    }
-
 }

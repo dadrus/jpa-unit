@@ -2,7 +2,7 @@ package eu.drus.jpa.unit.mongodb.ext;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.mongodb.MongoClientOptions;
@@ -11,7 +11,7 @@ import com.mongodb.ServerAddress;
 
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
-public class KunderaConfiguration implements Configuration {
+public class KunderaConfiguration extends AbstractConfiguration {
 
     private static final String KUNDERA_PASSWORD = "kundera.password";
     private static final String KUNDERA_USERNAME = "kundera.username";
@@ -19,6 +19,8 @@ public class KunderaConfiguration implements Configuration {
     private static final String KUNDERA_NODES = "kundera.nodes";
     private static final String KUNDERA_PORT = "kundera.port";
     private static final String KUNDERA_DIALECT = "kundera.dialect";
+
+    private static final Map<String, String> KUDERA_KEYS = createKeyMaping();
 
     public static class ConfigurationFactoryImpl implements ConfigurationFactory {
 
@@ -35,11 +37,6 @@ public class KunderaConfiguration implements Configuration {
             return new KunderaConfiguration(descriptor);
         }
     }
-
-    private List<ServerAddress> serverAddresses;
-    private String databaseName;
-    private List<MongoCredential> mongoCredentialList;
-    private MongoClientOptions mongoClientOptions;
 
     private KunderaConfiguration(final PersistenceUnitDescriptor descriptor) {
         final Map<String, Object> properties = descriptor.getProperties();
@@ -59,37 +56,25 @@ public class KunderaConfiguration implements Configuration {
         final String password = (String) properties.get(KUNDERA_PASSWORD);
         if (userName != null) {
             mongoCredentialList = Collections
-                    .singletonList(MongoCredential.createPlainCredential(userName, databaseName, toCharArray(password)));
+                    .singletonList(MongoCredential.createPlainCredential(userName, "admin", password.toCharArray()));
         } else {
             mongoCredentialList = Collections.emptyList();
         }
 
-        // TODO: build MongoClientOptions properly
-        mongoClientOptions = MongoClientOptions.builder().build();
+        final MongoClientOptions.Builder builder = MongoClientOptions.builder();
+        setOptions(builder, (final String key) -> (String) properties.get(KUDERA_KEYS.get(key)));
+        mongoClientOptions = builder.build();
     }
 
-    private char[] toCharArray(final String value) {
-        return value == null ? null : value.toCharArray();
+    private static Map<String, String> createKeyMaping() {
+        final Map<String, String> map = new HashMap<>();
+        map.put("connectionsPerHost", "connection.perhost");
+        // Kundera defines both "connection.perhost" as well as "kundera.pool.size.max.active",
+        // which is used by Kundera for the same purpose. Which one should we use?
+        map.put("connectTimeout", "connection.timeout");
+        map.put("maxWaitTime", "maxwait.time");
+        map.put("threadsAllowedToBlockForConnectionMultiplier", "threadsallowed.block.connectionmultiplier");
+        map.put("requiredReplicaSetName", "replica.set.name");
+        return map;
     }
-
-    @Override
-    public List<ServerAddress> getServerAddresses() {
-        return serverAddresses;
-    }
-
-    @Override
-    public String getDatabaseName() {
-        return databaseName;
-    }
-
-    @Override
-    public MongoClientOptions getClientOptions() {
-        return mongoClientOptions;
-    }
-
-    @Override
-    public List<MongoCredential> getCredentials() {
-        return mongoCredentialList;
-    }
-
 }

@@ -13,16 +13,15 @@ import com.mongodb.ServerAddress;
 
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
-public class DataNucleusConfiguration implements Configuration {
+public class DataNucleusConfiguration extends AbstractConfiguration {
 
+    private static final String DATANUCLEUS_MONGODB_OPTIONS_PREFIX = "datanucleus.mongodb";
     private static final String DATANUCLEUS_CONNECTION_URL = "datanucleus.ConnectionURL";
     private static final String DATANUCLEUS_CONNECTION_PASSWORD = "datanucleus.ConnectionPassword";
     private static final String DATANUCLEUS_CONNECTION_USER_NAME = "datanucleus.ConnectionUserName";
     private static final String JAVAX_PERSISTENCE_JDBC_URL = "javax.persistence.jdbc.url";
     private static final String JAVAX_PERSISTENCE_JDBC_USER = "javax.persistence.jdbc.user";
     private static final String JAVAX_PERSISTENCE_JDBC_PASSWORD = "javax.persistence.jdbc.password";
-    private static final String MONGODB_CONNECTIONS_PER_HOST = "datanucleus.mongodb.connectionsPerHost";
-    private static final String MONGODB_THREAD_BLOCK_FOR_MULTIPLIER = "datanucleus.mongodb.threadsAllowedToBlockForConnectionMultiplier";
 
     public static class ConfigurationFactoryImpl implements ConfigurationFactory {
 
@@ -39,11 +38,6 @@ public class DataNucleusConfiguration implements Configuration {
         }
     }
 
-    private List<ServerAddress> serverAddresses;
-    private String databaseName;
-    private List<MongoCredential> mongoCredentialList;
-    private MongoClientOptions mongoClientOptions;
-
     private DataNucleusConfiguration(final PersistenceUnitDescriptor descriptor) {
         final Map<String, Object> properties = descriptor.getProperties();
 
@@ -54,19 +48,13 @@ public class DataNucleusConfiguration implements Configuration {
 
         if (userName != null) {
             mongoCredentialList = Collections
-                    .singletonList(MongoCredential.createPlainCredential(userName, databaseName, toCharArray(password)));
+                    .singletonList(MongoCredential.createPlainCredential(userName, "admin", password.toCharArray()));
         } else {
             mongoCredentialList = Collections.emptyList();
         }
 
         final MongoClientOptions.Builder builder = MongoClientOptions.builder();
-        if (properties.containsKey(MONGODB_CONNECTIONS_PER_HOST)) {
-            builder.connectionsPerHost(Integer.valueOf((String) properties.get(MONGODB_CONNECTIONS_PER_HOST)));
-        }
-        if (properties.containsKey(MONGODB_THREAD_BLOCK_FOR_MULTIPLIER)) {
-            builder.threadsAllowedToBlockForConnectionMultiplier(
-                    Integer.valueOf((String) properties.get(MONGODB_THREAD_BLOCK_FOR_MULTIPLIER)));
-        }
+        setOptions(builder, (final String key) -> (String) properties.get(DATANUCLEUS_MONGODB_OPTIONS_PREFIX + "." + key));
         mongoClientOptions = builder.build();
 
     }
@@ -80,56 +68,26 @@ public class DataNucleusConfiguration implements Configuration {
     }
 
     private void parseUrl(final String url) {
-        // the url has the following structure: mongodb:[{server}][/{dbName}]
-        // [,{server2}[,server3}]]
+        // the url has the following structure:
+        // mongodb:[{server}][/{dbName}] [,{server2}[,server3}]]
         final List<HostAndPort> hostAndPortList = new ArrayList<>();
 
         final String serversAndDbName = url.substring(8); // skip mongodb: part
-        String[] parts = serversAndDbName.split("/");
-        if (parts[0].isEmpty()) {
-            // only db name is given
-            databaseName = parts[1].trim();
-        } else {
-            // at least one server is given
-            hostAndPortList.add(HostAndPort.fromString(parts[0].trim()));
-
-            // check whether there are further server defined
-            parts = parts[1].split(",");
-            databaseName = parts[0].trim();
-            for (int i = 1; i < parts.length; i++) {
-                hostAndPortList.add(HostAndPort.fromString(parts[i].trim()));
+        final String[] servers = serversAndDbName.split(",");
+        for (final String server : servers) {
+            final String[] parts = server.split("/");
+            if (parts.length == 2) {
+                databaseName = parts[1].trim();
             }
+            hostAndPortList.add(HostAndPort.fromString(parts[0].trim()));
         }
 
-        serverAddresses = hostAndPortList.stream().map(h -> new ServerAddress(h.getHost(), h.getPort())).collect(Collectors.toList());
+        serverAddresses = hostAndPortList.stream()
+                .map(h -> new ServerAddress(h.getHost(), h.hasPort() ? h.getPort() : ServerAddress.defaultPort()))
+                .collect(Collectors.toList());
 
         if (serverAddresses.isEmpty()) {
             serverAddresses.add(new ServerAddress());
         }
     }
-
-    private char[] toCharArray(final String value) {
-        return value == null ? null : value.toCharArray();
-    }
-
-    @Override
-    public List<ServerAddress> getServerAddresses() {
-        return serverAddresses;
-    }
-
-    @Override
-    public String getDatabaseName() {
-        return databaseName;
-    }
-
-    @Override
-    public MongoClientOptions getClientOptions() {
-        return mongoClientOptions;
-    }
-
-    @Override
-    public List<MongoCredential> getCredentials() {
-        return mongoCredentialList;
-    }
-
 }
