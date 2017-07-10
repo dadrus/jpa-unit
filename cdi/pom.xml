@@ -16,7 +16,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jpa-unit-spi</artifactId>
+      <artifactId>jpa-unit-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -56,6 +56,13 @@
       <artifactId>powermock-api-mockito</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jacoco</groupId>
+      <artifactId>org.jacoco.agent</artifactId>
+      <version>${version.jacoco}</version>
+      <classifier>runtime</classifier>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -79,5 +86,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

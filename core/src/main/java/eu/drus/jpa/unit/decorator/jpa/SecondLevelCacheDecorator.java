@@ -2,8 +2,9 @@ package eu.drus.jpa.unit.decorator.jpa;
 
 import javax.persistence.EntityManagerFactory;
 
-import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
+import eu.drus.jpa.unit.spi.Constants;
+import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -27,20 +28,27 @@ public class SecondLevelCacheDecorator implements TestMethodDecorator {
 
     @Override
     public void beforeTest(final TestMethodInvocation invocation) throws Exception {
-        final FeatureResolver resolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(), invocation.getTestClass());
+        final FeatureResolver resolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
 
-        final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext().getData("emf");
+        final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext()
+                .getData(Constants.KEY_ENTITY_MANAGER_FACTORY);
 
         evictCache(resolver.shouldEvictCacheBefore(), emf);
     }
 
     @Override
     public void afterTest(final TestMethodInvocation invocation) throws Exception {
-        final FeatureResolver resolver = FeatureResolverFactory.createFeatureResolver(invocation.getMethod(), invocation.getTestClass());
+        final FeatureResolver resolver = new FeatureResolver(invocation.getMethod(), invocation.getTestClass());
 
-        final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext().getData("emf");
+        final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext()
+                .getData(Constants.KEY_ENTITY_MANAGER_FACTORY);
 
         evictCache(resolver.shouldEvictCacheAfter(), emf);
+    }
+
+    @Override
+    public boolean isConfigurationSupported(final ExecutionContext ctx) {
+        return true;
     }
 
 }

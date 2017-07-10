@@ -1,0 +1,24 @@
+<dataset>
+	<XML_TABLE_1 
+	    id="1" 
+	    version="Record 1 version"
+		value_1="Record 1 Value 1" 
+		value_2="Record 1 Value 2" 
+		value_4="Record 1 Value 4" />
+	<XML_TABLE_1
+		id="2"
+		version="Record 2 version"
+		value_1="Record 2 Value 1"
+		value_2="Record 2 Value 2"
+		value_3="Record 2 Value 3" />
+	<XML_TABLE_1
+		id="3"
+		version="Record 3 version"
+		value_5="Record 3 Value 5" />
+
+	<XML_TABLE_2
+		id="4"
+		version="Record 4 version"
+		value_6="Record 4 Value 6"
+		value_7="Record 4 Value 7" />
+</dataset>

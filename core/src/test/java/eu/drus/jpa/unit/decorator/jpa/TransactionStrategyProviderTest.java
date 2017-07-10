@@ -77,7 +77,26 @@ public class TransactionStrategyProviderTest {
         // THEN
         verify(tx).begin();
         verify(tx).isActive();
+        verify(tx).getRollbackOnly();
         verify(tx).commit();
+        verifyNoMoreInteractions(tx);
+    }
+
+    @Test
+    public void testTransactionCommitStrategyExecutionForRolledBackTransaction() throws Throwable {
+        // GIVEN
+        when(tx.isActive()).thenReturn(Boolean.TRUE);
+        when(tx.getRollbackOnly()).thenReturn(Boolean.TRUE);
+        final TransactionStrategyExecutor executor = provider.commitStrategy();
+
+        // WHEN
+        executor.begin();
+        executor.commit();
+
+        // THEN
+        verify(tx).begin();
+        verify(tx).isActive();
+        verify(tx).getRollbackOnly();
         verifyNoMoreInteractions(tx);
     }
 

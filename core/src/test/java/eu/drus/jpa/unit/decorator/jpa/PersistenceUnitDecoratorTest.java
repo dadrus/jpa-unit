@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -42,7 +43,7 @@ public class PersistenceUnitDecoratorTest {
     @Before
     public void setupMocks() {
         when(invocation.getContext()).thenReturn(ctx);
-        when(ctx.getData(eq("emf"))).thenReturn(entityManagerFactory);
+        when(ctx.getData(eq(Constants.KEY_ENTITY_MANAGER_FACTORY))).thenReturn(entityManagerFactory);
     }
 
     @Test

@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
@@ -55,16 +56,22 @@ public class JpaUnitRunnerTest {
         compileModel(testFolder.getRoot());
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final RunListener listener = mock(RunListener.class);
+        final RunNotifier notifier = new RunNotifier();
+        notifier.addListener(listener);
 
-        try {
-            // WHEN
-            new JpaUnitRunner(cut);
-            fail("IllegalArgumentException expected");
-        } catch (final IllegalArgumentException e) {
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
 
-            // THEN
-            assertThat(e.getMessage(), containsString("EntityManagerFactory or EntityManager field annotated"));
-        }
+        // WHEN
+        runner.run(notifier);
+
+        // THEN
+        final ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(listener).testFailure(failureCaptor.capture());
+
+        final Failure failure = failureCaptor.getValue();
+        assertThat(failure.getException().getClass(), equalTo(IllegalArgumentException.class));
+        assertThat(failure.getException().getMessage(), containsString("EntityManagerFactory or EntityManager field annotated"));
     }
 
     @Test
@@ -87,15 +94,22 @@ public class JpaUnitRunnerTest {
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
 
-        try {
-            // WHEN
-            new JpaUnitRunner(cut);
-            fail("IllegalArgumentException expected");
-        } catch (final IllegalArgumentException e) {
+        final RunListener listener = mock(RunListener.class);
+        final RunNotifier notifier = new RunNotifier();
+        notifier.addListener(listener);
 
-            // THEN
-            assertThat(e.getMessage(), containsString("Only single field is allowed"));
-        }
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
+
+        // WHEN
+        runner.run(notifier);
+
+        // THEN
+        final ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(listener).testFailure(failureCaptor.capture());
+
+        final Failure failure = failureCaptor.getValue();
+        assertThat(failure.getException().getClass(), equalTo(IllegalArgumentException.class));
+        assertThat(failure.getException().getMessage(), containsString("Only single field is allowed"));
     }
 
     @Test
@@ -118,15 +132,22 @@ public class JpaUnitRunnerTest {
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
 
-        try {
-            // WHEN
-            new JpaUnitRunner(cut);
-            fail("IllegalArgumentException expected");
-        } catch (final IllegalArgumentException e) {
+        final RunListener listener = mock(RunListener.class);
+        final RunNotifier notifier = new RunNotifier();
+        notifier.addListener(listener);
 
-            // THEN
-            assertThat(e.getMessage(), containsString("Only single field is allowed"));
-        }
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
+
+        // WHEN
+        runner.run(notifier);
+
+        // THEN
+        final ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(listener).testFailure(failureCaptor.capture());
+
+        final Failure failure = failureCaptor.getValue();
+        assertThat(failure.getException().getClass(), equalTo(IllegalArgumentException.class));
+        assertThat(failure.getException().getMessage(), containsString("Only single field is allowed"));
     }
 
     @Test
@@ -149,15 +170,22 @@ public class JpaUnitRunnerTest {
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
 
-        try {
-            // WHEN
-            new JpaUnitRunner(cut);
-            fail("IllegalArgumentException expected");
-        } catch (final IllegalArgumentException e) {
+        final RunListener listener = mock(RunListener.class);
+        final RunNotifier notifier = new RunNotifier();
+        notifier.addListener(listener);
 
-            // THEN
-            assertThat(e.getMessage(), containsString("either @PersistenceUnit or @PersistenceContext"));
-        }
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
+
+        // WHEN
+        runner.run(notifier);
+
+        // THEN
+        final ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(listener).testFailure(failureCaptor.capture());
+
+        final Failure failure = failureCaptor.getValue();
+        assertThat(failure.getException().getClass(), equalTo(IllegalArgumentException.class));
+        assertThat(failure.getException().getMessage(), containsString("either @PersistenceUnit or @PersistenceContext"));
     }
 
     @Test
@@ -178,15 +206,22 @@ public class JpaUnitRunnerTest {
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
 
-        try {
-            // WHEN
-            new JpaUnitRunner(cut);
-            fail("IllegalArgumentException expected");
-        } catch (final IllegalArgumentException e) {
+        final RunListener listener = mock(RunListener.class);
+        final RunNotifier notifier = new RunNotifier();
+        notifier.addListener(listener);
 
-            // THEN
-            assertThat(e.getMessage(), containsString("annotated with @PersistenceContext is not of type EntityManager"));
-        }
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
+
+        // WHEN
+        runner.run(notifier);
+
+        // THEN
+        final ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(listener).testFailure(failureCaptor.capture());
+
+        final Failure failure = failureCaptor.getValue();
+        assertThat(failure.getException().getClass(), equalTo(IllegalArgumentException.class));
+        assertThat(failure.getException().getMessage(), containsString("annotated with @PersistenceContext is not of type EntityManager"));
     }
 
     @Test
@@ -207,15 +242,23 @@ public class JpaUnitRunnerTest {
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
 
-        try {
-            // WHEN
-            new JpaUnitRunner(cut);
-            fail("IllegalArgumentException expected");
-        } catch (final IllegalArgumentException e) {
+        final RunListener listener = mock(RunListener.class);
+        final RunNotifier notifier = new RunNotifier();
+        notifier.addListener(listener);
 
-            // THEN
-            assertThat(e.getMessage(), containsString("annotated with @PersistenceUnit is not of type EntityManagerFactory"));
-        }
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
+
+        // WHEN
+        runner.run(notifier);
+
+        // THEN
+        final ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(listener).testFailure(failureCaptor.capture());
+
+        final Failure failure = failureCaptor.getValue();
+        assertThat(failure.getException().getClass(), equalTo(IllegalArgumentException.class));
+        assertThat(failure.getException().getMessage(),
+                containsString("annotated with @PersistenceUnit is not of type EntityManagerFactory"));
     }
 
     @Test
@@ -236,15 +279,22 @@ public class JpaUnitRunnerTest {
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
 
-        try {
-            // WHEN
-            new JpaUnitRunner(cut);
-            fail("JpaUnitException expected");
-        } catch (final JpaUnitException e) {
+        final RunListener listener = mock(RunListener.class);
+        final RunNotifier notifier = new RunNotifier();
+        notifier.addListener(listener);
 
-            // THEN
-            assertThat(e.getMessage(), containsString("No Persistence"));
-        }
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
+
+        // WHEN
+        runner.run(notifier);
+
+        // THEN
+        final ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(listener).testFailure(failureCaptor.capture());
+
+        final Failure failure = failureCaptor.getValue();
+        assertThat(failure.getException().getClass(), equalTo(JpaUnitException.class));
+        assertThat(failure.getException().getMessage(), containsString("No Persistence"));
     }
 
     @Test
@@ -265,15 +315,22 @@ public class JpaUnitRunnerTest {
 
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
 
-        try {
-            // WHEN
-            new JpaUnitRunner(cut);
-            fail("JpaUnitException expected");
-        } catch (final JpaUnitException e) {
+        final RunListener listener = mock(RunListener.class);
+        final RunNotifier notifier = new RunNotifier();
+        notifier.addListener(listener);
 
-            // THEN
-            assertThat(e.getMessage(), containsString("No Persistence"));
-        }
+        final JpaUnitRunner runner = new JpaUnitRunner(cut);
+
+        // WHEN
+        runner.run(notifier);
+
+        // THEN
+        final ArgumentCaptor<Failure> failureCaptor = ArgumentCaptor.forClass(Failure.class);
+        verify(listener).testFailure(failureCaptor.capture());
+
+        final Failure failure = failureCaptor.getValue();
+        assertThat(failure.getException().getClass(), equalTo(JpaUnitException.class));
+        assertThat(failure.getException().getMessage(), containsString("No Persistence"));
     }
 
     @Test
@@ -418,6 +475,7 @@ public class JpaUnitRunnerTest {
         final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
 
         try {
+            // WHEN
             new JpaUnitRunner(cut);
             fail("InitializationError expected");
         } catch (final InitializationError e) {

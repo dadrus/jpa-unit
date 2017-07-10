@@ -1,0 +1,68 @@
+{
+	"DEPOSITOR": [
+		{
+			"_id": NumberLong(106),
+			"VERSION": NumberLong(2),
+			"NAME": "Max",
+			"SURNAME": "Doe"
+		}
+	],
+    "CONTACT_DETAIL": [
+    	{
+	        "_id": NumberLong(106),
+	        "TYPE": "EMAIL",
+	        "VALUE": "john.doe@acme.com",
+	        "DEPOSITOR_ID": NumberLong(106)
+        },
+        {
+	        "_id": NumberLong(107),
+	        "TYPE": "MOBILE",
+	        "VALUE": "+1 11 1111 1111",
+	        "DEPOSITOR_ID": NumberLong(106)
+        },
+        {
+	        "_id": NumberLong(108),
+	        "TYPE": "TELEPHONE",
+	        "VALUE": "+1 22 2222 2222",
+	        "DEPOSITOR_ID": NumberLong(106)
+        }
+    ],
+	"ACCOUNT": [
+		{
+	        "TYPE": "GIRO_ACCOUNT",
+	        "_id": NumberLong(106),
+	        "VERSION": NumberLong(2),
+	        "CREDIT_LIMIT": 1000,
+	        "DEPOSITOR_ID": NumberLong(106)
+        },
+        {
+	        "TYPE": "INSTANT_ACCESS_ACCOUNT",
+	        "_id": NumberLong(107),
+	        "VERSION": NumberLong(2),
+	        "DEPOSITOR_ID": NumberLong(106)
+        }
+    ],
+    "ACCOUNT_ENTRY": [
+    	{
+	        "AMOUNT": 100,
+	        "DETAILS": "deposit",
+	        "REFERENCE": "ACC",
+	        "TYPE": "DEBIT",
+	        "ACCOUNT_ID": NumberLong(106)
+    	},
+    	{
+	        "AMOUNT": 150,
+	        "DETAILS": "money transfer",
+	        "REFERENCE": "ACC",
+	        "TYPE": "CREDIT",
+	        "ACCOUNT_ID": NumberLong(106)
+    	},
+    	{
+	        "AMOUNT": 150,
+	        "DETAILS": "money transfer",
+	        "REFERENCE": "ACC",
+	        "TYPE": "DEBIT",
+	        "ACCOUNT_ID": NumberLong(107)
+    	}
+    ]
+}

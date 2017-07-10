@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -40,7 +41,7 @@ public class CdiProducerDecoratorTest {
     @Before
     public void setUp() throws Exception {
         when(invocation.getContext()).thenReturn(ctx);
-        when(ctx.getData(eq("em"))).thenReturn(em);
+        when(ctx.getData(eq(Constants.KEY_ENTITY_MANAGER))).thenReturn(em);
     }
 
     @Test

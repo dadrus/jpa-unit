@@ -19,13 +19,15 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Persistence.class)
 public class EntityManagerFactoryDecoratorTest {
 
-    private static final HashMap<Object, Object> PERSISTENCE_PROPERTIES = new HashMap<>();
+    private static final HashMap<String, Object> PERSISTENCE_PROPERTIES = new HashMap<>();
 
     private static final String UNIT_NAME = "MY_UNIT_NAME";
 
@@ -35,13 +37,17 @@ public class EntityManagerFactoryDecoratorTest {
     @Mock
     private EntityManagerFactory factory;
 
+    @Mock
+    private PersistenceUnitDescriptor descriptor;
+
     @Before
     public void prepareMocks() {
         mockStatic(Persistence.class);
-
-        when(ctx.getData("unitName")).thenReturn(UNIT_NAME);
-        when(ctx.getData("properties")).thenReturn(PERSISTENCE_PROPERTIES);
         when(Persistence.createEntityManagerFactory(eq(UNIT_NAME), eq(PERSISTENCE_PROPERTIES))).thenReturn(factory);
+
+        when(ctx.getDescriptor()).thenReturn(descriptor);
+        when(descriptor.getUnitName()).thenReturn(UNIT_NAME);
+        when(descriptor.getProperties()).thenReturn(PERSISTENCE_PROPERTIES);
     }
 
     @Test
@@ -65,13 +71,13 @@ public class EntityManagerFactoryDecoratorTest {
         decorator.beforeAll(ctx, getClass());
 
         // THEN
-        verify(ctx).storeData(eq("emf"), eq(factory));
+        verify(ctx).storeData(eq(Constants.KEY_ENTITY_MANAGER_FACTORY), eq(factory));
     }
 
     @Test
     public void testAfterAll() throws Throwable {
         // GIVEN
-        when(ctx.getData("emf")).thenReturn(factory);
+        when(ctx.getData(Constants.KEY_ENTITY_MANAGER_FACTORY)).thenReturn(factory);
 
         final EntityManagerFactoryDecorator decorator = new EntityManagerFactoryDecorator();
 
@@ -79,7 +85,7 @@ public class EntityManagerFactoryDecoratorTest {
         decorator.afterAll(ctx, getClass());
 
         // THEN
-        verify(ctx).storeData(eq("emf"), eq(null));
+        verify(ctx).storeData(eq(Constants.KEY_ENTITY_MANAGER_FACTORY), eq(null));
         verify(factory).close();
     }
 

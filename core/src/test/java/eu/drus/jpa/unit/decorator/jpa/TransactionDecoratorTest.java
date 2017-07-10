@@ -2,16 +2,13 @@ package eu.drus.jpa.unit.decorator.jpa;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-
-import java.lang.reflect.Method;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import javax.persistence.EntityManager;
 
@@ -23,13 +20,15 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.api.TransactionMode;
-import eu.drus.jpa.unit.core.metadata.FeatureResolver;
-import eu.drus.jpa.unit.core.metadata.FeatureResolverFactory;
+import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(FeatureResolverFactory.class)
+@PrepareForTest({
+        TransactionDecorator.class, TransactionDecoratorTest.class
+})
 public class TransactionDecoratorTest {
 
     @Mock
@@ -46,8 +45,7 @@ public class TransactionDecoratorTest {
 
     @Before
     public void setUp() throws Exception {
-        mockStatic(FeatureResolverFactory.class);
-        when(FeatureResolverFactory.createFeatureResolver(any(Method.class), any(Class.class))).thenReturn(resolver);
+        whenNew(FeatureResolver.class).withAnyArguments().thenReturn(resolver);
 
         when(invocation.getContext()).thenReturn(ctx);
         when(resolver.getTransactionMode()).thenReturn(TransactionMode.DISABLED);
@@ -70,7 +68,7 @@ public class TransactionDecoratorTest {
     @Test
     public void testTransactionStrategyIsExecutedForEntityManager() throws Throwable {
         // GIVEN
-        when(ctx.getData(eq("em"))).thenReturn(em);
+        when(ctx.getData(eq(Constants.KEY_ENTITY_MANAGER))).thenReturn(em);
         final TransactionDecorator fixture = new TransactionDecorator();
 
         // WHEN
@@ -103,6 +101,6 @@ public class TransactionDecoratorTest {
         final int priority = fixture.getPriority();
 
         // THEN
-        assertThat(priority, equalTo(4));
+        assertThat(priority, equalTo(100));
     }
 }

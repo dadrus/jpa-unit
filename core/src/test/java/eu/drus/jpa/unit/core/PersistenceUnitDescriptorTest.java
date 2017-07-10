@@ -18,8 +18,6 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import eu.drus.jpa.unit.core.PersistenceUnitDescriptor;
-
 public class PersistenceUnitDescriptorTest {
 
     private static final String DDL_GENERATION_VALUE = "drop-and-create-tables";
@@ -93,7 +91,7 @@ public class PersistenceUnitDescriptorTest {
         puElement.removeAttribute("name");
 
         // WHEN
-        final PersistenceUnitDescriptor descriptor = new PersistenceUnitDescriptor(puElement, Collections.emptyMap());
+        final PersistenceUnitDescriptorImpl descriptor = new PersistenceUnitDescriptorImpl(puElement, Collections.emptyMap());
 
         // THEN
         assertThat(descriptor.getUnitName(), nullValue());
@@ -112,7 +110,7 @@ public class PersistenceUnitDescriptorTest {
         // the created document
 
         // WHEN
-        final PersistenceUnitDescriptor descriptor = new PersistenceUnitDescriptor(puElement, Collections.emptyMap());
+        final PersistenceUnitDescriptorImpl descriptor = new PersistenceUnitDescriptorImpl(puElement, Collections.emptyMap());
 
         // THEN
         assertThat(descriptor.getUnitName(), equalTo(PERSISTENCE_UNIT_NAME));
@@ -143,7 +141,7 @@ public class PersistenceUnitDescriptorTest {
         userProperties.put(someFurtherProp, someFurtherValue);
 
         // WHEN
-        final PersistenceUnitDescriptor descriptor = new PersistenceUnitDescriptor(puElement, userProperties);
+        final PersistenceUnitDescriptorImpl descriptor = new PersistenceUnitDescriptorImpl(puElement, userProperties);
 
         // THEN
         assertThat(descriptor.getUnitName(), equalTo(PERSISTENCE_UNIT_NAME));

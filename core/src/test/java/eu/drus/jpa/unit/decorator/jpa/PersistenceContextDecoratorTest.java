@@ -24,6 +24,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -50,14 +51,14 @@ public class PersistenceContextDecoratorTest {
     @Before
     public void setupMocks() {
         when(invocation.getContext()).thenReturn(ctx);
-        when(ctx.getData(eq("emf"))).thenReturn(entityManagerFactory);
+        when(ctx.getData(eq(Constants.KEY_ENTITY_MANAGER_FACTORY))).thenReturn(entityManagerFactory);
         when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
     }
 
     @Test
     public void testApplyEntityManagerInjection() throws Throwable {
         // GIVEN
-        when(ctx.getData("em")).thenReturn(entityManager);
+        when(ctx.getData(Constants.KEY_ENTITY_MANAGER)).thenReturn(entityManager);
         final Field field = getClass().getDeclaredField("em");
         when(ctx.getPersistenceField()).thenReturn(field);
         final PersistenceContextDecorator fixture = new PersistenceContextDecorator();
@@ -72,7 +73,7 @@ public class PersistenceContextDecoratorTest {
         verify(entityManager).close();
 
         final ArgumentCaptor<EntityManager> emCaptor = ArgumentCaptor.forClass(EntityManager.class);
-        verify(ctx, times(2)).storeData(eq("em"), emCaptor.capture());
+        verify(ctx, times(2)).storeData(eq(Constants.KEY_ENTITY_MANAGER), emCaptor.capture());
         final List<EntityManager> captured = emCaptor.getAllValues();
         assertThat(captured.get(0), equalTo(entityManager));
         assertThat(captured.get(1), is(nullValue()));

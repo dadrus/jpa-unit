@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import eu.drus.jpa.unit.api.ApplyScriptsAfter;
 import eu.drus.jpa.unit.api.ApplyScriptsBefore;
+import eu.drus.jpa.unit.api.Bootstrapping;
 import eu.drus.jpa.unit.api.Cleanup;
 import eu.drus.jpa.unit.api.CleanupUsingScripts;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
@@ -105,6 +106,16 @@ public class MetadataExtractorTest {
 
         // WHEN
         final AnnotationInspector<Transactional> ai = metadataExtractor.transactional();
+
+        // THEN
+        assertThat(ai, notNullValue());
+    }
+
+    @Test
+    public void testBootstrapping() {
+
+        // WHEN
+        final AnnotationInspector<Bootstrapping> ai = metadataExtractor.bootstrapping();
 
         // THEN
         assertThat(ai, notNullValue());

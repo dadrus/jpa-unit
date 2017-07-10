@@ -1,0 +1,4 @@
+id;version;value_1;value_2;value_3;value_4;value_5
+1;Record 1 version;Record 1 Value 1;Record 1 Value 2;;Record 1 Value 4;
+2;Record 2 version;Record 2 Value 1;Record 2 Value 2;Record 2 Value 3;;
+3;Record 3 version;;;;;Record 3 Value 5

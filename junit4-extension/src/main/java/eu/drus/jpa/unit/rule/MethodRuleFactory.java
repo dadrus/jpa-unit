@@ -12,7 +12,6 @@ public final class MethodRuleFactory {
 
     public static MethodRule createRule(final ExecutionContext ctx, final TestClassDecorator decorator) {
         return (base, method, target) -> new TestClassStatement(ctx, decorator, base, target);
-
     }
 
     public static MethodRule createRule(final ExecutionContext ctx, final TestMethodDecorator decorator) {
