@@ -253,7 +253,7 @@ public class MyTest {
 
 ### Running Custom Catabase Scripts
 
-Seeding the database as described above introduces an additional abstraction level, which is not always desired on one hand. On other hand, there might be a need to disable specific database constraint checks before a database cleanup might be performed (latter only possible in a post test execution step). Usage of plain scripts (e.g. SQL) comes in handy here to execute any action directly on the database level. Simply put `@ApplyScriptBefore` and/or `@ApplyScriptAfter` annotation either on your test class or directly on your test method. Corresponding scripts will be executed before and/or after test method accordingly. If there is definition on both, test method level annotation takes precedence.
+Seeding the database as described above introduces an additional abstraction level, which is not always desired on one hand. On other hand, there might be a need to disable specific database constraint checks before a database cleanup might be performed (latter only possible in a post test execution step). Usage of plain scripts (e.g. SQL) comes in handy here to execute any action directly on the database level. Simply put `@ApplyScriptBefore` and/or `@ApplyScriptAfter` annotation on your test class and/or directly on your test method. Corresponding scripts will be executed before and/or after test method accordingly. If there is definition on both, test method level annotation takes precedence.
 
 Both annotation have the following properties:
 
@@ -282,7 +282,9 @@ public class MyTest {
 
 ### Database Content Verification
 
-Asserting database state directly from testing code might imply a huge amount of work. `@ExpectedDataSets` comes in handy here. Just put this annotation either on a test class to apply the same assertions for all tests, or on a single test method and JPA Unit will use the referenced files to check whether the database contains entries you are expecting after the test execution. `@ExpectedDataSets` has following properties:
+Asserting database state directly from testing code might imply a huge amount of work. `@ExpectedDataSets` comes in handy here. Just put this annotation either on a test class to apply the same assertions for all tests, or on a single test method (the latter takes precedence) and JPA Unit will use the referenced files to check whether the database contains entries you are expecting after the test execution. 
+
+The `@ExpectedDataSets` annotation has the following properties:
 
 - `value` of type `String[]` which takes a list of data set files used for post-test verification of the database's state.
 - `orderBy` of type `String[]` which takes a list of columns to be used for sorting rows to determine the order of data sets comparison (Not supported by all database types).
@@ -329,6 +331,50 @@ public class MyTest {
 ```
 
 ### Cleaning the Database
+
+#### Strategy based Cleanup
+
+By default the database content is entirely erased before each test. if you want to control this behavior, `@Cleanup` annotation is your friend. It defines when database cleanup should be triggered and which cleanup strategy to apply. 
+As always, you can use this annotation globally on a class level or on a method level. The latter takes precedence.
+
+The `@Cleanup` annotation has the following properties:
+
+- `strategy` of type `CleanupStrategy`. Defines which strategy to apply while erasing the database content. Default strategy is `CleanupStrategy.STRICT`. Following strategies are available:
+    - `STRICT`. Cleans entire database. Might require turning off database constraints (e.g. referential integrity).
+    - `USED_ROWS_ONLY`. Deletes only those entries which were defined in data sets.
+    - `USED_TABLES_ONLY`. Deletes only those tables/collections which were used in data sets.
+- `phase` of type `CleanupPhase`. Defines the phase when the database cleanup should be triggered. Default phase is `AFTER`. Following phases are available:
+    - `BEFORE`. The contents of database are deleted (based on the strategy) before the test method is executed.
+    - `AFTER`. The contents of database are deleted (based on the strategy) after the test method is executed.
+    - `NONE`. The cleanup of the database is disabled.
+    
+
+Usage example:
+
+```java
+@RunWith(JpaUnitRunner.class)
+@Cleanup(TransactionMode.BEFORE) // change the default phase from AFTER to BEFORE
+public class MyTest {
+
+    @PersistenceContext(unitName = "my-test-unit")
+    private EntityManager manager;
+	
+    @Test
+    public void someTest() {
+		// your code here
+    }
+    
+    @Test
+    @Cleanup(phase = CleanupPhase.AFTER, strategy = CleanupStrategy.USED_ROWS_ONLY)
+    public void otherTest() {
+		// your code here
+    }
+}
+```
+
+#### Using Custom Scripts
+
+
 
 ### Controlling Second Level Cache
 
