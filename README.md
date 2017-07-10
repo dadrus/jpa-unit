@@ -126,7 +126,7 @@ public class MyTest {
 ```
 
 
-## Basic configuration
+## Basic Configuration
 
 Irrespectively the JUnit version, the presence of either
 
@@ -140,7 +140,7 @@ In both cases the reference to the persistence unit is required as well (e.g. `@
 Like in any JPA application, you have to define a `persistence.xml` file in the `META-INF` directory which includes the JPA provider and `persistence-unit` configuration. 
 For test purposes the `transaction-type` of the configured `persistence-unit` must be `RESOURCE_LOCAL`. 
 
-## Control the behavior
+## Control the Behavior
 
 To control the test behavior, JPA Unit comes with a handful of annotations and some utility classes. All these annotations can be applied on class and method level, where the latter always takes precedence over the former.
 JPA Unit follows the concept of configuration by exception whenever possible. To support this concept its API consists mainly of annotations with meaningful defaults (if the annotation is not present) used to drive the test. 
@@ -158,7 +158,7 @@ JPA Unit follows the concept of configuration by exception whenever possible. To
 
 All these elements are described in more detail below.
 
-### Transactional tests
+### Transactional Tests
 
 Like already written above automatic transaction management is active if the test uses an `EntityManager` instance controlled by JPA Unit. To tweak the required behavior you can use the `@Transactional` annotation either on a test class to apply the same behavior for all tests, or on a single test. This annotation has following properties:
 
@@ -219,7 +219,7 @@ public class MyTest {
 }
 ```
 
-### Seeding the database
+### Seeding the Database
 
 Creating ad-hoc object graphs in a test to seed the database can be a complex task on the one hand and made the test less readable. On the other hand it is usually not the goal of a test case, rather a prerequisite. 
 To address this, JPA Unit provides an alternative way in a form of database fixtures, which are easy configurable and can be applied for all tests or for a single test. To achieve this JPA Unit uses the concept of data sets.
@@ -251,7 +251,7 @@ public class MyTest {
 }
 ```
 
-### Running custom database scripts
+### Running Custom Catabase Scripts
 
 Seeding the database as described above introduces an additional abstraction level, which is not always desired on one hand. On other hand, there might be a need to disable specific database constraint checks before a database cleanup might be performed (latter only possible in a post test execution step). Usage of plain scripts (e.g. SQL) comes in handy here to execute any action directly on the database level. Simply put `@ApplyScriptBefore` and/or `@ApplyScriptAfter` annotation either on your test class or directly on your test method. Corresponding scripts will be executed before and/or after test method accordingly. If there is definition on both, test method level annotation takes precedence.
 
@@ -263,7 +263,7 @@ Usage example:
 
 ```java
 @RunWith(JpaUnitRunner.class)
-@ApplyScriptBefore("scrips/some-sql-script.script")
+@ApplyScriptBefore("scrips/some-script.script")
 public class MyTest {
 
     @PersistenceContext(unitName = "my-test-unit")
@@ -271,8 +271,8 @@ public class MyTest {
 	
     @Test
     @ApplyScriptAfter({
-        "scrips/some-other-script-1.sql",
-        "scrips/some-other-script-2.sql"
+        "scrips/some-other-script-1.script",
+        "scrips/some-other-script-2.script"
     })
     public void someTest() {
         // your code here
@@ -280,11 +280,57 @@ public class MyTest {
 }
 ```
 
-### Database content verification
+### Database Content Verification
 
-### Cleaning database
+Asserting database state directly from testing code might imply a huge amount of work. `@ExpectedDataSets` comes in handy here. Just put this annotation either on a test class to apply the same assertions for all tests, or on a single test method and JPA Unit will use the referenced files to check whether the database contains entries you are expecting after the test execution. `@ExpectedDataSets` has following properties:
 
-### Controlling second level cache
+- `value` of type `String[]` which takes a list of data set files used for post-test verification of the database's state.
+- `orderBy` of type `String[]` which takes a list of columns to be used for sorting rows to determine the order of data sets comparison (Not supported by all database types).
+- `excludeColumns` of type `String[]` which takes a list of columns to be excluded during the comparison.
+- `filter` of type `Class<?>[]` which takes a list of custom filters to be applied during verification in the specified order (Not supported by all database types)
+- `strict` of type `boolean` which defines whether the performed verification about expected data sets is strict or not. In strict mode all tables/collections and entries not defined in the expected data sets are considered to be an error. By default strict mode is disabled.
+
+Both `orderBy` and `excludeColumns` properties can be used to define columns with and without dotted notation. With dotted notation one can explicitly define the table/collection in addition to the actual field/property (see also the example below).
+
+Usage example:
+
+```java
+@RunWith(JpaUnitRunner.class)
+public class MyTest {
+
+    @PersistenceContext(unitName = "my-test-unit")
+    private EntityManager manager;
+	
+    protected Depositor depositor;
+
+    @Before
+    public void createTestData() throws OperationNotSupportedException {
+        depositor = new Depositor("Max", "Doe");
+        depositor.addContactDetail(new ContactDetail(ContactType.EMAIL, "john.doe@acme.com"));
+        depositor.addContactDetail(new ContactDetail(ContactType.TELEPHONE, "+1 22 2222 2222"));
+        depositor.addContactDetail(new ContactDetail(ContactType.MOBILE, "+1 11 1111 1111"));
+        final InstantAccessAccount instantAccessAccount = new InstantAccessAccount(depositor);
+        final GiroAccount giroAccount = new GiroAccount(depositor);
+        giroAccount.setCreditLimit(1000.0f);
+        giroAccount.deposit(100.0f);
+        giroAccount.transfer(150.0f, instantAccessAccount);
+    }
+
+    @Test
+    @ExpectedDataSets(value = "datasets/expected-data.json", excludeColumns = {
+            "ID", "DEPOSITOR_ID", "ACCOUNT_ID", "VERSION"
+    }, orderBy = {
+            "CONTACT_DETAIL.TYPE", "ACCOUNT_ENTRY.TYPE"
+    })
+    public void test1() {
+        manager.persist(depositor);
+    }
+}
+```
+
+### Cleaning the Database
+
+### Controlling Second Level Cache
 
 The JPA L2 cache can be a two-edged sword if configured or used improperly. Therefore it is crucial to test the corresponding behavior as early as possible. JPA Unit enables this by the usage of the `@CleanupCache` annotation either on a test class, to apply the same behavior for all tests, or on a single test level to define whether and when the JPA L2 cache should be evicted . Please note: The behavior of the second level can be configured in the `persistence.xml`. If `@CleanupCache` is used and the defined `phase` (see below) is not `NONE`, the second level cache will be evicted regardless the settings defined in the `persistence.xml`. This annotation has following properties:
 
@@ -310,7 +356,7 @@ public class MyTest {
 }
 ```
 
-### Bootstrapping of DB schema & contents
+### Bootstrapping of DB Schema & Contents
 
 Bootstrapping of the data base schema, as well as the handling of its evolution over a period of time is a crucial topic. To enable a data base schema & contents setup close to the productive environment in which the JPA provider usually relies on this given DB setup, the corresponding database specific actions need to be done before the JPA provider is loaded by accessing the data base directly. JPA Unit enables this by the usage of the `@Bootstrapping` annotation. A dedicated method of a test class, which implements a data base scheme & contents setup can be annotated with this annotation and is required to have one parameter of type `DataSource`. JPA Unit will execute this method very early in its bootstrapping process. Because of this neither `EntityManager` nor `EntityManagerFactory` cannot be used at this time.
 
@@ -341,7 +387,7 @@ public class FlywaydbTest {
 }
 ```
 
-## Database integration
+## Database Integration
 
 Depending on the used database, you will have to add a dependency for a database specific JPA-Unit plugin.
 
@@ -547,7 +593,7 @@ If indexes (for more information on MongoDB indexes and types see [MongoDB Index
 Please note, that in this case the collection document consists of two subdocuments. The first one - `indexes` is where the indexes are defined. Basically this is which fields of the collection are going to be indexed.
 The second one - `data`, where all documents, which belong to the collection under test, are defined.
 
-## CDI integration
+## CDI Integration
 
 To be able to use the JPA Unit with CDI, all you need in addition to your CDI test dependency, like [DeltaSpike Test-Control Module](https://deltaspike.apache.org/documentation/test-control.html) or [Gunnar's CDI Test](https://github.com/guhilling/cdi-test), is to add the following dependency to your Maven project :
 
