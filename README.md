@@ -22,7 +22,7 @@ Implements [JUnit 4](http://junit.org/junit4) runner and rule, as well as [JUnit
 
 The implementation is inspired by the [Arquillian Persistence Extension](http://arquillian.org/modules/persistence-extension). Some of the code fragments are extracted out of it and adopted to suit the needs.
 
-## Maven Integraton
+# Maven Integraton
 
 To be able to use the JPA Unit you will have to add some dependencies to your Maven project. For easier dependency management, there is a bom available which you can add to your `dependencyManagement` section:
 
@@ -38,7 +38,7 @@ To be able to use the JPA Unit you will have to add some dependencies to your Ma
 </dependencyManagement>
 ```
 
-The actual dependencies are listed below in sections addressing the different possible integration types.
+The actual dependencies are listed in sections addressing the different possible integration types.
 
 ## JPA Unit with JUnit 4
 
@@ -140,7 +140,7 @@ In both cases the reference to the persistence unit is required as well (e.g. `@
 Like in any JPA application, you have to define a `persistence.xml` file in the `META-INF` directory which includes the JPA provider and `persistence-unit` configuration. 
 For test purposes the `transaction-type` of the configured `persistence-unit` must be `RESOURCE_LOCAL`. 
 
-## Control the Behavior
+# Control the Behavior
 
 To control the test behavior, JPA Unit comes with a handful of annotations and some utility classes. All these annotations can be applied on class and method level, where the latter always takes precedence over the former.
 JPA Unit follows the concept of configuration by exception whenever possible. To support this concept its API consists mainly of annotations with meaningful defaults (if the annotation is not present) used to drive the test. 
@@ -158,7 +158,7 @@ JPA Unit follows the concept of configuration by exception whenever possible. To
 
 All these elements are described in more detail below.
 
-### Transactional Tests
+## Transactional Tests
 
 Like already written above automatic transaction management is active if the test uses an `EntityManager` instance controlled by JPA Unit. To tweak the required behavior you can use the `@Transactional` annotation either on a test class to apply the same behavior for all tests, or on a single test. This annotation has following properties:
 
@@ -219,7 +219,7 @@ public class MyTest {
 }
 ```
 
-### Seeding the Database
+## Seeding the Database
 
 Creating ad-hoc object graphs in a test to seed the database can be a complex task on the one hand and made the test less readable. On the other hand it is usually not the goal of a test case, rather a prerequisite. 
 To address this, JPA Unit provides an alternative way in a form of database fixtures, which are easy configurable and can be applied for all tests or for a single test. To achieve this JPA Unit uses the concept of data sets.
@@ -251,7 +251,7 @@ public class MyTest {
 }
 ```
 
-### Running Custom Catabase Scripts
+## Running Custom Catabase Scripts
 
 Seeding the database as described above introduces an additional abstraction level, which is not always desired on one hand. On other hand, there might be a need to disable specific database constraint checks before a database cleanup might be performed (latter only possible in a post test execution step). Usage of plain scripts (e.g. SQL) comes in handy here to execute any action directly on the database level. Simply put `@ApplyScriptBefore` and/or `@ApplyScriptAfter` annotation on your test class and/or directly on your test method. Corresponding scripts will be executed before and/or after test method accordingly. If there is definition on both, test method level annotation takes precedence.
 
@@ -280,7 +280,7 @@ public class MyTest {
 }
 ```
 
-### Database Content Verification
+## Database Content Verification
 
 Asserting database state directly from testing code might imply a huge amount of work. `@ExpectedDataSets` comes in handy here. Just put this annotation either on a test class to apply the same assertions for all tests, or on a single test method (the latter takes precedence) and JPA Unit will use the referenced files to check whether the database contains entries you are expecting after the test execution. 
 
@@ -330,9 +330,9 @@ public class MyTest {
 }
 ```
 
-### Cleaning the Database
+## Cleaning the Database
 
-#### Strategy based Cleanup
+### Strategy based Cleanup
 
 By default the database content is entirely erased before each test. If you want to control this behavior, `@Cleanup` annotation is your friend. It defines when database cleanup should be triggered and which cleanup strategy to apply. 
 As always, you can use this annotation globally on a class level or on a method level. The latter takes precedence.
@@ -372,7 +372,7 @@ public class MyTest {
 }
 ```
 
-#### Using Custom Scripts
+### Using Custom Scripts
 
 If automatic cleanup as described in [Strategy based Cleanup](#strategy-based-cleanup) does not suit your needs, `@CleanupUsingScripts` might be your friend. You can use it to execute custom scripts to clean your database before or after the test. Just put this annotation either on the test itself or on the test class. As always the definition applied on the test method level takes precedence.
 
@@ -401,7 +401,7 @@ public class MyTest {
 }
 ```
 
-### Controlling Second Level Cache
+## Controlling Second Level Cache
 
 The JPA L2 cache can be a two-edged sword if configured or used improperly. Therefore it is crucial to test the corresponding behavior as early as possible. JPA Unit enables this by the usage of the `@CleanupCache` annotation either on a test class, to apply the same behavior for all tests, or on a single test level to define whether and when the JPA L2 cache should be evicted . Please note: The behavior of the second level can be configured in the `persistence.xml`. If `@CleanupCache` is used and the defined `phase` (see below) is not `NONE`, the second level cache will be evicted regardless the settings defined in the `persistence.xml`. This annotation has following properties:
 
@@ -427,7 +427,7 @@ public class MyTest {
 }
 ```
 
-### Bootstrapping of DB Schema & Contents
+## Bootstrapping of DB Schema & Contents
 
 Bootstrapping of the data base schema, as well as the handling of its evolution over a period of time is a crucial topic. To enable a data base schema & contents setup close to the productive environment in which the JPA provider usually relies on this given DB setup, the corresponding database specific actions need to be done before the JPA provider is loaded by accessing the data base directly. JPA Unit enables this by the usage of the `@Bootstrapping` annotation. A dedicated method of a test class, which implements a data base scheme & contents setup can be annotated with this annotation and is required to have one parameter of type `DataSource`. JPA Unit will execute this method very early in its bootstrapping process. Because of this neither `EntityManager` nor `EntityManagerFactory` cannot be used at this time.
 
@@ -458,11 +458,11 @@ public class FlywaydbTest {
 }
 ```
 
-## Database Integration
+# Supported Databases
 
 Depending on the used database, you will have to add a dependency for a database specific JPA-Unit plugin.
 
-### SQL Databases
+## SQL Databases
 
 For all SQL databases the `jpa-unit-sql` dependency needs to be added:
 
@@ -499,9 +499,11 @@ Here an example of a `persistence.xml` file which configures [EclipseLink](http:
 
     <properties>
       <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
-      <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform" />
+      <property name="eclipselink.target-database" 
+          value="org.eclipse.persistence.platform.database.H2Platform" />
       <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:serviceEnablerDB;DB_CLOSE_DELAY=-1" />
+      <property name="javax.persistence.jdbc.url" 
+          value="jdbc:h2:mem:serviceEnablerDB;DB_CLOSE_DELAY=-1" />
       <property name="javax.persistence.jdbc.user" value="test" />
       <property name="javax.persistence.jdbc.password" value="test" />
     </properties>
@@ -509,7 +511,7 @@ Here an example of a `persistence.xml` file which configures [EclipseLink](http:
 </persistence>
 ```
 
-#### Data Set Format
+### Data Set Format
 
 For SQL databases JPA Unit uses [DBUnit](http://dbunit.sourceforge.net/) initernally. Thanks to DBUnit, following data set formats are supported:
 
@@ -568,7 +570,7 @@ ADDRESS:
 
 
 
-### MongoDB
+## MongoDB
 
 For [MongoDB](https://www.mongodb.com), the `jpa-unit-mongodb` dependency needs to be added:
 
@@ -587,7 +589,7 @@ To overcome this limitation, or made it at least less painful, one can use e.g.
 - [Flapdoodle Embedded MongoDB](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo) for the lifecycle management of a MongoDB instance from code, e.g. from `@BeforeClass` and `@AfterClass` annotated methods. You can find working example within the JPA Unit integration test project for MongoDB. 
 - [embedmongo-maven-plugin](https://github.com/joelittlejohn/embedmongo-maven-plugin) for the lifecycle management of a MongoDB instance through Maven.
 
-#### JPA Provider Dependencies
+### JPA Provider Dependencies
 
 Since JPA does not address NoSQL databases, each JPA provider defines its own properties. These properties are also the only dependencies to a specific JPA provider implementation. As of todays JPA Unit MongoDB extension can use the properties of the following JPA provider:
 
@@ -596,7 +598,7 @@ Since JPA does not address NoSQL databases, each JPA provider defines its own pr
 - [DataNucleus (with MongoDB extension)](http://www.datanucleus.org/products/datanucleus/jpa/samples/tutorial_mongodb.html)
 - [Kundera (with MongoDB extension)](https://github.com/impetus-opensource/Kundera/wiki/Kundera-with-MongoDB)
 
-#### Data Set Format
+### Data Set Format
 
 Default data set format for MongoDB is _JSON_. In a simple case it must comply with the following example structure:
 
@@ -662,9 +664,9 @@ If indexes (for more information on MongoDB indexes and types see [MongoDB Index
 ``` 
 
 Please note, that in this case the collection document consists of two subdocuments. The first one - `indexes` is where the indexes are defined. Basically this is which fields of the collection are going to be indexed.
-The second one - `data`, where all documents, which belong to the collection under test, are defined.
+The second one - `data`, where all documents, which belong to the collection under test, are defined. In both cases all the types defined by MongoDB are supported.
 
-## CDI Integration
+# CDI Integration
 
 To be able to use the JPA Unit with CDI, all you need in addition to your CDI test dependency, like [DeltaSpike Test-Control Module](https://deltaspike.apache.org/documentation/test-control.html) or [Gunnar's CDI Test](https://github.com/guhilling/cdi-test), is to add the following dependency to your Maven project :
 
@@ -701,10 +703,3 @@ public class CdiEnabledJpaUnitTest {
 }
 ```
 
-## Examples
-
-You can find working examples in the `integration-test` subproject.
-
-## TODOs
-
-- [] Make the extension available in mavencentral
