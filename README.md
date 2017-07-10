@@ -374,7 +374,7 @@ public class MyTest {
 
 #### Using Custom Scripts
 
-If automatic cleanup as described in (#Strategy-based-Cleanup) does not suit your needs, `@CleanupUsingScripts` might be your friend. You can use it to execute custom scripts to clean your database before or after the test. Just put this annotation either on the test itself or on the test class. As always the definition applied on the test method level takes precedence.
+If automatic cleanup as described in [Strategy based Cleanup](#strategy-based-cleanup) does not suit your needs, `@CleanupUsingScripts` might be your friend. You can use it to execute custom scripts to clean your database before or after the test. Just put this annotation either on the test itself or on the test class. As always the definition applied on the test method level takes precedence.
 
 This annotation has following properties:
 
