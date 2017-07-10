@@ -4,7 +4,7 @@ Implements [JUnit 4](http://junit.org/junit4) runner and rule, as well as [JUnit
 
 ## Features
 
-- Makes use of standard `@PersistenceContext` and `@PersistenceUnit` annotations to inject the `EntityManager`, respectively `EntityManagerFactory`. Irrespective of the used configuration, the `EntityManagerFactory` instance is acquired once and lives for the duration of the entire test suite implemented by the given test class.
+- Makes use of standard `@PersistenceContext` and `@PersistenceUnit` annotations to inject the `EntityManager`, respectively `EntityManagerFactory`.
 - Solely relies on the JPA configuration (`persistence.xml`). No further JPA Unit specific configuration required. 
 - Does not impose any JPA provider dependencies.
 - Implements automatic transaction management.
@@ -38,19 +38,9 @@ To be able to use the JPA Unit you will have to add some dependencies to your Ma
 </dependencyManagement>
 ```
 
-The actual dependencies are listed below in sections addressing the different possible integration types. In addition you'll want to add the dependencies for your JPA provider (e.g. [EclipseLink](http://www.eclipse.org/eclipselink) and the database specific driver.
-E.g.:
+The actual dependencies are listed below in sections addressing the different possible integration types.
 
-```xml
-<dependency>
-  <groupId>org.eclipse.persistence</groupId>
-  <artifactId>eclipselink</artifactId>
-  <version>${eclipselink.version}</version>
-  <scope>test</scope>
-</dependency>
-```
-
-## JPA Unit integration with JUnit 4
+## JPA Unit with JUnit 4
 
 To work with JUnit 4, you would need to add `jpa-unit4` to your test dependencies:
 
@@ -102,7 +92,7 @@ public class MyTest {
 }
 ```
 
-## JPA Unit integration with JUnit 5
+## JPA Unit with JUnit 5
 
 To work with JUnit 5, you would need to add `jpa-unit5` to your test dependencies:
 
@@ -115,7 +105,7 @@ To work with JUnit 5, you would need to add `jpa-unit5` to your test dependencie
 </dependency>
 ```
 
-On the code leven, there is no much choice for JUnit 5
+On the code level, there is no much choice for JUnit 5
 
 - the test class needs to be annotated with `@ExtendWith(JpaUnit.class)` annotation.
 
@@ -143,7 +133,7 @@ Irrespectively the JUnit version, the presence of either
 - an `EntityManager` property annotated with `@PersistenceContext`. In this case a new `EntityManager` instance is acquired for each test case. On test case exit it is cleared and closed. Furthermore the usage of an `EntityManager` instance managed by JPA Unit, enables automatic transaction management, where a new transaction is started before each test case and committed after the test case returns, respectively the method annotated with `@After`. The `@Transactional` annotation (see below) can be used to overwrite and configure the required behavior.
 - or an `EntityManagerFactory` property annotated with `@PersistenceUnit`. In this case the user is responsible for obtaining and closing the required `EntityManager` instance including the corresponding transaction management. There are however some utility functions which can ease the test implementation (see `TransactionSupport` class).
 
-is required.
+is required. Irrespective of the used configuration, the `EntityManagerFactory` instance is acquired once and lives for the duration of the entire test suite implemented by the given test class.
 
 In both cases the reference to the persistence unit is required as well (e.g. `@PersistenceContext(unitName = "my-test-unit")` or `@PersistenceUnit(unitName = "my-test-unit")`). Thus, given the presence of a persistence provider configuration, the examples, shown above, already implement full functional tests.
 
@@ -407,10 +397,10 @@ Here an example of a `persistence.xml` file which configures [EclipseLink](http:
 For SQL databases JPA Unit uses [DBUnit](http://dbunit.sourceforge.net/) initernally. Thanks to DBUnit, following data set formats are supported:
 
 - XML (Flat XML Data Set). A simple XML structure, where each element represents a single row in a given table and attribute names correspond to the table columns as illustrated below.
-- YAML.
-- JSON.
-- XSL(X)
-- CSV
+- YAML. Similar to the flat XML layout, but has some improvements (columns are calculated by parsing the entire data set, not just the first row)
+- JSON. Similar to YAML.
+- XSL(X). With this data set format each sheet represents a table. The first row of a sheet defines the columns names and remaining rows contains the data.
+- CSV. Here a data set can be constructed from a directory containing csv files, each representing a separate table with its entries.
 
 
 Here some data set examples:
@@ -475,14 +465,19 @@ For [MongoDB](https://www.mongodb.com), the `jpa-unit-mongodb` dependency needs 
 ```
 
 JPA Unit needs to connect to a running MongoDB instance. This is done using [mongo-java-driver](https://mongodb.github.io/mongo-java-driver/). Usage of an in-process, in-memory MongoDB implementations, like [Fongo](https://github.com/fakemongo/fongo) is not possible.
-To overcome this limitation, or made it at least less painful, one can use 
+To overcome this limitation, or made it at least less painful, one can use e.g.
 
 - [Flapdoodle Embedded MongoDB](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo) for the lifecycle management of a MongoDB instance from code, e.g. from `@BeforeClass` and `@AfterClass` annotated methods. You can find working example within the JPA Unit integration test project for MongoDB. 
 - [embedmongo-maven-plugin](https://github.com/joelittlejohn/embedmongo-maven-plugin) for the lifecycle management of a MongoDB instance through Maven.
 
 #### JPA Provider Dependencies
 
-Sonce JPA does not address NoSQL databses, each JPA provider defines its own properties. These properties are also the only dependencies to a specific JPA provider implementation. As of todays JPA Unit supports Hibernate OGM MongoDB specific properties only.
+Since JPA does not address NoSQL databases, each JPA provider defines its own properties. These properties are also the only dependencies to a specific JPA provider implementation. As of todays JPA Unit MongoDB extension can use the properties of the following JPA provider:
+
+- [Hibernate OGM (with MongoDB extension)](https://docs.jboss.org/hibernate/ogm/5.1/reference/en-US/html_single/#ogm-mongodb).
+- [EclipseLink (with MongoDB extension)](https://www.eclipse.org/eclipselink/documentation/2.6/concepts/nosql002.htm)
+- [DataNucleus (with MongoDB extension)](http://www.datanucleus.org/products/datanucleus/jpa/samples/tutorial_mongodb.html)
+- [Kundera (with MongoDB extension)](https://github.com/impetus-opensource/Kundera/wiki/Kundera-with-MongoDB)
 
 #### Data Set Format
 
@@ -510,7 +505,7 @@ Default data set format for MongoDB is _JSON_. In a simple case it must comply w
 }
 ```
 
-If indexes need to be included as well, the following structure applies:
+If indexes (for more information on MongoDB indexes and types see [MongoDB Indexes](https://docs.mongodb.com/manual/indexes/)) need to be included as well, the following structure applies:
 
 ```.json
 {
@@ -518,12 +513,20 @@ If indexes need to be included as well, the following structure applies:
     "indexes": [
       {
         "index": {
+          "property_1": 1
         },
         "index": {
+          "property_2": 1,
+          "options": {
+            "unique": true,
+            "default_language": "english"
+          }
         }
       },
       {
         "index": {
+          "property_3": 1,
+          "property_4": -1
         }
       }
     ],
@@ -540,6 +543,9 @@ If indexes need to be included as well, the following structure applies:
   }
 }
 ``` 
+
+Please note, that in this case the collection document consists of two subdocuments. The first one - `indexes` is where the indexes are defined. Basically this is which fields of the collection are going to be indexed.
+The second one - `data`, where all documents, which belong to the collection under test, are defined.
 
 ## CDI integration
 
@@ -580,41 +586,7 @@ public class CdiEnabledJpaUnitTest {
 
 ## Examples
 
-Here another example which shows the usage of some of the aforementioned annotations:
-
-```java
-@RunWith(JpaUnitRunner.class)
-public class MyTest {
-
-    @PersistenceContext(unitName = "my-test-unit")
-    private EntityManager manager;
-	
-    @Test
-    @InitialDataSets("test-data.json")
-    @Transactional(TransactionMode.DISABLED)
-    public void someReadDataTest() {
-		final TestEntity entity = manager.find(TestEntity.class, 1L);
-		
-		// do something with entity
-    }
-	
-    @Test
-    @InitialDataSets("test-data.json")
-    @ExpectedDataSets("expected-data.json")
-    public void someUpdateDataTest() {
-		final TestEntity entity = manager.find(TestEntity.class, 1L);
-		
-		// update entity. It is attached to the persistence context.
-    }
-}
-```
-
-You can find working examples in the `integration-test` subproject. As for today it implements a simple model and defines four maven profiles to run tests with EclipseLink and Hibernate:
-
-- `jpa2.0-eclipselink`
-- `jpa2.1-eclipselink`
-- `jpa2.0-hibernate`
-- `jpa2.1-hibernate`
+You can find working examples in the `integration-test` subproject.
 
 ## TODOs
 
