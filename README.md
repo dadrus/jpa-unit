@@ -374,7 +374,32 @@ public class MyTest {
 
 #### Using Custom Scripts
 
+If automatic cleanup as described in (#Strategy-based-Cleanup) does not suit your needs, `@CleanupUsingScripts` might be your friend. You can use it to execute custom scripts to clean your database before or after the test. Just put this annotation either on the test itself or on the test class. As always the definition applied on the test method level takes precedence.
 
+This annotation has following properties:
+
+- `value` of type `String[]` which needs to be set to reference the required database specific cleanup scripts.
+- `phase` of type `CleanupPhase`. Defines the phase when the cleanup scripts should be executed. Following phases are available:
+    - `BEFORE`. Before the test method is executed.
+    - `AFTER`. After the test method is executed. This is the **default** phase.
+    - `NONE`. The execution of scripts is disabled.
+    
+Usage example:
+
+```java
+@RunWith(JpaUnitRunner.class)
+public class MyTest {
+
+    @PersistenceContext(unitName = "my-test-unit")
+    private EntityManager manager;
+    
+    @Test
+    @CleanupUsingScripts(phase = CleanupPhase.AFTER, value = "scripts/delete-all.script")
+    public void otherTest() {
+        // your code here
+    }
+}
+```
 
 ### Controlling Second Level Cache
 
@@ -682,4 +707,4 @@ You can find working examples in the `integration-test` subproject.
 
 ## TODOs
 
-- Make the extension available in mavencentral
+- [] Make the extension available in mavencentral
