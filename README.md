@@ -69,7 +69,7 @@ public class MyTest {
 	
     @Test
     public void someTest() {
-		// your code here
+        // your code here
     }
 }
 ```
@@ -87,7 +87,7 @@ public class MyTest {
 	
     @Test
     public void someTest() {
-		// your code here
+        // your code here
     }
 }
 ```
@@ -120,7 +120,7 @@ public class MyTest {
 	
     @Test
     public void someTest() {
-		// your code here
+        // your code here
     }
 }
 ```
@@ -179,7 +179,7 @@ public class MyTest {
 	
     @Test
     public void someTest() {
-		// your code here
+        // your code here
     }
 }
 ```
@@ -206,13 +206,13 @@ public class MyTest {
     @Test
     public void someTest() {
 		newTransaction(manager).execute(() -> {
-			// some code wrapped in a transaction
+            // some code wrapped in a transaction
 		});
 		
 		int result = newTransaction(manager)
 		.clearContextOnCommit(true)
 		.execute(() -> {
-			// some code wrapped in a transaction
+            // some code wrapped in a transaction
 			return 1;
 		});
     }
@@ -290,7 +290,7 @@ The `@ExpectedDataSets` annotation has the following properties:
 - `orderBy` of type `String[]` which takes a list of columns to be used for sorting rows to determine the order of data sets comparison (Not supported by all database types).
 - `excludeColumns` of type `String[]` which takes a list of columns to be excluded during the comparison.
 - `filter` of type `Class<?>[]` which takes a list of custom filters to be applied during verification in the specified order (Not supported by all database types)
-- `strict` of type `boolean` which defines whether the performed verification about expected data sets is strict or not. In strict mode all tables/collections and entries not defined in the expected data sets are considered to be an error. By default strict mode is disabled.
+- `strict` of type `boolean` which defines whether the performed verification about expected data sets is strict or not. In strict mode all tables/collections and entries not defined in the expected data sets are considered to be an error. This is the **default** strategy.
 
 Both `orderBy` and `excludeColumns` properties can be used to define columns with and without dotted notation. With dotted notation one can explicitly define the table/collection in addition to the actual field/property (see also the example below).
 
@@ -303,7 +303,7 @@ public class MyTest {
     @PersistenceContext(unitName = "my-test-unit")
     private EntityManager manager;
 	
-    protected Depositor depositor;
+    private Depositor depositor;
 
     @Before
     public void createTestData() throws OperationNotSupportedException {
@@ -334,18 +334,18 @@ public class MyTest {
 
 #### Strategy based Cleanup
 
-By default the database content is entirely erased before each test. if you want to control this behavior, `@Cleanup` annotation is your friend. It defines when database cleanup should be triggered and which cleanup strategy to apply. 
+By default the database content is entirely erased before each test. If you want to control this behavior, `@Cleanup` annotation is your friend. It defines when database cleanup should be triggered and which cleanup strategy to apply. 
 As always, you can use this annotation globally on a class level or on a method level. The latter takes precedence.
 
 The `@Cleanup` annotation has the following properties:
 
-- `strategy` of type `CleanupStrategy`. Defines which strategy to apply while erasing the database content. Default strategy is `CleanupStrategy.STRICT`. Following strategies are available:
-    - `STRICT`. Cleans entire database. Might require turning off database constraints (e.g. referential integrity).
+- `strategy` of type `CleanupStrategy`. Defines which strategy to apply while erasing the database content. Following strategies are available:
+    - `STRICT`. Cleans entire database. This is the **default** strategy. Might require turning off database constraints (e.g. referential integrity).
     - `USED_ROWS_ONLY`. Deletes only those entries which were defined in data sets.
     - `USED_TABLES_ONLY`. Deletes only those tables/collections which were used in data sets.
-- `phase` of type `CleanupPhase`. Defines the phase when the database cleanup should be triggered. Default phase is `AFTER`. Following phases are available:
+- `phase` of type `CleanupPhase`. Defines the phase when the database cleanup should be triggered. Following phases are available:
     - `BEFORE`. The contents of database are deleted (based on the strategy) before the test method is executed.
-    - `AFTER`. The contents of database are deleted (based on the strategy) after the test method is executed.
+    - `AFTER`. The contents of database are deleted (based on the strategy) after the test method is executed. This is the **default** phase.
     - `NONE`. The cleanup of the database is disabled.
     
 
@@ -361,13 +361,13 @@ public class MyTest {
 	
     @Test
     public void someTest() {
-		// your code here
+        // your code here
     }
     
     @Test
     @Cleanup(phase = CleanupPhase.AFTER, strategy = CleanupStrategy.USED_ROWS_ONLY)
     public void otherTest() {
-		// your code here
+        // your code here
     }
 }
 ```
@@ -380,9 +380,9 @@ public class MyTest {
 
 The JPA L2 cache can be a two-edged sword if configured or used improperly. Therefore it is crucial to test the corresponding behavior as early as possible. JPA Unit enables this by the usage of the `@CleanupCache` annotation either on a test class, to apply the same behavior for all tests, or on a single test level to define whether and when the JPA L2 cache should be evicted . Please note: The behavior of the second level can be configured in the `persistence.xml`. If `@CleanupCache` is used and the defined `phase` (see below) is not `NONE`, the second level cache will be evicted regardless the settings defined in the `persistence.xml`. This annotation has following properties:
 
-- `phase` of type `CleanupPhase`. Defines the phase when the second level cache cleanup should be triggered. Default phase is `CleanupPhase#AFTER`. Following phases are available:
+- `phase` of type `CleanupPhase`. Defines the phase when the second level cache cleanup should be triggered. Following phases are available:
     - `BEFORE`. The L2 cache is evicted before the test method is executed.
-    - `AFTER`. The L2 cache is evicted after the test method is executed.
+    - `AFTER`. The L2 cache is evicted after the test method is executed. This is the **default** phase.
     - `NONE`. The eviction of the L2 cache is disabled.
     
 Example which evicts the JPA L2 cache before the execution of each test method implemented by a given class:
@@ -397,7 +397,7 @@ public class MyTest {
 	
     @Test
     public void someTest() {
-		// your code here
+        // your code here
     }
 }
 ```
