@@ -1,5 +1,7 @@
 package eu.drus.jpa.unit.mongodb.ext;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,22 +43,35 @@ public class DataNucleusConfiguration extends AbstractConfiguration {
     private DataNucleusConfiguration(final PersistenceUnitDescriptor descriptor) {
         final Map<String, Object> properties = descriptor.getProperties();
 
-        parseUrl((String) getProperty(properties, JAVAX_PERSISTENCE_JDBC_URL, DATANUCLEUS_CONNECTION_URL));
+        configureServerAddressesAndDatabaseName(properties);
+        configureCredentials(properties);
+        configureClientOptions(properties);
 
+    }
+
+    private void configureServerAddressesAndDatabaseName(final Map<String, Object> properties) {
+        parseUrl((String) getProperty(properties, JAVAX_PERSISTENCE_JDBC_URL, DATANUCLEUS_CONNECTION_URL));
+        checkArgument(databaseName != null, DATANUCLEUS_CONNECTION_URL + " does not contain a database name part");
+    }
+
+    private void configureClientOptions(final Map<String, Object> properties) {
+        final MongoClientOptions.Builder builder = MongoClientOptions.builder();
+        setOptions(builder, (final String key) -> (String) properties.get(DATANUCLEUS_MONGODB_OPTIONS_PREFIX + "." + key));
+        mongoClientOptions = builder.build();
+    }
+
+    private void configureCredentials(final Map<String, Object> properties) {
         final String userName = (String) getProperty(properties, JAVAX_PERSISTENCE_JDBC_USER, DATANUCLEUS_CONNECTION_USER_NAME);
         final String password = (String) getProperty(properties, JAVAX_PERSISTENCE_JDBC_PASSWORD, DATANUCLEUS_CONNECTION_PASSWORD);
 
         if (userName != null) {
+            checkArgument(password != null, "neither " + JAVAX_PERSISTENCE_JDBC_PASSWORD + ", nor " + DATANUCLEUS_CONNECTION_PASSWORD
+                    + " were configured, but required");
             mongoCredentialList = Collections
                     .singletonList(MongoCredential.createPlainCredential(userName, "admin", password.toCharArray()));
         } else {
             mongoCredentialList = Collections.emptyList();
         }
-
-        final MongoClientOptions.Builder builder = MongoClientOptions.builder();
-        setOptions(builder, (final String key) -> (String) properties.get(DATANUCLEUS_MONGODB_OPTIONS_PREFIX + "." + key));
-        mongoClientOptions = builder.build();
-
     }
 
     private static Object getProperty(final Map<String, Object> properties, final String name, final String alternativeName) {
@@ -74,12 +89,18 @@ public class DataNucleusConfiguration extends AbstractConfiguration {
 
         final String serversAndDbName = url.substring(8); // skip mongodb: part
         final String[] servers = serversAndDbName.split(",");
-        for (final String server : servers) {
-            final String[] parts = server.split("/");
-            if (parts.length == 2) {
-                databaseName = parts[1].trim();
+        for (int i = 0; i < servers.length; i++) {
+            String server;
+            if (i == 0) {
+                final String[] parts = servers[i].split("/");
+                if (parts.length == 2) {
+                    databaseName = parts[1].trim();
+                }
+                server = parts[0].trim();
+            } else {
+                server = servers[i].trim();
             }
-            hostAndPortList.add(HostAndPort.fromString(parts[0].trim()));
+            hostAndPortList.add(HostAndPort.fromString(server));
         }
 
         serverAddresses = hostAndPortList.stream()

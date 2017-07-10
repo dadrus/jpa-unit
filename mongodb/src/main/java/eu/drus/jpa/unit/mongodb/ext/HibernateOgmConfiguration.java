@@ -1,5 +1,7 @@
 package eu.drus.jpa.unit.mongodb.ext;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,26 +46,13 @@ public class HibernateOgmConfiguration extends AbstractConfiguration {
     private HibernateOgmConfiguration(final PersistenceUnitDescriptor descriptor) {
         final Map<String, Object> properties = descriptor.getProperties();
 
-        final List<HostAndPort> hostsAndPorts = parse((String) properties.get(HIBERNATE_OGM_DATASTORE_HOST));
-        serverAddresses = hostsAndPorts.stream()
-                .map(h -> new ServerAddress(h.getHost(), h.hasPort() ? h.getPort() : ServerAddress.defaultPort()))
-                .collect(Collectors.toList());
-        if (serverAddresses.isEmpty()) {
-            serverAddresses.add(new ServerAddress());
-        }
+        configureServerAddresses(properties);
+        configureDatabaseName(properties);
+        configureCredentials(properties);
+        configureClientOptions(properties);
+    }
 
-        databaseName = (String) properties.get(HIBERNATE_OGM_DATASTORE_DATABASE);
-
-        final String userName = (String) properties.get(HIBERNATE_OGM_DATASTORE_USERNAME);
-        final String password = (String) properties.get(HIBERNATE_OGM_DATASTORE_PASSWORD);
-        final String authDatabaseName = (String) properties.get(HIBERNATE_OGM_MONGODB_AUTHENTICATION_DATABASE);
-        if (userName != null) {
-            mongoCredentialList = Collections.singletonList(MongoCredential.createPlainCredential(userName,
-                    authDatabaseName != null ? authDatabaseName : "admin", password.toCharArray()));
-        } else {
-            mongoCredentialList = Collections.emptyList();
-        }
-
+    private void configureClientOptions(final Map<String, Object> properties) {
         final MongoClientOptions.Builder builder = MongoClientOptions.builder();
         setOptions(builder, (final String key) -> (String) properties.get(HIBERNATE_OGM_MONGODB_OPTIONS_PREFIX + "." + key));
 
@@ -77,6 +66,34 @@ public class HibernateOgmConfiguration extends AbstractConfiguration {
             builder.readPreference(ReadPreference.valueOf(readPreference));
         }
         mongoClientOptions = builder.build();
+    }
+
+    private void configureCredentials(final Map<String, Object> properties) {
+        final String userName = (String) properties.get(HIBERNATE_OGM_DATASTORE_USERNAME);
+        final String password = (String) properties.get(HIBERNATE_OGM_DATASTORE_PASSWORD);
+        final String authDatabaseName = (String) properties.get(HIBERNATE_OGM_MONGODB_AUTHENTICATION_DATABASE);
+        if (userName != null) {
+            checkArgument(password != null, HIBERNATE_OGM_DATASTORE_PASSWORD + " was not configured, but required");
+            mongoCredentialList = Collections.singletonList(MongoCredential.createPlainCredential(userName,
+                    authDatabaseName != null ? authDatabaseName : "admin", password.toCharArray()));
+        } else {
+            mongoCredentialList = Collections.emptyList();
+        }
+    }
+
+    private void configureDatabaseName(final Map<String, Object> properties) {
+        databaseName = (String) properties.get(HIBERNATE_OGM_DATASTORE_DATABASE);
+        checkArgument(databaseName != null, HIBERNATE_OGM_DATASTORE_DATABASE + " was not configured, but required");
+    }
+
+    private void configureServerAddresses(final Map<String, Object> properties) {
+        final List<HostAndPort> hostsAndPorts = parse((String) properties.get(HIBERNATE_OGM_DATASTORE_HOST));
+        serverAddresses = hostsAndPorts.stream()
+                .map(h -> new ServerAddress(h.getHost(), h.hasPort() ? h.getPort() : ServerAddress.defaultPort()))
+                .collect(Collectors.toList());
+        if (serverAddresses.isEmpty()) {
+            serverAddresses.add(new ServerAddress());
+        }
     }
 
     private List<HostAndPort> parse(final String hostString) {

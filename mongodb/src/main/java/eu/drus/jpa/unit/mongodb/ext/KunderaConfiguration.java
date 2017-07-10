@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.net.HostAndPort;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -41,17 +42,19 @@ public class KunderaConfiguration extends AbstractConfiguration {
     private KunderaConfiguration(final PersistenceUnitDescriptor descriptor) {
         final Map<String, Object> properties = descriptor.getProperties();
 
-        final String port = (String) properties.get(KUNDERA_PORT);
-        final String host = (String) properties.get(KUNDERA_NODES);
+        configureServerAddresses(properties);
+        configureDatabaseName(properties);
+        configureCredentials(properties);
+        configureClientOptions(properties);
+    }
 
-        serverAddresses = new ArrayList<>();
-        serverAddresses.add(new ServerAddress(host.trim(), Integer.valueOf(port.trim())));
-        if (serverAddresses.isEmpty()) {
-            serverAddresses.add(new ServerAddress());
-        }
+    private void configureClientOptions(final Map<String, Object> properties) {
+        final MongoClientOptions.Builder builder = MongoClientOptions.builder();
+        setOptions(builder, (final String key) -> (String) properties.get(KUDERA_KEYS.get(key)));
+        mongoClientOptions = builder.build();
+    }
 
-        databaseName = (String) properties.get(KUNDERA_KEYSPACE);
-
+    private void configureCredentials(final Map<String, Object> properties) {
         final String userName = (String) properties.get(KUNDERA_USERNAME);
         final String password = (String) properties.get(KUNDERA_PASSWORD);
         if (userName != null) {
@@ -60,10 +63,27 @@ public class KunderaConfiguration extends AbstractConfiguration {
         } else {
             mongoCredentialList = Collections.emptyList();
         }
+    }
 
-        final MongoClientOptions.Builder builder = MongoClientOptions.builder();
-        setOptions(builder, (final String key) -> (String) properties.get(KUDERA_KEYS.get(key)));
-        mongoClientOptions = builder.build();
+    private void configureDatabaseName(final Map<String, Object> properties) {
+        databaseName = (String) properties.get(KUNDERA_KEYSPACE);
+    }
+
+    private void configureServerAddresses(final Map<String, Object> properties) {
+        final String port = (String) properties.get(KUNDERA_PORT);
+        final String hosts = (String) properties.get(KUNDERA_NODES);
+
+        final String[] hostList = hosts != null ? hosts.split(",") : new String[] {};
+        final Integer defaultPort = port != null ? Integer.valueOf(port) : 27017;
+
+        serverAddresses = new ArrayList<>();
+        for (int i = 0; i < hostList.length; i++) {
+            final HostAndPort hostAndPort = HostAndPort.fromString(hostList[i].trim());
+            serverAddresses.add(new ServerAddress(hostAndPort.getHost(), hostAndPort.getPortOrDefault(defaultPort)));
+        }
+        if (serverAddresses.isEmpty()) {
+            serverAddresses.add(new ServerAddress());
+        }
     }
 
     private static Map<String, String> createKeyMaping() {

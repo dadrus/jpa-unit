@@ -39,7 +39,7 @@ public class DataNucleusConfigurationTest {
         // mongodb:[{server}][/{dbName}] [,{server2}[,server3}]]
 
         properties.put("datanucleus.ConnectionURL",
-                "mongodb:www.example.com,www2.example.com:123,192.0.2.1, 192.0.2.2:123, 2001:db8::ff00:42:8329, [2001:db8::ff00:42:8329]:123 ");
+                "mongodb:www.example.com/foo, www2.example.com:123,192.0.2.1, 192.0.2.2:123, 2001:db8::ff00:42:8329, [2001:db8::ff00:42:8329]:123 ");
 
         final ConfigurationFactory factory = new ConfigurationFactoryImpl();
 

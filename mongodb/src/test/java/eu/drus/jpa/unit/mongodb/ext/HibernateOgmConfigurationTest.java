@@ -38,6 +38,7 @@ public class HibernateOgmConfigurationTest {
         final Map<String, Object> properties = new HashMap<>();
         when(descriptor.getProperties()).thenReturn(properties);
 
+        properties.put("hibernate.ogm.datastore.database", "foo");
         properties.put("hibernate.ogm.datastore.host",
                 "www.example.com, www2.example.com:123, 192.0.2.1, 192.0.2.2:123, 2001:db8::ff00:42:8329, [2001:db8::ff00:42:8329]:123 ");
 
@@ -63,6 +64,8 @@ public class HibernateOgmConfigurationTest {
         // GIVEN
         final Map<String, Object> properties = new HashMap<>();
         when(descriptor.getProperties()).thenReturn(properties);
+
+        properties.put("hibernate.ogm.datastore.database", "foo");
 
         final ConfigurationFactory factory = new ConfigurationFactoryImpl();
 
@@ -102,6 +105,7 @@ public class HibernateOgmConfigurationTest {
         final Map<String, Object> properties = new HashMap<>();
         when(descriptor.getProperties()).thenReturn(properties);
 
+        properties.put("hibernate.ogm.datastore.database", "foo");
         properties.put("hibernate.ogm.datastore.password", "foo");
 
         final ConfigurationFactory factory = new ConfigurationFactoryImpl();
@@ -123,6 +127,7 @@ public class HibernateOgmConfigurationTest {
         final Map<String, Object> properties = new HashMap<>();
         when(descriptor.getProperties()).thenReturn(properties);
 
+        properties.put("hibernate.ogm.datastore.database", "foo");
         properties.put("hibernate.ogm.datastore.username", "user");
         properties.put("hibernate.ogm.datastore.password", "pass");
 
@@ -152,6 +157,7 @@ public class HibernateOgmConfigurationTest {
         final Map<String, Object> properties = new HashMap<>();
         when(descriptor.getProperties()).thenReturn(properties);
 
+        properties.put("hibernate.ogm.datastore.database", "foo");
         properties.put("hibernate.ogm.datastore.username", "user");
         properties.put("hibernate.ogm.datastore.password", "pass");
         properties.put("hibernate.ogm.mongodb.authentication_database", "auth");
@@ -206,6 +212,8 @@ public class HibernateOgmConfigurationTest {
         final String requiredReplicaSetName = "Replica Name";
         final ReadPreference readPreference = ReadPreference.nearest();
         final WriteConcern writeConcern = WriteConcern.JOURNALED;
+
+        properties.put("hibernate.ogm.datastore.database", "foo");
 
         properties.put("hibernate.ogm.mongodb.driver.alwaysUseMBeans", "" + alwaysUseMBeans);
         properties.put("hibernate.ogm.mongodb.driver.applicationName", applicationName);
