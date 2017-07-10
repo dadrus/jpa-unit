@@ -11,8 +11,7 @@ import java.lang.annotation.Target;
 /**
  * Determines when database cleanup should be triggered. Default test phase is
  * {@link CleanupPhase#AFTER}. If not specified otherwise the whole database is erased. You can
- * change this behavior by setting up {@link #strategy()} field. In addition you can define whether
- * the second level cache should be evicted.
+ * change this behavior by setting up {@link #strategy()} field.
  *
  * @see CleanupPhase
  * @see CleanupStrategy
