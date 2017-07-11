@@ -9,7 +9,7 @@ cache:
    - $HOME/.sonar
    
 addons:
-  sonarqube:
+  sonarcloud:
     organization: dadrus-github
    
 env:
