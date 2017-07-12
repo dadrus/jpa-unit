@@ -45,6 +45,7 @@ public class GiroAccount extends Account {
         final double balance = getBalance();
         final double balanceAfterWithdraw = balance - amount;
         if (balanceAfterWithdraw < 0.0f) {
+            // TODO: enable as soon as https://hibernate.atlassian.net/browse/OGM-1294 is fixed
             // if (-balanceAfterWithdraw > creditLimit) {
             return 0;
             // }
@@ -56,6 +57,7 @@ public class GiroAccount extends Account {
 
     @Override
     public float transfer(final float amount, final Account toAccount) {
+        // TODO: enable as soon as https://hibernate.atlassian.net/browse/OGM-1294 is fixed
         // final double balance = getBalance();
         // final double balanceAfterTransfer = balance - amount;
         // if (balanceAfterTransfer < 0.0f) {

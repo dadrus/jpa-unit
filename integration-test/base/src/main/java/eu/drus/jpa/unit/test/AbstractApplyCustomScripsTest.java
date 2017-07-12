@@ -67,6 +67,8 @@ public abstract class AbstractApplyCustomScripsTest {
         assertThat(account, instanceOf(GiroAccount.class));
         final GiroAccount giroAccount = (GiroAccount) account;
         assertThat(giroAccount.getBalance(), equalTo(100000.0));
+
+        // TODO: enable as soon as https://hibernate.atlassian.net/browse/OGM-1294 is fixed
         // assertThat(giroAccount.getCreditLimit(), equalTo(100000.0));
     }
 
