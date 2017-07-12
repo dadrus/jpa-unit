@@ -2,11 +2,14 @@ version: 2
 groups:
   code-review:
     approve_by_comment:
-      approve_regex: ^Approved
       enabled: true
-      reject_regex: ^Rejected
+      approve_regex: ^(Approved|:shipit:|:\+1:|:thumbsup:|LGTM|Ok|\+1)
+      reject_regex: ^(Rejected|:\-1:|:thumbsdown:|\-1)
     required: 1
+    reject_value: -1
     reset_on_push:
+      enabled: true
+    reset_on_reopened:
       enabled: true
     users:
     - dadrus
