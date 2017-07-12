@@ -17,8 +17,3 @@ install: true
 
 script:
   - ./build.sh
-  
-deploy:
-  provider: script
-  script: "mvn -settings .travis/settings.xml deploy -Dpgp.skip=false -DskipTests"
-  skip_cleanup: true
