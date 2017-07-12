@@ -8,23 +8,15 @@ cache:
    - $HOME/.m2
    - $HOME/.sonar
    
-addons:
-  sonarcloud:
-    organization: "dadrus-github"
-    token:
-      secure: "DOj1ZX3K9TB0hSL4lw56xKDRV8g7k/vs1lw54EZ3r3HbJFL94AcakASnLvFofBq58Zl8T5qGqhXT81aMPxjRgdtgfFAB7gga3+2RccuaKdO5H319IoDPebsFRSV76K3V0qx0dXGRlNsZxtE4yGEHDYmTpxbz0nIB/FWMy6r56Dmqp8QUxCDv/vdmsXQdHE+ZMI9XhNcPQ8SGd+iLmR1nbweGOPzuSVS+bCWS+oordoYo++mLX8p/EGdYRj8iks6uPKfq6mhvhX6bNfbC1iyR7YOY/LY5HKKFFEdv71zqPqwhuqAyns9bncWgBnwir1/xgcC2ZrVoS3TnNc/Rb8F4zl3+tt1HHUZLXEI2cq3G44EUkw8NVTV5HzKL2/RExUl/Ijt68ONClifISqumzxzXMnyV6T51KBCbKmIJoiYCrrhhZJQ6p+zigB8BILGWcr4WFyBoxzibINjuBABAaFxSjZJlpO//LACqPUA89Mlz2UOLT6pCMJemvyiZ3ZWgrnfuHXstqAdwRfK2PbDd435sJ6gqRI3XQzlNcbQdfsT1P9CI/Ce+OlOS2zgmGZKaTsEnDge0CtrRPtA1DIv7NyI6nKtTyq1rkSE+kfknxQsCw7+euWDlcxBuE5UaFzeGfb1kEpH6ZLwQDPo/+mgrXoMUAEwv62wD/5ppEnrEU+bfBTM="
-    github_token:
-      secure: "qDHusfzttz2H7ZYvWRuT9pa/D24VF8A69p6pzFZuXe+ufbT50rM1O9zrOInPU738d53YOPb0BRgdUPzDzBNg/ycoEhr+3N0gVf76dFhGPp3bkUn+nRPtVVH2IIL9Clo4nB8y70ka8rLexb587d0NOsmI0hsQriAUpfOOSzFQFl8yJMJaZZmUc9hu8JbrMdtisXNUTBznFFW8O1n8VpzF0iHBOJLsSeGRM9uisfN7W3EtRjAOp/2u27SI2UF93rZd3e7sB2BYXRkzCtM3d0Xi66nhQ1BUzbFVuovk8dbknSo8oeW2awPZw1aGFncNNL3ZqCVFHtUDBuak4AHDO403a/6SymqSOpqV7Y9itck2zn31XU30hmPzmatJ+OyDfw4C9466Uel8UaiuHwVzkXeK0YOspd4kxMIzjxngLMC9OT92HSMTw7HwNdR994R9aiHsY7ZSMdw784HNwgTczIbKLvgYq/rX168mx5wGMTAyoMuVOwNgXX10AiZ7KSBBIFqlESJjHtv64tvijA4kceINCGFmGXgSziazpIC8OqNJdOMH0HYX/2IvIyJb5FVbU9mrfQn5e6ySjeM2ZV3HNlYaUgi3pGVuaynuJcsFozBkQAOgyJhWVeW06nTqJvhZTEMwxrmfThnqCI9EuRz+7cnRYNfaTWJwID5wJNjGZkR8U9s="
-   
-env:
-  global:
-    - secure: "DOj1ZX3K9TB0hSL4lw56xKDRV8g7k/vs1lw54EZ3r3HbJFL94AcakASnLvFofBq58Zl8T5qGqhXT81aMPxjRgdtgfFAB7gga3+2RccuaKdO5H319IoDPebsFRSV76K3V0qx0dXGRlNsZxtE4yGEHDYmTpxbz0nIB/FWMy6r56Dmqp8QUxCDv/vdmsXQdHE+ZMI9XhNcPQ8SGd+iLmR1nbweGOPzuSVS+bCWS+oordoYo++mLX8p/EGdYRj8iks6uPKfq6mhvhX6bNfbC1iyR7YOY/LY5HKKFFEdv71zqPqwhuqAyns9bncWgBnwir1/xgcC2ZrVoS3TnNc/Rb8F4zl3+tt1HHUZLXEI2cq3G44EUkw8NVTV5HzKL2/RExUl/Ijt68ONClifISqumzxzXMnyV6T51KBCbKmIJoiYCrrhhZJQ6p+zigB8BILGWcr4WFyBoxzibINjuBABAaFxSjZJlpO//LACqPUA89Mlz2UOLT6pCMJemvyiZ3ZWgrnfuHXstqAdwRfK2PbDd435sJ6gqRI3XQzlNcbQdfsT1P9CI/Ce+OlOS2zgmGZKaTsEnDge0CtrRPtA1DIv7NyI6nKtTyq1rkSE+kfknxQsCw7+euWDlcxBuE5UaFzeGfb1kEpH6ZLwQDPo/+mgrXoMUAEwv62wD/5ppEnrEU+bfBTM="
+before_cache:
+  # remove all the artifacts (JAR, ZIP) that are installed in local repo because of mvn deploy
+  - rm -rf $HOME/.m2/repository/com/github/dadrus/test
+  - find $HOME/.m2 -name resolver-status.properties -exec rm {} \;
 
 install: true
 
 script:
-  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
-  - mvn clean verify sonar:sonar  -Dsonar.organization=dadrus-github -Dsonar.host.url=https://sonarqube.com -Dsonar.login=${SONAR_TOKEN} -Dsonar.branch=${BRANCH}
+  - ./build.sh
   
 deploy:
   provider: script
