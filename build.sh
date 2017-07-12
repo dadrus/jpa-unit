@@ -6,15 +6,19 @@ export SONAR_ORGANIZATION='dadrus-github'
 if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   echo "Building and analyzing a regular branch"
   
-  export SONAR_ENV="-Dsonar.organization=$SONAR_ORGANIZATION -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_TOKEN"
-  export MAVEN_SETTINGS=""
-  if [ "$TRAVIS_BRANCH" != "master" ]; then
-    export SONAR_ENV="$SONAR_ENV -Dsonar.branch=$TRAVIS_BRANCH"
+  if [ "$TRAVIS_BRANCH" == "master" ]; then
+    mvn -settings .travis/settings.xml clean deploy sonar:sonar \
+	  -Dsonar.organization=$SONAR_ORGANIZATION \
+	  -Dsonar.host.url=$SONAR_HOST_URL \
+	  -Dsonar.login=$SONAR_TOKEN \
+	  -Dpgp.skip=false
   else
-	export MAVEN_SETTINGS="-settings .travis/settings.xml"
+    mvn clean verify sonar:sonar \
+	  -Dsonar.organization=$SONAR_ORGANIZATION \
+	  -Dsonar.host.url=$SONAR_HOST_URL \
+	  -Dsonar.login=$SONAR_TOKEN \
+	  -Dsonar.branch=$TRAVIS_BRANCH
   fi
-  
-  mvn $MAVEN_SETTINGS clean deploy sonar:sonar $SONAR_ENV -Dpgp.skip=false -DskipTests
 else
   echo "Building and analyzing a pull request from $TRAVIS_PULL_REQUEST_BRANCH branch"
   
