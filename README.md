@@ -679,7 +679,7 @@ To be able to use the JPA Unit with CDI, all you need in addition to your CDI te
 </dependency>
 ```
 
-This dependecy implements a CDI extension, which proxies the configured `EntityManager` producer. During a JPA Unit test run it uses the `EntityManager` configured in the test class instance. In all other cases it just uses the proxied producer.
+This dependency implements a CDI extension, which proxies the configured `EntityManager` producer. During a JPA Unit test run it uses the `EntityManager` configured in the test class instance. In all other cases it just uses the proxied producer.
 
 Usage example:
 
