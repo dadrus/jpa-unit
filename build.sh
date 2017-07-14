@@ -20,15 +20,22 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 	  -Dsonar.branch=$TRAVIS_BRANCH
   fi
 else
-  echo "Building and analyzing a pull request from $TRAVIS_PULL_REQUEST_BRANCH branch"
+  if [ "${SONAR_TOKEN}" != "" ]; then
+    echo "Building and analyzing an internal pull request from $TRAVIS_PULL_REQUEST_BRANCH branch"
   
-  mvn clean verify sonar:sonar \
-    -Dsource.skip=true \
-    -Dsonar.analysis.mode=preview \
-	-Dsonar.organization=$SONAR_ORGANIZATION \
-    -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST \
-    -Dsonar.github.repository=$TRAVIS_PULL_REQUEST_SLUG \
-    -Dsonar.github.oauth=$SONAR_GITHUB_TOKEN \
-    -Dsonar.host.url=$SONAR_HOST_URL \
-    -Dsonar.login=$SONAR_TOKEN
+    mvn verify sonar:sonar \
+      -Dsource.skip=true \
+      -Dsonar.analysis.mode=preview \
+	  -Dsonar.organization=$SONAR_ORGANIZATION \
+      -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST \
+      -Dsonar.github.repository=$TRAVIS_PULL_REQUEST_SLUG \
+      -Dsonar.github.oauth=$SONAR_GITHUB_TOKEN \
+      -Dsonar.host.url=$SONAR_HOST_URL \
+      -Dsonar.login=$SONAR_TOKEN
+  else
+    # external pull request. No Sonar analysis possible
+    echo 'Build external pull request'
+
+    mvn verify
+  fi
 fi
