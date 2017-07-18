@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,6 +44,7 @@ public class PersistenceContextDecoratorTest {
     @Mock
     private EntityManager entityManager;
 
+    @PersistenceContext
     private EntityManager em;
 
     @SuppressWarnings("unused")
@@ -56,7 +58,7 @@ public class PersistenceContextDecoratorTest {
     }
 
     @Test
-    public void testApplyEntityManagerInjection() throws Throwable {
+    public void testApplyScopeEntityManagerInjection() throws Throwable {
         // GIVEN
         when(ctx.getData(Constants.KEY_ENTITY_MANAGER)).thenReturn(entityManager);
         final Field field = getClass().getDeclaredField("em");

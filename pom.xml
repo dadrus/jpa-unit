@@ -17,7 +17,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    
+
     <sonar.jacoco.reportPaths>${project.build.directory}/coverage.exec</sonar.jacoco.reportPaths>
 
     <skipUnitTests>${skipTests}</skipUnitTests>
@@ -48,6 +48,7 @@
     <version.liquibase>3.5.3</version.liquibase>
     <version.jta>1.1</version.jta>
     <version.ehcache>2.7.1</version.ehcache>
+    <version.cucumber>1.2.5</version.cucumber>
 
     <version.powermock>1.7.0</version.powermock>
     <version.junit>4.12</version.junit>
@@ -122,6 +123,7 @@
     <module>sql</module>
     <module>cdi</module>
     <module>mongodb</module>
+    <module>cucumber</module>
     <module>integration-test</module>
     <module>bom</module>
   </modules>
@@ -519,6 +521,16 @@
         <groupId>org.jacoco</groupId>
         <artifactId>org.jacoco.agent</artifactId>
         <version>${version.jacoco}</version>
+      </dependency>
+      <dependency>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-java</artifactId>
+        <version>${version.cucumber}</version>
+      </dependency>
+      <dependency>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-junit</artifactId>
+        <version>${version.cucumber}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

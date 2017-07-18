@@ -1,0 +1,18 @@
+{
+	"DEPOSITOR": [
+		{
+			"ID": "106",
+			"VERSION": "1",
+			"NAME": "Max",
+			"SURNAME": "Payne"
+		}
+	],
+	"ACCOUNT": [
+        {
+	        "TYPE": "INSTANT_ACCESS_ACCOUNT",
+	        "ID": "107",
+	        "VERSION": "1",
+	        "DEPOSITOR_ID": "106"
+        }
+    ]
+}

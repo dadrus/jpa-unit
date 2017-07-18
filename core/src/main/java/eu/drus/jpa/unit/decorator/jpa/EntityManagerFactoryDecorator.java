@@ -1,5 +1,6 @@
 package eu.drus.jpa.unit.decorator.jpa;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -25,6 +26,12 @@ public class EntityManagerFactoryDecorator implements TestClassDecorator {
 
     @Override
     public void afterAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
+        final EntityManager em = (EntityManager) ctx.getData(Constants.KEY_ENTITY_MANAGER);
+        ctx.storeData(Constants.KEY_ENTITY_MANAGER, null);
+        if (em != null) {
+            em.close();
+        }
+
         final EntityManagerFactory emf = (EntityManagerFactory) ctx.getData(Constants.KEY_ENTITY_MANAGER_FACTORY);
         ctx.storeData(Constants.KEY_ENTITY_MANAGER_FACTORY, null);
         emf.close();
