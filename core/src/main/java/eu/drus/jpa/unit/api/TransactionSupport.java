@@ -58,11 +58,11 @@ public final class TransactionSupport {
         try {
             transactionBegin(tx);
             final R ret = function.apply(null);
+            transactionCommit(tx);
             if (flushOnCommit) {
                 em.flush();
             }
 
-            transactionCommit(tx);
             if (clearOnCommit) {
                 em.clear();
             }
