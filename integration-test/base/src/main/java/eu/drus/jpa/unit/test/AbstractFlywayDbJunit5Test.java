@@ -14,8 +14,6 @@ import javax.sql.DataSource;
 
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import eu.drus.jpa.unit.api.Bootstrapping;
 import eu.drus.jpa.unit.test.model.Account;
@@ -25,7 +23,6 @@ import eu.drus.jpa.unit.test.model.ContactType;
 import eu.drus.jpa.unit.test.model.Depositor;
 import eu.drus.jpa.unit.test.model.GiroAccount;
 
-@RunWith(JUnitPlatform.class)
 public abstract class AbstractFlywayDbJunit5Test {
 
     @PersistenceContext(unitName = "my-verification-unit")
