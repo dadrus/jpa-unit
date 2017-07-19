@@ -27,8 +27,8 @@
 
     <version.hibernate-jpa-2.1-api>1.0.0.Final</version.hibernate-jpa-2.1-api>
     <version.cdi-api>1.2</version.cdi-api>
-    <version.logback>1.1.7</version.logback>
-    <version.slf4j>1.7.21</version.slf4j>
+    <version.logback>1.2.3</version.logback>
+    <version.slf4j>1.7.25</version.slf4j>
     <version.gson>2.7</version.gson>
     <version.dbunit>2.5.3</version.dbunit>
     <version.snakeyaml>1.10</version.snakeyaml>
@@ -38,12 +38,12 @@
     <version.hibernate4>4.2.21.Final</version.hibernate4>
     <version.hibernate5>5.2.8.Final</version.hibernate5>
     <verions.hibernate-ogm>5.1.0.Final</verions.hibernate-ogm>
-    <version.sqlite>3.15.1</version.sqlite>
+    <version.sqlite>3.19.3</version.sqlite>
     <version.commons-dbcp2>2.1.1</version.commons-dbcp2>
-    <version.deltaspike>1.7.2</version.deltaspike>
+    <version.deltaspike>1.8.0</version.deltaspike>
     <version.weld>2.3.5.Final</version.weld>
-    <version.commons-lang3>3.4</version.commons-lang3>
-    <version.guava>20.0</version.guava>
+    <version.commons-lang3>3.3</version.commons-lang3>
+    <version.guava>22.0</version.guava>
     <version.flywaydb>4.1.1</version.flywaydb>
     <version.liquibase>3.5.3</version.liquibase>
     <version.jta>1.1</version.jta>
@@ -54,22 +54,22 @@
     <version.junit>4.12</version.junit>
     <version.hamcrest>1.3</version.hamcrest>
     <version.mockito>1.10.19</version.mockito>
-    <version.junit-jupiter>5.0.0-M4</version.junit-jupiter>
-    <version.junit-vintage>4.12.0-M4</version.junit-vintage>
-    <version.junit-platform>1.0.0-M4</version.junit-platform>
+    <version.junit-jupiter>5.0.0-M5</version.junit-jupiter>
+    <version.junit-vintage>4.12.0-M5</version.junit-vintage>
+    <version.junit-platform>1.0.0-M5</version.junit-platform>
     <version.jacoco>0.7.9</version.jacoco>
 
-    <plugin.version.compiler>3.3</plugin.version.compiler>
-    <plugin.version.resources>3.0.1</plugin.version.resources>
+    <plugin.version.compiler>3.6.1</plugin.version.compiler>
+    <plugin.version.resources>3.0.2</plugin.version.resources>
     <plugin.version.source>3.0.1</plugin.version.source>
-    <plugin.version.surefire>2.19.1</plugin.version.surefire>
-    <plugin.version.failsafe>2.19.1</plugin.version.failsafe>
-    <plugin.version.jar>2.6</plugin.version.jar>
+    <plugin.version.surefire>2.20</plugin.version.surefire>
+    <plugin.version.failsafe>2.20</plugin.version.failsafe>
+    <plugin.version.jar>3.0.2</plugin.version.jar>
     <plugin.version.javadoc>2.10.4</plugin.version.javadoc>
     <plugin.version.jacoco>${version.jacoco}</plugin.version.jacoco>
     <plugin.version.serviceloader>1.0.7</plugin.version.serviceloader>
     <plugin.version.enforcer>1.4.1</plugin.version.enforcer>
-    <plugin.maven.pgp>1.6</plugin.maven.pgp>
+    <plugin.version.pgp>1.6</plugin.version.pgp>
   </properties>
 
   <scm>
@@ -296,7 +296,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>${plugin.maven.pgp}</version>
+          <version>${plugin.version.pgp}</version>
           <configuration>
             <skip>true</skip>
           </configuration>
