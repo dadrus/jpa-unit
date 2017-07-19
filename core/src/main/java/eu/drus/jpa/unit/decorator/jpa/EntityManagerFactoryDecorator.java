@@ -26,6 +26,9 @@ public class EntityManagerFactoryDecorator implements TestClassDecorator {
 
     @Override
     public void afterAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
+        // if EntityManager has been configured for EXTENDED transaction mode, same instance is used
+        // throughout all the tests/test steps. In that case we have to close it here, before the
+        // EntityManagerFactory is closed.
         final EntityManager em = (EntityManager) ctx.getData(Constants.KEY_ENTITY_MANAGER);
         ctx.storeData(Constants.KEY_ENTITY_MANAGER, null);
         if (em != null) {

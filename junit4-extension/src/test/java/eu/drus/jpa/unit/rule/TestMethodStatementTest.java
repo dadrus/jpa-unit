@@ -51,7 +51,6 @@ public class TestMethodStatementTest {
 
         // THEN
         final InOrder inOrder = inOrder(decorator, base);
-        inOrder.verify(decorator).processInstance(eq(this), eq(statement));
         inOrder.verify(decorator).beforeTest(eq(statement));
         inOrder.verify(base).evaluate();
         inOrder.verify(decorator).afterTest(eq(statement));
@@ -74,7 +73,6 @@ public class TestMethodStatementTest {
 
         // THEN
         final InOrder inOrder = inOrder(decorator, base);
-        inOrder.verify(decorator).processInstance(eq(this), eq(statement));
         inOrder.verify(decorator).beforeTest(eq(statement));
         inOrder.verify(base).evaluate();
         inOrder.verify(decorator).afterTest(eq(statement));

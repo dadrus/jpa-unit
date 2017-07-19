@@ -19,11 +19,6 @@ public class DbUnitDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void processInstance(final Object instance, final TestMethodInvocation invocation) throws Exception {
-        // nothing to do
-    }
-
-    @Override
     public void beforeTest(final TestMethodInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
         final BasicDataSource ds = (BasicDataSource) invocation.getContext().getData(Constants.KEY_DATA_SOURCE);

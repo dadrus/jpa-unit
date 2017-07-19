@@ -56,18 +56,6 @@ public class CdiProducerDecoratorTest {
     }
 
     @Test
-    public void testProcessInstance() throws Exception {
-        // GIVEN
-
-        // WHEN
-        fixture.processInstance(this, invocation);
-
-        // THEN
-        // nothing should happen
-        verifyNoMoreInteractions(invocation, emh);
-    }
-
-    @Test
     public void testBeforeInstance() throws Exception {
         // GIVEN
 

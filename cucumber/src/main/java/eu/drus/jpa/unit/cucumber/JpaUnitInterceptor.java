@@ -11,7 +11,6 @@ import net.sf.cglib.proxy.MethodProxy;
 public class JpaUnitInterceptor implements MethodInterceptor {
 
     private final JpaUnitHookExecutor executor;
-    private boolean isPostInstanceHookExecuted = false;
 
     public JpaUnitInterceptor(final JpaUnitHookExecutor executor) {
         this.executor = executor;
@@ -32,11 +31,7 @@ public class JpaUnitInterceptor implements MethodInterceptor {
                 .withDefaultCleanupPhase(CleanupPhase.NONE).build();
 
         Object result = null;
-        final TestMethodInvocationImpl invocation = new TestMethodInvocationImpl(obj.getClass(), method, resolver);
-        if (!isPostInstanceHookExecuted) {
-            executor.processInstance(obj, invocation);
-            isPostInstanceHookExecuted = true;
-        }
+        final TestMethodInvocationImpl invocation = new TestMethodInvocationImpl(obj, method, resolver);
         executor.processBefore(invocation);
         try {
             result = proxy.invokeSuper(obj, args);

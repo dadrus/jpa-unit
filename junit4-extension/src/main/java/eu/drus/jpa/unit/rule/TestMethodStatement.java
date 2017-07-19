@@ -31,7 +31,6 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
 
     @Override
     public void evaluate() throws Throwable {
-        decorator.processInstance(target, this);
         decorator.beforeTest(this);
         try {
             base.evaluate();
@@ -44,7 +43,7 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
     }
 
     @Override
-    public Method getMethod() {
+    public Method getTestMethod() {
         return method.getMethod();
     }
 
@@ -66,6 +65,11 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
     @Override
     public FeatureResolver getFeatureResolver() {
         return FeatureResolver.newFeatureResolver(method.getMethod(), target.getClass()).build();
+    }
+
+    @Override
+    public Object getTestInstance() {
+        return target;
     }
 
 }

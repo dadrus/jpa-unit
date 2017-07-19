@@ -36,13 +36,6 @@ public class JpaUnitHookExecutor {
         }
     }
 
-    public void processInstance(final Object obj, final TestMethodInvocation invocation) throws Exception {
-        final Iterator<TestMethodDecorator> it = methodDecoratorIterator(invocation.getContext(), BEFORE_COMPARATOR);
-        while (it.hasNext()) {
-            it.next().processInstance(obj, invocation);
-        }
-    }
-
     public void processBefore(final TestMethodInvocation invocation) throws Exception {
         final Iterator<TestMethodDecorator> it = methodDecoratorIterator(invocation.getContext(), BEFORE_COMPARATOR);
         while (it.hasNext()) {

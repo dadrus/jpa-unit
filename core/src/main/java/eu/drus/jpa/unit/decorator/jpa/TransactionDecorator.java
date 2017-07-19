@@ -15,11 +15,6 @@ public class TransactionDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void processInstance(final Object instance, final TestMethodInvocation invocation) throws Exception {
-        // nothing to do
-    }
-
-    @Override
     public void beforeTest(final TestMethodInvocation invocation) throws Exception {
         final EntityManager em = (EntityManager) invocation.getContext().getData(Constants.KEY_ENTITY_MANAGER);
         if (em == null) {

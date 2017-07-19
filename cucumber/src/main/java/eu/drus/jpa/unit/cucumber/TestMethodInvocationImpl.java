@@ -9,14 +9,16 @@ import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 class TestMethodInvocationImpl implements TestMethodInvocation {
 
+    private final Object instance;
     private final Class<?> clazz;
     private final Method method;
     private final JpaUnitContext ctx;
     private Exception e;
     private FeatureResolver resolver;
 
-    TestMethodInvocationImpl(final Class<?> clazz, final Method method, final FeatureResolver resolver) {
-        this.clazz = clazz;
+    TestMethodInvocationImpl(final Object instance, final Method method, final FeatureResolver resolver) {
+        this.instance = instance;
+        clazz = instance.getClass();
         this.method = method;
         this.resolver = resolver;
         ctx = JpaUnitContext.getInstance(clazz);
@@ -28,7 +30,7 @@ class TestMethodInvocationImpl implements TestMethodInvocation {
     }
 
     @Override
-    public Method getMethod() {
+    public Method getTestMethod() {
         return method;
     }
 
@@ -49,5 +51,10 @@ class TestMethodInvocationImpl implements TestMethodInvocation {
     @Override
     public FeatureResolver getFeatureResolver() {
         return resolver;
+    }
+
+    @Override
+    public Object getTestInstance() {
+        return instance;
     }
 }

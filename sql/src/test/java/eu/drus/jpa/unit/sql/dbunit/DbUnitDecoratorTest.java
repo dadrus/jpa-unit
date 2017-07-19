@@ -9,7 +9,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
@@ -102,17 +101,6 @@ public class DbUnitDecoratorTest {
 
         // THEN
         verify(connection).close();
-    }
-
-    @Test
-    public void testProcessInstanceDoesNotHaveAnyEffect() throws Exception {
-        // GIVEN
-
-        // WHEN
-        decorator.processInstance(this, invocation);
-
-        // THEN
-        verifyNoMoreInteractions(invocation, connection, ctx, executor);
     }
 
     @Test

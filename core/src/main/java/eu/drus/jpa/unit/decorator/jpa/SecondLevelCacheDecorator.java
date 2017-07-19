@@ -21,11 +21,6 @@ public class SecondLevelCacheDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void processInstance(final Object instance, final TestMethodInvocation invocation) throws Exception {
-        // nothing to do
-    }
-
-    @Override
     public void beforeTest(final TestMethodInvocation invocation) throws Exception {
         final EntityManagerFactory emf = (EntityManagerFactory) invocation.getContext().getData(Constants.KEY_ENTITY_MANAGER_FACTORY);
 

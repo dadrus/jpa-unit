@@ -6,7 +6,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import javax.persistence.EntityManager;
@@ -72,18 +71,6 @@ public class TransactionDecoratorTest {
         // THEN
         verify(resolver, atLeastOnce()).getTransactionMode();
         verify(em).clear();
-    }
-
-    @Test
-    public void testProcessInstanceDoesNotHaveAnyEffect() throws Exception {
-        // GIVEN
-        final TransactionDecorator fixture = new TransactionDecorator();
-
-        // WHEN
-        fixture.processInstance(this, invocation);
-
-        // THEN
-        verifyNoMoreInteractions(invocation, em, ctx, resolver);
     }
 
     @Test

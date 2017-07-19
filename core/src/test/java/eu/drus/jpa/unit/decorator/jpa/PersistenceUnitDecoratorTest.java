@@ -43,6 +43,7 @@ public class PersistenceUnitDecoratorTest {
     @Before
     public void setupMocks() {
         when(invocation.getContext()).thenReturn(ctx);
+        when(invocation.getTestInstance()).thenReturn(this);
         when(ctx.getData(eq(Constants.KEY_ENTITY_MANAGER_FACTORY))).thenReturn(entityManagerFactory);
     }
 
@@ -54,7 +55,7 @@ public class PersistenceUnitDecoratorTest {
         final PersistenceUnitDecorator fixture = new PersistenceUnitDecorator();
 
         // WHEN
-        fixture.processInstance(this, invocation);
+        fixture.beforeTest(invocation);
 
         // THEN
         assertThat(emf, equalTo(entityManagerFactory));
@@ -70,24 +71,12 @@ public class PersistenceUnitDecoratorTest {
         final PersistenceUnitDecorator fixture = new PersistenceUnitDecorator();
 
         // WHEN
-        fixture.processInstance(this, invocation);
+        fixture.beforeTest(invocation);
 
         // THEN
         assertThat(emf, nullValue());
         verify(entityManagerFactory, times(0)).createEntityManager();
         verify(entityManagerFactory, times(0)).close();
-    }
-
-    @Test
-    public void testBeforeTestDoesNotHaveAnyEffect() throws Exception {
-        // GIVEN
-        final PersistenceUnitDecorator fixture = new PersistenceUnitDecorator();
-
-        // WHEN
-        fixture.beforeTest(invocation);
-
-        // THEN
-        verifyNoMoreInteractions(entityManagerFactory, ctx, invocation);
     }
 
     @Test

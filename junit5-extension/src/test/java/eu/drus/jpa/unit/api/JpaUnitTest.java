@@ -117,21 +117,6 @@ public class JpaUnitTest {
     }
 
     @Test
-    public void testPostProcessTestInstanceTestDecoratorExecutionOrder() throws Exception {
-        // GIVEN
-        final JpaUnit unit = new JpaUnit();
-
-        // WHEN
-        unit.postProcessTestInstance(this, context);
-
-        // THEN
-        final InOrder order = inOrder(firstMethodDecorator, secondMethodDecorator);
-        order.verify(firstMethodDecorator).processInstance(eq(this), notNull(TestMethodInvocation.class));
-        order.verify(secondMethodDecorator).processInstance(eq(this), notNull(TestMethodInvocation.class));
-        verifyZeroInteractions(firstClassDecorator, secondClassDecorator);
-    }
-
-    @Test
     public void testBeforeEachTestDecoratorExecutionOrder() throws Exception {
         // GIVEN
         final JpaUnit unit = new JpaUnit();
@@ -162,26 +147,6 @@ public class JpaUnitTest {
     }
 
     @Test
-    public void testPostProcessTestInstanceInvocationArguments() throws Exception {
-        // GIVEN
-        when(DecoratorRegistrar.getMethodDecorators()).thenReturn(Arrays.asList(firstMethodDecorator));
-        final JpaUnit unit = new JpaUnit();
-
-        // WHEN
-        unit.postProcessTestInstance(this, context);
-
-        // THEN
-        final ArgumentCaptor<TestMethodInvocation> invocationCaptor = ArgumentCaptor.forClass(TestMethodInvocation.class);
-        verify(firstMethodDecorator).processInstance(eq(this), invocationCaptor.capture());
-
-        final TestMethodInvocation invocation = invocationCaptor.getValue();
-        assertNotNull(invocation.getContext());
-        assertThat(invocation.getMethod(), equalTo(getClass().getMethod("prepareMocks")));
-        assertThat(invocation.getTestClass(), equalTo(getClass()));
-        assertFalse(invocation.hasErrors());
-    }
-
-    @Test
     public void testBeforeEachInvocationArguments() throws Exception {
         // GIVEN
         when(DecoratorRegistrar.getMethodDecorators()).thenReturn(Arrays.asList(firstMethodDecorator));
@@ -196,7 +161,7 @@ public class JpaUnitTest {
 
         final TestMethodInvocation invocation = invocationCaptor.getValue();
         assertNotNull(invocation.getContext());
-        assertThat(invocation.getMethod(), equalTo(getClass().getMethod("prepareMocks")));
+        assertThat(invocation.getTestMethod(), equalTo(getClass().getMethod("prepareMocks")));
         assertThat(invocation.getTestClass(), equalTo(getClass()));
         assertFalse(invocation.hasErrors());
     }
@@ -216,7 +181,7 @@ public class JpaUnitTest {
 
         final TestMethodInvocation invocation = invocationCaptor.getValue();
         assertNotNull(invocation.getContext());
-        assertThat(invocation.getMethod(), equalTo(getClass().getMethod("prepareMocks")));
+        assertThat(invocation.getTestMethod(), equalTo(getClass().getMethod("prepareMocks")));
         assertThat(invocation.getTestClass(), equalTo(getClass()));
         assertFalse(invocation.hasErrors());
     }

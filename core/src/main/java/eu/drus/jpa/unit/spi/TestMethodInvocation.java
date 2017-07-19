@@ -6,7 +6,9 @@ public interface TestMethodInvocation {
 
     Class<?> getTestClass();
 
-    Method getMethod();
+    Method getTestMethod();
+
+    Object getTestInstance();
 
     ExecutionContext getContext();
 

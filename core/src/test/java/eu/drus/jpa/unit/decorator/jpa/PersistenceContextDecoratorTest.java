@@ -8,7 +8,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
@@ -53,6 +52,7 @@ public class PersistenceContextDecoratorTest {
     @Before
     public void setupMocks() {
         when(invocation.getContext()).thenReturn(ctx);
+        when(invocation.getTestInstance()).thenReturn(this);
         when(ctx.getData(eq(Constants.KEY_ENTITY_MANAGER_FACTORY))).thenReturn(entityManagerFactory);
         when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
     }
@@ -66,7 +66,7 @@ public class PersistenceContextDecoratorTest {
         final PersistenceContextDecorator fixture = new PersistenceContextDecorator();
 
         // WHEN
-        fixture.processInstance(this, invocation);
+        fixture.beforeTest(invocation);
         fixture.afterTest(invocation);
 
         // THEN
@@ -89,7 +89,7 @@ public class PersistenceContextDecoratorTest {
         final PersistenceContextDecorator fixture = new PersistenceContextDecorator();
 
         // WHEN
-        fixture.processInstance(this, invocation);
+        fixture.beforeTest(invocation);
         fixture.afterTest(invocation);
 
         // THEN
@@ -97,18 +97,6 @@ public class PersistenceContextDecoratorTest {
         verify(entityManagerFactory, times(0)).createEntityManager();
         verify(entityManager, times(0)).close();
         verify(ctx, times(0)).storeData(any(String.class), any(EntityManager.class));
-    }
-
-    @Test
-    public void testBeforeTestDoesNotHaveAnyEffect() throws Exception {
-        // GIVEN
-        final PersistenceContextDecorator fixture = new PersistenceContextDecorator();
-
-        // WHEN
-        fixture.beforeTest(invocation);
-
-        // THEN
-        verifyNoMoreInteractions(entityManagerFactory, entityManager, ctx, invocation);
     }
 
     @Test

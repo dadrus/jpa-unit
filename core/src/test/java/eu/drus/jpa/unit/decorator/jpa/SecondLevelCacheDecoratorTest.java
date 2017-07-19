@@ -116,18 +116,6 @@ public class SecondLevelCacheDecoratorTest {
     }
 
     @Test
-    public void testProcessInstanceDoesNotHaveAnyEffect() throws Exception {
-        // GIVEN
-        final SecondLevelCacheDecorator fixture = new SecondLevelCacheDecorator();
-
-        // WHEN
-        fixture.processInstance(this, invocation);
-
-        // THEN
-        verifyNoMoreInteractions(cache, emf);
-    }
-
-    @Test
     public void testRequiredPriority() {
         // GIVEN
         final SecondLevelCacheDecorator fixture = new SecondLevelCacheDecorator();
