@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.test.cucumber;
+package eu.drus.jpa.unit.test;
 
 import org.junit.runner.RunWith;
 
@@ -11,6 +11,6 @@ import cucumber.api.junit.Cucumber;
 }, tags = {
         "~@ignore"
 }, features = "classpath:bdd-features")
-public abstract class AbstractCucumberTest {
+public class CucumberTest {
 
 }
