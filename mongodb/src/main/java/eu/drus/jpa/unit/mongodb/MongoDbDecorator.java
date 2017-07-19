@@ -6,7 +6,6 @@ import com.mongodb.client.MongoDatabase;
 import eu.drus.jpa.unit.mongodb.ext.Configuration;
 import eu.drus.jpa.unit.mongodb.ext.ConfigurationRegistry;
 import eu.drus.jpa.unit.spi.ExecutionContext;
-import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -40,8 +39,7 @@ public class MongoDbDecorator implements TestMethodDecorator {
         context.storeData(KEY_MONGO_CLIENT, client);
         context.storeData(KEY_MONGO_DB, mongoDb);
 
-        final MongoDbFeatureExecutor dbFeatureExecutor = new MongoDbFeatureExecutor(
-                new FeatureResolver(invocation.getMethod(), invocation.getTestClass()));
+        final MongoDbFeatureExecutor dbFeatureExecutor = new MongoDbFeatureExecutor(invocation.getFeatureResolver());
 
         dbFeatureExecutor.executeBeforeTest(mongoDb);
     }
@@ -55,8 +53,7 @@ public class MongoDbDecorator implements TestMethodDecorator {
         context.storeData(KEY_MONGO_CLIENT, null);
         context.storeData(KEY_MONGO_DB, null);
 
-        final MongoDbFeatureExecutor dbFeatureExecutor = new MongoDbFeatureExecutor(
-                new FeatureResolver(invocation.getMethod(), invocation.getTestClass()));
+        final MongoDbFeatureExecutor dbFeatureExecutor = new MongoDbFeatureExecutor(invocation.getFeatureResolver());
 
         try {
             dbFeatureExecutor.executeAfterTest(mongoDb, invocation.hasErrors());

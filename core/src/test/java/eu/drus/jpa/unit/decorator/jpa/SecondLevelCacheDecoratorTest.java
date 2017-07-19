@@ -7,7 +7,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import javax.persistence.Cache;
 import javax.persistence.EntityManagerFactory;
@@ -16,18 +15,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({
-        SecondLevelCacheDecorator.class, SecondLevelCacheDecoratorTest.class
-})
+@RunWith(MockitoJUnitRunner.class)
 public class SecondLevelCacheDecoratorTest {
 
     @Mock
@@ -47,9 +42,8 @@ public class SecondLevelCacheDecoratorTest {
 
     @Before
     public void setupMocks() throws Exception {
-        whenNew(FeatureResolver.class).withAnyArguments().thenReturn(resolver);
-
         when(invocation.getContext()).thenReturn(ctx);
+        when(invocation.getFeatureResolver()).thenReturn(resolver);
         when(ctx.getData(eq(Constants.KEY_ENTITY_MANAGER_FACTORY))).thenReturn(emf);
         when(emf.getCache()).thenReturn(cache);
     }

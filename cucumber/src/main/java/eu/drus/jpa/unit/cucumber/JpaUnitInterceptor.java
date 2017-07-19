@@ -3,6 +3,8 @@ package eu.drus.jpa.unit.cucumber;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
+import eu.drus.jpa.unit.api.CleanupPhase;
+import eu.drus.jpa.unit.spi.FeatureResolver;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -26,8 +28,11 @@ public class JpaUnitInterceptor implements MethodInterceptor {
 
     private Object invokeWithJpaUnitHooks(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
             throws Throwable {
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, obj.getClass())
+                .withDefaultCleanupPhase(CleanupPhase.NONE).build();
+
         Object result = null;
-        final TestMethodInvocationImpl invocation = new TestMethodInvocationImpl(obj.getClass(), method);
+        final TestMethodInvocationImpl invocation = new TestMethodInvocationImpl(obj.getClass(), method, resolver);
         if (!isPostInstanceHookExecuted) {
             executor.processInstance(obj, invocation);
             isPostInstanceHookExecuted = true;

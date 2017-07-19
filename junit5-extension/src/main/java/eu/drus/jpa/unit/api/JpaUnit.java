@@ -11,13 +11,12 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ContainerExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.TestExtensionContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
 import eu.drus.jpa.unit.core.JpaUnitContext;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestClassDecorator;
 import eu.drus.jpa.unit.spi.TestDecorator;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
@@ -29,7 +28,7 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
     private static final Comparator<TestDecorator> AFTER_COMPARATOR = (a, b) -> b.getPriority() - a.getPriority();
 
     @Override
-    public void beforeAll(final ContainerExtensionContext context) throws Exception {
+    public void beforeAll(final ExtensionContext context) throws Exception {
         final Class<?> testClass = context.getTestClass().get();
         final JpaUnitContext ctx = JpaUnitContext.getInstance(testClass);
 
@@ -40,7 +39,7 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
     }
 
     @Override
-    public void afterAll(final ContainerExtensionContext context) throws Exception {
+    public void afterAll(final ExtensionContext context) throws Exception {
         final Class<?> testClass = context.getTestClass().get();
         final JpaUnitContext ctx = JpaUnitContext.getInstance(testClass);
 
@@ -51,7 +50,7 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
     }
 
     @Override
-    public void beforeEach(final TestExtensionContext context) throws Exception {
+    public void beforeEach(final ExtensionContext context) throws Exception {
         final TestMethodInvocation invocation = createTestMethodInvocation(context, true);
 
         final Iterator<TestMethodDecorator> it = methodDecoratorIterator(invocation.getContext(), BEFORE_COMPARATOR);
@@ -61,7 +60,7 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
     }
 
     @Override
-    public void afterEach(final TestExtensionContext context) throws Exception {
+    public void afterEach(final ExtensionContext context) throws Exception {
         final TestMethodInvocation invocation = createTestMethodInvocation(context, true);
 
         final Iterator<TestMethodDecorator> it = methodDecoratorIterator(invocation.getContext(), AFTER_COMPARATOR);
@@ -110,7 +109,12 @@ public class JpaUnit implements BeforeAllCallback, AfterAllCallback, BeforeEachC
 
             @Override
             public boolean hasErrors() {
-                return considerExceptions ? ((TestExtensionContext) context).getTestException().isPresent() : false;
+                return considerExceptions ? context.getExecutionException().isPresent() : false;
+            }
+
+            @Override
+            public FeatureResolver getFeatureResolver() {
+                return FeatureResolver.newFeatureResolver(getMethod(), getTestClass()).build();
             }
         };
     }

@@ -18,8 +18,7 @@ import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.extension.ContainerExtensionContext;
-import org.junit.jupiter.api.extension.TestExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
@@ -55,10 +54,7 @@ public class JpaUnitTest {
     private TestMethodDecorator secondMethodDecorator;
 
     @Mock
-    private ContainerExtensionContext containerContext;
-
-    @Mock
-    private TestExtensionContext testContext;
+    private ExtensionContext context;
 
     @Mock
     private JpaUnitContext jpaUnitContext;
@@ -85,11 +81,9 @@ public class JpaUnitTest {
         when(firstMethodDecorator.getPriority()).thenReturn(1);
         when(secondMethodDecorator.getPriority()).thenReturn(2);
 
-        when(containerContext.getTestClass()).thenReturn(Optional.of(testClass));
-        when(containerContext.getTestMethod()).thenReturn(Optional.of(getClass().getMethod("prepareMocks")));
-        when(testContext.getTestClass()).thenReturn(Optional.of(testClass));
-        when(testContext.getTestMethod()).thenReturn(Optional.of(getClass().getMethod("prepareMocks")));
-        when(testContext.getTestException()).thenReturn(Optional.empty());
+        when(context.getTestClass()).thenReturn(Optional.of(testClass));
+        when(context.getTestMethod()).thenReturn(Optional.of(getClass().getMethod("prepareMocks")));
+        when(context.getExecutionException()).thenReturn(Optional.empty());
     }
 
     @Test
@@ -98,7 +92,7 @@ public class JpaUnitTest {
         final JpaUnit unit = new JpaUnit();
 
         // WHEN
-        unit.beforeAll(containerContext);
+        unit.beforeAll(context);
 
         // THEN
         final InOrder order = inOrder(firstClassDecorator, secondClassDecorator);
@@ -113,7 +107,7 @@ public class JpaUnitTest {
         final JpaUnit unit = new JpaUnit();
 
         // WHEN
-        unit.afterAll(containerContext);
+        unit.afterAll(context);
 
         // THEN
         final InOrder order = inOrder(secondClassDecorator, firstClassDecorator);
@@ -128,7 +122,7 @@ public class JpaUnitTest {
         final JpaUnit unit = new JpaUnit();
 
         // WHEN
-        unit.postProcessTestInstance(this, containerContext);
+        unit.postProcessTestInstance(this, context);
 
         // THEN
         final InOrder order = inOrder(firstMethodDecorator, secondMethodDecorator);
@@ -143,7 +137,7 @@ public class JpaUnitTest {
         final JpaUnit unit = new JpaUnit();
 
         // WHEN
-        unit.beforeEach(testContext);
+        unit.beforeEach(context);
 
         // THEN
         final InOrder order = inOrder(firstMethodDecorator, secondMethodDecorator);
@@ -158,7 +152,7 @@ public class JpaUnitTest {
         final JpaUnit unit = new JpaUnit();
 
         // WHEN
-        unit.afterEach(testContext);
+        unit.afterEach(context);
 
         // THEN
         final InOrder order = inOrder(firstMethodDecorator, secondMethodDecorator);
@@ -174,7 +168,7 @@ public class JpaUnitTest {
         final JpaUnit unit = new JpaUnit();
 
         // WHEN
-        unit.postProcessTestInstance(this, containerContext);
+        unit.postProcessTestInstance(this, context);
 
         // THEN
         final ArgumentCaptor<TestMethodInvocation> invocationCaptor = ArgumentCaptor.forClass(TestMethodInvocation.class);
@@ -194,7 +188,7 @@ public class JpaUnitTest {
         final JpaUnit unit = new JpaUnit();
 
         // WHEN
-        unit.beforeEach(testContext);
+        unit.beforeEach(context);
 
         // THEN
         final ArgumentCaptor<TestMethodInvocation> invocationCaptor = ArgumentCaptor.forClass(TestMethodInvocation.class);
@@ -214,7 +208,7 @@ public class JpaUnitTest {
         final JpaUnit unit = new JpaUnit();
 
         // WHEN
-        unit.afterEach(testContext);
+        unit.afterEach(context);
 
         // THEN
         final ArgumentCaptor<TestMethodInvocation> invocationCaptor = ArgumentCaptor.forClass(TestMethodInvocation.class);

@@ -6,6 +6,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
@@ -60,6 +61,11 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
     @Override
     public boolean hasErrors() {
         return isExceptionThrown;
+    }
+
+    @Override
+    public FeatureResolver getFeatureResolver() {
+        return FeatureResolver.newFeatureResolver(method.getMethod(), target.getClass()).build();
     }
 
 }

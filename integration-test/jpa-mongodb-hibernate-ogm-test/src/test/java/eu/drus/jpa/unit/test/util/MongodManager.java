@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import org.bson.Document;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.ContainerExtensionContext;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,12 +210,12 @@ public class MongodManager implements BeforeAllCallback, AfterAllCallback {
     }
 
     @Override
-    public void afterAll(final ContainerExtensionContext context) throws Exception {
+    public void afterAll(final ExtensionContext context) throws Exception {
         stopMongod();
     }
 
     @Override
-    public void beforeAll(final ContainerExtensionContext context) throws Exception {
+    public void beforeAll(final ExtensionContext context) throws Exception {
         startMongod(MongodConfiguration.builder().addHost("localhost", 27017).build());
     }
 }

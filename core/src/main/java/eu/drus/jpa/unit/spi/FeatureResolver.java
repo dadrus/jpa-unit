@@ -1,5 +1,7 @@
 package eu.drus.jpa.unit.spi;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,24 +29,34 @@ public class FeatureResolver {
 
     private final Method testMethod;
 
-    public FeatureResolver(final Method testMethod, final Class<?> clazz) {
+    private CleanupStrategy defaultCleanupStrategy = CleanupStrategy.STRICT;
+    private CleanupPhase defaultCleanupPhase = CleanupPhase.AFTER;
+    private CleanupPhase defaultCleanupUsingScriptsPhase = CleanupPhase.AFTER;
+    private DataSeedStrategy defaultDataSeedStrategy = DataSeedStrategy.INSERT;
+    private TransactionMode defaultTransactionMode = TransactionMode.COMMIT;
+
+    private FeatureResolver(final Method testMethod, final Class<?> clazz) {
         metadataExtractor = new MetadataExtractor(clazz);
         this.testMethod = testMethod;
     }
 
+    public static Builder newFeatureResolver(final Method testMethod, final Class<?> clazz) {
+        return new Builder(new FeatureResolver(testMethod, clazz));
+    }
+
     public CleanupStrategy getCleanupStrategy() {
         final Cleanup cleanup = metadataExtractor.cleanup().fetchUsingFirst(testMethod);
-        return cleanup == null ? CleanupStrategy.STRICT : cleanup.strategy();
+        return cleanup == null ? defaultCleanupStrategy : cleanup.strategy();
     }
 
     public DataSeedStrategy getDataSeedStrategy() {
         final InitialDataSets initialDataSet = metadataExtractor.initialDataSets().fetchUsingFirst(testMethod);
-        return initialDataSet == null ? DataSeedStrategy.INSERT : initialDataSet.seedStrategy();
+        return initialDataSet == null ? defaultDataSeedStrategy : initialDataSet.seedStrategy();
     }
 
     public TransactionMode getTransactionMode() {
         final Transactional transactional = metadataExtractor.transactional().fetchUsingFirst(testMethod);
-        return transactional == null ? TransactionMode.COMMIT : transactional.value();
+        return transactional == null ? defaultTransactionMode : transactional.value();
     }
 
     public List<String> getSeedData() {
@@ -111,7 +123,7 @@ public class FeatureResolver {
 
     private CleanupPhase getCleanupPhase() {
         final Cleanup cleanup = metadataExtractor.cleanup().fetchUsingFirst(testMethod);
-        return cleanup == null ? CleanupPhase.AFTER : cleanup.phase();
+        return cleanup == null ? defaultCleanupPhase : cleanup.phase();
     }
 
     public boolean shouldCleanupUsingScriptBefore() {
@@ -129,7 +141,7 @@ public class FeatureResolver {
 
     private CleanupPhase getCleanupUsingScriptPhase() {
         final CleanupUsingScripts cleanupUsingScript = metadataExtractor.cleanupUsingScripts().fetchUsingFirst(testMethod);
-        return cleanupUsingScript == null ? CleanupPhase.AFTER : cleanupUsingScript.phase();
+        return cleanupUsingScript == null ? defaultCleanupUsingScriptsPhase : cleanupUsingScript.phase();
     }
 
     private CleanupPhase getCleanupCachePhase() {
@@ -143,5 +155,47 @@ public class FeatureResolver {
 
     public boolean shouldEvictCacheAfter() {
         return getCleanupCachePhase() == CleanupPhase.AFTER;
+    }
+
+    public static class Builder {
+
+        private FeatureResolver featureResolver;
+
+        private Builder(final FeatureResolver featureResolver) {
+            this.featureResolver = featureResolver;
+        }
+
+        public Builder withDefaultCleanupPhase(final CleanupPhase phase) {
+            checkArgument(phase != null, "Default CleanupPhase is not allowd to be null");
+            featureResolver.defaultCleanupPhase = phase;
+            return this;
+        }
+
+        public Builder withDefaultCleanupStrategy(final CleanupStrategy strategy) {
+            checkArgument(strategy != null, "Default CleanupStrategy is not allowd to be null");
+            featureResolver.defaultCleanupStrategy = strategy;
+            return this;
+        }
+
+        public Builder withDefaultCleanupUsingScriptsPhase(final CleanupPhase phase) {
+            checkArgument(phase != null, "Default CleanupPhase is not allowd to be null");
+            featureResolver.defaultCleanupUsingScriptsPhase = phase;
+            return this;
+        }
+
+        public Builder withDefaultDataSeedStrategy(final DataSeedStrategy strategy) {
+            checkArgument(strategy != null, "Default DataSeedStrategy is not allowd to be null");
+            featureResolver.defaultDataSeedStrategy = strategy;
+            return this;
+        }
+
+        public Builder withDefaultTransactionMode(final TransactionMode mode) {
+            featureResolver.defaultTransactionMode = mode;
+            return this;
+        }
+
+        public FeatureResolver build() {
+            return featureResolver;
+        }
     }
 }

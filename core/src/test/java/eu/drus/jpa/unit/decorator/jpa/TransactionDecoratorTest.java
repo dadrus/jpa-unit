@@ -8,7 +8,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import javax.persistence.EntityManager;
 
@@ -16,8 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.api.TransactionMode;
 import eu.drus.jpa.unit.spi.Constants;
@@ -25,10 +23,7 @@ import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({
-        TransactionDecorator.class, TransactionDecoratorTest.class
-})
+@RunWith(MockitoJUnitRunner.class)
 public class TransactionDecoratorTest {
 
     @Mock
@@ -45,9 +40,8 @@ public class TransactionDecoratorTest {
 
     @Before
     public void setUp() throws Exception {
-        whenNew(FeatureResolver.class).withAnyArguments().thenReturn(resolver);
-
         when(invocation.getContext()).thenReturn(ctx);
+        when(invocation.getFeatureResolver()).thenReturn(resolver);
         when(resolver.getTransactionMode()).thenReturn(TransactionMode.DISABLED);
     }
 

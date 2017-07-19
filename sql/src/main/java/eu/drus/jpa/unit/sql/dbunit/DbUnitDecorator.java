@@ -4,7 +4,6 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.IDatabaseConnection;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
-import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 import eu.drus.jpa.unit.sql.Constants;
@@ -32,8 +31,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
         final IDatabaseConnection connection = DatabaseConnectionFactory.openConnection(ds);
         context.storeData(KEY_CONNECTION, connection);
 
-        final SqlDbFeatureExecutor dbFeatureExecutor = new SqlDbFeatureExecutor(
-                new FeatureResolver(invocation.getMethod(), invocation.getTestClass()));
+        final SqlDbFeatureExecutor dbFeatureExecutor = new SqlDbFeatureExecutor(invocation.getFeatureResolver());
 
         dbFeatureExecutor.executeBeforeTest(connection);
     }
@@ -44,8 +42,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
         final IDatabaseConnection connection = (IDatabaseConnection) context.getData(KEY_CONNECTION);
         context.storeData(KEY_CONNECTION, null);
 
-        final SqlDbFeatureExecutor dbFeatureExecutor = new SqlDbFeatureExecutor(
-                new FeatureResolver(invocation.getMethod(), invocation.getTestClass()));
+        final SqlDbFeatureExecutor dbFeatureExecutor = new SqlDbFeatureExecutor(invocation.getFeatureResolver());
 
         try {
             dbFeatureExecutor.executeAfterTest(connection, invocation.hasErrors());

@@ -11,4 +11,6 @@ public interface TestMethodInvocation {
     ExecutionContext getContext();
 
     boolean hasErrors();
+
+    FeatureResolver getFeatureResolver();
 }

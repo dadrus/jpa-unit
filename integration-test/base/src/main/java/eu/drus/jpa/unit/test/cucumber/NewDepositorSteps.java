@@ -17,7 +17,7 @@ import eu.drus.jpa.unit.test.model.Depositor;
 import eu.drus.jpa.unit.test.model.GiroAccount;
 import eu.drus.jpa.unit.test.model.OperationNotSupportedException;
 
-@Cleanup(phase = CleanupPhase.NONE)
+// By default cucumber scenarios are executed with Cleanup phase=NONE.
 public class NewDepositorSteps {
 
     @Rule

@@ -35,7 +35,6 @@ import eu.drus.jpa.unit.api.CleanupUsingScripts;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.InitialDataSets;
-import eu.drus.jpa.unit.spi.FeatureResolver;
 
 public class FeatureResolverTest {
 
@@ -58,7 +57,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldSeedData(), equalTo(Boolean.FALSE));
@@ -85,7 +84,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldSeedData(), equalTo(Boolean.TRUE));
@@ -117,7 +116,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldSeedData(), equalTo(Boolean.TRUE));
@@ -151,7 +150,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldSeedData(), equalTo(Boolean.TRUE));
@@ -186,7 +185,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldSeedData(), equalTo(Boolean.TRUE));
@@ -215,7 +214,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldApplyCustomScriptBefore(), equalTo(Boolean.FALSE));
@@ -242,7 +241,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldApplyCustomScriptBefore(), equalTo(Boolean.TRUE));
@@ -272,7 +271,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldApplyCustomScriptBefore(), equalTo(Boolean.TRUE));
@@ -298,7 +297,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldApplyCustomScriptAfter(), equalTo(Boolean.FALSE));
@@ -325,7 +324,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldApplyCustomScriptAfter(), equalTo(Boolean.TRUE));
@@ -355,7 +354,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldApplyCustomScriptAfter(), equalTo(Boolean.TRUE));
@@ -381,7 +380,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldVerifyDataAfter(), equalTo(Boolean.FALSE));
@@ -405,7 +404,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldVerifyDataAfter(), equalTo(Boolean.TRUE));
@@ -436,7 +435,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldVerifyDataAfter(), equalTo(Boolean.TRUE));
@@ -472,7 +471,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         final Set<Class<?>> filterSet = resolver.getCustomColumnFilter();
         assertThat(filterSet.size(), equalTo(1));
@@ -503,7 +502,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         final Set<Class<?>> filterSet = resolver.getCustomColumnFilter();
         assertThat(filterSet.size(), equalTo(1));
@@ -525,7 +524,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
@@ -550,7 +549,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
@@ -576,7 +575,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
@@ -603,7 +602,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
@@ -632,7 +631,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
@@ -658,7 +657,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
@@ -684,7 +683,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
@@ -707,7 +706,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
@@ -731,7 +730,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.TRUE));
@@ -757,7 +756,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.TRUE));
@@ -785,7 +784,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.FALSE));
@@ -809,7 +808,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupUsingScriptBefore(), equalTo(Boolean.FALSE));
@@ -834,7 +833,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupUsingScriptBefore(), equalTo(Boolean.TRUE));
@@ -866,7 +865,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupUsingScriptBefore(), equalTo(Boolean.TRUE));
@@ -891,7 +890,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupUsingScriptAfter(), equalTo(Boolean.FALSE));
@@ -916,7 +915,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupUsingScriptAfter(), equalTo(Boolean.TRUE));
@@ -946,7 +945,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupUsingScriptAfter(), equalTo(Boolean.TRUE));
@@ -978,7 +977,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupUsingScriptAfter(), equalTo(Boolean.TRUE));
@@ -1008,7 +1007,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldCleanupUsingScriptAfter(), equalTo(Boolean.TRUE));
@@ -1034,7 +1033,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldEvictCacheBefore(), equalTo(Boolean.FALSE));
@@ -1058,7 +1057,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldEvictCacheBefore(), equalTo(Boolean.FALSE));
@@ -1082,7 +1081,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldEvictCacheBefore(), equalTo(Boolean.FALSE));
@@ -1106,7 +1105,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldEvictCacheAfter(), equalTo(Boolean.TRUE));
@@ -1130,7 +1129,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldEvictCacheAfter(), equalTo(Boolean.TRUE));
@@ -1154,7 +1153,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldEvictCacheBefore(), equalTo(Boolean.TRUE));
@@ -1178,7 +1177,7 @@ public class FeatureResolverTest {
         final Method method = cut.getDeclaredMethod(jMethod.name());
 
         // WHEN
-        final FeatureResolver resolver = new FeatureResolver(method, cut);
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).build();
 
         // THEN
         assertThat(resolver.shouldEvictCacheBefore(), equalTo(Boolean.TRUE));
