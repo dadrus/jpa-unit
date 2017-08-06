@@ -1,6 +1,7 @@
 package eu.drus.jpa.unit.api;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -84,6 +85,7 @@ public class JpaUnitTest {
         when(context.getTestClass()).thenReturn(Optional.of(testClass));
         when(context.getTestMethod()).thenReturn(Optional.of(getClass().getMethod("prepareMocks")));
         when(context.getExecutionException()).thenReturn(Optional.empty());
+        when(context.getTestInstance()).thenReturn(Optional.of(new Object()));
     }
 
     @Test
@@ -164,6 +166,8 @@ public class JpaUnitTest {
         assertThat(invocation.getTestMethod(), equalTo(getClass().getMethod("prepareMocks")));
         assertThat(invocation.getTestClass(), equalTo(getClass()));
         assertFalse(invocation.hasErrors());
+        assertThat(invocation.getFeatureResolver().shouldCleanupAfter(), equalTo(Boolean.TRUE));
+        assertThat(invocation.getTestInstance(), notNullValue());
     }
 
     @Test
@@ -184,5 +188,7 @@ public class JpaUnitTest {
         assertThat(invocation.getTestMethod(), equalTo(getClass().getMethod("prepareMocks")));
         assertThat(invocation.getTestClass(), equalTo(getClass()));
         assertFalse(invocation.hasErrors());
+        assertThat(invocation.getFeatureResolver().shouldCleanupAfter(), equalTo(Boolean.TRUE));
+        assertThat(invocation.getTestInstance(), notNullValue());
     }
 }

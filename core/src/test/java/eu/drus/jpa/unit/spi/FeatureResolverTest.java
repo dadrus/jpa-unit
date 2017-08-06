@@ -713,6 +713,29 @@ public class FeatureResolverTest {
     }
 
     @Test
+    public void testCleanupBeforeTestIsEnabledForClassWithoutCorrespondingAnnotationsIfConfiguredAsDefaultPhase() throws Exception {
+        // GIVEN
+        final JCodeModel jCodeModel = new JCodeModel();
+        final JPackage jp = jCodeModel.rootPackage();
+        final JDefinedClass jClass = jp._class(JMod.PUBLIC, "ClassUnderTest");
+        final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "test");
+
+        buildModel(testFolder.getRoot(), jCodeModel);
+
+        compileModel(testFolder.getRoot());
+
+        final Class<?> cut = loadClass(testFolder.getRoot(), jClass.name());
+        final Method method = cut.getDeclaredMethod(jMethod.name());
+
+        // WHEN
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(method, cut).withDefaultCleanupPhase(CleanupPhase.BEFORE)
+                .build();
+
+        // THEN
+        assertThat(resolver.shouldCleanupBefore(), equalTo(Boolean.TRUE));
+    }
+
+    @Test
     public void testCleanupBeforeTestIsEnabledForClassWithCorrespondingClassLevelAnnotation() throws Exception {
         // GIVEN
         final JCodeModel jCodeModel = new JCodeModel();

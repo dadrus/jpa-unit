@@ -171,29 +171,6 @@ public class FeatureResolver {
             return this;
         }
 
-        public Builder withDefaultCleanupStrategy(final CleanupStrategy strategy) {
-            checkArgument(strategy != null, "Default CleanupStrategy is not allowd to be null");
-            featureResolver.defaultCleanupStrategy = strategy;
-            return this;
-        }
-
-        public Builder withDefaultCleanupUsingScriptsPhase(final CleanupPhase phase) {
-            checkArgument(phase != null, "Default CleanupPhase is not allowd to be null");
-            featureResolver.defaultCleanupUsingScriptsPhase = phase;
-            return this;
-        }
-
-        public Builder withDefaultDataSeedStrategy(final DataSeedStrategy strategy) {
-            checkArgument(strategy != null, "Default DataSeedStrategy is not allowd to be null");
-            featureResolver.defaultDataSeedStrategy = strategy;
-            return this;
-        }
-
-        public Builder withDefaultTransactionMode(final TransactionMode mode) {
-            featureResolver.defaultTransactionMode = mode;
-            return this;
-        }
-
         public FeatureResolver build() {
             return featureResolver;
         }

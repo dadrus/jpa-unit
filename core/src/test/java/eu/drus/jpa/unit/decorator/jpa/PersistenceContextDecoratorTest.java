@@ -16,6 +16,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,10 @@ public class PersistenceContextDecoratorTest {
     private EntityManager entityManager;
 
     @PersistenceContext
-    private EntityManager em;
+    private EntityManager em1;
+
+    @PersistenceContext(type = PersistenceContextType.EXTENDED)
+    private EntityManager em2;
 
     @SuppressWarnings("unused")
     private Object someField;
@@ -58,10 +62,10 @@ public class PersistenceContextDecoratorTest {
     }
 
     @Test
-    public void testApplyScopeEntityManagerInjection() throws Throwable {
+    public void testEntityManagerInjection() throws Exception {
         // GIVEN
         when(ctx.getData(Constants.KEY_ENTITY_MANAGER)).thenReturn(entityManager);
-        final Field field = getClass().getDeclaredField("em");
+        final Field field = getClass().getDeclaredField("em1");
         when(ctx.getPersistenceField()).thenReturn(field);
         final PersistenceContextDecorator fixture = new PersistenceContextDecorator();
 
@@ -70,7 +74,7 @@ public class PersistenceContextDecoratorTest {
         fixture.afterTest(invocation);
 
         // THEN
-        assertThat(em, equalTo(entityManager));
+        assertThat(em1, equalTo(entityManager));
         verify(entityManagerFactory).createEntityManager();
         verify(entityManager).close();
 
@@ -82,7 +86,29 @@ public class PersistenceContextDecoratorTest {
     }
 
     @Test
-    public void testApplyForAnUnsupportedFieldInjection() throws Throwable {
+    public void testEntityManagerIsReusedForExtendedPersistenceContextType() throws Exception {
+        // GIVEN
+        when(ctx.getData(Constants.KEY_ENTITY_MANAGER)).thenReturn(entityManager);
+        final Field field = getClass().getDeclaredField("em2");
+        when(ctx.getPersistenceField()).thenReturn(field);
+        final PersistenceContextDecorator fixture = new PersistenceContextDecorator();
+
+        // WHEN
+        fixture.beforeTest(invocation);
+        fixture.afterTest(invocation);
+
+        // THEN
+        assertThat(em2, equalTo(entityManager));
+        verify(entityManagerFactory, times(0)).createEntityManager();
+        verify(entityManager, times(0)).close();
+
+        final ArgumentCaptor<EntityManager> emCaptor = ArgumentCaptor.forClass(EntityManager.class);
+        verify(ctx, times(1)).storeData(eq(Constants.KEY_ENTITY_MANAGER), emCaptor.capture());
+        assertThat(emCaptor.getValue(), equalTo(entityManager));
+    }
+
+    @Test
+    public void testEntityManagerInjectionForUnsupportedField() throws Exception {
         // GIVEN
         final Field field = getClass().getDeclaredField("someField");
         when(ctx.getPersistenceField()).thenReturn(field);
@@ -93,7 +119,7 @@ public class PersistenceContextDecoratorTest {
         fixture.afterTest(invocation);
 
         // THEN
-        assertThat(em, nullValue());
+        assertThat(em1, nullValue());
         verify(entityManagerFactory, times(0)).createEntityManager();
         verify(entityManager, times(0)).close();
         verify(ctx, times(0)).storeData(any(String.class), any(EntityManager.class));
@@ -110,4 +136,5 @@ public class PersistenceContextDecoratorTest {
         // THEN
         assertThat(priority, equalTo(2));
     }
+
 }
