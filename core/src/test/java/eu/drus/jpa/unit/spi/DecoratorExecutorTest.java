@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.cucumber;
+package eu.drus.jpa.unit.spi;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -20,18 +20,11 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.core.DecoratorRegistrar;
-import eu.drus.jpa.unit.core.JpaUnitContext;
-import eu.drus.jpa.unit.spi.ExecutionContext;
-import eu.drus.jpa.unit.spi.TestClassDecorator;
-import eu.drus.jpa.unit.spi.TestMethodDecorator;
-import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("org.mockito.*")
-@PrepareForTest({
-        DecoratorRegistrar.class, JpaUnitContext.class
-})
-public class JpaUnitTest {
+@PrepareForTest(DecoratorRegistrar.class)
+public class DecoratorExecutorTest {
 
     @Mock
     private TestClassDecorator firstClassDecorator;
@@ -49,18 +42,16 @@ public class JpaUnitTest {
     private TestMethodInvocation invocation;
 
     @Mock
-    private JpaUnitContext jpaUnitContext;
+    private ExecutionContext jpaUnitContext;
 
     private final Class<?> testClass = getClass();
 
     @Before
     public void prepareMocks() throws Exception {
-        mockStatic(DecoratorRegistrar.class, JpaUnitContext.class);
+        mockStatic(DecoratorRegistrar.class);
 
         when(DecoratorRegistrar.getClassDecorators()).thenReturn(Arrays.asList(firstClassDecorator, secondClassDecorator));
         when(DecoratorRegistrar.getMethodDecorators()).thenReturn(Arrays.asList(firstMethodDecorator, secondMethodDecorator));
-
-        when(JpaUnitContext.getInstance(any(Class.class))).thenReturn(jpaUnitContext);
 
         when(firstClassDecorator.isConfigurationSupported(any(ExecutionContext.class))).thenReturn(Boolean.TRUE);
         when(secondClassDecorator.isConfigurationSupported(any(ExecutionContext.class))).thenReturn(Boolean.TRUE);
@@ -77,10 +68,10 @@ public class JpaUnitTest {
     @Test
     public void testProcessBeforeAllTestDecoratorExecutionOrder() throws Exception {
         // GIVEN
-        final JpaUnit unit = new JpaUnit();
+        final DecoratorExecutor unit = new DecoratorExecutor();
 
         // WHEN
-        unit.processBeforeAll(getClass());
+        unit.processBeforeAll(jpaUnitContext, getClass());
 
         // THEN
         final InOrder order = inOrder(firstClassDecorator, secondClassDecorator);
@@ -92,10 +83,10 @@ public class JpaUnitTest {
     @Test
     public void testProcessAfterAllTestDecoratorExecutionOrder() throws Exception {
         // GIVEN
-        final JpaUnit unit = new JpaUnit();
+        final DecoratorExecutor unit = new DecoratorExecutor();
 
         // WHEN
-        unit.processAfterAll(getClass());
+        unit.processAfterAll(jpaUnitContext, getClass());
 
         // THEN
         final InOrder order = inOrder(secondClassDecorator, firstClassDecorator);
@@ -107,7 +98,7 @@ public class JpaUnitTest {
     @Test
     public void testProcessBeforeTestDecoratorExecutionOrder() throws Exception {
         // GIVEN
-        final JpaUnit unit = new JpaUnit();
+        final DecoratorExecutor unit = new DecoratorExecutor();
 
         // WHEN
         unit.processBefore(invocation);
@@ -122,7 +113,7 @@ public class JpaUnitTest {
     @Test
     public void testProcessAfterTestDecoratorExecutionOrder() throws Exception {
         // GIVEN
-        final JpaUnit unit = new JpaUnit();
+        final DecoratorExecutor unit = new DecoratorExecutor();
 
         // WHEN
         unit.processAfter(invocation);

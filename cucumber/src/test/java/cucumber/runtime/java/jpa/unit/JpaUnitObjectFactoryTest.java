@@ -25,7 +25,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.ru.Если;
 import eu.drus.jpa.unit.core.JpaUnitContext;
-import eu.drus.jpa.unit.cucumber.JpaUnit;
+import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 @RunWith(PowerMockRunner.class)
@@ -33,7 +33,10 @@ import eu.drus.jpa.unit.spi.TestMethodInvocation;
 public class JpaUnitObjectFactoryTest {
 
     @Mock
-    private JpaUnit executor;
+    private JpaUnitContext ctx;
+
+    @Mock
+    private DecoratorExecutor executor;
 
     @InjectMocks
     private JpaUnitObjectFactory factory;
@@ -41,7 +44,7 @@ public class JpaUnitObjectFactoryTest {
     @Before
     public void prepareJpaUnitContext() {
         mockStatic(JpaUnitContext.class);
-        when(JpaUnitContext.getInstance(any(Class.class))).thenReturn(null);
+        when(JpaUnitContext.getInstance(any(Class.class))).thenReturn(ctx);
     }
 
     @Test
@@ -104,7 +107,7 @@ public class JpaUnitObjectFactoryTest {
         assertNotNull(obj1);
         assertNotNull(obj2);
 
-        verify(executor).processBeforeAll(eq(ClassA.class));
+        verify(executor).processBeforeAll(eq(ctx), eq(ClassA.class));
         verifyNoMoreInteractions(executor);
     }
 
@@ -120,8 +123,8 @@ public class JpaUnitObjectFactoryTest {
         assertNotNull(obj1);
         assertNotNull(obj2);
 
-        verify(executor).processBeforeAll(eq(ClassA.class));
-        verify(executor).processBeforeAll(eq(ClassB.class));
+        verify(executor).processBeforeAll(eq(ctx), eq(ClassA.class));
+        verify(executor).processBeforeAll(eq(ctx), eq(ClassB.class));
         verifyNoMoreInteractions(executor);
     }
 
@@ -131,15 +134,15 @@ public class JpaUnitObjectFactoryTest {
         factory.getInstance(ClassA.class);
         factory.getInstance(ClassB.class);
 
-        verify(executor).processBeforeAll(eq(ClassA.class));
-        verify(executor).processBeforeAll(eq(ClassB.class));
+        verify(executor).processBeforeAll(eq(ctx), eq(ClassA.class));
+        verify(executor).processBeforeAll(eq(ctx), eq(ClassB.class));
 
         // WHEN
         factory.stop();
 
         // THEN
-        verify(executor).processAfterAll(eq(ClassA.class));
-        verify(executor).processAfterAll(eq(ClassB.class));
+        verify(executor).processAfterAll(eq(ctx), eq(ClassA.class));
+        verify(executor).processAfterAll(eq(ctx), eq(ClassB.class));
         verifyNoMoreInteractions(executor);
     }
 
@@ -148,7 +151,7 @@ public class JpaUnitObjectFactoryTest {
         // GIVEN
         final ClassB obj = factory.getInstance(ClassB.class);
 
-        verify(executor).processBeforeAll(eq(ClassB.class));
+        verify(executor).processBeforeAll(eq(ctx), eq(ClassB.class));
 
         // WHEN
         obj.when();
@@ -166,7 +169,7 @@ public class JpaUnitObjectFactoryTest {
         // GIVEN
         final ClassB obj = factory.getInstance(ClassB.class);
 
-        verify(executor).processBeforeAll(eq(ClassB.class));
+        verify(executor).processBeforeAll(eq(ctx), eq(ClassB.class));
 
         // WHEN
         obj.notACucumberMethod();

@@ -22,7 +22,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
-import eu.drus.jpa.unit.spi.TestClassDecorator;
+import eu.drus.jpa.unit.spi.DecoratorExecutor;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestClassStatementTest {
@@ -34,7 +34,7 @@ public class TestClassStatementTest {
     private Statement base;
 
     @Mock
-    private TestClassDecorator decorator;
+    private DecoratorExecutor jpaUnit;
 
     private TestClassStatement statement;
 
@@ -53,7 +53,7 @@ public class TestClassStatementTest {
             return map.put(key, value);
         }).when(ctx).storeData(anyString(), anyObject());
 
-        statement = new TestClassStatement(ctx, decorator, base, this);
+        statement = new TestClassStatement(ctx, jpaUnit, base, this);
     }
 
     @Test
@@ -65,10 +65,10 @@ public class TestClassStatementTest {
         statement.evaluate();
 
         // THEN
-        final InOrder inOrder = inOrder(decorator, base);
-        inOrder.verify(decorator).beforeAll(eq(ctx), eq(this.getClass()));
+        final InOrder inOrder = inOrder(jpaUnit, base);
+        inOrder.verify(jpaUnit).processBeforeAll(eq(ctx), eq(this.getClass()));
         inOrder.verify(base, times(2)).evaluate();
-        inOrder.verify(decorator).afterAll(eq(ctx), eq(this.getClass()));
+        inOrder.verify(jpaUnit).processAfterAll(eq(ctx), eq(this.getClass()));
     }
 
     @Test
@@ -91,9 +91,9 @@ public class TestClassStatementTest {
         }
 
         // THEN
-        final InOrder inOrder = inOrder(decorator, base);
-        inOrder.verify(decorator).beforeAll(eq(ctx), eq(this.getClass()));
+        final InOrder inOrder = inOrder(jpaUnit, base);
+        inOrder.verify(jpaUnit).processBeforeAll(eq(ctx), eq(this.getClass()));
         inOrder.verify(base, times(2)).evaluate();
-        inOrder.verify(decorator).afterAll(eq(ctx), eq(this.getClass()));
+        inOrder.verify(jpaUnit).processAfterAll(eq(ctx), eq(this.getClass()));
     }
 }

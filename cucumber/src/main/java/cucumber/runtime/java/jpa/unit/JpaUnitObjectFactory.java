@@ -12,9 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import cucumber.api.java.ObjectFactory;
 import eu.drus.jpa.unit.api.JpaUnitException;
+import eu.drus.jpa.unit.core.JpaUnitContext;
 import eu.drus.jpa.unit.cucumber.CucumberInterceptor;
 import eu.drus.jpa.unit.cucumber.EqualsInterceptor;
-import eu.drus.jpa.unit.cucumber.JpaUnit;
+import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import net.sf.cglib.proxy.CallbackHelper;
 import net.sf.cglib.proxy.Dispatcher;
 import net.sf.cglib.proxy.Enhancer;
@@ -24,7 +25,7 @@ public class JpaUnitObjectFactory implements ObjectFactory {
     private static final Logger LOG = LoggerFactory.getLogger(JpaUnitObjectFactory.class);
 
     private Map<Class<?>, Object> definitions = new HashMap<>();
-    private JpaUnit executor = new JpaUnit();
+    private DecoratorExecutor executor = new DecoratorExecutor();
 
     @Override
     public void start() {
@@ -35,7 +36,7 @@ public class JpaUnitObjectFactory implements ObjectFactory {
     public void stop() {
         for (final Class<?> clazz : definitions.keySet()) {
             try {
-                executor.processAfterAll(clazz);
+                executor.processAfterAll(JpaUnitContext.getInstance(clazz), clazz);
             } catch (final Exception e) {
                 LOG.error("Failed to run after all hook", e);
             }
@@ -58,7 +59,7 @@ public class JpaUnitObjectFactory implements ObjectFactory {
 
     private <T> T createProxy(final Class<T> clazz) {
         try {
-            executor.processBeforeAll(clazz);
+            executor.processBeforeAll(JpaUnitContext.getInstance(clazz), clazz);
         } catch (final Exception e) {
             throw new JpaUnitException("Could not execute beforeAll hook", e);
         }

@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.api;
 
-import static eu.drus.jpa.unit.api.MethodRuleRegistrar.registerRules;
+import static eu.drus.jpa.unit.rule.MethodRuleRegistrar.registerRules;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +10,16 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
 import eu.drus.jpa.unit.core.JpaUnitContext;
+import eu.drus.jpa.unit.spi.DecoratorExecutor;
 
 public class JpaUnitRule implements MethodRule {
 
     private final JpaUnitContext ctx;
+    private final DecoratorExecutor executor;
 
     public JpaUnitRule(final Class<?> clazz) {
         ctx = JpaUnitContext.getInstance(clazz);
+        executor = new DecoratorExecutor();
     }
 
     @Override
@@ -31,6 +34,6 @@ public class JpaUnitRule implements MethodRule {
     }
 
     private List<MethodRule> getRules() {
-        return registerRules(new ArrayList<>(), ctx);
+        return registerRules(new ArrayList<>(), executor, ctx);
     }
 }

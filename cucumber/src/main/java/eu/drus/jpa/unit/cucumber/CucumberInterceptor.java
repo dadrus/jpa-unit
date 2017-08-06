@@ -6,16 +6,17 @@ import eu.drus.jpa.unit.api.CleanupPhase;
 import eu.drus.jpa.unit.core.JpaUnitContext;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
+import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 public class CucumberInterceptor implements MethodInterceptor {
 
-    private final JpaUnit executor;
+    private final DecoratorExecutor executor;
     private Object delegate;
 
-    public CucumberInterceptor(final JpaUnit executor, final Object delegate) {
+    public CucumberInterceptor(final DecoratorExecutor executor, final Object delegate) {
         this.executor = executor;
         this.delegate = delegate;
     }

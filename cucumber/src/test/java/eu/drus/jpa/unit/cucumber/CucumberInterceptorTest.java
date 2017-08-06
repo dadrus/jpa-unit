@@ -21,6 +21,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.core.JpaUnitContext;
+import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -37,7 +38,7 @@ public class CucumberInterceptorTest {
     private MethodProxy methodProxy;
 
     @Mock
-    private JpaUnit executor;
+    private DecoratorExecutor executor;
 
     private Method method;
 

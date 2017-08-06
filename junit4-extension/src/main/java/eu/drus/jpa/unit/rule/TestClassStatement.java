@@ -8,26 +8,26 @@ import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
-import eu.drus.jpa.unit.spi.TestClassDecorator;
+import eu.drus.jpa.unit.spi.DecoratorExecutor;
 
 public class TestClassStatement extends Statement {
 
     private final ExecutionContext ctx;
     private final Statement base;
     private final Object target;
-    private final TestClassDecorator decorator;
+    private final DecoratorExecutor executor;
 
     private final String beforeAllKey;
     private final String counterKey;
 
-    public TestClassStatement(final ExecutionContext ctx, final TestClassDecorator decorator, final Statement base, final Object target) {
+    public TestClassStatement(final ExecutionContext ctx, final DecoratorExecutor executor, final Statement base, final Object target) {
         this.ctx = ctx;
-        this.decorator = decorator;
+        this.executor = executor;
         this.base = base;
         this.target = target;
 
-        beforeAllKey = target.getClass().getName() + "[" + decorator.hashCode() + "].BeforeAllRun";
-        counterKey = target.getClass().getName() + "[" + decorator.hashCode() + "].Counter";
+        beforeAllKey = target.getClass().getName() + ".BeforeAllRun";
+        counterKey = target.getClass().getName() + ".Counter";
     }
 
     @Override
@@ -48,7 +48,7 @@ public class TestClassStatement extends Statement {
     private void beforeAll() throws Exception {
         final Boolean isBeforeAllRun = (Boolean) ctx.getData(beforeAllKey);
         if (isBeforeAllRun == null) {
-            decorator.beforeAll(ctx, target.getClass());
+            executor.processBeforeAll(ctx, target.getClass());
         }
         ctx.storeData(beforeAllKey, Boolean.TRUE);
     }
@@ -61,7 +61,7 @@ public class TestClassStatement extends Statement {
         ctx.storeData(counterKey, ++counter);
         final List<FrameworkMethod> testMethods = new TestClass(target.getClass()).getAnnotatedMethods(Test.class);
         if (counter >= testMethods.size()) {
-            decorator.afterAll(ctx, target.getClass());
+            executor.processAfterAll(ctx, target.getClass());
         }
     }
 }

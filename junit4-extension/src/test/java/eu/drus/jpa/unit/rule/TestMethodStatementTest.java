@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
-import eu.drus.jpa.unit.spi.TestMethodDecorator;
+import eu.drus.jpa.unit.spi.DecoratorExecutor;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestMethodStatementTest {
@@ -26,7 +26,7 @@ public class TestMethodStatementTest {
     private ExecutionContext ctx;
 
     @Mock
-    private TestMethodDecorator decorator;
+    private DecoratorExecutor jpaUnit;
 
     @Mock
     private Statement base;
@@ -38,7 +38,7 @@ public class TestMethodStatementTest {
 
     @Before
     public void setUp() {
-        statement = new TestMethodStatement(ctx, decorator, base, method, this);
+        statement = new TestMethodStatement(ctx, jpaUnit, base, method, this);
         assertFalse(statement.hasErrors());
     }
 
@@ -50,10 +50,10 @@ public class TestMethodStatementTest {
         statement.evaluate();
 
         // THEN
-        final InOrder inOrder = inOrder(decorator, base);
-        inOrder.verify(decorator).beforeTest(eq(statement));
+        final InOrder inOrder = inOrder(jpaUnit, base);
+        inOrder.verify(jpaUnit).processBefore(eq(statement));
         inOrder.verify(base).evaluate();
-        inOrder.verify(decorator).afterTest(eq(statement));
+        inOrder.verify(jpaUnit).processAfter(eq(statement));
 
         assertFalse(statement.hasErrors());
     }
@@ -72,10 +72,10 @@ public class TestMethodStatementTest {
         }
 
         // THEN
-        final InOrder inOrder = inOrder(decorator, base);
-        inOrder.verify(decorator).beforeTest(eq(statement));
+        final InOrder inOrder = inOrder(jpaUnit, base);
+        inOrder.verify(jpaUnit).processBefore(eq(statement));
         inOrder.verify(base).evaluate();
-        inOrder.verify(decorator).afterTest(eq(statement));
+        inOrder.verify(jpaUnit).processAfter(eq(statement));
 
         assertTrue(statement.hasErrors());
     }
