@@ -70,6 +70,7 @@
     <plugin.version.serviceloader>1.0.7</plugin.version.serviceloader>
     <plugin.version.enforcer>1.4.1</plugin.version.enforcer>
     <plugin.version.pgp>1.6</plugin.version.pgp>
+    <plugin.version.shade>3.0.0</plugin.version.shade>
   </properties>
 
   <scm>
@@ -309,6 +310,11 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>${plugin.version.shade}</version>
         </plugin>
       </plugins>
     </pluginManagement>
