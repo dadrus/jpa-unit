@@ -13,7 +13,7 @@ import eu.drus.jpa.unit.spi.TestDecorator;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
-public class JpaUnitHookExecutor {
+public class JpaUnit {
 
     private static final Comparator<TestDecorator> BEFORE_COMPARATOR = (a, b) -> a.getPriority() - b.getPriority();
     private static final Comparator<TestDecorator> AFTER_COMPARATOR = (a, b) -> b.getPriority() - a.getPriority();

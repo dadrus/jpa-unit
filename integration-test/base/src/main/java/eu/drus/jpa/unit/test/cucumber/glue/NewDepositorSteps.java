@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.test.cucumber;
+package eu.drus.jpa.unit.test.cucumber.glue;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,7 +14,7 @@ import eu.drus.jpa.unit.api.CleanupPhase;
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.JpaUnitRule;
 import eu.drus.jpa.unit.test.model.Depositor;
-import eu.drus.jpa.unit.test.model.GiroAccount;
+import eu.drus.jpa.unit.test.model.InstantAccessAccount;
 import eu.drus.jpa.unit.test.model.OperationNotSupportedException;
 
 // By default cucumber scenarios are executed with Cleanup phase=NONE.
@@ -28,12 +28,11 @@ public class NewDepositorSteps {
 
     private Depositor depositor;
 
-    @Given("^a new customer '(.+)', applying for a giro account$")
+    @Given("^a new customer '(.+)', applying for an instant access account$")
     public void createNewCustomer(final String customerName) throws OperationNotSupportedException {
         final String[] nameParts = customerName.split(" ");
         depositor = new Depositor(nameParts[0], nameParts[1]);
-        final GiroAccount giroAccount = new GiroAccount(depositor);
-        giroAccount.setCreditLimit(1000.0f);
+        new InstantAccessAccount(depositor);
     }
 
     @When("^the onboarding process completes")
@@ -41,9 +40,9 @@ public class NewDepositorSteps {
         manager.persist(depositor);
     }
 
-    @Then("(\\d+) depositor object and (\\d+) giro account object are present")
-    @ExpectedDataSets(value = "datasets/max-payne-after-onboarding.json", excludeColumns = {
-            "ID", "DEPOSITOR_ID", "ACCOUNT_ID", "VERSION"
+    @Then("(\\d+) depositor object and (\\d+) instant access account object are present")
+    @ExpectedDataSets(value = "datasets/max-payne-data.json", excludeColumns = {
+            "ID", "DEPOSITOR_ID", "ACCOUNT_ID", "VERSION", "accounts"
     })
     @Cleanup(phase = CleanupPhase.AFTER)
     public void verifyExistenceOfExpectedObjects(final int expectedDepositors, final int expectedAccounts) {

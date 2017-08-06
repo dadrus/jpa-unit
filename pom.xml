@@ -40,7 +40,7 @@
     <verions.hibernate-ogm>5.1.0.Final</verions.hibernate-ogm>
     <version.sqlite>3.19.3</version.sqlite>
     <version.commons-dbcp2>2.1.1</version.commons-dbcp2>
-    <version.deltaspike>1.8.0</version.deltaspike>
+    <version.deltaspike>1.7.2</version.deltaspike>
     <version.weld>2.3.5.Final</version.weld>
     <version.commons-lang3>3.3</version.commons-lang3>
     <version.guava>22.0</version.guava>

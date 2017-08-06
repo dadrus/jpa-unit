@@ -10,7 +10,5 @@ import cucumber.api.junit.Cucumber;
         "pretty", "html:target/site/cucumber-pretty", "json:target/cucumber.json"
 }, tags = {
         "~@ignore"
-}, features = "classpath:bdd-features")
-public class CucumberTest {
-
-}
+}, features = "classpath:bdd-features", glue = "classpath:eu.drus.jpa.unit.test.cucumber.glue")
+public class CucumberTest {}
