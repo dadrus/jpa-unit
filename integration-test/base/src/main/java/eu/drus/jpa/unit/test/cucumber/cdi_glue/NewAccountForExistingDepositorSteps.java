@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
-import javax.persistence.TypedQuery;
 
 import org.junit.Rule;
 
@@ -48,11 +47,6 @@ public class NewAccountForExistingDepositorSteps {
         // the following is just to verify, that the initial data is indeed present
 
         final String[] nameParts = customerName.split(" ");
-
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name=:name", Depositor.class);
-        query.setParameter("name", nameParts[0]);
-
-        depositor = query.getSingleResult();
 
         final List<Depositor> depositors = repo.findByName(nameParts[0]);
         depositor = depositors.get(0);
