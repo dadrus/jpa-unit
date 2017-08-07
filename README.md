@@ -16,6 +16,7 @@ Implements [JUnit 4](http://junit.org/junit4) runner and rule, as well as [JUnit
     - verify contents of the database after test execution
 - Enables bootstrapping of the database schema and contents using plain data base statements (e.g. SQL) or arbitrary frameworks, like e.g. [FlywayDB](https://flywaydb.org) or [Liquibase](http://www.liquibase.org) before the starting of JPA provider
 - Implements seamless integration with CDI.
+- Supports acceptance based testing using [Cucumber](https://cucumber.io/docs/reference/jvm#java)
 - Supports SQL and NoSQL (see below for a list of supported NoSQL databases and known limitations) databases (based on what is possible with the chosen JPA provider).
 	
 ## Credits
@@ -703,3 +704,97 @@ public class CdiEnabledJpaUnitTest {
 }
 ```
 
+# Cucumber Integration
+
+Cucumber is a BDD test framework. To be able to use JPA Unit with it, all you need in addition to cucumber dependencies is to add the following dependency to your Maven project :
+
+```xml
+<dependency>
+  <groupId>com.github.dadrus</groupId>
+  <artifactId>jpa-unit-cucumber</artifactId>
+  <version>${jpa-unit.version}</version>
+  <scope>test</scope>
+</dependency>
+```
+
+This dependency implements a Cucumber extension (`ObjectFactory`) which intercepts all cucumber feature glue methods to enable the usage of JPA Unit annotations. 
+
+Since each feature/scenario glue, compared to regular JUnit tests, implements a single test specification, JPA Unit disables automatic data base cleanup. To avoid stale data
+between the executions of different scenarios or more general different tests, you should take care of the cleanup by yourself. This is the only difference to the regular behavior. 
+This cleanup can be achieved, e.g. using the `@Cleanup` annotation on e.g. a method annotated with the cucumber `@After` annotation.
+
+Analogue to regular JUnit tests a cucumber glue needs to reference either an `EntityManager` or an `EntityManagerFactory`. The `EntityManagerFactory` lives for the
+duration of the scenario execution.
+
+Same rules as for regular JUnit tests apply for the `EntityManager` as well: An `EntityManager` for `TRANSACTION` `PersistenceContextType` lives only for the duration
+of the execution of the glue method. An `EntityManager` for `EXTENDED` `PersistenceContextType` has the life time of the `EntityManagerFactory` and is closed after the
+last glue method is executed. Latter configuration might be a better choice for cucumber glue.
+
+Usage example:
+
+```.java
+@RunWith(Cucumber.class)
+public class CucumberTest {
+    // According to cucumber, this class should not implement any tests
+}
+```
+
+```.java
+public class CucumberGlue {
+
+    @Rule
+    public JpaUnitRule rule = new JpaUnitRule(getClass());
+
+    @PersistenceContext(unitName = "my-test-unit", type = PersistenceContextType.EXTENDED)
+    private EntityManager manager;
+  
+    @Given("^an some existing data in the db$")
+    @InitialDataSets("datasets/initial-data.json")
+    public void seedDatabase() {
+        // data base is seeded thanks to the jpa unit annotation
+    }
+  
+    @When("^a new object is inserted$")
+    public void updataData() {
+        // e.g. manager.persist(new SomeEntity());
+    }
+  
+    @Then("^it is expected in the db")
+    @ExpectedDataSets(value = "datasets/expected-data.json")
+    public void verifyData() {
+        // db verification is done thanks to the jpa unit annotation
+    }
+  
+    @After
+    @Cleanup
+    public void cleanupDb() {
+        // to avoid stale data
+    } 
+}
+```
+
+If you would like to use cucumber with JPA Unit and CDI, you will have to follow the requirements from [CDI Integration](#cdi-integration). However, since
+the usage of multiple runners is not possible, you'll have to start the CDI container manually. Here an example with Deltaspike:
+
+```.java
+@RunWith(Cucumber.class)
+public class CucumberTest {
+    // According to cucumber, this class should not implement any tests
+    // but we can implement global setup and tear down functionality here.
+  
+    private static CdiContainer cdiContainer;
+
+    @BeforeClass
+    public static void startContainer() {
+        cdiContainer = CdiContainerLoader.getCdiContainer();
+        cdiContainer.boot();
+    }
+
+    @AfterClass
+    public static void stopContainer() {
+        cdiContainer.shutdown();
+    }
+}
+```
+
+Now you can inject your dependencies into glue objects.
