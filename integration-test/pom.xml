@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>com.github.dadrus</groupId>
     <artifactId>jpa-unit-parent</artifactId>
@@ -11,7 +11,7 @@
 
   <artifactId>jpa-unit-integration-test</artifactId>
   <packaging>pom</packaging>
-  
+
   <modules>
     <module>test-model</module>
     <module>base</module>
@@ -21,5 +21,18 @@
     <module>jpa2.1-hibernate-test</module>
     <module>jpa-mongodb-hibernate-ogm-test</module>
   </modules>
-  
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+
 </project>
