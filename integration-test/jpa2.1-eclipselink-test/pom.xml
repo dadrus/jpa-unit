@@ -37,7 +37,6 @@
     <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
-      <version>${version.jta}</version>
     </dependency>
   </dependencies>
 

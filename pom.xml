@@ -49,6 +49,9 @@
     <version.jta>1.1</version.jta>
     <version.ehcache>2.7.1</version.ehcache>
     <version.cucumber>1.2.5</version.cucumber>
+    <version.mongo-driver>3.5.0</version.mongo-driver>
+    <version.flapdoodle.embed.mongo>2.0.0</version.flapdoodle.embed.mongo>
+    <version.cglib>3.2.5</version.cglib>
 
     <version.powermock>1.7.0</version.powermock>
     <version.junit>4.12</version.junit>
@@ -367,6 +370,11 @@
         <version>${version.hibernate-jpa-2.1-api}</version>
       </dependency>
       <dependency>
+        <groupId>javax.transaction</groupId>
+        <artifactId>jta</artifactId>
+        <version>${version.jta}</version>
+      </dependency>
+      <dependency>
         <groupId>javax.enterprise</groupId>
         <artifactId>cdi-api</artifactId>
         <version>${version.cdi-api}</version>
@@ -449,9 +457,29 @@
         <version>${version.guava}</version>
       </dependency>
       <dependency>
+        <groupId>org.mongodb</groupId>
+        <artifactId>mongo-java-driver</artifactId>
+        <version>${version.mongo-driver}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.flapdoodle.embed</groupId>
+        <artifactId>de.flapdoodle.embed.mongo</artifactId>
+        <version>${version.flapdoodle.embed.mongo}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>${version.ehcache}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${version.commons-lang3}</version>
+      </dependency>
+      <dependency>
+        <groupId>cglib</groupId>
+        <artifactId>cglib</artifactId>
+        <version>${version.cglib}</version>
       </dependency>
       <dependency>
         <groupId>org.flywaydb</groupId>
