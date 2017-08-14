@@ -14,7 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -22,13 +21,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "DEPOSITOR")
-@SequenceGenerator(name = "DEPOSITOR_SEQ")
 public class Depositor {
 
     // persistence specific attributes
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "DEPOSITOR_SEQ")
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
     @Version

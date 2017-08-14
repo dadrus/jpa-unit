@@ -8,8 +8,10 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.InitialDataSets;
@@ -23,6 +25,7 @@ import eu.drus.jpa.unit.test.model.GiroAccount;
 import eu.drus.jpa.unit.test.model.InstantAccessAccount;
 import eu.drus.jpa.unit.test.model.OperationNotSupportedException;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public abstract class AbstractCdiEnabledJpaUnitTest {
 
     @Rule

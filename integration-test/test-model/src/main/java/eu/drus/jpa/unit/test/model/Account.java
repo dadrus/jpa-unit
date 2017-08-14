@@ -17,7 +17,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -25,11 +24,10 @@ import javax.persistence.Version;
 @Table(name = "ACCOUNT")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE")
-@SequenceGenerator(name = "ACCOUNT_SEQ")
 public abstract class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "ACCOUNT_SEQ")
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
     @Version

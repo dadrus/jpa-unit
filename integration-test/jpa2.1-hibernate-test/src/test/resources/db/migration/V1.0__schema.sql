@@ -1,5 +1,7 @@
-create sequence hibernate_sequence start with 1 increment by 50;
-create sequence hibernate_sequences;
+create table hibernate_sequences (
+    sequence_name varchar(50),
+    next_val bigint
+);
 
 create table ACCOUNT (
     TYPE varchar(25) not null,

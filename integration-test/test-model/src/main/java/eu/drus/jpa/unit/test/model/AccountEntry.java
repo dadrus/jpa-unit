@@ -10,7 +10,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,11 +19,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @Entity
 @Table(name = "ACCOUNT_ENTRY")
-@SequenceGenerator(name = "ACCOUNT_ENTRY_SEQ")
 public class AccountEntry {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "ACCOUNT_ENTRY_SEQ")
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
     @Column(name = "DATE", updatable = false)
