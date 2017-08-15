@@ -1,4 +1,10 @@
-# JPA Unit [![Build Status](https://travis-ci.org/dadrus/jpa-unit.svg?branch=master)](https://travis-ci.org/dadrus/jpa-unit) [![Quality Gate](https://sonarqube.com/api/badges/gate?key=com.github.dadrus.jpa-unit:jpa-unit)](https://sonarqube.com/dashboard?id=com.github.dadrus.jpa-unit%3Ajpa-unit) [![Coverage Status](https://sonarqube.com/api/badges/measure?key=com.github.dadrus.jpa-unit:jpa-unit&metric=coverage)](https://sonarqube.com/dashboard?id=com.github.dadrus.jpa-unit%3Ajpa-unit) [![Technical Debt](https://sonarqube.com/api/badges/measure?key=com.github.dadrus.jpa-unit:jpa-unit&metric=sqale_debt_ratio)](https://sonarqube.com/component_measures/?id=com.github.dadrus.jpa-unit%3Ajpa-unit)
+[![Build Status](https://travis-ci.org/dadrus/jpa-unit.svg?branch=master)](https://travis-ci.org/dadrus/jpa-unit) 
+[![Quality Gate](https://sonarqube.com/api/badges/gate?key=com.github.dadrus.jpa-unit:jpa-unit)](https://sonarqube.com/dashboard?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
+[![Coverage Status](https://sonarqube.com/api/badges/measure?key=com.github.dadrus.jpa-unit:jpa-unit&metric=coverage)](https://sonarqube.com/dashboard?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
+[![Technical Debt](https://sonarqube.com/api/badges/measure?key=com.github.dadrus.jpa-unit:jpa-unit&metric=sqale_debt_ratio)](https://sonarqube.com/component_measures/?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.dadrus.jpa-unit/jpa-unit.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.dadrus.jpa-unit%22)
+
+# JPA Unit 
 
 Implements [JUnit 4](http://junit.org/junit4) runner and rule, as well as [JUnit 5](http://junit.org/junit5) extension to enable easy testing of javax.persistence entities with an arbitrary persistence provider. Both JPA 2.0, as well as JPA 2.1 is supported (See [Issues](https://github.com/dadrus/jpa-unit/issues) for limitations).
 
