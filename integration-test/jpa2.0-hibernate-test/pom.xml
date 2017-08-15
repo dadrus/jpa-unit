@@ -20,7 +20,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jpa-unit-sql</artifactId>
+      <artifactId>jpa-unit-rdbms</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

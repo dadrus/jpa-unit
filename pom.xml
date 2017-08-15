@@ -124,10 +124,10 @@
     <module>core</module>
     <module>junit4-extension</module>
     <module>junit5-extension</module>
-    <module>sql</module>
-    <module>cdi</module>
-    <module>mongodb</module>
     <module>cucumber</module>
+    <module>cdi</module>
+    <module>rdbms</module>
+    <module>mongodb</module>
     <module>integration-test</module>
     <module>bom</module>
   </modules>
