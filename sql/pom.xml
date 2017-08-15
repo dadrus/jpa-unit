@@ -4,13 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.github.dadrus</groupId>
-    <artifactId>jpa-unit-parent</artifactId>
+    <groupId>com.github.dadrus.jpa-unit</groupId>
+    <artifactId>jpa-unit</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>jpa-unit-sql</artifactId>
-  <name>JPA Unit - SQL Plugin</name>
+  <artifactId>jpa-unit-rdbms</artifactId>
+  <name>JPA Unit - RDBMS Plugin</name>
   <description>Makes JPA Unit support SQL databases</description>
 
   <dependencies>
