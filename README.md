@@ -17,7 +17,7 @@ Implements [JUnit 4](http://junit.org/junit4) runner and rule, as well as [JUnit
 - Enables bootstrapping of the database schema and contents using plain data base statements (e.g. SQL) or arbitrary frameworks, like e.g. [FlywayDB](https://flywaydb.org) or [Liquibase](http://www.liquibase.org) before the starting of JPA provider
 - Implements seamless integration with CDI.
 - Supports acceptance based testing using [Cucumber](https://cucumber.io/docs/reference/jvm#java)
-- Supports SQL and NoSQL (see below for a list of supported NoSQL databases and known limitations) databases (based on what is possible with the chosen JPA provider).
+- Supports SQL and NoSQL databases (based on what is possible with the chosen JPA provider). See below for a list of supported NoSQL databases and known limitations.
 	
 ## Credits
 
@@ -30,7 +30,7 @@ To be able to use the JPA Unit you will have to add some dependencies to your Ma
 ```xml
 <dependencyManagement>
   <dependency>
-    <groupId>com.github.dadrus</groupId>
+    <groupId>com.github.dadrus.jpa-unit</groupId>
     <artifactId>jpa-unit-bom</artifactId>
     <version>${jpa-unit.version}</version>
     <type>pom</type>
@@ -47,7 +47,7 @@ To work with JUnit 4, you would need to add `jpa-unit4` to your test dependencie
 
 ```xml
 <dependency>
-  <groupId>com.github.dadrus</groupId>
+  <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit4</artifactId>
   <version>${jpa-unit.version}</version>
   <scope>test</scope>
@@ -99,7 +99,7 @@ To work with JUnit 5, you would need to add `jpa-unit5` to your test dependencie
 
 ```xml
 <dependency>
-  <groupId>com.github.dadrus</groupId>
+  <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit5</artifactId>
   <version>${jpa-unit.version}</version>
   <scope>test</scope>
@@ -258,7 +258,7 @@ Seeding the database as described above introduces an additional abstraction lev
 
 Both annotation have the following properties:
 
-- `value` of type `String[]` which needs to be set to reference the required database specific scripts (e.g. SQL for an SQL database).
+- `value` of type `String[]` which needs to be set to reference the required database specific scripts (e.g. SQL for a relational database).
     
 Usage example:
 
@@ -463,20 +463,20 @@ public class FlywaydbTest {
 
 Depending on the used database, you will have to add a dependency for a database specific JPA-Unit plugin.
 
-## SQL Databases
+## RDBMS Databases
 
-For all SQL databases the `jpa-unit-sql` dependency needs to be added:
+For all relational databases the `jpa-unit-rdbms` dependency needs to be added:
 
 ```xml
 <dependency>
-  <groupId>com.github.dadrus</groupId>
-  <artifactId>jpa-unit-sql</artifactId>
+  <groupId>com.github.dadrus.jpa-unit</groupId>
+  <artifactId>jpa-unit-rdbms</artifactId>
   <version>${jpa-unit.version}</version>
   <scope>test</scope>
 </dependency>
 ```
 
-For SQL databases JPA Unit makes use of the standard 
+Here JPA Unit makes use of the standard 
 - `javax.persistence.jdbc.driver`,
 - `javax.persistence.jdbc.url`,
 - `javax.persistence.jdbc.user` and
@@ -514,7 +514,7 @@ Here an example of a `persistence.xml` file which configures [EclipseLink](http:
 
 ### Data Set Format
 
-For SQL databases JPA Unit uses [DBUnit](http://dbunit.sourceforge.net/) initernally. Thanks to DBUnit, following data set formats are supported:
+Thanks to [DBUnit](http://dbunit.sourceforge.net/), which is used internally for all RDBMS, following data set formats are supported:
 
 - XML (Flat XML Data Set). A simple XML structure, where each element represents a single row in a given table and attribute names correspond to the table columns as illustrated below.
 - YAML. Similar to the flat XML layout, but has some improvements (columns are calculated by parsing the entire data set, not just the first row)
@@ -577,7 +577,7 @@ For [MongoDB](https://www.mongodb.com), the `jpa-unit-mongodb` dependency needs 
 
 ```xml
 <dependency>
-  <groupId>com.github.dadrus</groupId>
+  <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit-mongodb</artifactId>
   <version>${jpa-unit.version}</version>
   <scope>test</scope>
@@ -673,7 +673,7 @@ To be able to use the JPA Unit with CDI, all you need in addition to your CDI te
 
 ```xml
 <dependency>
-  <groupId>com.github.dadrus</groupId>
+  <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit-cdi</artifactId>
   <version>${jpa-unit.version}</version>
   <scope>test</scope>
@@ -710,7 +710,7 @@ Cucumber is a BDD test framework. To be able to use JPA Unit with it, all you ne
 
 ```xml
 <dependency>
-  <groupId>com.github.dadrus</groupId>
+  <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit-cucumber</artifactId>
   <version>${jpa-unit.version}</version>
   <scope>test</scope>
