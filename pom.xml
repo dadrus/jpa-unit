@@ -77,8 +77,8 @@
   </properties>
 
   <scm>
-    <connection>scm:git:https://github.com/dadrus/jpa-unit.git</connection>
-    <developerConnection>scm:git:https://github.com/dadrus/jpa-unit.git</developerConnection>
+    <connection>scm:git:git@github.com:dadrus/jpa-unit.git</connection>
+    <developerConnection>scm:git:git@github.com:dadrus/jpa-unit.git</developerConnection>
     <url>https://github.com/dadrus/jpa-unit.git</url>
     <tag>HEAD</tag>
   </scm>
