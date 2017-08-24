@@ -133,6 +133,7 @@
     <module>cdi</module>
     <module>rdbms</module>
     <module>mongodb</module>
+    <module>cassandra</module>
     <module>integration-test</module>
     <module>bom</module>
   </modules>

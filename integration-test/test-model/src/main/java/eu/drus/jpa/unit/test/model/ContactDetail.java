@@ -12,9 +12,11 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.search.annotations.Indexed;
 
 @Entity
 @Table(name = "CONTACT_DETAIL")
+@Indexed
 public class ContactDetail {
 
     @Id

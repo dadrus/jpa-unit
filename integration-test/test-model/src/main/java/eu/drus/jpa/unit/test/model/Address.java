@@ -10,9 +10,11 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.search.annotations.Indexed;
 
 @Entity
 @Table(name = "ADDRESS")
+@Indexed
 public class Address {
 
     @Id

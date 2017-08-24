@@ -9,8 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.search.annotations.Indexed;
+
 @Entity
 @Table(name = "CREDIT_CONDITION")
+@Indexed
 public class CreditCondition {
 
     @Id

@@ -1,0 +1,19 @@
+{
+	"DEPOSITOR": [
+		{
+			"_id": NumberLong(106),
+			"VERSION": NumberLong(1),
+			"NAME": "Max",
+			"SURNAME": "Payne",
+			"accounts" : [ NumberLong(107) ]
+		}
+	],
+	"ACCOUNT": [
+        {
+	        "TYPE": "INSTANT_ACCESS_ACCOUNT",
+	        "_id": NumberLong(107),
+	        "VERSION": NumberLong(1),
+	        "DEPOSITOR_ID": NumberLong(106)
+        }
+    ]
+}

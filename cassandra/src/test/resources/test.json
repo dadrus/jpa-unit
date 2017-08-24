@@ -1,0 +1,27 @@
+{
+	"SINGLE_ENTRY_ARRAY": [
+		{
+			"string_value": "some string",
+			"int_value": 1,
+			"double_value": 100.51,
+			"boolean_value": true
+		}
+	],
+	"MULTI_ENTRY_ARRAY": [
+		{
+			"string_value1": "some string 1",
+			"int_value": 1,
+			"double_value": 100.51,
+			"boolean_value": true,
+			"null_value": null
+		},
+		{
+			"string_value1": "some string 1",
+			"string_value2": "some string 2",
+			"int_value": 1,
+			"double_value": 100.51,
+			"boolean_value": false,
+			"null_value": NULL
+		}
+    ]
+}

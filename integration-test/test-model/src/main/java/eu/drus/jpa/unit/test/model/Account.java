@@ -20,10 +20,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.search.annotations.Indexed;
+
 @Entity
 @Table(name = "ACCOUNT")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE")
+@Indexed
 public abstract class Account {
 
     @Id

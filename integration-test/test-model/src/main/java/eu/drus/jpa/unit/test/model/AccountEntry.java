@@ -16,9 +16,11 @@ import javax.persistence.TemporalType;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.search.annotations.Indexed;
 
 @Entity
 @Table(name = "ACCOUNT_ENTRY")
+@Indexed
 public class AccountEntry {
 
     @Id

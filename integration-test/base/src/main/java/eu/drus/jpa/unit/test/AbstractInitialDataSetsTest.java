@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.junit.FixMethodOrder;
@@ -33,6 +34,10 @@ public abstract class AbstractInitialDataSetsTest {
     @InitialDataSets("datasets/initial-data.json")
     public void test1() throws OperationNotSupportedException {
         // this test uses the default INSERT DataSeedStrategy
+        final Query nativeQuery = manager.createNativeQuery("select * from \"DEPOSITOR\" where \"NAME\"='John' allow filtering",
+                Depositor.class);
+        final Depositor d = (Depositor) nativeQuery.getSingleResult();
+
         final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='John'", Depositor.class);
         final Depositor entity = query.getSingleResult();
 

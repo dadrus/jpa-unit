@@ -32,5 +32,13 @@
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
     </dependency>
+    
+    
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-orm</artifactId>
+      <version>5.6.1.Final</version>
+    </dependency>
+    
   </dependencies>
 </project>

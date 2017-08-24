@@ -18,9 +18,13 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 
 @Entity
 @Table(name = "DEPOSITOR")
+@Indexed
 public class Depositor {
 
     // persistence specific attributes
@@ -37,6 +41,7 @@ public class Depositor {
 
     @Column(name = "NAME")
     @Basic(optional = false)
+    @Field(analyze = Analyze.NO)
     private String name;
 
     @Column(name = "SURNAME")
