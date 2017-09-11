@@ -6,11 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
 public class AbstractConfiguration implements Configuration {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractConfiguration.class);
 
     protected List<ServerAddress> serverAddresses;
     protected String databaseName;
@@ -48,7 +53,7 @@ public class AbstractConfiguration implements Configuration {
             try {
                 setterMethod.invoke(builder, convertTo(entry.getValue().getParameterTypes()[0], value));
             } catch (InvocationTargetException | IllegalAccessException e) {
-                // TODO: log
+                LOG.error("Could not set options", e);
             }
         }
     }

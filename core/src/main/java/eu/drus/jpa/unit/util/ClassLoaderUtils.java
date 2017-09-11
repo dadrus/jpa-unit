@@ -1,4 +1,4 @@
-package eu.drus.jpa.unit.cucumber.utils;
+package eu.drus.jpa.unit.util;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;

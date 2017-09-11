@@ -23,6 +23,7 @@ Implements [JUnit 4](http://junit.org/junit4) runner and rule, as well as [JUnit
 - Enables bootstrapping of the database schema and contents using plain data base statements (e.g. SQL) or arbitrary frameworks, like e.g. [FlywayDB](https://flywaydb.org) or [Liquibase](http://www.liquibase.org) before the starting of JPA provider
 - Implements seamless integration with CDI.
 - Supports acceptance based testing using [Cucumber](https://cucumber.io/docs/reference/jvm#java)
+- Supports acceptance based testing using [Concordion](http://concordion.org)
 - Supports SQL and NoSQL databases (based on what is possible with the chosen JPA provider). See below for a list of supported NoSQL databases and known limitations.
 	
 ## Credits
@@ -209,19 +210,19 @@ public class MyTest {
 
     @PersistenceContext(unitName = "my-test-unit")
     private EntityManager manager;
-	
+
     @Test
     public void someTest() {
-		newTransaction(manager).execute(() -> {
+        newTransaction(manager).execute(() -> {
             // some code wrapped in a transaction
-		});
-		
-		int result = newTransaction(manager)
-		.clearContextOnCommit(true)
-		.execute(() -> {
+        });
+
+    int result = newTransaction(manager)
+        .clearContextOnCommit(true)
+        .execute(() -> {
             // some code wrapped in a transaction
-			return 1;
-		});
+            return 1;
+        });
     }
 }
 ```
@@ -804,3 +805,108 @@ public class CucumberTest {
 ```
 
 Now you can inject your dependencies into glue objects.
+
+# Concordion Integration
+
+Concordion is a BDD test framework. To be able to use JPA Unit with it, all you need in addition to concordion dependencies is to add the following dependency to your Maven project :
+
+```xml
+<dependency>
+  <groupId>com.github.dadrus.jpa-unit</groupId>
+  <artifactId>jpa-unit-concordion</artifactId>
+  <version>${jpa-unit.version}</version>
+  <scope>test</scope>
+</dependency>
+```
+
+This dependency implements a specialized `ConcordionRunner` - the `JpaUnitConcordionRunner` which you have to use with the JUnit `@RunWith` annotation on the class level. 
+This runner hooks into concordion implementation and intercepts all fixture methods referenced from corresponding specifications, thus enables the usage of JPA Unit annotations
+on fixture methods. 
+
+Since each fixture/specification(-example), compared to a regular JUnit tests, implements a single test specification, JPA Unit disables automatic data base cleanup. To avoid stale data
+between the executions of different scenarios or more general different tests, you should take care of the cleanup by yourself. This is the only difference to the regular behavior. 
+This cleanup can be achieved, e.g. using the `@Cleanup` annotation on e.g. a method annotated with the concordion `@AfterSpecification` annotation.
+
+Analogue to regular JUnit tests a concordion fixture needs to reference either an `EntityManager` or an `EntityManagerFactory`. The `EntityManagerFactory` lives for the
+duration of the scenario execution.
+
+Same rules as for regular JUnit tests apply for the `EntityManager` as well: An `EntityManager` for `TRANSACTION` `PersistenceContextType` lives only for the duration
+of the execution of the fixture method. An `EntityManager` for `EXTENDED` `PersistenceContextType` has the life time of the `EntityManagerFactory` and is closed after the
+last fixture method is executed. Latter configuration might be a better choice for concordion fixtures.
+
+Usage example:
+
+```.java
+@RunWith(JpaUnitConcordionRunner.class)
+public class ConcordionFixture {
+    
+    @PersistenceContext(unitName = "my-test-unit", type = PersistenceContextType.EXTENDED)
+    private EntityManager manager;
+    
+    public Depositor createNewCustomer(final String customerName) {
+        final String[] nameParts = customerName.split(" ");
+        final Depositor depositor = new Depositor(nameParts[0], nameParts[1]);
+        new InstantAccessAccount(depositor);
+        return depositor;
+    }
+
+    public void finalizeOnboarding(final Depositor depositor) {
+        manager.persist(depositor);
+    }
+
+    @ExpectedDataSets(value = "datasets/max-payne-data.json", excludeColumns = {
+            "ID", "DEPOSITOR_ID", "ACCOUNT_ID", "VERSION", "accounts"
+    })
+    @Cleanup(phase = CleanupPhase.AFTER)
+    public void verifyExistenceOfExpectedObjects() {
+        // The check is done via @ExpectedDataSets annotation
+    }
+}
+```
+
+The associated specification looks like this:
+```.markdown
+# Create New Depositor
+
+During the on-boarding of a new banking customer for an instant access account a new depositor as well
+as a new instant access account have to be created. 
+ 
+
+### [Example](- "Onboard a new customer")
+
+Given a new customer *[Max Payne](- "#customer = createNewCustomer(#TEXT)")*, applying for an instant
+access account
+
+When the [onboarding process completes](- "finalizeOnboarding(#customer)")
+
+Then a new depositor object and a new instant access account object are 
+[present in the system](- "verifyExistenceOfExpectedObjects()").
+```
+
+If you would like to use concordion with JPA Unit and CDI, you will have to follow the requirements from [CDI Integration](#cdi-integration). However, since
+the usage of multiple runners is not possible, you'll have to start the CDI container manually. Here's an excerpt demonstrating CDI usage:
+
+```.java
+@RunWith(JpaUnitConcordionRunner.class)
+public class ConcordionFixture {
+    private static CdiContainer cdiContainer;
+
+    @BeforeSpecification
+    public static void startContainer() {
+        cdiContainer = CdiContainerLoader.getCdiContainer();
+        cdiContainer.boot();
+    }
+
+    @AfterSpecification
+    public static void stopContainer() {
+        cdiContainer.shutdown();
+    }
+    
+    // ...
+}
+```
+
+Now you can inject your dependencies into the fixture class.
+
+If you organize your fixtures/specifications in a hierarchical story, it will make more sense to start and stop the CDI container in the root fixture
+using methods annotated with `@BeforeSuite`, respectively `@AfterSuite`.
