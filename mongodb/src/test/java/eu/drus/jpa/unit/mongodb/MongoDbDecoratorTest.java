@@ -69,6 +69,7 @@ public class MongoDbDecoratorTest {
         when(invocation.getContext()).thenReturn(ctx);
         when(ctx.getData(eq(MongoDbDecorator.KEY_MONGO_CLIENT))).thenReturn(mongoClient);
         when(ctx.getData(eq(MongoDbDecorator.KEY_MONGO_DB))).thenReturn(mongoDataBase);
+        when(ctx.getData(eq(MongoDbDecorator.KEY_FEATURE_EXECUTOR))).thenReturn(executor);
         when(mongoClient.getDatabase(anyString())).thenReturn(mongoDataBase);
         when(configRegistry.getConfiguration(any(PersistenceUnitDescriptor.class))).thenReturn(configuration);
 

@@ -12,6 +12,7 @@ import eu.drus.jpa.unit.sql.SqlDbConfiguration;
 public class DbUnitDecorator implements TestMethodDecorator {
 
     protected static final String KEY_CONNECTION = "eu.drus.jpa.unit.sql.DatabaseConnection";
+    protected static final String KEY_FEATURE_EXECUTOR = "eu.drus.jpa.unit.sql.FeatureExecutor";
 
     @Override
     public int getPriority() {
@@ -29,15 +30,16 @@ public class DbUnitDecorator implements TestMethodDecorator {
         final SqlDbFeatureExecutor dbFeatureExecutor = new SqlDbFeatureExecutor(invocation.getFeatureResolver());
 
         dbFeatureExecutor.executeBeforeTest(connection);
+        context.storeData(KEY_FEATURE_EXECUTOR, dbFeatureExecutor);
     }
 
     @Override
     public void afterTest(final TestMethodInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
         final IDatabaseConnection connection = (IDatabaseConnection) context.getData(KEY_CONNECTION);
+        final SqlDbFeatureExecutor dbFeatureExecutor = (SqlDbFeatureExecutor) context.getData(KEY_FEATURE_EXECUTOR);
         context.storeData(KEY_CONNECTION, null);
-
-        final SqlDbFeatureExecutor dbFeatureExecutor = new SqlDbFeatureExecutor(invocation.getFeatureResolver());
+        context.storeData(KEY_FEATURE_EXECUTOR, null);
 
         try {
             dbFeatureExecutor.executeAfterTest(connection, invocation.hasErrors());

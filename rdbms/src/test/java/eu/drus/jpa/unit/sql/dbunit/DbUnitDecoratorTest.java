@@ -56,6 +56,7 @@ public class DbUnitDecoratorTest {
 
         when(invocation.getContext()).thenReturn(ctx);
         when(ctx.getData(eq(DbUnitDecorator.KEY_CONNECTION))).thenReturn(connection);
+        when(ctx.getData(eq(DbUnitDecorator.KEY_FEATURE_EXECUTOR))).thenReturn(executor);
 
         decorator = new DbUnitDecorator();
     }
