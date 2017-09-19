@@ -17,7 +17,7 @@
     <shared-cache-mode>NONE</shared-cache-mode>
 
     <properties>
-      <property name="hibernate.ogm.datastore.provider" value="cassandra_experimental" />
+      <property name="hibernate.ogm.datastore.provider" value="org.hibernate.ogm.datastore.cassandra.impl.CassandraDatastoreProvider" />
       <property name="hibernate.ogm.datastore.host" value="localhost" />
       <property name="hibernate.ogm.datastore.database" value="test" />
 
