@@ -10,6 +10,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -64,12 +65,11 @@ public class MongoDbDecoratorTest {
         whenNew(ConfigurationRegistry.class).withAnyArguments().thenReturn(configRegistry);
         whenNew(FeatureResolver.class).withAnyArguments().thenReturn(null);
         whenNew(MongoDbFeatureExecutor.class).withAnyArguments().thenReturn(executor);
-        whenNew(MongoClient.class).withAnyArguments().thenReturn(mongoClient);
 
         when(invocation.getContext()).thenReturn(ctx);
-        when(ctx.getData(eq(MongoDbDecorator.KEY_MONGO_CLIENT))).thenReturn(mongoClient);
-        when(ctx.getData(eq(MongoDbDecorator.KEY_MONGO_DB))).thenReturn(mongoDataBase);
-        when(ctx.getData(eq(MongoDbDecorator.KEY_FEATURE_EXECUTOR))).thenReturn(executor);
+        when(ctx.getData(eq(Constants.KEY_MONGO_CLIENT))).thenReturn(mongoClient);
+        when(ctx.getData(eq(Constants.KEY_MONGO_DB))).thenReturn(mongoDataBase);
+        when(ctx.getData(eq(Constants.KEY_FEATURE_EXECUTOR))).thenReturn(executor);
         when(mongoClient.getDatabase(anyString())).thenReturn(mongoDataBase);
         when(configRegistry.getConfiguration(any(PersistenceUnitDescriptor.class))).thenReturn(configuration);
 
@@ -85,8 +85,8 @@ public class MongoDbDecoratorTest {
 
         // THEN
         verify(executor).executeBeforeTest(eq(mongoDataBase));
-        verify(ctx).storeData(eq(MongoDbDecorator.KEY_MONGO_CLIENT), eq(mongoClient));
-        verify(ctx).storeData(eq(MongoDbDecorator.KEY_MONGO_DB), eq(mongoDataBase));
+        verify(ctx).storeData(eq(Constants.KEY_MONGO_DB), eq(mongoDataBase));
+        verify(ctx).storeData(eq(Constants.KEY_FEATURE_EXECUTOR), eq(executor));
     }
 
     @Test
@@ -99,8 +99,8 @@ public class MongoDbDecoratorTest {
 
         // THEN
         verify(executor).executeAfterTest(eq(mongoDataBase), eq(Boolean.FALSE));
-        verify(ctx).storeData(eq(MongoDbDecorator.KEY_MONGO_CLIENT), isNull());
-        verify(ctx).storeData(eq(MongoDbDecorator.KEY_MONGO_DB), isNull());
+        verify(ctx).storeData(eq(Constants.KEY_MONGO_DB), isNull());
+        verify(ctx).storeData(eq(Constants.KEY_FEATURE_EXECUTOR), isNull());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class MongoDbDecoratorTest {
         }
 
         // THEN
-        verify(mongoClient).close();
+        verifyZeroInteractions(mongoClient);
     }
 
     @Test
@@ -129,6 +129,6 @@ public class MongoDbDecoratorTest {
         final int priority = decorator.getPriority();
 
         // THEN
-        assertThat(priority, equalTo(4));
+        assertThat(priority, equalTo(3));
     }
 }
