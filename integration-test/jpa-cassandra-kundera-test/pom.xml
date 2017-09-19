@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.github.dadrus.jpa-unit</groupId>
     <artifactId>jpa-unit-integration-test</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>jpa-unit-jpa-cassandra-kundera-integration-test</artifactId>
