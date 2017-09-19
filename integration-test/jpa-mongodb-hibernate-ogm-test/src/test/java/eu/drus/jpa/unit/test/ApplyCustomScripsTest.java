@@ -5,23 +5,25 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 import eu.drus.jpa.unit.api.JpaUnitRunner;
+import eu.drus.jpa.unit.suite.MongoSuite;
 import eu.drus.jpa.unit.test.util.MongodConfiguration;
 import eu.drus.jpa.unit.test.util.MongodManager;
 
 @RunWith(JpaUnitRunner.class)
 public class ApplyCustomScripsTest extends AbstractApplyCustomScripsTest {
 
-    private static MongodManager manager;
-
     @BeforeClass
     public static void startMongod() {
-        manager = new MongodManager();
-        manager.startMongod(MongodConfiguration.builder().addHost("localhost", 27017).build());
+        if (!MongoSuite.isActive()) {
+            MongodManager.start(MongodConfiguration.builder().addHost("localhost", 27017).build());
+        }
     }
 
     @AfterClass
     public static void stopMongod() throws InterruptedException {
-        manager.stopMongod();
+        if (!MongoSuite.isActive()) {
+            MongodManager.stop();
+        }
     }
 
 }

@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
+import eu.drus.jpa.unit.suite.MongoSuite;
 import eu.drus.jpa.unit.test.util.MongodConfiguration;
 import eu.drus.jpa.unit.test.util.MongodManager;
 
@@ -19,7 +20,6 @@ import eu.drus.jpa.unit.test.util.MongodManager;
 }, features = "classpath:bdd-features", glue = "classpath:eu.drus.jpa.unit.test.cucumber.cdi_glue")
 public class CucumberCdiTest {
 
-    private static MongodManager manager;
     private static CdiContainer cdiContainer;
 
     @BeforeClass
@@ -35,12 +35,15 @@ public class CucumberCdiTest {
 
     @BeforeClass
     public static void startMongod() {
-        manager = new MongodManager();
-        manager.startMongod(MongodConfiguration.builder().addHost("localhost", 27017).build());
+        if (!MongoSuite.isActive()) {
+            MongodManager.start(MongodConfiguration.builder().addHost("localhost", 27017).build());
+        }
     }
 
     @AfterClass
     public static void stopMongod() throws InterruptedException {
-        manager.stopMongod();
+        if (!MongoSuite.isActive()) {
+            MongodManager.stop();
+        }
     }
 }

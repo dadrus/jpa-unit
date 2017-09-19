@@ -42,6 +42,7 @@ import de.flapdoodle.embed.process.config.IRuntimeConfig;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
 import de.flapdoodle.embed.process.io.Slf4jLevel;
 import de.flapdoodle.embed.process.io.progress.Slf4jProgressListener;
+import eu.drus.jpa.unit.suite.MongoSuite;
 
 // Unfortunately JUnit 5 breaks the contract of JUnit 4 regarding the order of @BeforeAll/@AfterAll
 // With JUnit 4 these methods are executed before any extensions/rules are executed. With JUnit 5
@@ -53,7 +54,25 @@ public class MongodManager implements BeforeAllCallback, AfterAllCallback {
 
     private transient Map<MongodProcess, MongodExecutable> mongoProcesses = new HashMap<>();
 
-    public void startMongod(final MongodConfiguration config) {
+    private static final MongodManager MONGO_MANAGER = new MongodManager();
+
+    public synchronized static void start(final MongodConfiguration config) {
+        if (!MONGO_MANAGER.isMongoRunning()) {
+            MONGO_MANAGER.startMongod(config);
+        }
+    }
+
+    public synchronized static void stop() throws InterruptedException {
+        if (MONGO_MANAGER.isMongoRunning()) {
+            MONGO_MANAGER.stopMongod();
+        }
+    }
+
+    private boolean isMongoRunning() {
+        return !mongoProcesses.isEmpty();
+    }
+
+    private void startMongod(final MongodConfiguration config) {
 
         List<IMongodConfig> mongodConfigList;
         try {
@@ -195,7 +214,7 @@ public class MongodManager implements BeforeAllCallback, AfterAllCallback {
         return builder.build();
     }
 
-    public void stopMongod() throws InterruptedException {
+    private void stopMongod() throws InterruptedException {
         for (final Entry<MongodProcess, MongodExecutable> entry : mongoProcesses.entrySet()) {
             entry.getKey().stop();
             entry.getValue().stop();
@@ -211,11 +230,15 @@ public class MongodManager implements BeforeAllCallback, AfterAllCallback {
 
     @Override
     public void afterAll(final ExtensionContext context) throws Exception {
-        stopMongod();
+        if (!MongoSuite.isActive()) {
+            stopMongod();
+        }
     }
 
     @Override
     public void beforeAll(final ExtensionContext context) throws Exception {
-        startMongod(MongodConfiguration.builder().addHost("localhost", 27017).build());
+        if (!MongoSuite.isActive()) {
+            startMongod(MongodConfiguration.builder().addHost("localhost", 27017).build());
+        }
     }
 }
