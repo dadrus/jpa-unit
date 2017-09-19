@@ -51,7 +51,7 @@ public abstract class AbstractCleanupTest {
     @Cleanup(phase = CleanupPhase.NONE)
     public void test2() {
         // since clean up is disabled we can work with the entity persisted by the previous test
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='Max'", Depositor.class);
+        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.id=1", Depositor.class);
         final Depositor entity = query.getSingleResult();
 
         assertNotNull(entity);
