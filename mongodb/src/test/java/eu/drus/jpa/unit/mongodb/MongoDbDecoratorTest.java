@@ -24,11 +24,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
-import eu.drus.jpa.unit.mongodb.ext.Configuration;
-import eu.drus.jpa.unit.mongodb.ext.ConfigurationRegistry;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
-import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 @RunWith(PowerMockRunner.class)
@@ -50,19 +47,12 @@ public class MongoDbDecoratorTest {
     private MongoClient mongoClient;
 
     @Mock
-    private ConfigurationRegistry configRegistry;
-
-    @Mock
     private MongoDbFeatureExecutor executor;
-
-    @Mock
-    private Configuration configuration;
 
     private MongoDbDecorator decorator;
 
     @Before
     public void prepareTest() throws Exception {
-        whenNew(ConfigurationRegistry.class).withAnyArguments().thenReturn(configRegistry);
         whenNew(FeatureResolver.class).withAnyArguments().thenReturn(null);
         whenNew(MongoDbFeatureExecutor.class).withAnyArguments().thenReturn(executor);
 
@@ -71,7 +61,6 @@ public class MongoDbDecoratorTest {
         when(ctx.getData(eq(Constants.KEY_MONGO_DB))).thenReturn(mongoDataBase);
         when(ctx.getData(eq(Constants.KEY_FEATURE_EXECUTOR))).thenReturn(executor);
         when(mongoClient.getDatabase(anyString())).thenReturn(mongoDataBase);
-        when(configRegistry.getConfiguration(any(PersistenceUnitDescriptor.class))).thenReturn(configuration);
 
         decorator = new MongoDbDecorator();
     }
