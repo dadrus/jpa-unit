@@ -87,7 +87,11 @@ public class JpaUnitConcordionRunner extends ConcordionRunner {
                 final Method injectFieldsMethod = bpClass.getMethod("injectFields", Object.class);
                 injectFieldsMethod.invoke(bpClass, fixtureObject);
             } catch (final Exception e) {
-                LOG.error("CDI and Deltaspike are not properly configured", e);
+                if (e.getCause() instanceof IllegalStateException) {
+                    LOG.warn(e.getCause().getMessage());
+                } else {
+                    LOG.error("Error in CDI handling", e);
+                }
             }
         }
 
