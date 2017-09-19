@@ -45,7 +45,7 @@
 	        "TYPE": "GIRO_ACCOUNT",
 	        "_id": NumberLong(106),
 	        "VERSION": NumberLong(1),
-	        "CREDIT_LIMIT": 1000,
+	        "CREDIT_LIMIT": 1000.0,
 	        "DEPOSITOR_ID": NumberLong(106)
         },
         {

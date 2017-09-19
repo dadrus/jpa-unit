@@ -37,7 +37,7 @@
     <version.eclipselink>2.5.2</version.eclipselink>
     <version.hibernate4>4.2.21.Final</version.hibernate4>
     <version.hibernate5>5.2.8.Final</version.hibernate5>
-    <verions.hibernate-ogm>5.1.0.Final</verions.hibernate-ogm>
+    <verions.hibernate-ogm>5.2.0.Alpha1</verions.hibernate-ogm>
     <version.sqlite>3.20.0</version.sqlite>
     <version.commons-dbcp2>2.1.1</version.commons-dbcp2>
     <version.deltaspike>1.7.2</version.deltaspike>

@@ -42,7 +42,7 @@ public abstract class AbstractTransactionJunit5Test {
     @Transactional(TransactionMode.ROLLBACK)
     @Disabled("It seems there is a bug in EclipseLink. If this test is executed as a first one, EclipseLink is unable to generate further IDs")
     public void transactionRollbackTest() {
-        // We need to wait until #13 Junit5 is implemented
+        // TODO We need to wait until #13 Junit5 is implemented
         // (https://github.com/junit-team/junit5/issues/13) before we can enable this test again
         final Depositor entity = manager.find(Depositor.class, 106L);
 
