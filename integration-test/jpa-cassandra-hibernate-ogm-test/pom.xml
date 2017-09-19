@@ -60,6 +60,7 @@
     <dependency>
       <groupId>org.hibernate.ogm</groupId>
       <artifactId>hibernate-ogm-cassandra</artifactId>
+      <version>${verions.hibernate-ogm}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
