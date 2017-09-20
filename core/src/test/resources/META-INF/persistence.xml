@@ -29,4 +29,30 @@
       <property name="javax.persistence.jdbc.password" value="test" />
     </properties>
   </persistence-unit>
+  
+  <persistence-unit name="test-unit-4" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+    <properties>
+      <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
+      <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform" />
+      <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB" />
+      <property name="javax.persistence.jdbc.user" value="test" />
+      <property name="javax.persistence.jdbc.password" value="test" />
+    </properties>
+  </persistence-unit>
+  
+  <persistence-unit name="test-unit-4" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+    <properties>
+      <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
+      <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform" />
+      <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testDB" />
+      <property name="javax.persistence.jdbc.user" value="test" />
+      <property name="javax.persistence.jdbc.password" value="test" />
+    </properties>
+  </persistence-unit>
 </persistence>

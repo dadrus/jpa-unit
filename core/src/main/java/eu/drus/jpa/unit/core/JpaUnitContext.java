@@ -68,10 +68,6 @@ public class JpaUnitContext implements ExecutionContext {
             properties = getPersistenceContextProperties(persistenceContext);
         }
 
-        if (unitName == null || unitName.isEmpty()) {
-            throw new JpaUnitException("No Persistence Unit found for given unit name");
-        }
-
         final PersistenceUnitDescriptorLoader pudLoader = new PersistenceUnitDescriptorLoader();
         List<PersistenceUnitDescriptor> descriptors;
         try {
@@ -92,12 +88,7 @@ public class JpaUnitContext implements ExecutionContext {
     }
 
     public static synchronized JpaUnitContext getInstance(final Class<?> testClass) {
-        JpaUnitContext ctx = CTX_MAP.get(testClass);
-        if (ctx == null) {
-            ctx = new JpaUnitContext(testClass);
-            CTX_MAP.put(testClass, ctx);
-        }
-        return ctx;
+        return CTX_MAP.computeIfAbsent(testClass, JpaUnitContext::new);
     }
 
     private static Map<String, Object> getPersistenceContextProperties(final PersistenceContext persistenceContext) {
