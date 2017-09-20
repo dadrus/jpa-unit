@@ -27,7 +27,7 @@ public class PersistenceUnitDescriptorLoaderTest {
 
         // THEN
         assertThat(descriptors, notNullValue());
-        assertThat(descriptors.size(), equalTo(2));
+        assertThat(descriptors.size(), equalTo(4));
         assertThat(descriptors, not(hasItem(nullValue())));
     }
 }

@@ -2,18 +2,14 @@ package eu.drus.jpa.unit.sql.dbunit;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.junit.Before;
@@ -26,10 +22,11 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestMethodInvocation;
+import eu.drus.jpa.unit.sql.Constants;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
-        DatabaseConnectionFactory.class, DbUnitDecorator.class, DbUnitDecoratorTest.class
+        DbUnitDecorator.class, DbUnitDecoratorTest.class
 })
 public class DbUnitDecoratorTest {
 
@@ -49,14 +46,12 @@ public class DbUnitDecoratorTest {
 
     @Before
     public void prepareMocks() throws Throwable {
-        mockStatic(DatabaseConnectionFactory.class);
-        when(DatabaseConnectionFactory.openConnection(any(BasicDataSource.class))).thenReturn(connection);
         whenNew(FeatureResolver.class).withAnyArguments().thenReturn(null);
         whenNew(SqlDbFeatureExecutor.class).withAnyArguments().thenReturn(executor);
 
         when(invocation.getContext()).thenReturn(ctx);
-        when(ctx.getData(eq(DbUnitDecorator.KEY_CONNECTION))).thenReturn(connection);
-        when(ctx.getData(eq(DbUnitDecorator.KEY_FEATURE_EXECUTOR))).thenReturn(executor);
+        when(ctx.getData(eq(Constants.KEY_CONNECTION))).thenReturn(connection);
+        when(ctx.getData(eq(Constants.KEY_FEATURE_EXECUTOR))).thenReturn(executor);
 
         decorator = new DbUnitDecorator();
     }
@@ -70,7 +65,7 @@ public class DbUnitDecoratorTest {
 
         // THEN
         verify(executor).executeBeforeTest(eq(connection));
-        verify(ctx).storeData(eq(DbUnitDecorator.KEY_CONNECTION), eq(connection));
+        verify(ctx, times(0)).storeData(eq(Constants.KEY_CONNECTION), any(IDatabaseConnection.class));
     }
 
     @Test
@@ -83,25 +78,8 @@ public class DbUnitDecoratorTest {
 
         // THEN
         verify(executor).executeAfterTest(eq(connection), eq(Boolean.FALSE));
-        verify(ctx).storeData(eq(DbUnitDecorator.KEY_CONNECTION), isNull());
-    }
-
-    @Test
-    public void testDataVerificationIsSkippedButAllAfterTestFeaturesAreExecutedIfInvocationProcessingFails() throws Throwable {
-        // GIVEN
-        when(invocation.hasErrors()).thenReturn(Boolean.TRUE);
-        doThrow(RuntimeException.class).when(executor).executeAfterTest(any(IDatabaseConnection.class), anyBoolean());
-
-        // WHEN
-        try {
-            decorator.afterTest(invocation);
-            fail("Exception expected");
-        } catch (final Exception e) {
-            // expected
-        }
-
-        // THEN
-        verify(connection).close();
+        verify(ctx, times(0)).storeData(eq(Constants.KEY_CONNECTION), any(IDatabaseConnection.class));
+        verifyZeroInteractions(connection);
     }
 
     @Test
