@@ -52,19 +52,22 @@ class EntityManagerProducerProxy implements Producer<EntityManager> {
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             if (method.equals(Disposable.class.getDeclaredMethods()[0])) {
-                if (delegateUsed) {
+                if (delegateUsed && instance != null) {
                     proxied.dispose(instance);
+                    instance = null;
+                    delegateUsed = false;
                 }
                 return null;
             }
 
-            if (instance == null) {
-                instance = EntityManagerHolder.INSTANCE.getEntityManager();
-            }
+            final EntityManager oldInstance = instance;
+            instance = EntityManagerHolder.INSTANCE.getEntityManager();
 
-            if (instance == null) {
+            if (instance == null && oldInstance == null) {
                 instance = proxied.produce(ctx);
                 delegateUsed = true;
+            } else if (instance == null) {
+                instance = oldInstance;
             }
 
             return method.invoke(instance, args);

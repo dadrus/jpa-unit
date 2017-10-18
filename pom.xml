@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -22,7 +23,7 @@
 
     <skipUnitTests>${skipTests}</skipUnitTests>
     <skipIntegrationTests>${skipTests}</skipIntegrationTests>
-    <integrationSourceDirectory>src\integrationtest</integrationSourceDirectory>
+    <integrationSourceDirectory>src/integrationtest</integrationSourceDirectory>
     <snapshotDependencyAllowed>true</snapshotDependencyAllowed>
 
     <version.hibernate-jpa-2.1-api>1.0.0.Final</version.hibernate-jpa-2.1-api>
@@ -78,6 +79,7 @@
     <plugin.version.nexus-staging>1.6.8</plugin.version.nexus-staging>
     <plugin.version.release>2.5.3</plugin.version.release>
     <plugin.verions.deploy>2.8.2</plugin.verions.deploy>
+    <plugin.version.build-helper>3.0.0</plugin.version.build-helper>
   </properties>
 
   <scm>
@@ -144,6 +146,8 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${plugin.version.compiler}</version>
+          <configuration>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -168,10 +172,7 @@
             <!-- </property> -->
             <!-- </properties> -->
             <excludes>
-              <exclude>**/manual/**</exclude>
-              <exclude>**/integration/**</exclude>
-              <exclude>**/*IT.java</exclude>
-              <exclude>**/*ITCase.java</exclude>
+              <exclude>**/*ManualTest.java</exclude>
               <exclude>**/*IntegrationTest.java</exclude>
             </excludes>
             <systemPropertyVariables>
@@ -179,6 +180,63 @@
             </systemPropertyVariables>
           </configuration>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${plugin.version.failsafe}</version>
+          <configuration>
+            <!-- <argLine>${argLine} -Xms256m -Xmx1024m</argLine> -->
+            <skipTests>${skipIntegrationTests}</skipTests>
+            <forkCount>1</forkCount>
+            <reuseForks>false</reuseForks>
+            <includes>
+              <include>**/*IT.java</include>
+              <include>**/*ITCase.java</include>
+              <include>**/*IntegrationTest.java</include>
+<!--               <include>**/*Feature.java</include> -->
+<!--               <include>**/*Fixture.java</include> -->
+            </includes>
+            <!-- Specific to generate mapping between tests and covered code -->
+            <!-- <properties> -->
+            <!-- <property> -->
+            <!-- <name>listener</name> -->
+            <!-- <value>org.sonar.java.jacoco.JUnitListener</value> -->
+            <!-- </property> -->
+            <!-- </properties> -->
+            <!-- Let's put failsafe reports with surefire to have access to tests failures/success reports in sonar -->
+            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+            <testSourceDirectory>${integrationSourceDirectory}/java</testSourceDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${plugin.version.build-helper}</version>
+          <executions>
+            <execution>
+              <id>add-it-test-sources</id>
+              <phase>generate-test-sources</phase>
+              <goals>
+                <goal>add-test-source</goal>
+              </goals>
+              <configuration>
+                <sources>
+                  <source>${integrationSourceDirectory}/java</source>
+                </sources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
@@ -373,10 +431,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
-      <!-- <plugin> -->
-      <!-- <groupId>org.apache.maven.plugins</groupId> -->
-      <!-- <artifactId>maven-failsafe-plugin</artifactId> -->
-      <!-- </plugin> -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -394,6 +456,24 @@
         <artifactId>maven-enforcer-plugin</artifactId>
       </plugin>
     </plugins>
+
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+      <testResource>
+        <directory>${integrationSourceDirectory}/java</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+      <testResource>
+        <directory>${integrationSourceDirectory}/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+
   </build>
 
   <dependencyManagement>

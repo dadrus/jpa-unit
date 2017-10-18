@@ -25,7 +25,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class EntityManagerProducerTest {
+public class EntityManagerProducerProxyTest {
 
     @Mock
     private CreationalContext<EntityManager> context;
@@ -133,6 +133,45 @@ public class EntityManagerProducerTest {
         // THEN (previously retrieved instance used)
         verifyNoMoreInteractions(delegate);
         verify(em).close();
+
+        // WHEN
+        producer.dispose(instance);
+
+        // THEN (nothing happens since the instance is managed by the test environment)
+        verifyNoMoreInteractions(delegate);
+    }
+
+    @Test
+    public void testProduceAndUseEntityManagerHavingMultipleInstancesBackedByTheHolder() {
+        // GIVEN
+        final EntityManager em1 = mock(EntityManager.class);
+        final EntityManager em2 = mock(EntityManager.class);
+        EntityManagerHolder.INSTANCE.setEntityManager(em1);
+        final EntityManagerProducerProxy producer = new EntityManagerProducerProxy(delegate);
+
+        // WHEN
+        final EntityManager instance = producer.produce(context);
+
+        // THEN (only a proxy is created)
+        assertThat(instance, not(nullValue()));
+        verifyNoMoreInteractions(delegate);
+
+        // WHEN (method is invoked on the proxy)
+        instance.clear();
+
+        // THEN (the actual instance is retrieved from the holder and used)
+        verifyNoMoreInteractions(delegate);
+        verify(em1).clear();
+
+        // WHEN (further method is invoked on the proxy, this time however using another
+        // EntityManager object)
+        EntityManagerHolder.INSTANCE.setEntityManager(em2);
+        instance.close();
+
+        // THEN (new cached instance is used and not the previous one)
+        verifyNoMoreInteractions(delegate);
+        verify(em2).close();
+        verifyNoMoreInteractions(em1);
 
         // WHEN
         producer.dispose(instance);
