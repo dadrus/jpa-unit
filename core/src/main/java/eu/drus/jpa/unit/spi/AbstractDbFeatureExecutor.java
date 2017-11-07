@@ -53,7 +53,7 @@ public abstract class AbstractDbFeatureExecutor<D, C> {
 
     protected String loadScript(final String scriptPath) throws IOException, URISyntaxException {
         final URL url = getResource(scriptPath);
-        return new String(Files.readAllBytes(Paths.get(url.toURI())));
+        return new String(Files.readAllBytes(Paths.get(url.toURI()))).trim();
     }
 
     private List<D> getInitialDataSets() {

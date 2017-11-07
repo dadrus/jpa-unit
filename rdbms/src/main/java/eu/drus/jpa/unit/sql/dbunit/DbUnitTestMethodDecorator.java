@@ -3,12 +3,12 @@ package eu.drus.jpa.unit.sql.dbunit;
 import org.dbunit.database.IDatabaseConnection;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.TestInvocation;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
-import eu.drus.jpa.unit.spi.TestMethodInvocation;
 import eu.drus.jpa.unit.sql.Constants;
 import eu.drus.jpa.unit.sql.SqlDbConfiguration;
 
-public class DbUnitDecorator implements TestMethodDecorator {
+public class DbUnitTestMethodDecorator implements TestMethodDecorator {
 
     @Override
     public int getPriority() {
@@ -16,7 +16,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void beforeTest(final TestMethodInvocation invocation) throws Exception {
+    public void beforeTest(final TestInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
 
         final SqlDbFeatureExecutor dbFeatureExecutor = new SqlDbFeatureExecutor(invocation.getFeatureResolver());
@@ -27,7 +27,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void afterTest(final TestMethodInvocation invocation) throws Exception {
+    public void afterTest(final TestInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
 
         final SqlDbFeatureExecutor dbFeatureExecutor = (SqlDbFeatureExecutor) context.getData(Constants.KEY_FEATURE_EXECUTOR);
@@ -35,7 +35,7 @@ public class DbUnitDecorator implements TestMethodDecorator {
 
         final IDatabaseConnection connection = (IDatabaseConnection) context.getData(Constants.KEY_CONNECTION);
 
-        dbFeatureExecutor.executeAfterTest(connection, invocation.hasErrors());
+        dbFeatureExecutor.executeAfterTest(connection, invocation.getException().isPresent());
     }
 
     @Override

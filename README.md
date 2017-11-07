@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/dadrus/jpa-unit.svg?branch=master)](https://travis-ci.org/dadrus/jpa-unit) 
-[![Quality Gate](https://sonarqube.com/api/badges/gate?key=com.github.dadrus.jpa-unit:jpa-unit)](https://sonarqube.com/dashboard?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
-[![Coverage Status](https://sonarqube.com/api/badges/measure?key=com.github.dadrus.jpa-unit:jpa-unit&metric=coverage)](https://sonarqube.com/dashboard?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
-[![Technical Debt](https://sonarqube.com/api/badges/measure?key=com.github.dadrus.jpa-unit:jpa-unit&metric=sqale_debt_ratio)](https://sonarqube.com/component_measures/?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
+[![Quality Gate](https://sonarcloud.io/api/badges/gate?key=com.github.dadrus.jpa-unit:jpa-unit)](https://sonarcloud.io/dashboard?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
+[![Coverage Status](https://sonarcloud.io/api/badges/measure?key=com.github.dadrus.jpa-unit:jpa-unit&metric=coverage)](https://sonarcloud.io/dashboard?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
+[![Technical Debt](https://sonarcloud.io/api/badges/measure?key=com.github.dadrus.jpa-unit:jpa-unit&metric=sqale_debt_ratio)](https://sonarcloud.io/component_measures/?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.dadrus.jpa-unit/jpa-unit.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.dadrus.jpa-unit%22)
 
 # JPA Unit 
@@ -57,7 +57,6 @@ To work with JUnit 4, you would need to add `jpa-unit4` to your test dependencie
   <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit4</artifactId>
   <version>${jpa-unit.version}</version>
-  <scope>test</scope>
 </dependency>
 ```
 
@@ -109,7 +108,6 @@ To work with JUnit 5, you would need to add `jpa-unit5` to your test dependencie
   <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit5</artifactId>
   <version>${jpa-unit.version}</version>
-  <scope>test</scope>
 </dependency>
 ```
 
@@ -479,7 +477,6 @@ For all relational databases the `jpa-unit-rdbms` dependency needs to be added:
   <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit-rdbms</artifactId>
   <version>${jpa-unit.version}</version>
-  <scope>test</scope>
 </dependency>
 ```
 
@@ -527,7 +524,7 @@ Thanks to [DBUnit](http://dbunit.sourceforge.net/), which is used internally for
 - YAML. Similar to the flat XML layout, but has some improvements (columns are calculated by parsing the entire data set, not just the first row)
 - JSON. Similar to YAML.
 - XSL(X). With this data set format each sheet represents a table. The first row of a sheet defines the columns names and remaining rows contains the data.
-- CSV. Here a data set can be constructed from a directory containing csv files, each representing a separate table with its entries.
+- [CSV](https://www.ietf.org/rfc/rfc4180.txt). Here a data set can be constructed from a directory containing csv files, each representing a separate table with its entries.
 
 
 Here some data set examples:
@@ -587,7 +584,6 @@ For [MongoDB](https://www.mongodb.com), the `jpa-unit-mongodb` dependency needs 
   <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit-mongodb</artifactId>
   <version>${jpa-unit.version}</version>
-  <scope>test</scope>
 </dependency>
 ```
 
@@ -597,11 +593,11 @@ To overcome this limitation, or made it at least less painful, one can use e.g.
 - [Flapdoodle Embedded MongoDB](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo) for the lifecycle management of a MongoDB instance from code, e.g. from `@BeforeClass` and `@AfterClass` annotated methods. You can find working example within the JPA Unit integration test project for MongoDB. 
 - [embedmongo-maven-plugin](https://github.com/joelittlejohn/embedmongo-maven-plugin) for the lifecycle management of a MongoDB instance through Maven.
 
-### JPA Provider Dependencies
+### Supported JPA Provider
 
 Since JPA does not address NoSQL databases, each JPA provider defines its own properties. These properties are also the only dependencies to a specific JPA provider implementation. As of todays JPA Unit MongoDB extension can use the properties of the following JPA provider:
 
-- [Hibernate OGM (with MongoDB extension)](https://docs.jboss.org/hibernate/ogm/5.1/reference/en-US/html_single/#ogm-mongodb).
+- [Hibernate OGM (with MongoDB extension)](https://docs.jboss.org/hibernate/ogm/5.2/reference/en-US/html_single/#ogm-mongodb).
 - [EclipseLink (with MongoDB extension)](https://www.eclipse.org/eclipselink/documentation/2.6/concepts/nosql002.htm)
 - [DataNucleus (with MongoDB extension)](http://www.datanucleus.org/products/datanucleus/jpa/samples/tutorial_mongodb.html)
 - [Kundera (with MongoDB extension)](https://github.com/impetus-opensource/Kundera/wiki/Kundera-with-MongoDB)
@@ -674,6 +670,88 @@ If indexes (for more information on MongoDB indexes and types see [MongoDB Index
 Please note, that in this case the collection document consists of two subdocuments. The first one - `indexes` is where the indexes are defined. Basically this is which fields of the collection are going to be indexed.
 The second one - `data`, where all documents, which belong to the collection under test, are defined. In both cases all the types defined by MongoDB are supported.
 
+## Neo4j
+
+For [Neo4j](https://www.neo4j.com), the `jpa-unit-neo4j` dependency needs to be added:
+
+```xml
+<dependency>
+  <groupId>com.github.dadrus.jpa-unit</groupId>
+  <artifactId>jpa-unit-neo4j</artifactId>
+  <version>${jpa-unit.version}</version>
+</dependency>
+```
+
+JPA Unit needs to connect to a running Neo4j instance. This is done using [Neo4j JDBC Driver](http://neo4j-contrib.github.io/neo4j-jdbc/), which as a neat side effect makes bootstrapping 
+(see [Bootstrapping of DB Schema & Contents](#bootstrapping-of-db-schema--contents)) of the DB possible e.g. using [LIQUIGRAPH](http://www.liquigraph.org/). Usage of an in-process, 
+in-memory Neo4j implementation is only possible if the embedded data base is configured to expose BOLT or HTTP interfaces. This can be achieved by the use of e.g.
+
+- [Neo4J Harness](https://neo4j.com/docs/java-reference/current/) for the lifecycle management of a Neo4j instance from code, e.g. for test purposes by using a `Neo4jRule`. You can find working example as part of integration tests of JPA-Unit's neo4j project.
+
+### Supported JPA Provider
+
+Since JPA does not address NoSQL databases, each JPA provider defines its own properties. These properties are also the only dependencies to a specific JPA provider implementation. As of todays JPA Unit Node4j
+extension can use the properties of the following JPA provider:
+
+- [Hibernate OGM (with Neo4j extension)](https://docs.jboss.org/hibernate/ogm/5.2/reference/en-US/html_single/#ogm-neo4j).
+- [DataNucleus (with Neo4j extension)](http://www.datanucleus.org/products/datanucleus/jpa/samples/tutorial_neo4j.html)
+- [Kundera (with Neo4j extension)](https://github.com/impetus-opensource/Kundera/wiki/Neo4J-Specific-Configuration)
+
+Even the last two support Neo4j in an embedded mode only, both can be used if the embedded Neo4j database exposes HTTP or BOLT interfaces (like available with Neo4j Harness). Since there is no possibility to define the corresponding
+interfaces (BOLT or HTTP) in a standard way (by the means of the regular `persistence.xml`), JPA-Unit makes use of a `jpa-unit.properties` file, which has to be made available on the class path and which has to define the following
+properties:
+
+- `connection.url`, which defines the url to the available interface. E.g. `jdbc:neo4j:bolt://localhost:7687`. This property is mandatory.
+- `user.name`, which defines the user name to be used during connection establishment. This property is optional.
+- `user.password`, which defines the password of the user to be used during connection establishment. This property is optional as well.
+
+Same approach can be used if Hibernate OGM Neo4j extension is used in embedded mode.
+
+**A special note on Kundera:** It still depends on a pretty old Neo4j (1.8.1) version. So even JPA-Unit's neo4j extension understands the configuration dialect of Kundera, I didn't find a version of Noe4j Harness, which can expose BOLT or 
+HTTP protocols and is binary compatible with the version used by Kundera. With other words, as long as Kundera is not updated to use a more recent version of Neo4j, the usage of this JPA provider will most probably be not possible. 
+
+### Data Set Format
+
+Thanks to [jgrapht](https://github.com/jgrapht/jgrapht), which is used internally for graph handling, following data set formats are supported:
+
+- [GraphML](http://graphml.graphdrawing.org/primer/graphml-primer.html). an XML-based file format for graphs.
+
+If you want to generate/export data out of an existing Neo4j instance [APOC](https://neo4j-contrib.github.io/neo4j-apoc-procedures/) can be really helpful.
+Be however aware, that the data exported by APOC does not fully comply with GraphML. APOC generated file does not include `key` elements definitions for
+`label` and `labels` `data` elements for `edge`, respectively `node` elements. It also adds additional attributes (`label` and `labels`) to `node` and `edge`
+elements which are not defined by GraphML. The first one needs to be addressed by adding the missing `<key id="labels" for="node" attr.name="labels" attr.type="string"/>`
+and `<key id="label" for="edge" attr.name="label" attr.type="string"/>` to the `graph` element. The second one can be ignored - schema compliance is not enforced by
+JPA-Unit's neo4j extension.
+
+Here's an example:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="name" for="node" attr.name="name" attr.type="string"/>
+  <key id="id" for="node" attr.name="id" attr.type="long"/>
+  <key id="labels" for="node" attr.name="labels" attr.type="string"/>
+  <key id="label" for="edge" attr.name="label" attr.type="string"/>
+  <graph id="G" edgedefault="directed">
+    <node id="1" labels=":Person">
+      <data key="labels">:Person</data>
+      <data key="name">Tom</data>
+      <data key="id">1</data>
+    </node>
+    <node id="2" labels=":Person">
+      <data key="labels">:Person</data>
+      <data key="name">Jerry</data>
+      <data key="id">2</data>
+    </node>
+    <edge id="3" source="1" target="2" label="friend">
+      <data key="label">friend</data>
+    </edge>
+  </graph>
+</graphml>
+```
+
 # CDI Integration
 
 To be able to use the JPA Unit with CDI, all you need in addition to your CDI test dependency, like [DeltaSpike Test-Control Module](https://deltaspike.apache.org/documentation/test-control.html) or [Gunnar's CDI Test](https://github.com/guhilling/cdi-test), is to add the following dependency to your Maven project :
@@ -683,7 +761,6 @@ To be able to use the JPA Unit with CDI, all you need in addition to your CDI te
   <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit-cdi</artifactId>
   <version>${jpa-unit.version}</version>
-  <scope>test</scope>
 </dependency>
 ```
 
@@ -720,7 +797,6 @@ Cucumber is a BDD test framework. To be able to use JPA Unit with it, all you ne
   <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit-cucumber</artifactId>
   <version>${jpa-unit.version}</version>
-  <scope>test</scope>
 </dependency>
 ```
 
@@ -815,7 +891,6 @@ Concordion is a BDD test framework. To be able to use JPA Unit with it, all you 
   <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit-concordion</artifactId>
   <version>${jpa-unit.version}</version>
-  <scope>test</scope>
 </dependency>
 ```
 

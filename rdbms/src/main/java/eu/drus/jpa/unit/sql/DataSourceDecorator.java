@@ -4,6 +4,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestClassDecorator;
+import eu.drus.jpa.unit.spi.TestInvocation;
 
 public class DataSourceDecorator implements TestClassDecorator {
 
@@ -13,16 +14,18 @@ public class DataSourceDecorator implements TestClassDecorator {
     }
 
     @Override
-    public void beforeAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
-        final SqlDbConfiguration configuration = new SqlDbConfiguration(ctx.getDescriptor());
-        ctx.storeData(Constants.KEY_DATA_SOURCE, configuration.createDataSource());
+    public void beforeAll(final TestInvocation invocation) throws Exception {
+        final ExecutionContext context = invocation.getContext();
+        final SqlDbConfiguration configuration = new SqlDbConfiguration(context.getDescriptor());
+        context.storeData(Constants.KEY_DATA_SOURCE, configuration.createDataSource());
     }
 
     @Override
-    public void afterAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
-        final BasicDataSource ds = (BasicDataSource) ctx.getData(Constants.KEY_DATA_SOURCE);
+    public void afterAll(final TestInvocation invocation) throws Exception {
+        final ExecutionContext context = invocation.getContext();
+        final BasicDataSource ds = (BasicDataSource) context.getData(Constants.KEY_DATA_SOURCE);
         ds.close();
-        ctx.storeData(Constants.KEY_DATA_SOURCE, null);
+        context.storeData(Constants.KEY_DATA_SOURCE, null);
     }
 
     @Override

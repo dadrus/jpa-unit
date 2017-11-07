@@ -4,7 +4,7 @@ public interface TestMethodDecorator extends TestDecorator {
 
     boolean isConfigurationSupported(ExecutionContext ctx);
 
-    void beforeTest(TestMethodInvocation invocation) throws Exception;
+    void beforeTest(TestInvocation invocation) throws Exception;
 
-    void afterTest(TestMethodInvocation invocation) throws Exception;
+    void afterTest(TestInvocation invocation) throws Exception;
 }

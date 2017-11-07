@@ -1,9 +1,10 @@
 package eu.drus.jpa.unit.rule;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -16,13 +17,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.Statement;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
+import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.TestInvocation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestClassStatementTest {
@@ -65,10 +68,19 @@ public class TestClassStatementTest {
         statement.evaluate();
 
         // THEN
+        final ArgumentCaptor<TestInvocation> invocationCaptor = ArgumentCaptor.forClass(TestInvocation.class);
+
         final InOrder inOrder = inOrder(jpaUnit, base);
-        inOrder.verify(jpaUnit).processBeforeAll(eq(ctx), eq(this.getClass()));
+        inOrder.verify(jpaUnit).processBeforeAll(invocationCaptor.capture());
+        assertThat(invocationCaptor.getValue().getContext(), equalTo(ctx));
+        assertThat(invocationCaptor.getValue().getTestClass(), equalTo(this.getClass()));
+
         inOrder.verify(base, times(2)).evaluate();
-        inOrder.verify(jpaUnit).processAfterAll(eq(ctx), eq(this.getClass()));
+
+        inOrder.verify(jpaUnit).processAfterAll(invocationCaptor.capture());
+        assertThat(invocationCaptor.getValue().getContext(), equalTo(ctx));
+        assertThat(invocationCaptor.getValue().getTestClass(), equalTo(this.getClass()));
+
     }
 
     @Test
@@ -91,9 +103,17 @@ public class TestClassStatementTest {
         }
 
         // THEN
+        final ArgumentCaptor<TestInvocation> invocationCaptor = ArgumentCaptor.forClass(TestInvocation.class);
+
         final InOrder inOrder = inOrder(jpaUnit, base);
-        inOrder.verify(jpaUnit).processBeforeAll(eq(ctx), eq(this.getClass()));
+        inOrder.verify(jpaUnit).processBeforeAll(invocationCaptor.capture());
+        assertThat(invocationCaptor.getValue().getContext(), equalTo(ctx));
+        assertThat(invocationCaptor.getValue().getTestClass(), equalTo(this.getClass()));
+
         inOrder.verify(base, times(2)).evaluate();
-        inOrder.verify(jpaUnit).processAfterAll(eq(ctx), eq(this.getClass()));
+
+        inOrder.verify(jpaUnit).processAfterAll(invocationCaptor.capture());
+        assertThat(invocationCaptor.getValue().getContext(), equalTo(ctx));
+        assertThat(invocationCaptor.getValue().getTestClass(), equalTo(this.getClass()));
     }
 }

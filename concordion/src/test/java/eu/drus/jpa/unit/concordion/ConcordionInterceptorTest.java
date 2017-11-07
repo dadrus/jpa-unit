@@ -22,7 +22,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.core.JpaUnitContext;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
-import eu.drus.jpa.unit.spi.TestMethodInvocation;
+import eu.drus.jpa.unit.spi.TestInvocation;
 import net.sf.cglib.proxy.MethodProxy;
 
 @RunWith(PowerMockRunner.class)
@@ -71,25 +71,25 @@ public class ConcordionInterceptorTest {
         // THEN
         assertThat(res, equalTo(RESULT));
 
-        final ArgumentCaptor<TestMethodInvocation> beforeCaptor = ArgumentCaptor.forClass(TestMethodInvocation.class);
-        final ArgumentCaptor<TestMethodInvocation> afterCaptor = ArgumentCaptor.forClass(TestMethodInvocation.class);
+        final ArgumentCaptor<TestInvocation> beforeCaptor = ArgumentCaptor.forClass(TestInvocation.class);
+        final ArgumentCaptor<TestInvocation> afterCaptor = ArgumentCaptor.forClass(TestInvocation.class);
         final InOrder inOrder = inOrder(executor, methodProxy);
         inOrder.verify(executor).processBefore(beforeCaptor.capture());
         inOrder.verify(methodProxy).invoke(any(), any(Object[].class));
         inOrder.verify(executor).processAfter(afterCaptor.capture());
 
-        final TestMethodInvocation invocation1 = beforeCaptor.getValue();
-        final TestMethodInvocation invocation2 = afterCaptor.getValue();
+        final TestInvocation invocation1 = beforeCaptor.getValue();
+        final TestInvocation invocation2 = afterCaptor.getValue();
 
         assertThat(invocation1, equalTo(invocation2));
-        assertThat(invocation1.hasErrors(), equalTo(Boolean.FALSE));
+        assertThat(invocation1.getException().isPresent(), equalTo(Boolean.FALSE));
 
         assertThat(invocation1.getContext(), equalTo(context));
         assertThat(invocation1.getFeatureResolver().shouldCleanupAfter(), equalTo(Boolean.FALSE));
         assertThat(invocation1.getFeatureResolver().shouldCleanupBefore(), equalTo(Boolean.FALSE));
         assertThat(invocation1.getTestClass(), equalTo(TestDelegate.class));
-        assertThat(invocation1.getTestInstance(), equalTo(delegate));
-        assertThat(invocation1.getTestMethod(), equalTo(method));
+        assertThat(invocation1.getTestInstance().get(), equalTo(delegate));
+        assertThat(invocation1.getTestMethod().get(), equalTo(method));
     }
 
     @Test
@@ -108,25 +108,25 @@ public class ConcordionInterceptorTest {
         }
 
         // THEN
-        final ArgumentCaptor<TestMethodInvocation> beforeCaptor = ArgumentCaptor.forClass(TestMethodInvocation.class);
-        final ArgumentCaptor<TestMethodInvocation> afterCaptor = ArgumentCaptor.forClass(TestMethodInvocation.class);
+        final ArgumentCaptor<TestInvocation> beforeCaptor = ArgumentCaptor.forClass(TestInvocation.class);
+        final ArgumentCaptor<TestInvocation> afterCaptor = ArgumentCaptor.forClass(TestInvocation.class);
         final InOrder inOrder = inOrder(executor, methodProxy);
         inOrder.verify(executor).processBefore(beforeCaptor.capture());
         inOrder.verify(methodProxy).invoke(any(), any(Object[].class));
         inOrder.verify(executor).processAfter(afterCaptor.capture());
 
-        final TestMethodInvocation invocation1 = beforeCaptor.getValue();
-        final TestMethodInvocation invocation2 = afterCaptor.getValue();
+        final TestInvocation invocation1 = beforeCaptor.getValue();
+        final TestInvocation invocation2 = afterCaptor.getValue();
 
         assertThat(invocation1, equalTo(invocation2));
-        assertThat(invocation1.hasErrors(), equalTo(Boolean.TRUE));
+        assertThat(invocation1.getException().isPresent(), equalTo(Boolean.TRUE));
 
         assertThat(invocation1.getContext(), equalTo(context));
         assertThat(invocation1.getFeatureResolver().shouldCleanupAfter(), equalTo(Boolean.FALSE));
         assertThat(invocation1.getFeatureResolver().shouldCleanupBefore(), equalTo(Boolean.FALSE));
         assertThat(invocation1.getTestClass(), equalTo(TestDelegate.class));
-        assertThat(invocation1.getTestInstance(), equalTo(delegate));
-        assertThat(invocation1.getTestMethod(), equalTo(method));
+        assertThat(invocation1.getTestInstance().get(), equalTo(delegate));
+        assertThat(invocation1.getTestMethod().get(), equalTo(method));
     }
 
 }

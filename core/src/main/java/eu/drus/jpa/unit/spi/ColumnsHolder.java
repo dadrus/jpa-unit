@@ -35,13 +35,7 @@ public class ColumnsHolder {
         }
 
         final String tableName = splittedTableAndColumnNames[0];
-        List<String> tableColumnNames = columnsInTable.get(tableName);
-
-        if (tableColumnNames == null) {
-            tableColumnNames = new ArrayList<>();
-            columnsInTable.put(tableName, tableColumnNames);
-        }
-
+        final List<String> tableColumnNames = columnsInTable.computeIfAbsent(tableName, k -> new ArrayList<>());
         tableColumnNames.add(idMapper.apply(splittedTableAndColumnNames[1]));
     }
 

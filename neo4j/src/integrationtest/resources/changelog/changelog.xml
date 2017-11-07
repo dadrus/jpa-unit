@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<changelog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://www.liquigraph.org/schema/1.0/liquigraph.xsd">
+    <changeset id="1" author="dadrus">
+        <query><![CDATA[CREATE (p:Person:ENTITY {id: 1, name: "Max", surname: "Payne"})<-[:expertIn]-(t:Technology:ENTITY {id: 1, name: "All kinds of weapons"})]]></query>
+    </changeset>
+    <changeset id="2" author="dadrus">
+        <query><![CDATA[MATCH (p:Person:ENTITY {id: 1}) CREATE (p)-[:friend]->(:Person:ENTITY {id: 2, name: "Alex", surname: "Balder" })]]></query>
+    </changeset>
+    <changeset id="3" author="dadrus">
+        <query><![CDATA[MATCH (p:Person:ENTITY {id: 1}) CREATE (p)-[:expertIn]->(:Technology:ENTITY {name: "Detective work"})]]></query>
+    </changeset>
+    <changeset id="4" author="dadrus">
+        <query><![CDATA[MATCH (p:Person:ENTITY {id: 1}) CREATE (p)-[:expertIn]->(:Technology:ENTITY {name: "Weapons of all kinds"})]]></query>
+    </changeset>
+</changelog>

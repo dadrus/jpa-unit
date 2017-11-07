@@ -1,6 +1,5 @@
 package eu.drus.jpa.unit.suite;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -19,7 +18,6 @@ import eu.drus.jpa.unit.test.ExpectedDataSetsTest;
 import eu.drus.jpa.unit.test.InitialDataSetsTest;
 import eu.drus.jpa.unit.test.TransactionJunit5Test;
 import eu.drus.jpa.unit.test.TransactionTest;
-import eu.drus.jpa.unit.test.util.MongodConfiguration;
 import eu.drus.jpa.unit.test.util.MongodManager;
 
 @RunWith(Suite.class)
@@ -30,20 +28,9 @@ import eu.drus.jpa.unit.test.util.MongodManager;
 })
 public class MongoSuite {
 
-    private static boolean active = false;
-
     @BeforeClass
     public static void startMongod() {
-        active = true;
-        MongodManager.start(MongodConfiguration.builder().addHost("localhost", 27017).build());
+        MongodManager.startServer();
     }
 
-    @AfterClass
-    public static void stopMongod() throws InterruptedException {
-        MongodManager.stop();
-    }
-
-    public static boolean isActive() {
-        return active;
-    }
 }

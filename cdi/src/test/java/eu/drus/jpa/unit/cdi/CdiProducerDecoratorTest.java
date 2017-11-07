@@ -18,13 +18,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
-import eu.drus.jpa.unit.spi.TestMethodInvocation;
+import eu.drus.jpa.unit.spi.TestInvocation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CdiProducerDecoratorTest {
 
     @Mock
-    private TestMethodInvocation invocation;
+    private TestInvocation invocation;
 
     @Mock
     private EntityManager em;

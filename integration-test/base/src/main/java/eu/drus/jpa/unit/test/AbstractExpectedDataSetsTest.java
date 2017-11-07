@@ -41,12 +41,24 @@ public abstract class AbstractExpectedDataSetsTest {
     }
 
     @Test
-    @ExpectedDataSets(value = "datasets/expected-data.json", excludeColumns = {
+    @ExpectedDataSets(value = "datasets/no-data.json", excludeColumns = {
             "ID", "DEPOSITOR_ID", "ACCOUNT_ID", "VERSION"
     }, orderBy = {
             "CONTACT_DETAIL.TYPE", "ACCOUNT_ENTRY.TYPE"
     })
     public void test1() {
+        manager.persist(depositor);
+
+        expectedException.expect(AssertionError.class);
+    }
+
+    @Test
+    @ExpectedDataSets(value = "datasets/expected-data.json", excludeColumns = {
+            "ID", "DEPOSITOR_ID", "ACCOUNT_ID", "VERSION"
+    }, orderBy = {
+            "CONTACT_DETAIL.TYPE", "ACCOUNT_ENTRY.TYPE"
+    })
+    public void test2() {
         manager.persist(depositor);
     }
 
@@ -56,7 +68,7 @@ public abstract class AbstractExpectedDataSetsTest {
     }, orderBy = {
             "CONTACT_DETAIL.TYPE", "ACCOUNT_ENTRY.TYPE"
     })
-    public void test2() throws OperationNotSupportedException {
+    public void test3() throws OperationNotSupportedException {
         manager.persist(depositor);
 
         // adding a new row to a table which is referenced by the expected data set but not included
@@ -72,7 +84,7 @@ public abstract class AbstractExpectedDataSetsTest {
     }, orderBy = {
             "CONTACT_DETAIL.TYPE", "ACCOUNT_ENTRY.TYPE"
     })
-    public void test3() throws OperationNotSupportedException {
+    public void test4() throws OperationNotSupportedException {
         // adding a new row to a table which is not referenced by the expected data set will not
         // lead to a comparison error.
         depositor.addAddress(new Address("SomeStreet 1", "12345", "SomeCity", "SomeCountry"));
@@ -86,7 +98,7 @@ public abstract class AbstractExpectedDataSetsTest {
     }, orderBy = {
             "CONTACT_DETAIL.TYPE", "ACCOUNT_ENTRY.TYPE"
     }, strict = true)
-    public void test4() throws OperationNotSupportedException {
+    public void test5() throws OperationNotSupportedException {
         // adding a new row to a table which is not referenced by the expected data set will
         // lead to a comparison error in strict mode.
         depositor.addAddress(new Address("SomeStreet 1", "12345", "SomeCity", "SomeCountry"));

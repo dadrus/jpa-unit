@@ -3,6 +3,7 @@ package eu.drus.jpa.unit.concordion;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -22,7 +23,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.core.JpaUnitContext;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
-import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.TestInvocation;
 import net.sf.cglib.proxy.Enhancer;
 
 @RunWith(PowerMockRunner.class)
@@ -42,7 +43,7 @@ public class JpaUnitFixtureTest {
     private JpaUnitFixture fixture;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         mockStatic(JpaUnitContext.class);
         when(JpaUnitContext.getInstance(any(Class.class))).thenReturn(ctx);
 
@@ -60,19 +61,20 @@ public class JpaUnitFixtureTest {
         fixture.beforeSpecification();
 
         // THEN
-        final ArgumentCaptor<ExecutionContext> ecCaptor = ArgumentCaptor.forClass(ExecutionContext.class);
-        final ArgumentCaptor<Class> classCaptor = ArgumentCaptor.forClass(Class.class);
-        verify(executor).processBeforeAll(ecCaptor.capture(), classCaptor.capture());
+        final ArgumentCaptor<TestInvocation> invocationCaptor = ArgumentCaptor.forClass(TestInvocation.class);
+        verify(executor).processBeforeAll(invocationCaptor.capture());
 
-        assertThat(ecCaptor.getValue(), equalTo(ctx));
-        assertThat(classCaptor.getValue(), equalTo(TestClass.class));
+        final TestInvocation invocation = invocationCaptor.getValue();
+        assertThat(invocation.getTestClass(), equalTo(TestClass.class));
+        assertThat(invocation.getContext(), equalTo(ctx));
+        assertThat(invocation.getFeatureResolver(), notNullValue());
     }
 
     @Test
     public void testBeforeSpecificationThrowsJpaUnitExceptionIfAnyExceptionIsThrown() throws Exception {
         // GIVEN
         final Exception exception = new Exception("error");
-        doThrow(exception).when(executor).processBeforeAll(any(ExecutionContext.class), any(Class.class));
+        doThrow(exception).when(executor).processBeforeAll(any(TestInvocation.class));
 
         try {
             // WHEN
@@ -92,19 +94,20 @@ public class JpaUnitFixtureTest {
         fixture.afterSpecification();
 
         // THEN
-        final ArgumentCaptor<ExecutionContext> ecCaptor = ArgumentCaptor.forClass(ExecutionContext.class);
-        final ArgumentCaptor<Class> classCaptor = ArgumentCaptor.forClass(Class.class);
-        verify(executor).processAfterAll(ecCaptor.capture(), classCaptor.capture());
+        final ArgumentCaptor<TestInvocation> invocationCaptor = ArgumentCaptor.forClass(TestInvocation.class);
+        verify(executor).processAfterAll(invocationCaptor.capture());
 
-        assertThat(ecCaptor.getValue(), equalTo(ctx));
-        assertThat(classCaptor.getValue(), equalTo(TestClass.class));
+        final TestInvocation invocation = invocationCaptor.getValue();
+        assertThat(invocation.getTestClass(), equalTo(TestClass.class));
+        assertThat(invocation.getContext(), equalTo(ctx));
+        assertThat(invocation.getFeatureResolver(), notNullValue());
     }
 
     @Test
     public void testAfterSpecificationThrowsJpaUnitExceptionIfAnyExceptionIsThrown() throws Exception {
         // GIVEN
         final Exception exception = new Exception("error");
-        doThrow(exception).when(executor).processAfterAll(any(ExecutionContext.class), any(Class.class));
+        doThrow(exception).when(executor).processAfterAll(any(TestInvocation.class));
 
         try {
             // WHEN

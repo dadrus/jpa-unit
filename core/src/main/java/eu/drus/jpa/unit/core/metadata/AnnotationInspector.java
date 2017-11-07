@@ -81,7 +81,7 @@ public class AnnotationInspector<T extends Annotation> {
     }
 
     public T fetchFromMethod(final Method method) {
-        return annotatedMethods.get(method);
+        return method != null ? annotatedMethods.get(method) : null;
     }
 
     public boolean isDefinedOnAnyMethod() {

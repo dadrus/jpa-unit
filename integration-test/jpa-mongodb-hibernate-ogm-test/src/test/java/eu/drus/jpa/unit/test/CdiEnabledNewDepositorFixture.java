@@ -12,8 +12,6 @@ import org.concordion.internal.ClassNameAndTypeBasedSpecificationLocator;
 import org.junit.runner.RunWith;
 
 import eu.drus.jpa.unit.api.concordion.JpaUnitConcordionRunner;
-import eu.drus.jpa.unit.suite.MongoSuite;
-import eu.drus.jpa.unit.test.util.MongodConfiguration;
 import eu.drus.jpa.unit.test.util.MongodManager;
 
 @RunWith(JpaUnitConcordionRunner.class)
@@ -53,16 +51,7 @@ public class CdiEnabledNewDepositorFixture extends AbstractCdiEnabledNewDeposito
 
     @BeforeSuite
     public static void startMongod() {
-        if (!MongoSuite.isActive()) {
-            MongodManager.start(MongodConfiguration.builder().addHost("localhost", 27017).build());
-        }
-    }
-
-    @AfterSuite
-    public static void stopMongod() throws InterruptedException {
-        if (!MongoSuite.isActive()) {
-            MongodManager.stop();
-        }
+        MongodManager.startServer();
     }
 
 }

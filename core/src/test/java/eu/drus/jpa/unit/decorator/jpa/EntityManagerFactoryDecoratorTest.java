@@ -22,6 +22,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
+import eu.drus.jpa.unit.spi.TestInvocation;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Persistence.class)
@@ -35,16 +36,24 @@ public class EntityManagerFactoryDecoratorTest {
     private ExecutionContext ctx;
 
     @Mock
+    private TestInvocation invocation;
+
+    @Mock
     private EntityManagerFactory factory;
 
     @Mock
     private PersistenceUnitDescriptor descriptor;
 
+    @SuppressWarnings({
+            "unchecked", "rawtypes"
+    })
     @Before
     public void prepareMocks() {
         mockStatic(Persistence.class);
         when(Persistence.createEntityManagerFactory(eq(UNIT_NAME), eq(PERSISTENCE_PROPERTIES))).thenReturn(factory);
 
+        when(invocation.getContext()).thenReturn(ctx);
+        when(invocation.getTestClass()).thenReturn((Class) getClass());
         when(ctx.getDescriptor()).thenReturn(descriptor);
         when(descriptor.getUnitName()).thenReturn(UNIT_NAME);
         when(descriptor.getProperties()).thenReturn(PERSISTENCE_PROPERTIES);
@@ -68,7 +77,7 @@ public class EntityManagerFactoryDecoratorTest {
         final EntityManagerFactoryDecorator decorator = new EntityManagerFactoryDecorator();
 
         // WHEN
-        decorator.beforeAll(ctx, getClass());
+        decorator.beforeAll(invocation);
 
         // THEN
         verify(ctx).storeData(eq(Constants.KEY_ENTITY_MANAGER_FACTORY), eq(factory));
@@ -82,7 +91,7 @@ public class EntityManagerFactoryDecoratorTest {
         final EntityManagerFactoryDecorator decorator = new EntityManagerFactoryDecorator();
 
         // WHEN
-        decorator.afterAll(ctx, getClass());
+        decorator.afterAll(invocation);
 
         // THEN
         verify(ctx).storeData(eq(Constants.KEY_ENTITY_MANAGER_FACTORY), eq(null));

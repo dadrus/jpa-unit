@@ -11,8 +11,8 @@ import javax.persistence.PersistenceContextType;
 
 import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.TestInvocation;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
-import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 public class PersistenceContextDecorator implements TestMethodDecorator {
 
@@ -22,7 +22,7 @@ public class PersistenceContextDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void beforeTest(final TestMethodInvocation invocation) throws Exception {
+    public void beforeTest(final TestInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
 
         final EntityManagerFactory emf = (EntityManagerFactory) context.getData(Constants.KEY_ENTITY_MANAGER_FACTORY);
@@ -31,7 +31,7 @@ public class PersistenceContextDecorator implements TestMethodDecorator {
         if (field.getType().equals(EntityManager.class)) {
             final EntityManager em = getEntityManager(context, emf);
             context.storeData(Constants.KEY_ENTITY_MANAGER, em);
-            injectValue(field, invocation.getTestInstance(), em);
+            injectValue(field, invocation.getTestInstance().get(), em);
         }
     }
 
@@ -50,7 +50,7 @@ public class PersistenceContextDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void afterTest(final TestMethodInvocation invocation) throws Exception {
+    public void afterTest(final TestInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
 
         final EntityManager em = (EntityManager) context.getData(Constants.KEY_ENTITY_MANAGER);

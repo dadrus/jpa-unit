@@ -46,6 +46,11 @@
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
+        <artifactId>jpa-unit-neo4j</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
         <artifactId>jpa-unit-rdbms</artifactId>
         <version>${project.version}</version>
       </dependency>

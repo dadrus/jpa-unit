@@ -1,5 +1,6 @@
 package eu.drus.jpa.unit.core;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.nullValue;
@@ -17,6 +18,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import eu.drus.jpa.unit.api.JpaUnitException;
+import eu.drus.jpa.unit.test.entities.EntityA;
+import eu.drus.jpa.unit.test.entities.EntityB;
 
 public class PersistenceUnitDescriptorTest {
 
@@ -51,6 +56,14 @@ public class PersistenceUnitDescriptorTest {
         providerElement.setTextContent(PROVIDER_CLASS);
         puElement.appendChild(providerElement);
 
+        Element classElement = document.createElement("class");
+        classElement.setTextContent(EntityA.class.getName());
+        puElement.appendChild(classElement);
+
+        classElement = document.createElement("class");
+        classElement.setTextContent(EntityB.class.getName());
+        puElement.appendChild(classElement);
+
         final Element propsElement = document.createElement("properties");
         puElement.appendChild(propsElement);
 
@@ -84,6 +97,7 @@ public class PersistenceUnitDescriptorTest {
         propsElement.appendChild(notAPropertyElement);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testPersistenceUnitDescriptorWithoutUnitNameSet() {
         // GIVEN
@@ -102,8 +116,10 @@ public class PersistenceUnitDescriptorTest {
         assertThat(descriptor.getProperties(), hasEntry(ATTRIBUTE_PASSWORD, PASSWORD_VALUE));
         assertThat(descriptor.getProperties(), hasEntry(ATTRIBUTE_DDL_GENERATION, DDL_GENERATION_VALUE));
         assertThat(descriptor.getProviderClassName(), equalTo(PROVIDER_CLASS));
+        assertThat(descriptor.getClasses(), containsInAnyOrder(EntityB.class, EntityA.class));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testPersistenceUnitDescriptorWithoutOverwrittenProperties() {
         // GIVEN
@@ -121,8 +137,10 @@ public class PersistenceUnitDescriptorTest {
         assertThat(descriptor.getProperties(), hasEntry(ATTRIBUTE_PASSWORD, PASSWORD_VALUE));
         assertThat(descriptor.getProperties(), hasEntry(ATTRIBUTE_DDL_GENERATION, DDL_GENERATION_VALUE));
         assertThat(descriptor.getProviderClassName(), equalTo(PROVIDER_CLASS));
+        assertThat(descriptor.getClasses(), containsInAnyOrder(EntityB.class, EntityA.class));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testPersistenceUnitDescriptorWithOverwrittenProperties() {
         // GIVEN
@@ -153,5 +171,23 @@ public class PersistenceUnitDescriptorTest {
         assertThat(descriptor.getProperties(), hasEntry(ATTRIBUTE_DDL_GENERATION, DDL_GENERATION_VALUE));
         assertThat(descriptor.getProperties(), hasEntry(someFurtherProp, someFurtherValue));
         assertThat(descriptor.getProviderClassName(), equalTo(PROVIDER_CLASS));
+        assertThat(descriptor.getClasses(), containsInAnyOrder(EntityB.class, EntityA.class));
     }
+
+    @Test(expected = JpaUnitException.class)
+    public void testPersistenceUnitDescriptorReferencingNotAvailableEntityClasses() {
+        // GIVEN
+        // the created document and the following properties
+        final Document document = puElement.getOwnerDocument();
+        final Element classElement = document.createElement("class");
+        classElement.setTextContent("not.existent.Entity");
+        puElement.appendChild(classElement);
+
+        // WHEN
+        new PersistenceUnitDescriptorImpl(puElement, Collections.emptyMap());
+
+        // THEN
+        // exception is thrown
+    }
+
 }

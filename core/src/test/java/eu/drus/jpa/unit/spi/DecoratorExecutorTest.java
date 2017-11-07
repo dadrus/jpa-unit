@@ -2,7 +2,6 @@ package eu.drus.jpa.unit.spi;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -39,13 +38,14 @@ public class DecoratorExecutorTest {
     private TestMethodDecorator secondMethodDecorator;
 
     @Mock
-    private TestMethodInvocation invocation;
+    private TestInvocation invocation;
 
     @Mock
     private ExecutionContext jpaUnitContext;
 
-    private final Class<?> testClass = getClass();
-
+    @SuppressWarnings({
+            "unchecked", "rawtypes"
+    })
     @Before
     public void prepareMocks() throws Exception {
         mockStatic(DecoratorRegistrar.class);
@@ -63,6 +63,9 @@ public class DecoratorExecutorTest {
 
         when(firstMethodDecorator.getPriority()).thenReturn(1);
         when(secondMethodDecorator.getPriority()).thenReturn(2);
+
+        when(invocation.getContext()).thenReturn(jpaUnitContext);
+        when(invocation.getTestClass()).thenReturn((Class) getClass());
     }
 
     @Test
@@ -71,12 +74,12 @@ public class DecoratorExecutorTest {
         final DecoratorExecutor unit = new DecoratorExecutor();
 
         // WHEN
-        unit.processBeforeAll(jpaUnitContext, getClass());
+        unit.processBeforeAll(invocation);
 
         // THEN
         final InOrder order = inOrder(firstClassDecorator, secondClassDecorator);
-        order.verify(firstClassDecorator).beforeAll(notNull(ExecutionContext.class), eq(testClass));
-        order.verify(secondClassDecorator).beforeAll(notNull(ExecutionContext.class), eq(testClass));
+        order.verify(firstClassDecorator).beforeAll(eq(invocation));
+        order.verify(secondClassDecorator).beforeAll(eq(invocation));
         verifyZeroInteractions(firstMethodDecorator, secondMethodDecorator);
     }
 
@@ -86,12 +89,12 @@ public class DecoratorExecutorTest {
         final DecoratorExecutor unit = new DecoratorExecutor();
 
         // WHEN
-        unit.processAfterAll(jpaUnitContext, getClass());
+        unit.processAfterAll(invocation);
 
         // THEN
         final InOrder order = inOrder(secondClassDecorator, firstClassDecorator);
-        order.verify(secondClassDecorator).afterAll(notNull(ExecutionContext.class), eq(testClass));
-        order.verify(firstClassDecorator).afterAll(notNull(ExecutionContext.class), eq(testClass));
+        order.verify(secondClassDecorator).afterAll(eq(invocation));
+        order.verify(firstClassDecorator).afterAll(eq(invocation));
         verifyZeroInteractions(firstMethodDecorator, secondMethodDecorator);
     }
 
@@ -105,8 +108,8 @@ public class DecoratorExecutorTest {
 
         // THEN
         final InOrder order = inOrder(firstMethodDecorator, secondMethodDecorator);
-        order.verify(firstMethodDecorator).beforeTest(notNull(TestMethodInvocation.class));
-        order.verify(secondMethodDecorator).beforeTest(notNull(TestMethodInvocation.class));
+        order.verify(firstMethodDecorator).beforeTest(eq(invocation));
+        order.verify(secondMethodDecorator).beforeTest(eq(invocation));
         verifyZeroInteractions(firstClassDecorator, secondClassDecorator);
     }
 
@@ -120,8 +123,8 @@ public class DecoratorExecutorTest {
 
         // THEN
         final InOrder order = inOrder(firstMethodDecorator, secondMethodDecorator);
-        order.verify(secondMethodDecorator).afterTest(notNull(TestMethodInvocation.class));
-        order.verify(firstMethodDecorator).afterTest(notNull(TestMethodInvocation.class));
+        order.verify(secondMethodDecorator).afterTest(eq(invocation));
+        order.verify(firstMethodDecorator).afterTest(eq(invocation));
         verifyZeroInteractions(firstClassDecorator, secondClassDecorator);
     }
 }

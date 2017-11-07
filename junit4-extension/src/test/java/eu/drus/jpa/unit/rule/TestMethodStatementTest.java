@@ -16,8 +16,8 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
+import eu.drus.jpa.unit.spi.ExecutionContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestMethodStatementTest {
@@ -39,7 +39,7 @@ public class TestMethodStatementTest {
     @Before
     public void setUp() {
         statement = new TestMethodStatement(ctx, jpaUnit, base, method, this);
-        assertFalse(statement.hasErrors());
+        assertFalse(statement.getException().isPresent());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class TestMethodStatementTest {
         inOrder.verify(base).evaluate();
         inOrder.verify(jpaUnit).processAfter(eq(statement));
 
-        assertFalse(statement.hasErrors());
+        assertFalse(statement.getException().isPresent());
     }
 
     @Test
@@ -77,6 +77,6 @@ public class TestMethodStatementTest {
         inOrder.verify(base).evaluate();
         inOrder.verify(jpaUnit).processAfter(eq(statement));
 
-        assertTrue(statement.hasErrors());
+        assertTrue(statement.getException().isPresent());
     }
 }

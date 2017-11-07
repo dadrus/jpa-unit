@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <graph id="G" edgedefault="directed">
+    <key id="label" for="edge" attr.name="label" attr.type="string" />
+    <key id="labels" for="node" attr.name="labels" attr.type="string" />
+
+    <key id="surname" for="node" attr.name="surname" attr.type="string" />
+    <key id="name" for="node" attr.name="name" attr.type="string" />
+    <key id="id" for="node" attr.name="id" attr.type="long" />
+
+    <node id="n1" labels=":Person">
+      <data key="labels">:Person</data>
+      <data key="id">100</data>
+      <data key="surname">Payne</data>
+      <data key="name">Max</data>
+    </node>
+    <node id="t1" labels=":Technology">
+      <data key="labels">:Technology</data>
+      <data key="name">Detective work</data>
+    </node>
+    
+    <edge id="e1" source="n1" target="t1" label="depositor">
+      <data key="label">expertIn</data>
+    </edge>
+  </graph>
+</graphml>

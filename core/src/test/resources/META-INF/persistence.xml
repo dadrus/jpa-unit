@@ -6,6 +6,9 @@
 
   <persistence-unit name="test-unit-1" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    
+    <class>eu.drus.jpa.unit.test.entities.EntityA</class>
+    <class>eu.drus.jpa.unit.test.entities.EntityB</class>
 
     <properties>
       <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
@@ -19,6 +22,9 @@
   
   <persistence-unit name="test-unit-2" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    
+    <class>eu.drus.jpa.unit.test.entities.EntityA</class>
+    <class>eu.drus.jpa.unit.test.entities.EntityB</class>
 
     <properties>
       <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
@@ -32,6 +38,9 @@
   
   <persistence-unit name="test-unit-4" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    
+    <class>eu.drus.jpa.unit.test.entities.EntityA</class>
+    <class>eu.drus.jpa.unit.test.entities.EntityB</class>
 
     <properties>
       <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
@@ -45,6 +54,9 @@
   
   <persistence-unit name="test-unit-4" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    
+    <class>eu.drus.jpa.unit.test.entities.EntityA</class>
+    <class>eu.drus.jpa.unit.test.entities.EntityB</class>
 
     <properties>
       <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />

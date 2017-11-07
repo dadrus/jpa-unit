@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import eu.drus.jpa.unit.spi.TestMethodInvocation;
+import eu.drus.jpa.unit.spi.TestInvocation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionStrategyProviderTest {
@@ -22,7 +22,7 @@ public class TransactionStrategyProviderTest {
     private EntityTransaction tx;
 
     @Mock
-    private TestMethodInvocation invocation;
+    private TestInvocation invocation;
 
     private TransactionStrategyProvider provider;
 

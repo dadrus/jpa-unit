@@ -14,6 +14,8 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +31,7 @@ import eu.drus.jpa.unit.mongodb.ext.ConfigurationRegistry;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
-import eu.drus.jpa.unit.spi.TestMethodInvocation;
+import eu.drus.jpa.unit.spi.TestInvocation;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
@@ -38,7 +40,7 @@ import eu.drus.jpa.unit.spi.TestMethodInvocation;
 public class MongoDbDecoratorTest {
 
     @Mock
-    private TestMethodInvocation invocation;
+    private TestInvocation invocation;
 
     @Mock
     private ExecutionContext ctx;
@@ -92,7 +94,7 @@ public class MongoDbDecoratorTest {
     @Test
     public void testAfterTest() throws Throwable {
         // GIVEN
-        when(invocation.hasErrors()).thenReturn(Boolean.FALSE);
+        when(invocation.getException()).thenReturn(Optional.empty());
 
         // WHEN
         decorator.afterTest(invocation);
@@ -106,7 +108,7 @@ public class MongoDbDecoratorTest {
     @Test
     public void testMongoClientIsClosedEvenIfExecuteAfterTestFails() throws Throwable {
         // GIVEN
-        when(invocation.hasErrors()).thenReturn(Boolean.TRUE);
+        when(invocation.getException()).thenReturn(Optional.of(new Exception()));
         doThrow(RuntimeException.class).when(executor).executeAfterTest(any(MongoDatabase.class), anyBoolean());
 
         // WHEN

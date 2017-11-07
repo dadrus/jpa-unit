@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+	<graph id="G" edgedefault="directed">
+		<node id="n185" labels=":hibernate_sequences:TABLE_BASED_SEQUENCE">
+			<data key="labels">:hibernate_sequences:TABLE_BASED_SEQUENCE</data>
+			<data key="sequence_name">default</data>
+			<data key="next_val">6</data>
+		</node>
+		<node id="n190" labels=":DEPOSITOR:ENTITY">
+			<data key="labels">:DEPOSITOR:ENTITY</data>
+			<data key="id">1</data>
+			<data key="SURNAME">Payne</data>
+			<data key="VERSION">0</data>
+			<data key="NAME">Max</data>
+		</node>
+		<node id="n191" labels=":ENTITY:ACCOUNT">
+			<data key="labels">:ENTITY:ACCOUNT</data>
+			<data key="CREDIT_LIMIT">0</data>
+			<data key="VERSION">0</data>
+			<data key="TYPE">GIRO_ACCOUNT</data>
+			<data key="id">2</data>
+		</node>
+		<node id="n192" labels=":ACCOUNT_ENTRY:ENTITY">
+			<data key="labels">:ACCOUNT_ENTRY:ENTITY</data>
+			<data key="id">3</data>
+			<data key="AMOUNT">100000</data>
+			<data key="TYPE">DEBIT</data>
+			<data key="DETAILS">deposit</data>
+			<data key="REFERENCE">ACC</data>
+			<data key="DATE">2017/09/12 20:27:48:012 +0200</data>
+			<data key="ACCOUNT_ID">2</data>
+		</node>
+		<node id="n193" labels=":ENTITY:ADDRESS">
+			<data key="labels">:ENTITY:ADDRESS</data>
+			<data key="id">4</data>
+			<data key="ZIP_CODE">111111</data>
+			<data key="COUNTRY">Unknown</data>
+			<data key="DEPOSITOR_ID">1</data>
+			<data key="CITY">Unknown</data>
+			<data key="STREET">Unknown</data>
+		</node>
+		<node id="n196" labels=":CONTACT_DETAIL:ENTITY">
+			<data key="labels">:CONTACT_DETAIL:ENTITY</data>
+			<data key="id">5</data>
+			<data key="TYPE">EMAIL</data>
+			<data key="VALUE">max@payne.com</data>
+			<data key="DEPOSITOR_ID">1</data>
+		</node>
+		<edge id="e4" source="n190" target="n196" label="contactDetails">
+			<data key="label">contactDetails</data>
+		</edge>
+		<edge id="e5" source="n191" target="n192" label="entries">
+			<data key="label">entries</data>
+		</edge>
+		<edge id="e265" source="n191" target="n190" label="depositor">
+			<data key="label">depositor</data>
+		</edge>
+		<edge id="e266" source="n190" target="n193" label="addresses">
+			<data key="label">addresses</data>
+		</edge>
+	</graph>
+</graphml>

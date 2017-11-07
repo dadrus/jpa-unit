@@ -6,8 +6,8 @@ import com.mongodb.client.MongoDatabase;
 import eu.drus.jpa.unit.mongodb.ext.Configuration;
 import eu.drus.jpa.unit.mongodb.ext.ConfigurationRegistry;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.TestInvocation;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
-import eu.drus.jpa.unit.spi.TestMethodInvocation;
 
 public class MongoDbDecorator implements TestMethodDecorator {
 
@@ -19,7 +19,7 @@ public class MongoDbDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void beforeTest(final TestMethodInvocation invocation) throws Exception {
+    public void beforeTest(final TestInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
 
         final Configuration configuration = configurationRegistry.getConfiguration(context.getDescriptor());
@@ -35,7 +35,7 @@ public class MongoDbDecorator implements TestMethodDecorator {
     }
 
     @Override
-    public void afterTest(final TestMethodInvocation invocation) throws Exception {
+    public void afterTest(final TestInvocation invocation) throws Exception {
         final ExecutionContext context = invocation.getContext();
 
         final MongoDatabase mongoDb = (MongoDatabase) context.getData(Constants.KEY_MONGO_DB);
@@ -43,7 +43,7 @@ public class MongoDbDecorator implements TestMethodDecorator {
         context.storeData(Constants.KEY_MONGO_DB, null);
         context.storeData(Constants.KEY_FEATURE_EXECUTOR, null);
 
-        dbFeatureExecutor.executeAfterTest(mongoDb, invocation.hasErrors());
+        dbFeatureExecutor.executeAfterTest(mongoDb, invocation.getException().isPresent());
     }
 
     @Override

@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bson.Document;
-import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
@@ -42,34 +41,35 @@ import de.flapdoodle.embed.process.config.IRuntimeConfig;
 import de.flapdoodle.embed.process.config.io.ProcessOutput;
 import de.flapdoodle.embed.process.io.Slf4jLevel;
 import de.flapdoodle.embed.process.io.progress.Slf4jProgressListener;
-import eu.drus.jpa.unit.suite.MongoSuite;
 
 // Unfortunately JUnit 5 breaks the contract of JUnit 4 regarding the order of @BeforeAll/@AfterAll
 // With JUnit 4 these methods are executed before any extensions/rules are executed. With JUnit 5
 // these methods are executed after the execution of the corresponding functionality of the
 // extension. To circumvent this, we let this class implement the JUnit 5 callbacks and register
 // this extension before the JpaUnit extension
-public class MongodManager implements BeforeAllCallback, AfterAllCallback {
+public class MongodManager implements BeforeAllCallback {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongodManager.class.getName());
 
     private transient Map<MongodProcess, MongodExecutable> mongoProcesses = new HashMap<>();
 
-    private static final MongodManager MONGO_MANAGER = new MongodManager();
+    private static MongodManager MONGO_MANAGER;
 
-    public synchronized static void start(final MongodConfiguration config) {
-        if (!MONGO_MANAGER.isMongoRunning()) {
-            MONGO_MANAGER.startMongod(config);
+    public synchronized static void startServer() {
+        if (MONGO_MANAGER == null) {
+            MONGO_MANAGER = new MongodManager();
+            MONGO_MANAGER.startMongod(MongodConfiguration.builder().addHost("localhost", 27017).build());
+
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        MONGO_MANAGER.stopMongod();
+                    } catch (final InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
-    }
-
-    public synchronized static void stop() throws InterruptedException {
-        if (MONGO_MANAGER.isMongoRunning()) {
-            MONGO_MANAGER.stopMongod();
-        }
-    }
-
-    private boolean isMongoRunning() {
-        return !mongoProcesses.isEmpty();
     }
 
     private void startMongod(final MongodConfiguration config) {
@@ -229,16 +229,7 @@ public class MongodManager implements BeforeAllCallback, AfterAllCallback {
     }
 
     @Override
-    public void afterAll(final ExtensionContext context) throws Exception {
-        if (!MongoSuite.isActive()) {
-            stopMongod();
-        }
-    }
-
-    @Override
     public void beforeAll(final ExtensionContext context) throws Exception {
-        if (!MongoSuite.isActive()) {
-            startMongod(MongodConfiguration.builder().addHost("localhost", 27017).build());
-        }
+        startServer();
     }
 }

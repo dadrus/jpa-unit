@@ -44,11 +44,6 @@ public class SqlDbFeatureExecutor extends AbstractDbFeatureExecutor<IDataSet, ID
         providerFactory = new StrategyProviderFactory();
     }
 
-    // for tests
-    void setProviderFactory(final StrategyProviderFactory providerFactory) {
-        this.providerFactory = providerFactory;
-    }
-
     private static IDataSet mergeDataSets(final List<IDataSet> dataSets) throws DataSetException {
         return new CompositeDataSet(dataSets.toArray(new IDataSet[dataSets.size()]));
     }

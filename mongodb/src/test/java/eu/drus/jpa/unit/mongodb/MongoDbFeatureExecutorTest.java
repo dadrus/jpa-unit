@@ -91,7 +91,7 @@ public class MongoDbFeatureExecutorTest {
         assertNotNull(doc1);
         assertThat(doc1.entrySet().size(), equalTo(2));
 
-        final Document doc2 = dataSetList.get(0);
+        final Document doc2 = dataSetList.get(1);
         assertNotNull(doc2);
         assertThat(doc2.entrySet().size(), equalTo(2));
 

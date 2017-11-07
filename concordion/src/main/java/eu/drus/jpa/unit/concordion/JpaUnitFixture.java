@@ -5,8 +5,9 @@ import org.concordion.internal.FixtureSpecificationMapper;
 import org.concordion.internal.util.SimpleFormatter;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
-import eu.drus.jpa.unit.core.JpaUnitContext;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
+import eu.drus.jpa.unit.spi.FeatureResolver;
+import eu.drus.jpa.unit.spi.TestInvocation;
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Factory;
 
@@ -14,17 +15,21 @@ public class JpaUnitFixture extends FixtureInstance {
 
     private DecoratorExecutor executor;
     private Object originalFixture;
+    private TestInvocation invocation;
 
     public JpaUnitFixture(final DecoratorExecutor executor, final Object fixtureObject) {
         super(fixtureObject);
         originalFixture = getDelegate(fixtureObject);
         this.executor = executor;
+
+        final FeatureResolver resolver = FeatureResolver.newFeatureResolver(originalFixture.getClass()).build();
+        invocation = new TestInvocationImpl(originalFixture.getClass(), resolver);
     }
 
     @Override
     public void beforeSpecification() {
         try {
-            executor.processBeforeAll(JpaUnitContext.getInstance(originalFixture.getClass()), originalFixture.getClass());
+            executor.processBeforeAll(invocation);
         } catch (final Exception e) {
             throw new JpaUnitException(e);
         }
@@ -34,7 +39,7 @@ public class JpaUnitFixture extends FixtureInstance {
     @Override
     public void afterSpecification() {
         try {
-            executor.processAfterAll(JpaUnitContext.getInstance(originalFixture.getClass()), originalFixture.getClass());
+            executor.processAfterAll(invocation);
         } catch (final Exception e) {
             throw new JpaUnitException(e);
         }

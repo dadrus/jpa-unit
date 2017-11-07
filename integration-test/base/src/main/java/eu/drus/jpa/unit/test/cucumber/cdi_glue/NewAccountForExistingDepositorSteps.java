@@ -11,15 +11,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 
-import org.junit.Rule;
-
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import eu.drus.jpa.unit.api.Cleanup;
 import eu.drus.jpa.unit.api.CleanupPhase;
 import eu.drus.jpa.unit.api.InitialDataSets;
-import eu.drus.jpa.unit.api.JpaUnitRule;
 import eu.drus.jpa.unit.test.model.Account;
 import eu.drus.jpa.unit.test.model.Depositor;
 import eu.drus.jpa.unit.test.model.DepositorRepository;
@@ -28,9 +25,6 @@ import eu.drus.jpa.unit.test.model.OperationNotSupportedException;
 
 // By default cucumber scenarios are executed with Cleanup phase=NONE.
 public class NewAccountForExistingDepositorSteps {
-
-    @Rule
-    public JpaUnitRule rule = new JpaUnitRule(getClass());
 
     // EXTENDED because we do not want the EntityManager to be closed after each step
     @PersistenceContext(unitName = "my-test-unit", type = PersistenceContextType.EXTENDED)

@@ -27,7 +27,7 @@ public class FeatureResolver {
 
     private final MetadataExtractor metadataExtractor;
 
-    private final Method testMethod;
+    private Method testMethod;
 
     private CleanupStrategy defaultCleanupStrategy = CleanupStrategy.STRICT;
     private CleanupPhase defaultCleanupPhase = CleanupPhase.AFTER;
@@ -35,13 +35,12 @@ public class FeatureResolver {
     private DataSeedStrategy defaultDataSeedStrategy = DataSeedStrategy.INSERT;
     private TransactionMode defaultTransactionMode = TransactionMode.COMMIT;
 
-    private FeatureResolver(final Method testMethod, final Class<?> clazz) {
+    private FeatureResolver(final Class<?> clazz) {
         metadataExtractor = new MetadataExtractor(clazz);
-        this.testMethod = testMethod;
     }
 
-    public static Builder newFeatureResolver(final Method testMethod, final Class<?> clazz) {
-        return new Builder(new FeatureResolver(testMethod, clazz));
+    public static Builder newFeatureResolver(final Class<?> clazz) {
+        return new Builder(new FeatureResolver(clazz));
     }
 
     public CleanupStrategy getCleanupStrategy() {
@@ -163,6 +162,11 @@ public class FeatureResolver {
 
         private Builder(final FeatureResolver featureResolver) {
             this.featureResolver = featureResolver;
+        }
+
+        public Builder withTestMethod(final Method method) {
+            featureResolver.testMethod = method;
+            return this;
         }
 
         public Builder withDefaultCleanupPhase(final CleanupPhase phase) {

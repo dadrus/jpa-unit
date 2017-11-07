@@ -26,6 +26,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import eu.drus.jpa.unit.core.PersistenceUnitDescriptorImpl;
 import eu.drus.jpa.unit.core.PersistenceUnitDescriptorLoader;
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.TestInvocation;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DataSourceDecorator.class)
@@ -44,6 +45,9 @@ public class DataSourceDecoratorTest {
 
     @Mock
     private BasicDataSource ds;
+
+    @Mock
+    private TestInvocation invocation;
 
     private static Map<String, Object> createProperties() {
         final Map<String, Object> dbConfig = new HashMap<>();
@@ -66,6 +70,9 @@ public class DataSourceDecoratorTest {
         when(descriptor.getUnitName()).thenReturn("foo");
         when(descriptor.getProperties()).thenReturn(PROPS);
         when(descriptorLoader.loadPersistenceUnitDescriptors(any(Map.class))).thenReturn(Arrays.asList(descriptor));
+
+        when(invocation.getContext()).thenReturn(ctx);
+        when(invocation.getTestClass()).thenReturn((Class) getClass());
     }
 
     @Test
@@ -86,7 +93,7 @@ public class DataSourceDecoratorTest {
         final DataSourceDecorator decorator = new DataSourceDecorator();
 
         // WHEN
-        decorator.beforeAll(ctx, getClass());
+        decorator.beforeAll(invocation);
 
         // THEN
         final ArgumentCaptor<BasicDataSource> dsCaptor = ArgumentCaptor.forClass(BasicDataSource.class);
@@ -106,7 +113,7 @@ public class DataSourceDecoratorTest {
         final DataSourceDecorator decorator = new DataSourceDecorator();
 
         // WHEN
-        decorator.afterAll(ctx, getClass());
+        decorator.afterAll(invocation);
 
         // THEN
         verify(ds).close();

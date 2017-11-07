@@ -1,0 +1,1 @@
+MATCH (p:Person:ENTITY {id: 1}) CREATE (p)-[:friend]->(:Person:ENTITY {id: 2, name: "Alex", surname: "Balder" });

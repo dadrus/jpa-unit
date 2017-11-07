@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <key id="label" for="edge" attr.name="label" attr.type="string" />
+  <key id="labels" for="node" attr.name="labels" attr.type="string" />
+
+  <key id="surname" for="node" attr.name="surname" attr.type="string" />
+  <key id="name" for="node" attr.name="name" attr.type="string" />
+  <key id="id" for="node" attr.name="id" attr.type="long" />
+  <key id="since" for="edge" attr.name="since" attr.type="string" />
+
+  <graph id="G" edgedefault="directed">
+    <node id="p1" labels=":ENTITY:Person">
+      <data key="labels">:ENTITY:Person</data>
+      <data key="id">100</data>
+      <data key="name">Bronislav</data>
+      <data key="surname">Orlov</data>
+    </node>
+    <node id="p2" labels=":ENTITY:Person">
+      <data key="labels">:ENTITY:Person</data>
+      <data key="id">101</data>
+      <data key="name">Rajesh</data>
+      <data key="surname">Nagarkar</data>
+    </node>
+    <node id="p3" labels=":ENTITY:Person">
+      <data key="labels">:ENTITY:Person</data>
+      <data key="id">102</data>
+      <data key="name">Anna</data>
+      <data key="surname">Schroeder</data>
+    </node>
+    <node id="p4" labels=":ENTITY:Person">
+      <data key="labels">:ENTITY:Person</data>
+      <data key="id">103</data>
+      <data key="name">Amanda</data>
+      <data key="surname">Herman</data>
+    </node>
+    <node id="p5" labels=":ENTITY:Person">
+      <data key="labels">:ENTITY:Person</data>
+      <data key="id">104</data>
+      <data key="name">Ludovico</data>
+      <data key="surname">Adamo</data>
+    </node>
+    <node id="p6" labels=":ENTITY:Person">
+      <data key="labels">:ENTITY:Person</data>
+      <data key="id">105</data>
+      <data key="name">Jack</data>
+      <data key="surname">Sparrow</data>
+    </node>
+
+    <node id="t1" labels=":ENTITY:Technology">
+      <data key="labels">:ENTITY:Technology</data>
+      <data key="name">Java EE</data>
+    </node>
+    <node id="t2" labels=":ENTITY:Technology">
+      <data key="labels">:ENTITY:Technology</data>
+      <data key="name">Neo4j</data>
+    </node>
+    <node id="t3" labels=":Technology:ENTITY">
+      <data key="labels">:Technology:ENTITY</data>
+      <data key="name">Bootstrap</data>
+    </node>
+
+    <node id="r1" labels="ENTITY:Recipe">
+      <data key="labels">:ENTITY:CookingRecipe</data>
+      <data key="name">Macarons</data>
+    </node>
+
+    <edge id="e2" source="p1" target="p2" label="friend">
+      <data key="label">friend</data>
+    </edge>
+    <edge id="e3" source="p1" target="p3" label="friend">
+      <data key="label">friend</data>
+    </edge>
+    <edge id="e4" source="p3" target="p4" label="friend">
+      <data key="label">friend</data>
+    </edge>
+    <edge id="e5" source="p4" target="t2" label="expertIn">
+      <data key="label">expertIn</data>
+    </edge>
+    <edge id="e6" source="p2" target="p5" label="friend">
+      <data key="label">friend</data>
+      <data key="since">Dec 2017</data>
+    </edge>
+    <edge id="e7" source="p5" target="t1" label="expertIn">
+      <data key="label">expertIn</data>
+    </edge>
+    <edge id="e8" source="p2" target="t3" label="expertIn">
+      <data key="label">expertIn</data>
+    </edge>
+  </graph>
+</graphml>

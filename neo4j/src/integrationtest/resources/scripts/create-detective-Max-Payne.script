@@ -1,0 +1,2 @@
+CREATE (p:Person:ENTITY {id: 1, name: "Max", surname: "Payne"})-[:expertIn]->(t:Technology:ENTITY {name: "All kinds of weapons"}),
+(p)-[:expertIn]->(:Technology:ENTITY {name: "Detective work"});

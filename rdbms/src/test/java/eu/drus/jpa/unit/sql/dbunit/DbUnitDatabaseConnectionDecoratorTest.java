@@ -19,6 +19,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
+import eu.drus.jpa.unit.spi.TestInvocation;
 import eu.drus.jpa.unit.sql.Constants;
 
 @RunWith(PowerMockRunner.class)
@@ -36,6 +37,9 @@ public class DbUnitDatabaseConnectionDecoratorTest {
     @Mock
     private DatabaseConnectionFactory connectionFatory;
 
+    @Mock
+    private TestInvocation invocation;
+
     private DbUnitDatabaseConnectionDecorator decorator;
 
     @Before
@@ -44,6 +48,7 @@ public class DbUnitDatabaseConnectionDecoratorTest {
 
         when(DatabaseConnectionFactory.openConnection(any(BasicDataSource.class))).thenReturn(connection);
         when(ctx.getData(eq(Constants.KEY_CONNECTION))).thenReturn(connection);
+        when(invocation.getContext()).thenReturn(ctx);
 
         decorator = new DbUnitDatabaseConnectionDecorator();
     }
@@ -53,7 +58,7 @@ public class DbUnitDatabaseConnectionDecoratorTest {
         // GIVEN
 
         // WHEN
-        decorator.beforeAll(ctx, null);
+        decorator.beforeAll(invocation);
 
         // THEN
         verify(ctx).storeData(eq(Constants.KEY_CONNECTION), eq(connection));
@@ -64,7 +69,7 @@ public class DbUnitDatabaseConnectionDecoratorTest {
         // GIVEN
 
         // WHEN
-        decorator.afterAll(ctx, null);
+        decorator.afterAll(invocation);
 
         // THEN
         verify(ctx).storeData(eq(Constants.KEY_CONNECTION), isNull());

@@ -1,0 +1,19 @@
+"_id:id","_labels:label","sequence_name","next_val:long","SURNAME","VERSION:long","NAME","id:long","TYPE","AMOUNT:double","DETAILS","REFERENCE","DATE","ACCOUNT_ID:long","CREDIT_LIMIT:double","DEPOSITOR_ID:long","VALUE","_start:id","_end:id","_type:label"
+"5845",":hibernate_sequences:TABLE_BASED_SEQUENCE","default","10","","","","","","","","","","","","","",,,
+"5846",":DEPOSITOR:ENTITY","","","Doe","0","Max","1","","","","","","","","","",,,
+"5847",":ENTITY:ACCOUNT","","","","0","","2","INSTANT_ACCESS_ACCOUNT","","","","","","","","",,,
+"5848",":ACCOUNT_ENTRY:ENTITY","","","","","","3","DEBIT","150","money transfer","ACC","2017/09/28 13:16:02:739 +0200","2","","","",,,
+"5849",":ENTITY:ACCOUNT","","","","0","","4","GIRO_ACCOUNT","","","","","","1000","","",,,
+"5850",":ACCOUNT_ENTRY:ENTITY","","","","","","5","DEBIT","100","deposit","ACC","2017/09/28 13:16:02:739 +0200","4","","","",,,
+"5851",":ACCOUNT_ENTRY:ENTITY","","","","","","6","CREDIT","150","money transfer","ACC","2017/09/28 13:16:02:739 +0200","4","","","",,,
+"5852",":CONTACT_DETAIL:ENTITY","","","","","","7","MOBILE","","","","","","","1","+1 11 1111 1111",,,
+"5853",":CONTACT_DETAIL:ENTITY","","","","","","8","EMAIL","","","","","","","1","john.doe@acme.com",,,
+"5854",":CONTACT_DETAIL:ENTITY","","","","","","9","TELEPHONE","","","","","","","1","+1 22 2222 2222",,,
+,,,,,,,,,,,,,,,,,"5847","5846","depositor"
+,,,,,,,,,,,,,,,,,"5849","5846","depositor"
+,,,,,,,,,,,,,,,,,"5846","5852","contactDetails"
+,,,,,,,,,,,,,,,,,"5846","5853","contactDetails"
+,,,,,,,,,,,,,,,,,"5846","5854","contactDetails"
+,,,,,,,,,,,,,,,,,"5847","5848","entries"
+,,,,,,,,,,,,,,,,,"5849","5850","entries"
+,,,,,,,,,,,,,,,,,"5849","5851","entries"

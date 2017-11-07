@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
+import java.util.Optional;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -21,13 +22,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
-import eu.drus.jpa.unit.spi.TestMethodInvocation;
+import eu.drus.jpa.unit.spi.TestInvocation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceUnitDecoratorTest {
 
     @Mock
-    private TestMethodInvocation invocation;
+    private TestInvocation invocation;
 
     @Mock
     private ExecutionContext ctx;
@@ -43,7 +44,7 @@ public class PersistenceUnitDecoratorTest {
     @Before
     public void setupMocks() {
         when(invocation.getContext()).thenReturn(ctx);
-        when(invocation.getTestInstance()).thenReturn(this);
+        when(invocation.getTestInstance()).thenReturn(Optional.of(this));
         when(ctx.getData(eq(Constants.KEY_ENTITY_MANAGER_FACTORY))).thenReturn(entityManagerFactory);
     }
 

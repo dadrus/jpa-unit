@@ -1,0 +1,28 @@
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/persistence/persistence_2_1.xsd">
+
+  <persistence-unit name="my-test-unit" transaction-type="RESOURCE_LOCAL">
+    <provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
+
+    <!-- your classes converters, etc -->
+    <class>eu.drus.jpa.unit.test.model.Account</class>
+    <class>eu.drus.jpa.unit.test.model.AccountEntry</class>
+    <class>eu.drus.jpa.unit.test.model.Address</class>
+    <class>eu.drus.jpa.unit.test.model.ContactDetail</class>
+    <class>eu.drus.jpa.unit.test.model.CreditCondition</class>
+    <class>eu.drus.jpa.unit.test.model.Depositor</class>
+    <class>eu.drus.jpa.unit.test.model.GiroAccount</class>
+    <class>eu.drus.jpa.unit.test.model.InstantAccessAccount</class>
+
+    <shared-cache-mode>NONE</shared-cache-mode>
+
+    <properties>
+      <property name="datanucleus.ConnectionURL" value="neo4j:localhost:7687"/>
+      <property name="datanucleus.ConnectionUserName" value="neo4j"/>
+      <property name="datanucleus.ConnectionPassword" value="test"/>
+
+    </properties>
+  </persistence-unit>
+
+
+</persistence>

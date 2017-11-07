@@ -4,7 +4,7 @@ public interface TestClassDecorator extends TestDecorator {
 
     boolean isConfigurationSupported(ExecutionContext ctx);
 
-    void beforeAll(ExecutionContext ctx, Class<?> testClass) throws Exception;
+    void beforeAll(TestInvocation invocation) throws Exception;
 
-    void afterAll(ExecutionContext ctx, Class<?> testClass) throws Exception;
+    void afterAll(TestInvocation invocation) throws Exception;
 }

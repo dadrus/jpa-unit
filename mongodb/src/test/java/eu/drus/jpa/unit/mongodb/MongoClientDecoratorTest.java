@@ -22,6 +22,7 @@ import eu.drus.jpa.unit.mongodb.ext.Configuration;
 import eu.drus.jpa.unit.mongodb.ext.ConfigurationRegistry;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
+import eu.drus.jpa.unit.spi.TestInvocation;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
@@ -41,6 +42,9 @@ public class MongoClientDecoratorTest {
     @Mock
     private ConfigurationRegistry configRegistry;
 
+    @Mock
+    private TestInvocation invocation;
+
     private MongoClientDecorator decorator;
 
     @Before
@@ -50,6 +54,7 @@ public class MongoClientDecoratorTest {
 
         when(ctx.getData(eq(Constants.KEY_MONGO_CLIENT))).thenReturn(mongoClient);
         when(configRegistry.getConfiguration(any(PersistenceUnitDescriptor.class))).thenReturn(configuration);
+        when(invocation.getContext()).thenReturn(ctx);
 
         decorator = new MongoClientDecorator();
     }
@@ -70,7 +75,7 @@ public class MongoClientDecoratorTest {
         // GIVEN
 
         // WHEN
-        decorator.beforeAll(ctx, null);
+        decorator.beforeAll(invocation);
 
         // THEN
         verify(ctx).storeData(eq(Constants.KEY_MONGO_CLIENT), eq(mongoClient));
@@ -81,7 +86,7 @@ public class MongoClientDecoratorTest {
         // GIVEN
 
         // WHEN
-        decorator.afterAll(ctx, null);
+        decorator.afterAll(invocation);
 
         // THEN
         verify(mongoClient).close();

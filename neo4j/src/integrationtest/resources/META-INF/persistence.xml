@@ -1,0 +1,68 @@
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/persistence/persistence_2_1.xsd">
+
+  <persistence-unit name="my-test-unit" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ogm.jpa.HibernateOgmPersistence</provider>
+
+    <!-- your classes converters, etc -->
+    
+    <class>eu.drus.jpa.unit.test.model.Person</class>
+    <class>eu.drus.jpa.unit.test.model.Technology</class>
+    <class>eu.drus.jpa.unit.test.model.CookingRecipe</class>
+
+    <shared-cache-mode>NONE</shared-cache-mode>
+
+    <properties>
+      <property name="hibernate.ogm.datastore.provider" value="neo4j_bolt"/>
+      <property name="hibernate.ogm.datastore.host" value="localhost:7687"/>
+      <property name="hibernate.ogm.datastore.username" value="neo4j"/>
+      <property name="hibernate.ogm.datastore.password" value="test"/>
+<!--       <property name="hibernate.ogm.datastore.provider" value="neo4j_embedded" /> -->
+<!--       <property name="hibernate.ogm.neo4j.database_path" value="${java.io.tmpdir}/neo4j_test_db" /> -->
+
+    </properties>
+  </persistence-unit>
+
+  <persistence-unit name="my-cache-unit" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ogm.jpa.HibernateOgmPersistence</provider>
+
+    <!-- your classes converters, etc -->
+    <class>eu.drus.jpa.unit.test.model.Person</class>
+    <class>eu.drus.jpa.unit.test.model.Technology</class>
+    <class>eu.drus.jpa.unit.test.model.CookingRecipe</class>
+
+    <shared-cache-mode>ALL</shared-cache-mode>
+
+    <properties>
+      <property name="hibernate.ogm.datastore.provider" value="neo4j_bolt" />
+      <property name="hibernate.ogm.datastore.host" value="localhost:7687" />
+      <property name="hibernate.ogm.datastore.username" value="neo4j" />
+      <property name="hibernate.ogm.datastore.password" value="test" />
+      <property name="hibernate.ogm.datastore.create_database" value="true" />
+
+      <property name="hibernate.cache.use_second_level_cache" value="true" />
+      <property name="hibernate.cache.use_query_cache" value="true" />
+      <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory" />
+    </properties>
+  </persistence-unit>
+
+  <persistence-unit name="my-verification-unit" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ogm.jpa.HibernateOgmPersistence</provider>
+
+    <!-- your classes converters, etc -->
+    <class>eu.drus.jpa.unit.test.model.Person</class>
+    <class>eu.drus.jpa.unit.test.model.Technology</class>
+    <class>eu.drus.jpa.unit.test.model.CookingRecipe</class>
+
+    <shared-cache-mode>NONE</shared-cache-mode>
+
+    <properties>
+      <property name="hibernate.ogm.datastore.provider" value="neo4j_bolt" />
+      <property name="hibernate.ogm.datastore.host" value="localhost:7687" />
+      <property name="hibernate.ogm.datastore.username" value="neo4j" />
+      <property name="hibernate.ogm.datastore.password" value="test" />
+
+    </properties>
+  </persistence-unit>
+
+</persistence>

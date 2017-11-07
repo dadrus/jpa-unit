@@ -1,32 +1,33 @@
 package eu.drus.jpa.unit.rule;
 
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
-import eu.drus.jpa.unit.spi.DecoratorExecutor;
-import eu.drus.jpa.unit.spi.TestMethodInvocation;
+import eu.drus.jpa.unit.spi.TestInvocation;
 
-public class TestMethodStatement extends Statement implements TestMethodInvocation {
+public class TestMethodStatement extends Statement implements TestInvocation {
 
     private final ExecutionContext ctx;
     private final DecoratorExecutor executor;
     private final Statement base;
     private final FrameworkMethod method;
     private final Object target;
-    private boolean isExceptionThrown;
+    private Throwable thrownException;
 
-    public TestMethodStatement(final ExecutionContext ctx, final DecoratorExecutor executor, final Statement base, final FrameworkMethod method,
-            final Object target) {
+    public TestMethodStatement(final ExecutionContext ctx, final DecoratorExecutor executor, final Statement base,
+            final FrameworkMethod method, final Object target) {
         this.ctx = ctx;
         this.executor = executor;
         this.base = base;
         this.method = method;
         this.target = target;
-        isExceptionThrown = false;
+        thrownException = null;
     }
 
     @Override
@@ -35,7 +36,7 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
         try {
             base.evaluate();
         } catch (final Throwable t) {
-            isExceptionThrown = true;
+            thrownException = t;
             throw t;
         } finally {
             executor.processAfter(this);
@@ -43,8 +44,8 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
     }
 
     @Override
-    public Method getTestMethod() {
-        return method.getMethod();
+    public Optional<Method> getTestMethod() {
+        return Optional.of(method.getMethod());
     }
 
     @Override
@@ -58,18 +59,18 @@ public class TestMethodStatement extends Statement implements TestMethodInvocati
     }
 
     @Override
-    public boolean hasErrors() {
-        return isExceptionThrown;
+    public Optional<Throwable> getException() {
+        return Optional.ofNullable(thrownException);
     }
 
     @Override
     public FeatureResolver getFeatureResolver() {
-        return FeatureResolver.newFeatureResolver(method.getMethod(), target.getClass()).build();
+        return FeatureResolver.newFeatureResolver(target.getClass()).withTestMethod(method.getMethod()).build();
     }
 
     @Override
-    public Object getTestInstance() {
-        return target;
+    public Optional<Object> getTestInstance() {
+        return Optional.of(target);
     }
 
 }

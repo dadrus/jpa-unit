@@ -8,6 +8,7 @@ import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestClassDecorator;
+import eu.drus.jpa.unit.spi.TestInvocation;
 
 public class EntityManagerFactoryDecorator implements TestClassDecorator {
 
@@ -17,26 +18,28 @@ public class EntityManagerFactoryDecorator implements TestClassDecorator {
     }
 
     @Override
-    public void beforeAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
-        final PersistenceUnitDescriptor descriptor = ctx.getDescriptor();
+    public void beforeAll(final TestInvocation invocation) throws Exception {
+        ExecutionContext context = invocation.getContext();
+        final PersistenceUnitDescriptor descriptor = context.getDescriptor();
 
         final EntityManagerFactory emf = Persistence.createEntityManagerFactory(descriptor.getUnitName(), descriptor.getProperties());
-        ctx.storeData(Constants.KEY_ENTITY_MANAGER_FACTORY, emf);
+        context.storeData(Constants.KEY_ENTITY_MANAGER_FACTORY, emf);
     }
 
     @Override
-    public void afterAll(final ExecutionContext ctx, final Class<?> testClass) throws Exception {
+    public void afterAll(final TestInvocation invocation) throws Exception {
         // if EntityManager has been configured for EXTENDED transaction mode, same instance is used
         // throughout all the tests/test steps. In that case we have to close it here, before the
         // EntityManagerFactory is closed.
-        final EntityManager em = (EntityManager) ctx.getData(Constants.KEY_ENTITY_MANAGER);
-        ctx.storeData(Constants.KEY_ENTITY_MANAGER, null);
+        ExecutionContext context = invocation.getContext();
+        final EntityManager em = (EntityManager) context.getData(Constants.KEY_ENTITY_MANAGER);
+        context.storeData(Constants.KEY_ENTITY_MANAGER, null);
         if (em != null) {
             em.close();
         }
 
-        final EntityManagerFactory emf = (EntityManagerFactory) ctx.getData(Constants.KEY_ENTITY_MANAGER_FACTORY);
-        ctx.storeData(Constants.KEY_ENTITY_MANAGER_FACTORY, null);
+        final EntityManagerFactory emf = (EntityManagerFactory) context.getData(Constants.KEY_ENTITY_MANAGER_FACTORY);
+        context.storeData(Constants.KEY_ENTITY_MANAGER_FACTORY, null);
         emf.close();
     }
 

@@ -195,7 +195,7 @@ public class DataSetLoaderProviderTest {
     }
 
     @Test
-    @Ignore("Even Excel can open the file, it seems not to be a proper zip file")
+    @Ignore("Somehow the given zip file (xlsx) is invalid, even Excel opens it without issues")
     public void testXlsxLoaderLoadUsingProperResource() throws Exception {
         // WHEN
         final DataSetLoader<IDataSet> loader = LOADER_PROVIDER.xlsLoader();
@@ -251,7 +251,7 @@ public class DataSetLoaderProviderTest {
     }
 
     @Test
-    @Ignore("Even Excel can open the file, it seems not to be a proper zip file")
+    @Ignore("Somehow the given zip file (xlsx) is invalid, even Excel opens it without issues")
     public void testXlsLoaderLoadUsingProperResource() throws Exception {
         // WHEN
         final DataSetLoader<IDataSet> loader = LOADER_PROVIDER.xlsLoader();
