@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.github.dadrus.jpa-unit</groupId>
     <artifactId>jpa-unit-integration-test</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>0.3.0</version>
   </parent>
 
   <artifactId>jpa-unit-jpa2.1-hibernate-integration-test</artifactId>
