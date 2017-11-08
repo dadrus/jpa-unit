@@ -19,10 +19,6 @@
     <module>jpa2.1-eclipselink-test</module>
     <module>jpa2.0-hibernate-test</module>
     <module>jpa2.1-hibernate-test</module>
-    <module>jpa-mongodb-hibernate-ogm-test</module>
-<!--     <module>jpa-neo4j-hibernate-ogm-test</module> -->
-<!--     <module>jpa-neo4j-kundera-test</module> -->
-<!--     <module>jpa-neo4j-datanucleus-test</module> -->
   </modules>
 
   <build>
