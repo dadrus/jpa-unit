@@ -1,0 +1,27 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+        http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+  version="2.0">
+
+  <persistence-unit name="my-test-unit" transaction-type="RESOURCE_LOCAL">
+    <provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
+
+    <class>eu.drus.jpa.unit.test.model.Account</class>
+    <class>eu.drus.jpa.unit.test.model.AccountEntry</class>
+    <class>eu.drus.jpa.unit.test.model.Address</class>
+    <class>eu.drus.jpa.unit.test.model.ContactDetail</class>
+    <class>eu.drus.jpa.unit.test.model.CreditCondition</class>
+    <class>eu.drus.jpa.unit.test.model.Depositor</class>
+    <class>eu.drus.jpa.unit.test.model.GiroAccount</class>
+    <class>eu.drus.jpa.unit.test.model.InstantAccessAccount</class>
+
+    <shared-cache-mode>NONE</shared-cache-mode>
+
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="mongodb:127.0.0.1:27017/test" />
+      <property name="datanucleus.schema.autoCreateAll" value="true" />
+      <property name="datanucleus.schema.validateTables" value="false" />
+      <property name="datanucleus.schema.validateConstraints" value="false" />
+    </properties>
+  </persistence-unit>
+</persistence>
