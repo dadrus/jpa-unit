@@ -22,8 +22,7 @@ import eu.drus.jpa.unit.api.CleanupPhase;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
 import eu.drus.jpa.unit.api.InitialDataSets;
 import eu.drus.jpa.unit.api.JpaUnitRunner;
-import eu.drus.jpa.unit.test.model.Depositor;
-import eu.drus.jpa.unit.test.model.OperationNotSupportedException;
+import eu.drus.jpa.unit.test.model.Customer;
 import eu.drus.jpa.unit.test.util.MongodManager;
 
 @RunWith(JpaUnitRunner.class)
@@ -41,25 +40,25 @@ public class InitialDataSetsIT {
 
     @Test
     @InitialDataSets("datasets/initial-data.json")
-    public void test1() throws OperationNotSupportedException {
+    public void test1() {
         // this test uses the default INSERT DataSeedStrategy
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='John'", Depositor.class);
-        final Depositor entity = query.getSingleResult();
+        final TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c WHERE c.name='John'", Customer.class);
+        final Customer entity = query.getSingleResult();
 
         assertNotNull(entity);
         assertThat(entity.getName(), equalTo("John"));
         assertThat(entity.getSurname(), equalTo("Doe"));
 
-        final Depositor depositor = new Depositor("Max", "Payne");
-        manager.persist(depositor);
+        final Customer customer = new Customer("Max", "Payne");
+        manager.persist(customer);
     }
 
     @Test
     public void test2() {
-        // Since cleanup is disabled 2 Depositor entities do exist.
+        // Since cleanup is disabled 2 Customer entities do exist.
 
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d", Depositor.class);
-        final List<Depositor> depositors = query.getResultList();
+        final TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c", Customer.class);
+        final List<Customer> depositors = query.getResultList();
 
         assertThat(depositors.size(), equalTo(2));
     }
@@ -73,14 +72,14 @@ public class InitialDataSetsIT {
         // corresponding data from the data set and retain other data.
         // Thus: Max Payne entity is deleted
 
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d", Depositor.class);
-        final List<Depositor> depositors = query.getResultList();
+        final TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c", Customer.class);
+        final List<Customer> depositors = query.getResultList();
 
         assertThat(depositors.size(), equalTo(1));
 
-        // insert a new depositor and update e.g a name of the previously stored depositor and let's
+        // insert a new customer and update e.g a name of the previously stored customer and let's
         // see what REFRESH DataSeedStrategy will do (see next test methods)
-        final Depositor depositor = new Depositor("Max", "Payne");
+        final Customer depositor = new Customer("Max", "Payne");
         manager.persist(depositor);
 
         depositors.get(0).setName("Foo");
@@ -89,8 +88,8 @@ public class InitialDataSetsIT {
     @Test
     public void test4() {
         // Just to verify the surname update has been persisted
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.surname='Doe'", Depositor.class);
-        final Depositor entity = query.getSingleResult();
+        final TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c WHERE c.surname='Doe'", Customer.class);
+        final Customer entity = query.getSingleResult();
 
         assertNotNull(entity);
         assertThat(entity.getName(), equalTo("Foo"));
@@ -105,16 +104,16 @@ public class InitialDataSetsIT {
         // Thus: Max Payne entity is still there, the name of Foo is changed back to John and a new
         // entity Jack is added
 
-        TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.surname='Doe'", Depositor.class);
-        Depositor entity = query.getSingleResult();
+        TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c WHERE c.surname='Doe'", Customer.class);
+        Customer entity = query.getSingleResult();
         assertThat(entity.getName(), equalTo("John")); // not Foo!!!
         entity.setName("Foo"); // change it to Foo for the next test again
 
-        query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='Max'", Depositor.class);
+        query = manager.createQuery("SELECT c FROM Customer c WHERE c.name='Max'", Customer.class);
         entity = query.getSingleResult();
         assertThat(entity.getSurname(), equalTo("Payne"));
 
-        query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='Jack'", Depositor.class);
+        query = manager.createQuery("SELECT c FROM Customer c WHERE c.name='Jack'", Customer.class);
         entity = query.getSingleResult();
         assertThat(entity.getSurname(), equalTo("Sparrow"));
 
@@ -131,15 +130,15 @@ public class InitialDataSetsIT {
         // not present in the database are ignored.
         // Thus John is John again, Max is still there, and Jack is still absent
 
-        TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.surname='Doe'", Depositor.class);
-        Depositor entity = query.getSingleResult();
+        TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c WHERE c.surname='Doe'", Customer.class);
+        Customer entity = query.getSingleResult();
         assertThat(entity.getName(), equalTo("John")); // not Foo!!!
 
-        query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='Max'", Depositor.class);
+        query = manager.createQuery("SELECT c FROM Customer c WHERE c.name='Max'", Customer.class);
         entity = query.getSingleResult();
         assertThat(entity.getSurname(), equalTo("Payne"));
 
-        query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='Jack'", Depositor.class);
+        query = manager.createQuery("SELECT c FROM Customer c WHERE c.name='Jack'", Customer.class);
         assertTrue(query.getResultList().isEmpty());
     }
 }

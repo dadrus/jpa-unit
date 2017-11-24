@@ -22,7 +22,7 @@ import eu.drus.jpa.unit.api.CleanupCache;
 import eu.drus.jpa.unit.api.CleanupPhase;
 import eu.drus.jpa.unit.api.InitialDataSets;
 import eu.drus.jpa.unit.api.JpaUnitRunner;
-import eu.drus.jpa.unit.test.model.Depositor;
+import eu.drus.jpa.unit.test.model.Customer;
 import eu.drus.jpa.unit.test.util.MongodManager;
 
 @RunWith(JpaUnitRunner.class)
@@ -47,7 +47,7 @@ public class CleanupCacheIT {
     @Test
     @InitialDataSets("datasets/initial-data.json")
     public void test1() {
-        final Depositor entity = manager.find(Depositor.class, 106L);
+        final Customer entity = manager.find(Customer.class, 106L);
 
         assertNotNull(entity);
         entity.setName("David");
@@ -58,7 +58,7 @@ public class CleanupCacheIT {
     public void test2() {
         // Even the DB is explicitly deleted before the actual test start, we can still find our
         // entity thanks to the used second level cache
-        final Depositor entity = manager.find(Depositor.class, 106L);
+        final Customer entity = manager.find(Customer.class, 106L);
         assertNotNull(entity);
 
         assertThat(entity.getName(), equalTo("David"));
@@ -68,14 +68,14 @@ public class CleanupCacheIT {
     @CleanupCache(phase = CleanupPhase.BEFORE)
     public void test3() {
         // Cleaning the second level cache will make it now impossible to find the entity
-        final Depositor entity = manager.find(Depositor.class, 106L);
+        final Customer entity = manager.find(Customer.class, 106L);
         assertNull(entity);
     }
 
     @Test
     @InitialDataSets("datasets/initial-data.json")
     public void test4() {
-        final Depositor entity = manager.find(Depositor.class, 106L);
+        final Customer entity = manager.find(Customer.class, 106L);
 
         assertNotNull(entity);
     }
@@ -85,7 +85,7 @@ public class CleanupCacheIT {
     public void test5() {
         // Even the DB is implicitly deleted after the previous test, we can still find our
         // entity thanks to the used second level cache
-        final Depositor entity = manager.find(Depositor.class, 106L);
+        final Customer entity = manager.find(Customer.class, 106L);
         assertNotNull(entity);
 
         // Cleaning the second level cache will make it impossible for the next test to find the
@@ -94,7 +94,7 @@ public class CleanupCacheIT {
 
     @Test
     public void test6() {
-        final Depositor entity = manager.find(Depositor.class, 106L);
+        final Customer entity = manager.find(Customer.class, 106L);
         assertNull(entity);
     }
 

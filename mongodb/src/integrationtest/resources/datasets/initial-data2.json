@@ -1,61 +1,41 @@
 {
-	"DEPOSITOR": [
+	"Customer": [
 		{
 			"_id": NumberLong(106),
-			"VERSION": NumberLong(1),
-			"NAME": "John",
-			"SURNAME": "Doe"
+			"surname": "Doe",
+			"name": "John",
+			"version": NumberLong(0),
+			"addresses": [
+				{
+					"country": "SomeCountry",
+					"zipCode": "12345",
+					"city": "SomeCity",
+					"street": "SomeStreet 1",
+					"type": "INVOICE_AND_SHIPMENT"
+				}
+			],
+			"contactDetails": [
+				{
+					"type": "EMAIL",
+					"value": "john.doe@acme.com"
+				}
+				{
+					"type": "TELEPHONE",
+					"value": "+1 22 2222 2222"
+				}
+			],
+			"paymentAccounts": [
+				{
+					"iban": "DE74876543211234567890",
+					"bic": "ESSDEDDXXX"
+				}
+			]
 		},
 		{
 			"_id": NumberLong(110),
-			"VERSION": NumberLong(1),
-			"NAME": "Jack",
-			"SURNAME": "Sparrow"
+			"surname": "Sparrow",
+			"name": "Jack",
+			"version": NumberLong(1)
 		}
-	],
-	"ADDRESS": [
-		{
-	        "_id": NumberLong(106),
-	        "CITY":"SomeCity",
-	        "COUNTRY": "SomeCountry",
-	        "STREET": "SomeStreet 1",
-	        "ZIP_CODE": "12345",
-	        "DEPOSITOR_ID": NumberLong(106)
-        }
-    ],
-    "CONTACT_DETAIL": [
-    	{
-	        "_id": NumberLong(106),
-	        "TYPE": "EMAIL",
-	        "VALUE": "john.doe@acme.com",
-	        "DEPOSITOR_ID": NumberLong(106)
-        },
-        {
-	        "_id": NumberLong(107),
-	        "TYPE": "MOBILE",
-	        "VALUE": "+1 11 1111 1111",
-	        "DEPOSITOR_ID": NumberLong(106)
-        },
-        {
-	        "_id": NumberLong(108),
-	        "TYPE": "TELEPHONE",
-	        "VALUE": "+1 22 2222 2222",
-	        "DEPOSITOR_ID": NumberLong(106)
-        }
-    ],
-	"ACCOUNT": [
-		{
-	        "TYPE": "GIRO_ACCOUNT",
-	        "_id": NumberLong(106),
-	        "VERSION": NumberLong(1),
-	        "CREDIT_LIMIT": 1000.00,
-	        "DEPOSITOR_ID": NumberLong(106)
-        },
-        {
-	        "TYPE": "INSTANT_ACCESS_ACCOUNT",
-	        "_id": NumberLong(107),
-	        "VERSION": NumberLong(1),
-	        "DEPOSITOR_ID": NumberLong(106)
-        }
-    ]
+	]
 }

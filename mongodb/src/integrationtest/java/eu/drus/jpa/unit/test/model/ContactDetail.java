@@ -2,31 +2,22 @@ package eu.drus.jpa.unit.test.model;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@Entity
-@Table(name = "CONTACT_DETAIL")
+@Embeddable
 public class ContactDetail {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
-    private Long id;
-
-    @Column(name = "TYPE", length = 50, updatable = false)
+    @Column(length = 50, updatable = false)
     @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     private ContactType type;
 
-    @Column(name = "VALUE", length = 50)
+    @Column(length = 50)
     @Basic(optional = false)
     private String value;
 

@@ -2,8 +2,6 @@ package eu.drus.jpa.unit.test;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Set;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -19,10 +17,7 @@ import eu.drus.jpa.unit.api.JpaUnitRunner;
 import eu.drus.jpa.unit.api.TransactionMode;
 import eu.drus.jpa.unit.api.Transactional;
 import eu.drus.jpa.unit.test.model.Account;
-import eu.drus.jpa.unit.test.model.Depositor;
-import eu.drus.jpa.unit.test.model.GiroAccount;
-import eu.drus.jpa.unit.test.model.InstantAccessAccount;
-import eu.drus.jpa.unit.test.model.OperationNotSupportedException;
+import eu.drus.jpa.unit.test.model.Customer;
 import eu.drus.jpa.unit.test.util.MongodManager;
 
 @RunWith(JpaUnitRunner.class)
@@ -42,7 +37,7 @@ public class TransactionIT {
     @ExpectedDataSets("datasets/initial-data.json")
     @Transactional(TransactionMode.DISABLED)
     public void transactionDisabledTest() {
-        final Depositor entity = manager.find(Depositor.class, 106L);
+        final Customer entity = manager.find(Customer.class, 106L);
 
         assertNotNull(entity);
         entity.setName("David");
@@ -53,7 +48,7 @@ public class TransactionIT {
     @ExpectedDataSets("datasets/initial-data.json")
     @Transactional(TransactionMode.ROLLBACK)
     public void transactionRollbackTest() {
-        final Depositor entity = manager.find(Depositor.class, 106L);
+        final Customer entity = manager.find(Customer.class, 106L);
 
         assertNotNull(entity);
         entity.setName("Alex");
@@ -63,20 +58,13 @@ public class TransactionIT {
     @InitialDataSets("datasets/initial-data.json")
     @ExpectedDataSets("datasets/expected-data.json")
     @Transactional(TransactionMode.COMMIT)
-    public void transactionCommitTest() throws OperationNotSupportedException {
-        final Depositor entity = manager.find(Depositor.class, 106L);
+    public void transactionCommitTest() {
+        final Customer entity = manager.find(Customer.class, 106L);
 
         assertNotNull(entity);
         entity.setName("Max");
 
-        final Set<Account> accounts = entity.getAccounts();
-
-        final GiroAccount giroAccount = accounts.stream().filter(a -> a instanceof GiroAccount).map(a -> (GiroAccount) a).findFirst().get();
-        final InstantAccessAccount accessAcount = accounts.stream().filter(a -> a instanceof InstantAccessAccount)
-                .map(a -> (InstantAccessAccount) a).findFirst().get();
-
-        giroAccount.deposit(100.0f);
-        giroAccount.transfer(150.0f, accessAcount);
+        entity.addPaymentAccount(new Account("DE74876543211234567890", "ESSDEDDXXX"));
     }
 
 }

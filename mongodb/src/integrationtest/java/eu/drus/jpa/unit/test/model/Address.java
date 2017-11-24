@@ -2,48 +2,51 @@ package eu.drus.jpa.unit.test.model;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@Entity
-@Table(name = "ADDRESS")
+@Embeddable
 public class Address {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
-    private Long id;
-
-    @Column(name = "STREET", length = 50, updatable = false)
+    @Column(length = 50, updatable = false)
     @Basic(optional = false)
     private String street;
 
-    @Column(name = "ZIP_CODE", length = 6, updatable = false)
+    @Column(length = 6, updatable = false)
     @Basic(optional = false)
     private String zipCode;
 
-    @Column(name = "CITY", length = 25, updatable = false)
+    @Column(length = 25, updatable = false)
     @Basic(optional = false)
     private String city;
 
-    @Column(name = "COUNTRY", length = 50, updatable = false)
+    @Column(length = 50, updatable = false)
     @Basic(optional = false)
     private String country;
+
+    @Column(length = 50, updatable = false)
+    @Basic(optional = false)
+    @Enumerated(EnumType.STRING)
+    private AddressType type;
 
     protected Address() {
         // for JPA
     }
 
     public Address(final String street, final String zipCode, final String city, final String country) {
+        this(street, zipCode, city, country, AddressType.INVOICE_AND_SHIPMENT);
+    }
+
+    public Address(final String street, final String zipCode, final String city, final String country, final AddressType type) {
         this.street = street;
         this.zipCode = zipCode;
         this.city = city;
         this.country = country;
+        this.type = type;
     }
 
     public String getStreet() {
@@ -60,6 +63,10 @@ public class Address {
 
     public String getCountry() {
         return country;
+    }
+
+    public AddressType getType() {
+        return type;
     }
 
     @Override

@@ -1,0 +1,21 @@
+db.Customer.insertOne({
+	"_id": NumberLong(1),
+	"name": "Max",
+	"surname": "Payne",
+	"version": NumberLong(1),
+	"addresses": [
+		{
+			"country": "Unknown",
+			"zipCode": "111111",
+			"city": "Unknown",
+			"street": "Unknown",
+			"type": "INVOICE_AND_SHIPMENT"
+		}
+	],
+	"contactDetails": [
+		{
+			"type": "EMAIL",
+			"value": "max@payne.com"
+		}
+	]
+})

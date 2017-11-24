@@ -1,0 +1,14 @@
+db.Customer.findAndModify({
+	query: { "_id": NumberLong(1) },
+	update: { 
+		$push: { 
+			"addresses": {
+				"country": "Unknown 2",
+				"zipCode": "111111",
+				"city": "Unknown 2",
+				"street": "Unknown 2",
+				"type": "INVOICE"
+			} 
+		}
+	}
+})

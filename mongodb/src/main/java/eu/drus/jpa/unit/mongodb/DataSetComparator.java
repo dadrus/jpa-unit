@@ -17,7 +17,7 @@ import eu.drus.jpa.unit.spi.ColumnsHolder;
 
 public class DataSetComparator {
 
-    private static final Function<String, String> ID_MAPPER = (final String name) -> name.equalsIgnoreCase("ID") ? "_id" : name;
+    private static final Function<String, String> ID_MAPPER = (final String name) -> name;
 
     private ColumnsHolder toExclude;
     private boolean isStrict;
@@ -83,7 +83,8 @@ public class DataSetComparator {
         final MongoCollection<Document> currentCollection = connection.getCollection(collectionName);
         for (final Document expectedEntry : expectedCollectionEntries) {
 
-            final FindIterable<Document> resultIt = currentCollection.find(filterRequest(expectedEntry, columnsToExclude));
+            final Document expected = filterRequest(expectedEntry, columnsToExclude);
+            final FindIterable<Document> resultIt = currentCollection.find(expected);
             if (!resultIt.iterator().hasNext()) {
                 errorCollector.collect(expectedEntry + " was expected in [" + collectionName + "], but is not present");
             }

@@ -7,13 +7,9 @@
     <provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
 
     <class>eu.drus.jpa.unit.test.model.Account</class>
-    <class>eu.drus.jpa.unit.test.model.AccountEntry</class>
     <class>eu.drus.jpa.unit.test.model.Address</class>
-    <class>eu.drus.jpa.unit.test.model.ContactDetail</class>
-    <class>eu.drus.jpa.unit.test.model.CreditCondition</class>
-    <class>eu.drus.jpa.unit.test.model.Depositor</class>
-    <class>eu.drus.jpa.unit.test.model.GiroAccount</class>
-    <class>eu.drus.jpa.unit.test.model.InstantAccessAccount</class>
+    <class>eu.drus.jpa.unit.test.model.Customer</class>
+    <class>eu.drus.jpa.unit.test.model.Invoice</class>
 
     <shared-cache-mode>NONE</shared-cache-mode>
 

@@ -21,13 +21,12 @@ import eu.drus.jpa.unit.api.CleanupPhase;
 import eu.drus.jpa.unit.api.CleanupStrategy;
 import eu.drus.jpa.unit.api.InitialDataSets;
 import eu.drus.jpa.unit.api.JpaUnitRunner;
+import eu.drus.jpa.unit.test.model.Account;
 import eu.drus.jpa.unit.test.model.Address;
 import eu.drus.jpa.unit.test.model.ContactDetail;
 import eu.drus.jpa.unit.test.model.ContactType;
-import eu.drus.jpa.unit.test.model.CreditCondition;
-import eu.drus.jpa.unit.test.model.Depositor;
-import eu.drus.jpa.unit.test.model.GiroAccount;
-import eu.drus.jpa.unit.test.model.OperationNotSupportedException;
+import eu.drus.jpa.unit.test.model.Customer;
+import eu.drus.jpa.unit.test.model.Invoice;
 import eu.drus.jpa.unit.test.util.MongodManager;
 
 @RunWith(JpaUnitRunner.class)
@@ -44,25 +43,25 @@ public class CleanupIT {
 
     @Test
     @Cleanup(phase = CleanupPhase.NONE)
-    public void test1() throws OperationNotSupportedException {
+    public void test1() {
         // just seed the DB with some data
-        final Depositor depositor = new Depositor("Max", "Payne");
-        depositor.addAddress(new Address("Unknown", "111111", "Unknown", "Unknown"));
-        depositor.addContactDetail(new ContactDetail(ContactType.EMAIL, "max@payne.com"));
-        final GiroAccount account = new GiroAccount(depositor);
-        account.deposit(100000.0f);
+        final Customer customer = new Customer("Max", "Payne");
+        customer.addAddress(new Address("Unknown", "111111", "Unknown", "Unknown"));
+        customer.addContactDetail(new ContactDetail(ContactType.EMAIL, "max@payne.com"));
+        customer.addContactDetail(new ContactDetail(ContactType.MOBILE, "+1 11 11111111"));
+        customer.addPaymentAccount(new Account("DE74123456780987654321", "DUSSDEDDXXX"));
 
         // by default this test is executed in a transaction which is committed on test return. Thus
         // this entity becomes available for further tests thanks to disabled cleanup
-        manager.persist(depositor);
+        manager.persist(customer);
     }
 
     @Test
     @Cleanup(phase = CleanupPhase.NONE)
     public void test2() {
         // since clean up is disabled we can work with the entity persisted by the previous test
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='Max'", Depositor.class);
-        final Depositor entity = query.getSingleResult();
+        final TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c WHERE c.name='Max'", Customer.class);
+        final Customer entity = query.getSingleResult();
 
         assertNotNull(entity);
     }
@@ -72,7 +71,7 @@ public class CleanupIT {
     public void test3() {
         // since the entire DB is erased before this test starts, the query should return an empty
         // result set
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='Max'", Depositor.class);
+        final TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c WHERE c.name='Max'", Customer.class);
 
         assertTrue(query.getResultList().isEmpty());
     }
@@ -80,28 +79,27 @@ public class CleanupIT {
     @Test
     @InitialDataSets("datasets/initial-data.json")
     @Cleanup(phase = CleanupPhase.AFTER, strategy = CleanupStrategy.USED_ROWS_ONLY)
-    public void test4() throws OperationNotSupportedException {
+    public void test4() {
 
         // this entity is from the initial data set
-        final Depositor entity = manager.find(Depositor.class, 106L);
+        final Customer entity = manager.find(Customer.class, 106L);
         assertNotNull(entity);
 
         // this is created by us
-        final Depositor depositor = new Depositor("Max", "Payne");
-        depositor.addAddress(new Address("Unknown", "111111", "Unknown", "Unknown"));
-        depositor.addContactDetail(new ContactDetail(ContactType.EMAIL, "max@payne.com"));
-        final GiroAccount account = new GiroAccount(depositor);
-        account.deposit(100000.0f);
+        final Customer customer = new Customer("Max", "Payne");
+        customer.addAddress(new Address("Unknown", "111111", "Unknown", "Unknown"));
+        customer.addContactDetail(new ContactDetail(ContactType.EMAIL, "max@payne.com"));
+        customer.addPaymentAccount(new Account("DE74123456780987654321", "DUSSDEDDXXX"));
 
-        manager.persist(depositor);
+        manager.persist(customer);
     }
 
     @Test
     public void test5() {
         // since the previous test has defined to delete only the data imported by data sets, only
         // the manually created entity should remain.
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d", Depositor.class);
-        final Depositor entity = query.getSingleResult();
+        final TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c", Customer.class);
+        final Customer entity = query.getSingleResult();
 
         assertNotNull(entity);
         assertThat(entity.getName(), equalTo("Max"));
@@ -112,7 +110,7 @@ public class CleanupIT {
         // the default behavior is to erase the whole DB after the test has been executed. This way
         // the query should return an empty result set
 
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='Max'", Depositor.class);
+        final TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c WHERE c.name='Max'", Customer.class);
 
         assertTrue(query.getResultList().isEmpty());
     }
@@ -120,31 +118,33 @@ public class CleanupIT {
     @Test
     @InitialDataSets("datasets/initial-data.json")
     @Cleanup(phase = CleanupPhase.AFTER, strategy = CleanupStrategy.USED_TABLES_ONLY)
-    public void test7() throws OperationNotSupportedException {
+    public void test7() {
         // this entity is from the initial data set
-        final Depositor entity = manager.find(Depositor.class, 106L);
+        final Customer entity = manager.find(Customer.class, 106L);
         assertNotNull(entity);
 
         // this is created by us (rows in tables used by initial data set)
-        final Depositor depositor = new Depositor("Max", "Payne");
-        depositor.addAddress(new Address("Unknown", "111111", "Unknown", "Unknown"));
-        depositor.addContactDetail(new ContactDetail(ContactType.EMAIL, "max@payne.com"));
+        final Customer customer = new Customer("Max", "Payne");
+        final Address address = new Address("Unknown", "111111", "Unknown", "Unknown");
+        customer.addAddress(address);
+        customer.addContactDetail(new ContactDetail(ContactType.EMAIL, "max@payne.com"));
+        customer.addPaymentAccount(new Account("DE74123456780987654321", "DUSSDEDDXXX"));
 
-        manager.persist(depositor);
+        manager.persist(customer);
 
-        final CreditCondition condition = new CreditCondition("Some description");
-        manager.persist(condition);
+        final Invoice invoice = new Invoice(customer, address, "some weapons bought");
+        manager.persist(invoice);
     }
 
     @Test
     @Cleanup
     public void test8() {
         // depositor table is empty (and all related tables as well)
-        final TypedQuery<Depositor> depositorQuery = manager.createQuery("SELECT d FROM Depositor d", Depositor.class);
-        assertTrue(depositorQuery.getResultList().isEmpty());
+        final TypedQuery<Customer> customerQuery = manager.createQuery("SELECT c FROM Customer c", Customer.class);
+        assertTrue(customerQuery.getResultList().isEmpty());
 
-        // but credit_condition not
-        final TypedQuery<CreditCondition> conditionQuery = manager.createQuery("SELECT c FROM CreditCondition c", CreditCondition.class);
-        assertFalse(conditionQuery.getResultList().isEmpty());
+        // but invoice not
+        final TypedQuery<Invoice> invoiceQuery = manager.createQuery("SELECT i FROM Invoice i", Invoice.class);
+        assertFalse(invoiceQuery.getResultList().isEmpty());
     }
 }

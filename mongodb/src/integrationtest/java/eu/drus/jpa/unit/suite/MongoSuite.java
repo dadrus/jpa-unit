@@ -13,7 +13,6 @@ import eu.drus.jpa.unit.test.ExpectedDataSetsIT;
 import eu.drus.jpa.unit.test.InitialDataSetsIT;
 import eu.drus.jpa.unit.test.TransactionIT;
 import eu.drus.jpa.unit.test.TransactionJunit5IT;
-import eu.drus.jpa.unit.test.util.MongodManager;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -24,7 +23,7 @@ public class MongoSuite {
 
     @BeforeClass
     public static void startMongod() {
-        MongodManager.startServer();
+        // MongodManager.startServer();
     }
 
 }

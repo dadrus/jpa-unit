@@ -1,10 +1,10 @@
 package eu.drus.jpa.unit.test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -22,12 +22,11 @@ import eu.drus.jpa.unit.api.ApplyScriptsBefore;
 import eu.drus.jpa.unit.api.Cleanup;
 import eu.drus.jpa.unit.api.CleanupPhase;
 import eu.drus.jpa.unit.api.JpaUnitRunner;
-import eu.drus.jpa.unit.test.model.Account;
 import eu.drus.jpa.unit.test.model.Address;
+import eu.drus.jpa.unit.test.model.AddressType;
 import eu.drus.jpa.unit.test.model.ContactDetail;
 import eu.drus.jpa.unit.test.model.ContactType;
-import eu.drus.jpa.unit.test.model.Depositor;
-import eu.drus.jpa.unit.test.model.GiroAccount;
+import eu.drus.jpa.unit.test.model.Customer;
 import eu.drus.jpa.unit.test.util.MongodManager;
 
 @RunWith(JpaUnitRunner.class)
@@ -44,11 +43,11 @@ public class ApplyCustomScripsIT {
     private EntityManager manager;
 
     @Test
-    @ApplyScriptsBefore("scripts/create-depositor-Max-Payne.script")
-    @ApplyScriptsAfter("scripts/update-balance-of-Max-Payne.script")
+    @ApplyScriptsBefore("scripts/create-customer-Max-Payne.script")
+    @ApplyScriptsAfter("scripts/update-addresses-of-Max-Payne.script")
     public void test1() {
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='Max'", Depositor.class);
-        final Depositor entity = query.getSingleResult();
+        final TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c WHERE c.name='Max'", Customer.class);
+        final Customer entity = query.getSingleResult();
 
         assertNotNull(entity);
         assertThat(entity.getName(), equalTo("Max"));
@@ -62,38 +61,35 @@ public class ApplyCustomScripsIT {
 
         final Set<Address> addresses = entity.getAddresses();
         assertThat(addresses.size(), equalTo(1));
-        final Address address = addresses.iterator().next();
-        assertThat(address.getCountry(), equalTo("Unknown"));
-        assertThat(address.getZipCode(), equalTo("111111"));
-        assertThat(address.getCity(), equalTo("Unknown"));
-        assertThat(address.getStreet(), equalTo("Unknown"));
+        final Address address1 = addresses.iterator().next();
+        assertThat(address1.getCountry(), equalTo("Unknown"));
+        assertThat(address1.getZipCode(), equalTo("111111"));
+        assertThat(address1.getCity(), equalTo("Unknown"));
+        assertThat(address1.getStreet(), equalTo("Unknown"));
+        assertThat(address1.getType(), equalTo(AddressType.INVOICE_AND_SHIPMENT));
 
-        final Set<Account> accounts = entity.getAccounts();
-        assertThat(accounts.size(), equalTo(1));
-        final Account account = accounts.iterator().next();
-        assertThat(account, instanceOf(GiroAccount.class));
-        final GiroAccount giroAccount = (GiroAccount) account;
-        assertThat(giroAccount.getBalance(), equalTo(100000.0));
-
-        assertThat(giroAccount.getCreditLimit(), equalTo(100000.0));
     }
 
     @Test
     @Cleanup
     public void test2() {
-        final TypedQuery<Depositor> query = manager.createQuery("SELECT d FROM Depositor d WHERE d.name='Max'", Depositor.class);
-        final Depositor entity = query.getSingleResult();
+        final TypedQuery<Customer> query = manager.createQuery("SELECT c FROM Customer c WHERE c.name='Max'", Customer.class);
+        final Customer entity = query.getSingleResult();
 
         assertNotNull(entity);
         assertThat(entity.getName(), equalTo("Max"));
         assertThat(entity.getSurname(), equalTo("Payne"));
 
-        final Set<Account> accounts = entity.getAccounts();
-        assertThat(accounts.size(), equalTo(1));
-        final Account account = accounts.iterator().next();
-        assertThat(account, instanceOf(GiroAccount.class));
-        final GiroAccount giroAccount = (GiroAccount) account;
-        assertThat(giroAccount.getBalance(), equalTo(95000.0));
-        assertThat(giroAccount.getCreditLimit(), equalTo(100000.0));
+        final Set<Address> addresses = entity.getAddresses();
+        assertThat(addresses.size(), equalTo(2));
+
+        final Iterator<Address> it = addresses.iterator();
+        it.next();
+        final Address address2 = it.next();
+        assertThat(address2.getCountry(), equalTo("Unknown 2"));
+        assertThat(address2.getZipCode(), equalTo("111111"));
+        assertThat(address2.getCity(), equalTo("Unknown 2"));
+        assertThat(address2.getStreet(), equalTo("Unknown 2"));
+        assertThat(address2.getType(), equalTo(AddressType.INVOICE));
     }
 }
