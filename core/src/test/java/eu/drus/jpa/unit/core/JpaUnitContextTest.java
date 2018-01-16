@@ -1,7 +1,7 @@
 package eu.drus.jpa.unit.core;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.Map;
 
@@ -179,6 +179,34 @@ public class JpaUnitContextTest {
         assertThat(ctx.getData("key"), equalTo("foo"));
     }
 
+    @Test
+    public void testPropertyReplacementWithMultipleProperties() throws Exception {
+        // GIVEN
+        final String username = "some_user";
+        final String password = "some_password";
+
+        // WHEN
+        System.setProperty("test.user", username);
+        System.setProperty("test.password", password);
+        final JpaUnitContext ctx = JpaUnitContext.getInstance(ClassWithEntitiyManagerAndPersistencePropertiesWithMultipleProperties.class);
+
+        // THEN
+        assertThat(ctx.getDescriptor().getProperties().get("javax.persistence.jdbc.url"), equalTo("jdbc:oracle:thin:some_user/some_password@server:1521:db"));
+    }
+
+    @Test
+    public void testPropertyReplacement() throws Exception {
+        // GIVEN
+        final String urlValue = "some url";
+
+        // WHEN
+        System.setProperty("test.jdbc.url", urlValue);
+        final JpaUnitContext ctx = JpaUnitContext.getInstance(ClassWithEntitiyManagerAndPersistenceProperties.class);
+
+        // THEN
+        assertThat(ctx.getDescriptor().getProperties().get("javax.persistence.jdbc.url"), equalTo(urlValue));
+    }
+
     private static class ClassWithoutPersistenceFields {}
 
     private static class ClassWithEntitiyManagerAndEntityManagerFactory {
@@ -231,6 +259,16 @@ public class JpaUnitContextTest {
 
     private static class ClassWithPersistenceContextWithoutDescriptors {
         @PersistenceContext(unitName = NO_UNIT_NAME)
+        private EntityManager em;
+    }
+
+    private static class ClassWithEntitiyManagerAndPersistenceProperties {
+        @PersistenceContext(unitName = SINGLE_UNIT_NAME, properties = {@PersistenceProperty(name = "javax.persistence.jdbc.url", value = "${test.jdbc.url}")})
+        private EntityManager em;
+    }
+
+    private static class ClassWithEntitiyManagerAndPersistencePropertiesWithMultipleProperties {
+        @PersistenceContext(unitName = SINGLE_UNIT_NAME, properties = {@PersistenceProperty(name = "javax.persistence.jdbc.url", value = "jdbc:oracle:thin:${test.user}/${test.password}@server:1521:db")})
         private EntityManager em;
     }
 }

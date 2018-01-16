@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -25,6 +27,7 @@ import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 public class JpaUnitContext implements ExecutionContext {
 
     private static final Map<Class<?>, JpaUnitContext> CTX_MAP = new HashMap<>();
+    private static final Pattern PROPERTY_PATTERN = Pattern.compile("\\$\\{([^}]*)\\}");
 
     private Field persistenceField;
 
@@ -94,7 +97,16 @@ public class JpaUnitContext implements ExecutionContext {
     private static Map<String, Object> getPersistenceContextProperties(final PersistenceContext persistenceContext) {
         final Map<String, Object> properties = new HashMap<>();
         for (final PersistenceProperty property : persistenceContext.properties()) {
-            properties.put(property.name(), property.value());
+            String propertyValue = property.value();
+            Matcher matcher = PROPERTY_PATTERN.matcher(propertyValue);
+
+            while(matcher.find()) {
+                String p = matcher.group();
+                String systemProperty = p.substring(2, p.length() - 1);
+                propertyValue = propertyValue.replace(p, System.getProperty(systemProperty, p));
+            }
+
+            properties.put(property.name(), propertyValue);
         }
         return properties;
     }
