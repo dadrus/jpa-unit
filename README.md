@@ -146,6 +146,26 @@ In both cases the reference to the persistence unit is required as well (e.g. `@
 Like in any JPA application, you have to define a `persistence.xml` file in the `META-INF` directory which includes the JPA provider and `persistence-unit` configuration. 
 For test purposes the `transaction-type` of the configured `persistence-unit` must be `RESOURCE_LOCAL`. 
 
+## Property replacement
+It is possible to configure `PersistenceProperties` within `@PersistenceContext` to override values in `persistence.xml`. In addition it is possible to use system properties to specify them from outside of the test.
+For example: 
+
+`-Dtest.jdbc.url=jdbc:oracle:thin:@myHost:1521:DB`
+
+```java
+@ExtendWith(JpaUnit.class)
+public class MyTest {
+
+    @PersistenceContext(unitName = "my-test-unit", properties = {@PersistenceProperty(name = "javax.persistence.jdbc.url", value = "${test.jdbc.url}")})
+    private EntityManager manager;
+	
+    @Test
+    public void someTest() {
+        // your code here
+    }
+}
+```
+
 # Control the Behavior
 
 To control the test behavior, JPA Unit comes with a handful of annotations and some utility classes. All these annotations can be applied on class and method level, where the latter always takes precedence over the former.
