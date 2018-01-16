@@ -154,24 +154,6 @@
       <artifactId>shrinkwrap-impl-base</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-api-jpa</artifactId>
-      <version>5.1.0-release</version>
-    </dependency>
-    <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-core</artifactId>
-      <version>5.1.0-release</version>
-    </dependency>
-    <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-mongodb</artifactId>
-      <version>5.1.0-release</version>
-    </dependency>
-
-
   </dependencies>
 
   <build>
@@ -190,24 +172,6 @@
           <execution>
             <goals>
               <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.datanucleus</groupId>
-        <artifactId>datanucleus-maven-plugin</artifactId>
-        <version>5.0.2</version>
-        <configuration>
-          <api>JPA</api>
-          <verbose>true</verbose>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>enhance</goal>
             </goals>
           </execution>
         </executions>
