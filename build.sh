@@ -1,6 +1,6 @@
 #/bin/bash
 
-export SONAR_HOST_URL='https://sonarqube.com'
+export SONAR_HOST_URL='https://sonarcloud.io'
 export SONAR_ORGANIZATION='dadrus-github'
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
@@ -17,7 +17,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 	  -Dsonar.organization=$SONAR_ORGANIZATION \
 	  -Dsonar.host.url=$SONAR_HOST_URL \
 	  -Dsonar.login=$SONAR_TOKEN \
-	  -Dsonar.branch=$TRAVIS_BRANCH
+	  -Dsonar.branch.name=$TRAVIS_BRANCH
   fi
 else
   echo "Building and analyzing a pull request from $TRAVIS_PULL_REQUEST_BRANCH branch"
@@ -30,5 +30,6 @@ else
     -Dsonar.github.repository=$TRAVIS_PULL_REQUEST_SLUG \
     -Dsonar.github.oauth=$SONAR_GITHUB_TOKEN \
     -Dsonar.host.url=$SONAR_HOST_URL \
-    -Dsonar.login=$SONAR_TOKEN
+    -Dsonar.login=$SONAR_TOKEN \
+    -Dsonar.branch.name=$TRAVIS_PULL_REQUEST_BRANCH
 fi
