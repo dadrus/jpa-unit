@@ -16,12 +16,12 @@
     <dependencies>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>jpa-unit-junit4</artifactId>
+        <artifactId>jpa-unit4</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>jpa-unit-junit5</artifactId>
+        <artifactId>jpa-unit5</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
