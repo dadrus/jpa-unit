@@ -4,7 +4,7 @@
 
   <groupId>com.github.dadrus.jpa-unit</groupId>
   <artifactId>jpa-unit</artifactId>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
   <name>JPA Unit</name>
   <description>JUnit extension for simple testing of JPA entities and components</description>
@@ -13,6 +13,8 @@
   <inceptionYear>2016</inceptionYear>
 
   <properties>
+    <revision>0.5.0-SNAPSHOT</revision>
+
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

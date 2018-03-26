@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.github.dadrus.jpa-unit</groupId>
     <artifactId>jpa-unit</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <version>${revision}</version>
   </parent>
 
   <artifactId>jpa-unit-bom</artifactId>
@@ -15,44 +15,44 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>com.github.dadrus.jpa-unit</groupId>
         <artifactId>jpa-unit4</artifactId>
-        <version>${project.version}</version>
+        <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>com.github.dadrus.jpa-unit</groupId>
         <artifactId>jpa-unit5</artifactId>
-        <version>${project.version}</version>
+        <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>com.github.dadrus.jpa-unit</groupId>
         <artifactId>jpa-unit-cucumber</artifactId>
-        <version>${project.version}</version>
+        <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>com.github.dadrus.jpa-unit</groupId>
         <artifactId>jpa-unit-concordion</artifactId>
-        <version>${project.version}</version>
+        <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>com.github.dadrus.jpa-unit</groupId>
         <artifactId>jpa-unit-cdi</artifactId>
-        <version>${project.version}</version>
+        <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>com.github.dadrus.jpa-unit</groupId>
         <artifactId>jpa-unit-mongodb</artifactId>
-        <version>${project.version}</version>
+        <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>com.github.dadrus.jpa-unit</groupId>
         <artifactId>jpa-unit-neo4j</artifactId>
-        <version>${project.version}</version>
+        <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>com.github.dadrus.jpa-unit</groupId>
         <artifactId>jpa-unit-rdbms</artifactId>
-        <version>${project.version}</version>
+        <version>${revision}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
