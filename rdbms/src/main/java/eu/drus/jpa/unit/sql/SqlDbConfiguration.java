@@ -19,8 +19,7 @@ public class SqlDbConfiguration {
     public static boolean isSupported(final PersistenceUnitDescriptor descriptor) {
         final Map<String, Object> dbConfig = descriptor.getProperties();
 
-        return dbConfig.containsKey("javax.persistence.jdbc.driver") && dbConfig.containsKey("javax.persistence.jdbc.url")
-                && dbConfig.containsKey("javax.persistence.jdbc.user") && dbConfig.containsKey("javax.persistence.jdbc.password");
+        return dbConfig.containsKey("javax.persistence.jdbc.driver") && dbConfig.containsKey("javax.persistence.jdbc.url");
     }
 
     public DataSource createDataSource() {
