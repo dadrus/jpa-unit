@@ -137,8 +137,6 @@ public class DataSourceDecoratorTest {
         // GIVEN
         final Map<String, Object> props = new HashMap<>();
         props.put("javax.persistence.jdbc.driver", "driver");
-        props.put("javax.persistence.jdbc.url", "url");
-        props.put("javax.persistence.jdbc.user", "user");
         when(descriptor.getProperties()).thenReturn(props);
 
         final DataSourceDecorator decorator = new DataSourceDecorator();
