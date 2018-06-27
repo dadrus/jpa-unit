@@ -120,5 +120,4 @@ public class ConcordionInterceptorTest {
         assertThat(invocation1.getTestInstance().get(), equalTo(delegate));
         assertThat(invocation1.getTestMethod().get(), equalTo(method));
     }
-
 }

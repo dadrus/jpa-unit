@@ -1,4 +1,4 @@
-package cucumber.runtime.java.jpa.unit;
+package eu.drus.jpa.unit.cucumber;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
@@ -8,22 +8,22 @@ import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestInvocation;
 
-class TestInvocationImpl implements TestInvocation {
+public class TestInvocationImpl implements TestInvocation {
 
+	private Object instance;
     private final Class<?> clazz;
-    private final JpaUnitContext ctx;
-    private final FeatureResolver resolver;
-    private Object instance;
     private Method method;
+    private final JpaUnitContext ctx;
     private Exception e;
+    private final FeatureResolver resolver;
 
-    TestInvocationImpl(final Class<?> clazz, final FeatureResolver resolver) {
+    public TestInvocationImpl(final Class<?> clazz, final FeatureResolver resolver) {
         this.clazz = clazz;
         this.resolver = resolver;
         ctx = JpaUnitContext.getInstance(clazz);
     }
 
-    TestInvocationImpl(final Object instance, final Method method, final FeatureResolver resolver) {
+    public TestInvocationImpl(final Object instance, final Method method, final FeatureResolver resolver) {
         this(instance.getClass(), resolver);
         this.instance = instance;
         this.method = method;

@@ -2,8 +2,6 @@ package cucumber.runtime.java.jpa.unit;
 
 import static eu.drus.jpa.unit.cucumber.BeanFactory.createBean;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,14 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import cucumber.api.java.ObjectFactory;
 import eu.drus.jpa.unit.api.JpaUnitException;
-import eu.drus.jpa.unit.cucumber.CucumberInterceptor;
-import eu.drus.jpa.unit.cucumber.EqualsInterceptor;
+import eu.drus.jpa.unit.cucumber.EnhancedProxy;
+import eu.drus.jpa.unit.cucumber.TestInvocationImpl;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestInvocation;
-import net.sf.cglib.proxy.CallbackHelper;
-import net.sf.cglib.proxy.Dispatcher;
-import net.sf.cglib.proxy.Enhancer;
 
 public class JpaUnitObjectFactory implements ObjectFactory {
 
@@ -75,32 +70,6 @@ public class JpaUnitObjectFactory implements ObjectFactory {
             throw new JpaUnitException("Could not execute beforeAll hook", e);
         }
 
-        final T bean = createBean(clazz);
-        final CallbackHelper helper = new CallbackHelper(clazz, new Class[0]) {
-
-            @Override
-            protected Object getCallback(final Method method) {
-                if (hasCucumberAnnotations(method)) {
-                    return new CucumberInterceptor(executor, bean);
-                } else if (method.getName().equals("equals")) {
-                    return new EqualsInterceptor(bean);
-                } else {
-                    return (Dispatcher) () -> bean;
-                }
-            }
-        };
-
-        return clazz.cast(Enhancer.create(clazz, new Class[0], helper, helper.getCallbacks()));
-    }
-
-    private static boolean hasCucumberAnnotations(final Method method) {
-        final Annotation[] annotations = method.getDeclaredAnnotations();
-        for (final Annotation annotation : annotations) {
-            final Class<? extends Annotation> annotationType = annotation.annotationType();
-            if (annotationType.getName().startsWith("cucumber.api")) {
-                return true;
-            }
-        }
-        return false;
+        return clazz.cast(EnhancedProxy.create(createBean(clazz), executor));
     }
 }
