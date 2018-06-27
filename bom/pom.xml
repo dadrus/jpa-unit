@@ -15,45 +15,61 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.github.dadrus.jpa-unit</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>jpa-unit4</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.github.dadrus.jpa-unit</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>jpa-unit5</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.github.dadrus.jpa-unit</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>jpa-unit-cucumber</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.github.dadrus.jpa-unit</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>jpa-unit-concordion</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.github.dadrus.jpa-unit</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>jpa-unit-cdi</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.github.dadrus.jpa-unit</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>jpa-unit-mongodb</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.github.dadrus.jpa-unit</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>jpa-unit-neo4j</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.github.dadrus.jpa-unit</groupId>
+        <groupId>${project.groupId}</groupId>
         <artifactId>jpa-unit-rdbms</artifactId>
-        <version>${revision}</version>
+        <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
+  
+  <build>
+    <plugins>
+      <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <configuration>
+            <updatePomFile>true</updatePomFile>
+            <flattenMode>ossrh</flattenMode>
+            <pomElements>
+                <dependencyManagement>resolve</dependencyManagement>
+            </pomElements>
+          </configuration>
+        </plugin>
+    </plugins>
+  </build>
 </project>

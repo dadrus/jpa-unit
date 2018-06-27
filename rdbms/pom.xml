@@ -4,8 +4,9 @@
 
   <parent>
     <groupId>com.github.dadrus.jpa-unit</groupId>
-    <artifactId>jpa-unit</artifactId>
+    <artifactId>jpa-unit-parent</artifactId>
     <version>${revision}</version>
+    <relativePath>../parent</relativePath>
   </parent>
 
   <artifactId>jpa-unit-rdbms</artifactId>

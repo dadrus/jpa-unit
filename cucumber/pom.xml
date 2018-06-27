@@ -4,8 +4,9 @@
 
   <parent>
     <groupId>com.github.dadrus.jpa-unit</groupId>
-    <artifactId>jpa-unit</artifactId>
+    <artifactId>jpa-unit-parent</artifactId>
     <version>${revision}</version>
+    <relativePath>../parent</relativePath>
   </parent>
 
   <artifactId>jpa-unit-cucumber</artifactId>
@@ -20,6 +21,11 @@
     <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy</artifactId>
+      <version>1.8.12</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
