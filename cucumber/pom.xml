@@ -21,7 +21,6 @@
     <dependency>
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy</artifactId>
-      <version>1.8.12</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

@@ -48,6 +48,7 @@
     <version.jgrapht>1.0.1</version.jgrapht>
     <version.liquigraph>3.0.1</version.liquigraph>
     <version.neo4j-harness>3.2.3</version.neo4j-harness>
+    <version.byte-buddy>1.8.12</version.byte-buddy>
 
     <version.powermock>1.7.3</version.powermock>
     <version.junit>4.12</version.junit>
@@ -339,6 +340,11 @@
         <artifactId>neo4j-harness</artifactId>
         <version>${version.neo4j-harness}</version>
       </dependency>
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy</artifactId>
+        <version>${version.byte-buddy}</version>
+    </dependency>
     </dependencies>
   </dependencyManagement>
 
