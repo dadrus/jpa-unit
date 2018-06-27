@@ -30,7 +30,7 @@ public class CdiEnabledNewDepositorFixture extends AbstractConcordionFixture {
             @Override
             public Resource locateSpecification(final Object fixtureObject, final String typeSuffix) {
                 String slashedClassName = fixtureObject.getClass().getName().replaceAll("\\.", "/");
-                slashedClassName = slashedClassName.substring(0, slashedClassName.indexOf("$$"));
+                slashedClassName = slashedClassName.substring(0, slashedClassName.indexOf('$'));
                 String fixturePath = slashedClassName.replace(CdiEnabledNewDepositorFixture.class.getSimpleName(),
                         NewDepositorFixture.class.getSimpleName());
                 fixturePath = fixturePath.replaceAll("(Fixture|Test)$", "");
