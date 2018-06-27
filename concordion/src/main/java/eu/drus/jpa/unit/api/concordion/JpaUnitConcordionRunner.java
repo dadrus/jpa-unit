@@ -3,9 +3,20 @@ package eu.drus.jpa.unit.api.concordion;
 import static eu.drus.jpa.unit.util.ClassLoaderUtils.tryLoadClassForName;
 import static eu.drus.jpa.unit.util.ReflectionUtils.getValue;
 import static eu.drus.jpa.unit.util.ReflectionUtils.injectValue;
+import static net.bytebuddy.implementation.MethodDelegation.to;
+import static net.bytebuddy.implementation.MethodDelegation.toField;
+import static net.bytebuddy.matcher.ElementMatchers.isAnnotatedWith;
+import static net.bytebuddy.matcher.ElementMatchers.isClone;
+import static net.bytebuddy.matcher.ElementMatchers.isDeclaredBy;
+import static net.bytebuddy.matcher.ElementMatchers.isEquals;
+import static net.bytebuddy.matcher.ElementMatchers.isHashCode;
+import static net.bytebuddy.matcher.ElementMatchers.isToString;
+import static net.bytebuddy.matcher.ElementMatchers.nameStartsWith;
+import static net.bytebuddy.matcher.ElementMatchers.not;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import org.concordion.api.Fixture;
 import org.concordion.api.Resource;
@@ -18,13 +29,14 @@ import org.slf4j.LoggerFactory;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.concordion.ConcordionInterceptor;
+import eu.drus.jpa.unit.concordion.EnhancedProxy;
 import eu.drus.jpa.unit.concordion.EqualsInterceptor;
 import eu.drus.jpa.unit.concordion.JpaUnitFixture;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
-import net.sf.cglib.proxy.Callback;
-import net.sf.cglib.proxy.CallbackHelper;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.Factory;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.implementation.MethodDelegation;
+
 
 public class JpaUnitConcordionRunner extends ConcordionRunner {
 
@@ -37,14 +49,11 @@ public class JpaUnitConcordionRunner extends ConcordionRunner {
     }
 
     private static Object getDelegate(final Object fixtureObject) {
-        final Callback[] callbacks = ((Factory) fixtureObject).getCallbacks();
-        for (final Callback callback : callbacks) {
-            if (callback instanceof ConcordionInterceptor) {
-                return ((ConcordionInterceptor) callback).getDelegate();
-            }
-        }
-
-        throw new JpaUnitException("Internal Error. No ConcordionInterceptor registered. Please submit a bug report!");
+    	try {
+			return fixtureObject.getClass().getDeclaredField("bean").get(fixtureObject);
+		} catch (Exception e) {
+			throw new JpaUnitException("Internal Error. No ConcordionInterceptor registered. Please submit a bug report!");
+		}
     }
 
     @Override
@@ -74,7 +83,7 @@ public class JpaUnitConcordionRunner extends ConcordionRunner {
             // the setup of concordion scoped objects is done in this call
             final Object fixtureObject = super.createTest();
             injectFields(fixtureObject);
-            enhancedFixture = createProxy(fixtureObject);
+            enhancedFixture = EnhancedProxy.create(fixtureObject, executor);
         }
 
         return enhancedFixture;
@@ -100,27 +109,12 @@ public class JpaUnitConcordionRunner extends ConcordionRunner {
 
     @Override
     protected Fixture createFixture(final Object fixtureObject) {
-        if (fixtureObject instanceof Factory) {
+    	
+        if (fixtureObject instanceof EnhancedProxy) {
             return new JpaUnitFixture(executor, fixtureObject);
         } else {
-            return new JpaUnitFixture(executor, createProxy(fixtureObject));
+            return new JpaUnitFixture(executor, EnhancedProxy.create(fixtureObject, executor));
         }
-    }
-
-    private Object createProxy(final Object bean) {
-        final CallbackHelper helper = new CallbackHelper(bean.getClass(), new Class[0]) {
-
-            @Override
-            protected Object getCallback(final Method method) {
-                if (method.getName().equals("equals")) {
-                    return new EqualsInterceptor(bean);
-                } else {
-                    return new ConcordionInterceptor(executor, bean);
-                }
-            }
-        };
-
-        return Enhancer.create(bean.getClass(), new Class[0], helper, helper.getCallbacks());
     }
 
     @Override

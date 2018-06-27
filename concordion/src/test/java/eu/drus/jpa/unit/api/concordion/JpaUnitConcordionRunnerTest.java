@@ -18,8 +18,8 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import eu.drus.jpa.unit.concordion.EnhancedProxy;
 import eu.drus.jpa.unit.core.JpaUnitContext;
-import net.sf.cglib.proxy.Factory;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(JpaUnitContext.class)
@@ -50,7 +50,7 @@ public class JpaUnitConcordionRunnerTest {
         final Object testObject1 = runner.createTest();
 
         // THEN
-        assertThat(testObject1, instanceOf(Factory.class));
+        assertThat(testObject1, instanceOf(EnhancedProxy.class));
     }
 
     @Test

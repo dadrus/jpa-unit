@@ -1,35 +1,22 @@
 package eu.drus.jpa.unit.concordion;
 
-import java.lang.reflect.Method;
+import net.bytebuddy.implementation.bind.annotation.Argument;
+import net.bytebuddy.implementation.bind.annotation.FieldValue;
+import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import net.bytebuddy.implementation.bind.annotation.This;
 
-import net.sf.cglib.proxy.Callback;
-import net.sf.cglib.proxy.Factory;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+public final class EqualsInterceptor {
+	
+	private EqualsInterceptor() {}
 
-public class EqualsInterceptor implements MethodInterceptor {
-
-    private final Object target;
-
-    public EqualsInterceptor(final Object target) {
-        this.target = target;
-    }
-
-    @Override
-    public Object intercept(final Object proxy, final Method method, final Object[] args, final MethodProxy methodProxy) throws Throwable {
-        final Object other = args[0];
-
-        if (proxy == other) {
+	@RuntimeType
+	public static Object intercept(@This Object thiz, @Argument(0) Object other, @FieldValue("bean") Object bean) throws Exception {			
+        if (thiz == other) {
             return true;
-        } else if (other instanceof Factory) {
-            for (final Callback callback : ((Factory) other).getCallbacks()) {
-                if (callback.getClass().isAssignableFrom(EqualsInterceptor.class)) {
-                    return target.equals(((EqualsInterceptor) callback).target);
-                }
-            }
+        } else if (other instanceof EnhancedProxy) {
+            return bean.equals(other.getClass().getDeclaredField("bean").get(other));
+        } else {
+        	return bean.equals(other);
         }
-
-        return target.equals(other);
-    }
-
+	}
 }

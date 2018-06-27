@@ -8,8 +8,6 @@ import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestInvocation;
-import net.sf.cglib.proxy.Callback;
-import net.sf.cglib.proxy.Factory;
 
 public class JpaUnitFixture extends FixtureInstance {
 
@@ -47,14 +45,11 @@ public class JpaUnitFixture extends FixtureInstance {
     }
 
     private static Object getDelegate(final Object fixtureObject) {
-        final Callback[] callbacks = ((Factory) fixtureObject).getCallbacks();
-        for (final Callback callback : callbacks) {
-            if (callback instanceof ConcordionInterceptor) {
-                return ((ConcordionInterceptor) callback).getDelegate();
-            }
-        }
-
-        throw new JpaUnitException("Internal Error. No ConcordionInterceptor registered. Please submit a bug report!");
+    	try {
+			return fixtureObject.getClass().getDeclaredField("bean").get(fixtureObject);
+		} catch (Exception e) {
+			throw new JpaUnitException("Internal Error. No ConcordionInterceptor registered. Please submit a bug report!");
+		}
     }
 
     @Override

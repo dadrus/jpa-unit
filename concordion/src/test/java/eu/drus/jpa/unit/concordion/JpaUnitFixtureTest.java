@@ -24,7 +24,6 @@ import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.core.JpaUnitContext;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.TestInvocation;
-import net.sf.cglib.proxy.Enhancer;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(JpaUnitContext.class)
@@ -49,8 +48,7 @@ public class JpaUnitFixtureTest {
 
         originalFixture = new TestClass();
 
-        fixture = new JpaUnitFixture(executor,
-                Enhancer.create(originalFixture.getClass(), new ConcordionInterceptor(executor, originalFixture)));
+        fixture = new JpaUnitFixture(executor, EnhancedProxy.create(originalFixture, executor));
     }
 
     @Test

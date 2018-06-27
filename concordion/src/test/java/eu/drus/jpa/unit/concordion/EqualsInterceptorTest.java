@@ -5,69 +5,74 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import net.sf.cglib.proxy.Enhancer;
-
 public class EqualsInterceptorTest {
 
     @Test
-    public void testProxyEqualsTarget() {
+    public void testProxyEqualsTarget() throws Exception {
         // GIVEN
         final ClassA target = new ClassA();
-        final Object proxy = Enhancer.create(ClassA.class, new EqualsInterceptor(target));
+        final Object proxy = EnhancedProxy.create(target, null);        
 
         // WHEN
-        final boolean isEqual = proxy.equals(target);
+        final boolean isEqual = (boolean) EqualsInterceptor.intercept(proxy, target, target);
 
         // THEN
         assertTrue(isEqual);
     }
 
+
     @Test
-    public void testProxyEqualsSelf() {
+    public void testProxyEqualsSelf() throws Exception {
         // GIVEN
-        final Object proxy = Enhancer.create(ClassA.class, new EqualsInterceptor(new ClassA()));
+    	final ClassA target = new ClassA();
+        final Object proxy = EnhancedProxy.create(target, null);
 
         // WHEN
-        final boolean isEqual = proxy.equals(proxy);
+        final boolean isEqual = (boolean) EqualsInterceptor.intercept(proxy, proxy, target);
 
         // THEN
         assertTrue(isEqual);
     }
 
     @Test
-    public void testProxyEqualsOtherProxyForSameTarget() {
+    public void testProxyEqualsOtherProxyForSameTarget() throws Exception {
         // GIVEN
         final ClassA target = new ClassA();
-        final Object proxy1 = Enhancer.create(ClassA.class, new EqualsInterceptor(target));
-        final Object proxy2 = Enhancer.create(ClassA.class, new EqualsInterceptor(target));
+        final Object proxy1 = EnhancedProxy.create(target, null);
+        
+        final Object proxy2 = EnhancedProxy.create(target, null);
 
         // WHEN
-        final boolean isEqual = proxy1.equals(proxy2);
+        final boolean isEqual = (boolean) EqualsInterceptor.intercept(proxy1, proxy2, target);
 
         // THEN
         assertTrue(isEqual);
     }
 
     @Test
-    public void testProxyForOneTargetIsNotEqualsToOtherTarget() {
+    public void testProxyForOneTargetIsNotEqualsToOtherTarget() throws Exception {
         // GIVEN
-        final Object proxy = Enhancer.create(ClassA.class, new EqualsInterceptor(new ClassA()));
+    	final ClassA target = new ClassA();
+        final Object proxy = EnhancedProxy.create(target, null);
 
         // WHEN
-        final boolean isEqual = proxy.equals(new ClassA());
+        final boolean isEqual = (boolean) EqualsInterceptor.intercept(proxy, new ClassA(), target);
 
         // THEN
         assertFalse(isEqual);
     }
 
     @Test
-    public void testProxyForOneTargetIsNotEqualsProxyForOtherTarget() {
+    public void testProxyForOneTargetIsNotEqualsProxyForOtherTarget() throws Exception {
         // GIVEN
-        final Object proxy1 = Enhancer.create(ClassA.class, new EqualsInterceptor(new ClassA()));
-        final Object proxy2 = Enhancer.create(ClassA.class, new EqualsInterceptor(new ClassA()));
+    	final ClassA target1 = new ClassA();
+        final Object proxy1 = EnhancedProxy.create(target1, null);
+        
+        final ClassA target2 = new ClassA();
+        final Object proxy2 = EnhancedProxy.create(target2, null);
 
         // WHEN
-        final boolean isEqual = proxy1.equals(proxy2);
+        final boolean isEqual = (boolean) EqualsInterceptor.intercept(proxy1, proxy2, target1);
 
         // THEN
         assertFalse(isEqual);
