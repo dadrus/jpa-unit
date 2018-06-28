@@ -13,6 +13,7 @@ import java.lang.reflect.Modifier;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
+import eu.drus.jpa.unit.util.ReflectionUtils;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 
@@ -23,8 +24,8 @@ public interface EnhancedProxy {
 			Object proxy = new ByteBuddy()
 				.subclass(bean.getClass())
 				.implement(EnhancedProxy.class)
-				.defineField("bean", bean.getClass(), Modifier.PUBLIC)
-				.defineField("executor", DecoratorExecutor.class, Modifier.PUBLIC)
+				.defineField("bean", bean.getClass(), Modifier.PRIVATE)
+				.defineField("executor", DecoratorExecutor.class, Modifier.PRIVATE)
 				.method(isEquals())
 					.intercept(to(EqualsInterceptor.class))
 				.method(isAnnotatedWith(nameStartsWith("cucumber.api")))
@@ -36,8 +37,8 @@ public interface EnhancedProxy {
 				.getLoaded()
 				.newInstance();
 			
-			proxy.getClass().getDeclaredField("bean").set(proxy, bean);
-			proxy.getClass().getDeclaredField("executor").set(proxy, executor);
+			ReflectionUtils.injectValue(proxy, "bean", bean);
+			ReflectionUtils.injectValue(proxy, "executor", executor);
 	    	
 	        return proxy;
 		} catch (Exception e) {

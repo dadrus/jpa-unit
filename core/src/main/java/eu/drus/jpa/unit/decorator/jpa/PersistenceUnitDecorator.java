@@ -22,7 +22,7 @@ public class PersistenceUnitDecorator implements TestMethodDecorator {
 
         final Class<?> fieldType = invocation.getContext().getPersistenceField().getType();
         if (fieldType.equals(EntityManagerFactory.class)) {
-            injectValue(invocation.getContext().getPersistenceField(), invocation.getTestInstance().get(), emf);
+            injectValue(invocation.getTestInstance().get(), invocation.getContext().getPersistenceField(), emf);
         }
     }
 

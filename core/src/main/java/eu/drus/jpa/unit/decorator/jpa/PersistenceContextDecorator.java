@@ -31,7 +31,7 @@ public class PersistenceContextDecorator implements TestMethodDecorator {
         if (field.getType().equals(EntityManager.class)) {
             final EntityManager em = getEntityManager(context, emf);
             context.storeData(Constants.KEY_ENTITY_MANAGER, em);
-            injectValue(field, invocation.getTestInstance().get(), em);
+            injectValue(invocation.getTestInstance().get(), field, em);
         }
     }
 

@@ -8,6 +8,7 @@ import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestInvocation;
+import eu.drus.jpa.unit.util.ReflectionUtils;
 
 public class JpaUnitFixture extends FixtureInstance {
 
@@ -46,7 +47,7 @@ public class JpaUnitFixture extends FixtureInstance {
 
     private static Object getDelegate(final Object fixtureObject) {
     	try {
-			return fixtureObject.getClass().getDeclaredField("bean").get(fixtureObject);
+			return ReflectionUtils.getValue(fixtureObject, "bean");
 		} catch (Exception e) {
 			throw new JpaUnitException("Internal Error. No ConcordionInterceptor registered. Please submit a bug report!");
 		}
