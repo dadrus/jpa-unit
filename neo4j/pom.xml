@@ -11,6 +11,14 @@
 
   <artifactId>jpa-unit-neo4j</artifactId>
   <name>JPA Unit - Neo4J Extension</name>
+  
+  <repositories>
+    <repository>
+      <id>neo4j</id>
+      <name>neo4j-repository</name>
+      <url>https://m2.neo4j.org/content/repositories/releases</url>
+    </repository>
+  </repositories>
 
   <dependencies>
     <dependency>

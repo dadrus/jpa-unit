@@ -77,14 +77,6 @@
       </testResource>
     </testResources>
   </build>
-  
-  <repositories>
-    <repository>
-      <id>neo4j</id>
-      <name>neo4j-repository</name>
-      <url>https://m2.neo4j.org/content/repositories/releases</url>
-    </repository>
-  </repositories>
 
   <dependencyManagement>
     <dependencies>
