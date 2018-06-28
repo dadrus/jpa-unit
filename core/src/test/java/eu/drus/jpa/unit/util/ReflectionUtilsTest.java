@@ -12,26 +12,50 @@ public class ReflectionUtilsTest {
     private Long privateField;
 
     @Test
-    public void testInjectPrivateField() throws Exception {
+    public void testInjectPrivateFieldUsingFieldObject() throws Exception {
         // GIVEN
         final Long value = 10L;
         final Field toi = getClass().getDeclaredField("privateField");
 
         // WHEN
-        ReflectionUtils.injectValue(toi, this, value);
+        ReflectionUtils.injectValue(this, toi, value);
+
+        // THEN
+        assertThat(privateField, equalTo(value));
+    }
+    
+    @Test
+    public void testInjectPrivateFieldUsingFieldName() throws Exception {
+        // GIVEN
+        final Long value = 10L;
+
+        // WHEN
+        ReflectionUtils.injectValue(this, "privateField", value);
 
         // THEN
         assertThat(privateField, equalTo(value));
     }
 
     @Test
-    public void testGetValeOfAPrivateField() throws Exception {
+    public void testGetValeOfAPrivateFieldUsingFieldObject() throws Exception {
         // GIVEN
         privateField = 10l;
         final Field toi = getClass().getDeclaredField("privateField");
 
         // WHEN
-        final Object value = ReflectionUtils.getValue(toi, this);
+        final Object value = ReflectionUtils.getValue(this, toi);
+
+        // THEN
+        assertThat(privateField, equalTo(value));
+    }
+    
+    @Test
+    public void testGetValeOfAPrivateFieldUsingFieldName() throws Exception {
+        // GIVEN
+        privateField = 10l;
+
+        // WHEN
+        final Object value = ReflectionUtils.getValue(this, "privateField");
 
         // THEN
         assertThat(privateField, equalTo(value));
