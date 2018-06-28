@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -56,20 +58,23 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
+
   <build>
-    <plugins>
-      <plugin>
+    <pluginManagement>
+      <plugins>
+        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>flatten-maven-plugin</artifactId>
           <configuration>
             <updatePomFile>true</updatePomFile>
             <flattenMode>ossrh</flattenMode>
             <pomElements>
-                <dependencyManagement>resolve</dependencyManagement>
+              <dependencyManagement>resolve</dependencyManagement>
             </pomElements>
           </configuration>
         </plugin>
-    </plugins>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>
