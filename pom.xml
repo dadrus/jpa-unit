@@ -36,7 +36,6 @@
     <plugin.version.serviceloader>1.0.7</plugin.version.serviceloader>
     <plugin.version.enforcer>1.4.1</plugin.version.enforcer>
     <plugin.version.pgp>1.6</plugin.version.pgp>
-    <plugin.version.shade>3.0.0</plugin.version.shade>
     <plugin.version.nexus-staging>1.6.8</plugin.version.nexus-staging>
     <plugin.version.release>2.5.3</plugin.version.release>
     <plugin.verions.deploy>2.8.2</plugin.verions.deploy>
@@ -267,6 +266,7 @@
 <!--           </configuration> -->
 <!--         </plugin> -->
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-plugin</artifactId>
           <version>${plugin.version.scm}</version>
           <configuration>
@@ -415,11 +415,6 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-shade-plugin</artifactId>
-          <version>${plugin.version.shade}</version>
         </plugin>
         <plugin>
           <groupId>org.sonatype.plugins</groupId>
