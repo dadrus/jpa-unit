@@ -24,7 +24,7 @@ public final class DatabaseConnectionFactory {
 
             for (final DbUnitConnectionFactory impl : SERVICE_LOADER) {
                 if (impl.supportsDriver(ds.getDriverClassName())) {
-                    return impl.createConnection(connection);
+                    return impl.createConnection(connection, discoverSchema(connection));
                 }
             }
 
@@ -32,6 +32,14 @@ public final class DatabaseConnectionFactory {
             return new DatabaseConnection(connection);
         } catch (final DatabaseUnitException | SQLException e) {
             throw new JpaUnitException(e);
+        }
+    }
+
+    private static String discoverSchema(final Connection connection) {
+        try {
+            return connection.getSchema();
+        } catch (final SQLException e) {
+            return null;
         }
     }
 }

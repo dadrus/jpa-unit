@@ -16,8 +16,9 @@ public class PostgresqlConnectionFactory implements DbUnitConnectionFactory {
     }
 
     @Override
-    public IDatabaseConnection createConnection(final Connection connection) throws DatabaseUnitException {
-        final IDatabaseConnection dbUnitConnection = new DatabaseConnection(connection);
+    public IDatabaseConnection createConnection(final Connection connection, final String schema) throws DatabaseUnitException {
+        final IDatabaseConnection dbUnitConnection = new DatabaseConnection(connection, schema);
+
         dbUnitConnection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new PostgresqlDataTypeFactory());
 
         return dbUnitConnection;

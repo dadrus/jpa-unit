@@ -1,30 +1,54 @@
 package eu.drus.jpa.unit.sql.dbunit.ext;
 
-import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
-import org.hamcrest.core.Is;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.DatabaseConfig;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.ext.oracle.Oracle10DataTypeFactory;
+import org.dbunit.util.SQLHelper;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(SQLHelper.class)
 public class Oracle10ConnectionFactoryTest {
+
     private static final DbUnitConnectionFactory FACTORY = new Oracle10ConnectionFactory();
+
+    @Mock
+    private Connection connection;
+
+    @Mock
+    private DatabaseMetaData metaData;
+
+    @Before
+    public void repareMocks() throws SQLException {
+        mockStatic(SQLHelper.class);
+        when(SQLHelper.correctCase(anyString(), any(Connection.class))).then(invocation -> {
+            return invocation.getArguments()[0];
+        });
+        when(SQLHelper.schemaExists(any(Connection.class), anyString())).thenReturn(Boolean.TRUE);
+
+        when(connection.getMetaData()).thenReturn(metaData);
+        when(metaData.getIdentifierQuoteString()).thenReturn(" ");
+    }
 
     @Test
     public void testDriverClassSupport() {
@@ -34,49 +58,20 @@ public class Oracle10ConnectionFactoryTest {
 
     @Test
     @Ignore("oracle jdbc required in classpath")
-    public void testCreateConnectionNoSchemaAvailable() throws DatabaseUnitException, SQLException {
+    public void testCreateConnection() throws DatabaseUnitException, SQLException {
+        // GIVEN
+        final String schema = "foo";
+
         // WHEN
-        Connection connectionMock = mock(Connection.class);
-        when(connectionMock.getSchema()).thenThrow(SQLException.class);
-        
-        final IDatabaseConnection connection = FACTORY.createConnection(connectionMock);
+        final IDatabaseConnection dbConnection = FACTORY.createConnection(connection, schema);
 
         // THEN
-        assertThat(connection, notNullValue());
-        assertThat(connection.getSchema(), nullValue());
-        
-        final Object typeFactory = connection.getConfig().getProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY);
+        assertThat(dbConnection, notNullValue());
+
+        final Object typeFactory = dbConnection.getConfig().getProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY);
         assertThat(typeFactory, notNullValue());
-        assertThat(typeFactory.getClass(), not(equalTo(DefaultDataTypeFactory.class)));
-    }
-    
-    
-    @Test
-    @Ignore("oracle jdbc required in classpath")
-    public void testCreateConnectionSchemaAvailableFromConnection() throws SQLException, DatabaseUnitException {
-        // WHEN
-        Connection connectionMock = mock(Connection.class);
-        when(connectionMock.getSchema()).thenReturn("schemaName");
-        DatabaseMetaData dbMetadataMock = mock(DatabaseMetaData.class);
-        when(dbMetadataMock.getIdentifierQuoteString()).thenReturn("'");
-        
-        when(connectionMock.getMetaData()).thenReturn(dbMetadataMock);
-        
-        // we Use same resultset mock for both catalog and schema proofing
-        ResultSet resultSetMock = mock(ResultSet.class);
-        doNothing().when(resultSetMock).close();
-        
-        when(dbMetadataMock.getCatalogs()).thenReturn(resultSetMock);
-        when(dbMetadataMock.getSchemas()).thenReturn(resultSetMock);
-        
-        final IDatabaseConnection connection = FACTORY.createConnection(connectionMock);
-    
-        // THEN
-        assertThat(connection, notNullValue());
-        assertThat(connection.getSchema(), Is.is("schemaName"));
-    
-        final Object typeFactory = connection.getConfig().getProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY);
-        assertThat(typeFactory, notNullValue());
-        assertThat(typeFactory.getClass(), not(equalTo(DefaultDataTypeFactory.class)));
+        assertThat(typeFactory.getClass(), equalTo(Oracle10DataTypeFactory.class));
+
+        assertThat(dbConnection.getSchema(), equalTo(schema));
     }
 }

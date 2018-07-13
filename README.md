@@ -504,7 +504,9 @@ Here JPA Unit makes use of the standard
 - `javax.persistence.jdbc.driver`,
 - `javax.persistence.jdbc.url`,
 - `javax.persistence.jdbc.user` and
-- `javax.persistence.jdbc.password` 
+- `javax.persistence.jdbc.password`
+
+The last two are optional (depending on the requirements of the underlying database).
 
 properties to access the database directly.
 
@@ -593,6 +595,11 @@ ADDRESS:
 ]
 ```
 
+### DBUnit specific configuration
+
+All [DBUnit specific settings](http://dbunit.sourceforge.net/properties.html) can be configured by just making a `dbunit.properties` file available in the classpath. Long and short property names are supported.
+
+Please note, that JPA-Unit configures the required DBUnit `datatypeFactory` and `metadataHandler` automatically based on the used JDBC driver.
 
 
 ## MongoDB

@@ -14,7 +14,7 @@ public class HsqldbConnectionFactory implements DbUnitConnectionFactory {
     }
 
     @Override
-    public IDatabaseConnection createConnection(final Connection connection) throws DatabaseUnitException {
-        return new HsqldbConnection(connection, null);
+    public IDatabaseConnection createConnection(final Connection connection, final String schema) throws DatabaseUnitException {
+        return new HsqldbConnection(connection, schema);
     }
 }

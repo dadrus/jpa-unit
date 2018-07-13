@@ -8,6 +8,7 @@ import eu.drus.jpa.unit.spi.TestClassDecorator;
 import eu.drus.jpa.unit.spi.TestInvocation;
 import eu.drus.jpa.unit.sql.Constants;
 import eu.drus.jpa.unit.sql.SqlDbConfiguration;
+import eu.drus.jpa.unit.util.ResourceLocator;
 
 public class DbUnitDatabaseConnectionDecorator implements TestClassDecorator {
 
@@ -27,6 +28,8 @@ public class DbUnitDatabaseConnectionDecorator implements TestClassDecorator {
         final BasicDataSource ds = (BasicDataSource) context.getData(Constants.KEY_DATA_SOURCE);
 
         final IDatabaseConnection connection = DatabaseConnectionFactory.openConnection(ds);
+        connection.getConfig().setPropertiesByString(
+                DbUnitConfigurationLoader.loadConfiguration(ResourceLocator.getResource("dbunit.properties")));
         context.storeData(Constants.KEY_CONNECTION, connection);
     }
 

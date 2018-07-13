@@ -16,7 +16,7 @@ import eu.drus.jpa.unit.test.model.DepositorRepository;
  * from the test-model project is used to produce and dispose the EntityManager.
  */
 
-public class AbstractCdiWithJpaTest {
+public abstract class AbstractCdiWithJpaTest {
 
     @Inject
     private DepositorRepository repository;

@@ -10,11 +10,11 @@ public class MySqlConnectionFactory implements DbUnitConnectionFactory {
 
     @Override
     public boolean supportsDriver(final String driverClass) {
-        return "com.mysql.jdbc.Driver".equals(driverClass);
+        return "com.mysql.cj.jdbc.Driver".equals(driverClass) || "com.mysql.jdbc.Driver".equals(driverClass);
     }
 
     @Override
-    public IDatabaseConnection createConnection(final Connection connection) throws DatabaseUnitException {
-        return new MySqlConnection(connection, null);
+    public IDatabaseConnection createConnection(final Connection connection, final String schema) throws DatabaseUnitException {
+        return new MySqlConnection(connection, schema);
     }
 }

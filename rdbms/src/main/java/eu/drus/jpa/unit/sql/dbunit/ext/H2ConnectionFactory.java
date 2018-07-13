@@ -14,7 +14,7 @@ public class H2ConnectionFactory implements DbUnitConnectionFactory {
     }
 
     @Override
-    public IDatabaseConnection createConnection(final Connection connection) throws DatabaseUnitException {
-        return new H2Connection(connection, null);
+    public IDatabaseConnection createConnection(final Connection connection, final String schema) throws DatabaseUnitException {
+        return new H2Connection(connection, schema);
     }
 }

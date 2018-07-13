@@ -1,3 +1,6 @@
+/*
+ *
+ */
 package eu.drus.jpa.unit.sql.dbunit.ext;
 
 import java.sql.Connection;
@@ -7,7 +10,7 @@ import org.dbunit.database.IDatabaseConnection;
 
 public interface DbUnitConnectionFactory {
 
-    boolean supportsDriver(String driverClass);
+    boolean supportsDriver(final String driverClass);
 
-    IDatabaseConnection createConnection(Connection connection) throws DatabaseUnitException;
+    IDatabaseConnection createConnection(final Connection connection, final String schema) throws DatabaseUnitException;
 }

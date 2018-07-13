@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,12 +25,15 @@ import eu.drus.jpa.unit.sql.Constants;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
-        DatabaseConnectionFactory.class
+    DatabaseConnectionFactory.class
 })
 public class DbUnitDatabaseConnectionDecoratorTest {
 
     @Mock
     private ExecutionContext ctx;
+
+    @Mock
+    private DatabaseConfig dbConfig;
 
     @Mock
     private IDatabaseConnection connection;
@@ -46,6 +50,7 @@ public class DbUnitDatabaseConnectionDecoratorTest {
     public void prepareMocks() throws Throwable {
         mockStatic(DatabaseConnectionFactory.class);
 
+        when(connection.getConfig()).thenReturn(dbConfig);
         when(DatabaseConnectionFactory.openConnection(any(BasicDataSource.class))).thenReturn(connection);
         when(ctx.getData(eq(Constants.KEY_CONNECTION))).thenReturn(connection);
         when(invocation.getContext()).thenReturn(ctx);
