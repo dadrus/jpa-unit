@@ -12,6 +12,13 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
 	  -Dsonar.host.url=$SONAR_HOST_URL \
 	  -Dsonar.login=$SONAR_TOKEN \
 	  -Dpgp.skip=false
+  elif [ "$TRAVIS_BRANCH" == "release" ]; then
+    mvn -settings .travis/settings.xml clean deploy sonar:sonar \
+          -Prelease
+	  -Dsonar.organization=$SONAR_ORGANIZATION \
+	  -Dsonar.host.url=$SONAR_HOST_URL \
+	  -Dsonar.login=$SONAR_TOKEN \
+	  -Dpgp.skip=false
   else
     mvn clean verify sonar:sonar \
 	  -Dsonar.organization=$SONAR_ORGANIZATION \
