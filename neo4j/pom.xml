@@ -12,6 +12,10 @@
   <artifactId>jpa-unit-neo4j</artifactId>
   <name>JPA Unit - Neo4J Extension</name>
   
+  <properties>
+    <maven.deploy.skip>false</maven.deploy.skip>
+  </properties>
+  
   <repositories>
     <repository>
       <id>neo4j</id>

@@ -12,6 +12,10 @@
   <artifactId>jpa-unit5</artifactId>
   <name>JPA Unit - JUnit 5 Extension</name>
   <description>JUnit 5 extension to run tests for JPA entities using EntityManagerFactory or EntityManager</description>
+  
+  <properties>
+    <maven.deploy.skip>false</maven.deploy.skip>
+  </properties>
 
   <dependencies>
     <dependency>

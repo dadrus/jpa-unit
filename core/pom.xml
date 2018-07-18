@@ -12,6 +12,10 @@
   <artifactId>jpa-unit-core</artifactId>
   <name>JPA Unit - Core</name>
   <description>Core classes and SPI of JPA Unit</description>
+  
+  <properties>
+    <maven.deploy.skip>false</maven.deploy.skip>
+  </properties>
 
   <dependencies>
     <dependency>

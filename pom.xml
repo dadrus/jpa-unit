@@ -42,6 +42,8 @@
     <plugin.version.build-helper>3.0.0</plugin.version.build-helper>
     <plugin.version.scm>1.10.0</plugin.version.scm>
     <plugin.version.flatten>1.0.1</plugin.version.flatten>
+  
+    <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
 
   <scm>

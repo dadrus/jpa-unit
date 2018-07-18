@@ -12,6 +12,10 @@
   <artifactId>jpa-unit-cdi</artifactId>
   <name>JPA Unit - CDI Extension</name>
   <description>Makes JPA Unit usable in CDI test environment</description>
+  
+  <properties>
+    <maven.deploy.skip>false</maven.deploy.skip>
+  </properties>
 
   <dependencies>
     <dependency>

@@ -13,6 +13,10 @@
   <artifactId>jpa-unit-bom</artifactId>
   <packaging>pom</packaging>
   <name>JPA Unit - Bill of Materials (BOM)</name>
+  
+  <properties>
+    <maven.deploy.skip>false</maven.deploy.skip>
+  </properties>
 
   <dependencyManagement>
     <dependencies>

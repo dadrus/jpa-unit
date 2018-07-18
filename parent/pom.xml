@@ -1,7 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>com.github.dadrus.jpa-unit</groupId>
     <artifactId>jpa-unit</artifactId>
@@ -57,6 +59,8 @@
     <version.junit-vintage>4.12.0</version.junit-vintage>
     <version.junit-platform>1.0.0</version.junit-platform>
     <version.jacoco>${plugin.version.jacoco}</version.jacoco>
+
+    <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
 
   <build>
@@ -330,7 +334,7 @@
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
         <version>${version.byte-buddy}</version>
-    </dependency>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

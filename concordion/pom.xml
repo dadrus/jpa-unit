@@ -11,6 +11,10 @@
 
   <artifactId>jpa-unit-concordion</artifactId>
   <name>JPA Unit - Concordion Extension</name>
+  
+  <properties>
+    <maven.deploy.skip>false</maven.deploy.skip>
+  </properties>
 
   <dependencies>
     <dependency>

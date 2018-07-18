@@ -11,6 +11,10 @@
 
   <artifactId>jpa-unit-cucumber</artifactId>
   <name>JPA Unit - Cucumber Extension</name>
+  
+  <properties>
+    <maven.deploy.skip>false</maven.deploy.skip>
+  </properties>
 
   <dependencies>
     <dependency>
