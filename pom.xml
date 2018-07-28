@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -42,8 +44,6 @@
     <plugin.version.build-helper>3.0.0</plugin.version.build-helper>
     <plugin.version.scm>1.10.0</plugin.version.scm>
     <plugin.version.flatten>1.0.1</plugin.version.flatten>
-  
-    <maven.deploy.skip>true</maven.deploy.skip>
   </properties>
 
   <scm>
@@ -170,7 +170,8 @@
             <!-- <value>org.sonar.java.jacoco.JUnitListener</value> -->
             <!-- </property> -->
             <!-- </properties> -->
-            <!-- Let's put failsafe reports with surefire to have access to tests failures/success reports in sonar -->
+            <!-- Let's put failsafe reports with surefire to have access to tests failures/success reports 
+              in sonar -->
             <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
             <testSourceDirectory>${integrationSourceDirectory}/java</testSourceDirectory>
           </configuration>
@@ -254,19 +255,25 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>${plugin.verions.deploy}</version>
+          <executions>
+            <execution>
+              <id>default-deploy</id>
+              <phase>none</phase>
+            </execution>
+          </executions>
         </plugin>
-<!--         <plugin> -->
-<!--           <groupId>org.apache.maven.plugins</groupId> -->
-<!--           <artifactId>maven-release-plugin</artifactId> -->
-<!--           <version>${plugin.version.release}</version> -->
-<!--           <configuration> -->
-<!--             <autoVersionSubmodules>true</autoVersionSubmodules> -->
-<!--             <tagNameFormat>v${project.version}</tagNameFormat> -->
-<!--             <useReleaseProfile>true</useReleaseProfile> -->
-<!--             <releaseProfiles>release</releaseProfiles> -->
-<!--             <goals>deploy</goals> -->
-<!--           </configuration> -->
-<!--         </plugin> -->
+        <!-- <plugin> -->
+        <!-- <groupId>org.apache.maven.plugins</groupId> -->
+        <!-- <artifactId>maven-release-plugin</artifactId> -->
+        <!-- <version>${plugin.version.release}</version> -->
+        <!-- <configuration> -->
+        <!-- <autoVersionSubmodules>true</autoVersionSubmodules> -->
+        <!-- <tagNameFormat>v${project.version}</tagNameFormat> -->
+        <!-- <useReleaseProfile>true</useReleaseProfile> -->
+        <!-- <releaseProfiles>release</releaseProfiles> -->
+        <!-- <goals>deploy</goals> -->
+        <!-- </configuration> -->
+        <!-- </plugin> -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-plugin</artifactId>
@@ -310,8 +317,8 @@
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>${plugin.version.jacoco}</version>
           <executions>
-            <!-- because of powermock usage we cannot just use the on the fly instrumentation to measure coverage of unit 
-              test -->
+            <!-- because of powermock usage we cannot just use the on the fly instrumentation to measure 
+              coverage of unit test -->
             <execution>
               <id>default-instrument</id>
               <goals>
@@ -384,7 +391,8 @@
               </configuration>
             </execution>
             <execution>
-              <!-- Make sure no SNAPSHOT dependencies are used. Only active if snapshotDependencyAllowed is set to false -->
+              <!-- Make sure no SNAPSHOT dependencies are used. Only active if snapshotDependencyAllowed 
+                is set to false -->
               <id>enforce-no-snapshots</id>
               <goals>
                 <goal>enforce</goal>
@@ -422,6 +430,18 @@
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>nexus-staging-maven-plugin</artifactId>
           <version>${plugin.version.nexus-staging}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <serverId>ossrh</serverId>
+            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          </configuration>
+          <executions>
+            <execution>
+              <id>default-deploy</id>
+              <phase>none</phase>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -463,43 +483,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>release</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-
-      <properties>
-        <snapshotDependencyAllowed>false</snapshotDependencyAllowed>
-      </properties>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <extensions>true</extensions>
-            <configuration>
-              <serverId>ossrh</serverId>
-              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-              <autoReleaseAfterClose>true</autoReleaseAfterClose>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>flatten-maven-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
 </project>

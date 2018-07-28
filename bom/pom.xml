@@ -13,10 +13,6 @@
   <artifactId>jpa-unit-bom</artifactId>
   <packaging>pom</packaging>
   <name>JPA Unit - Bill of Materials (BOM)</name>
-  
-  <properties>
-    <maven.deploy.skip>false</maven.deploy.skip>
-  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -65,20 +61,60 @@
 
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>flatten-maven-plugin</artifactId>
-          <configuration>
-            <updatePomFile>true</updatePomFile>
-            <flattenMode>ossrh</flattenMode>
-            <pomElements>
-              <dependencyManagement>resolve</dependencyManagement>
-            </pomElements>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+          <flattenMode>ossrh</flattenMode>
+          <pomElements>
+            <dependencyManagement>resolve</dependencyManagement>
+          </pomElements>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-deploy</id>
+            <phase>deploy</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+
+      <properties>
+        <snapshotDependencyAllowed>false</snapshotDependencyAllowed>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-deploy</id>
+                <phase>deploy</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
