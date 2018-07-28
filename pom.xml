@@ -15,7 +15,7 @@
   <inceptionYear>2016</inceptionYear>
 
   <properties>
-    <revision>0.5.0</revision>
+    <revision>0.6.0-SNAPSHOT</revision>
 
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
