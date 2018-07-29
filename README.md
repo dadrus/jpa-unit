@@ -2,7 +2,7 @@
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=com.github.dadrus.jpa-unit%3Ajpa-unit&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
 [![Coverage Status](https://sonarcloud.io/api/project_badges/measure?project=com.github.dadrus.jpa-unit%3Ajpa-unit&metric=coverage)](https://sonarcloud.io/dashboard?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=com.github.dadrus.jpa-unit%3Ajpa-unit&metric=sqale_index)](https://sonarcloud.io/component_measures/?id=com.github.dadrus.jpa-unit%3Ajpa-unit) 
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.dadrus.jpa-unit/jpa-unit.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.dadrus.jpa-unit%22)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.dadrus.jpa-unit/jpa-unit-core.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.dadrus.jpa-unit%22)
 
 # JPA Unit 
 
