@@ -171,8 +171,8 @@ public class MyTest {
 To control the test behavior, JPA Unit comes with a handful of annotations and some utility classes. All these annotations can be applied on class and method level, where the latter always takes precedence over the former.
 JPA Unit follows the concept of configuration by exception whenever possible. To support this concept its API consists mainly of annotations with meaningful defaults (if the annotation is not present) used to drive the test. 
 
-- `@ApplyScriptsAfter`, which can be used to define arbitrary scripts which shall be executed before running the test method.
-- `@ApplyScriptsBefore`, which can be used to define arbitrary scripts which shall be executed after running the test method.
+- `@ApplyScriptsBefore`, which can be used to define arbitrary scripts which shall be executed before running the test method.
+- `@ApplyScriptsAfter`, which can be used to define arbitrary scripts which shall be executed after running the test method.
 - `@Bootstrapping`, which can be used to define a method executed only once before the bootstrapping of a JPA provider happens. This can be handy e.g. to setup a test specific DB schema. 
 - `@Cleanup`, which can be used to define when the database cleanup should be triggered.
 - `@CleanupCache`, which can be used to define whether and when the JPA L2 cache should be evicted.
@@ -180,7 +180,7 @@ JPA Unit follows the concept of configuration by exception whenever possible. To
 - `@ExpectedDataSets`, which provides the ability to verify the state of underlying database using data sets. Verification is invoked after test's execution.
 - `@InitialDataSets`, which provides the ability to seed the database using data sets before test method execution.
 - `@Transactional`, which can be used to control the automatic transaction management for a test if supported by the chosen JPA provider for the chosen database. Otherwise it does not have any effect.
-- `TransactionSupport`, comes in handy when fine graned transaction management is required or automatic transaction management is disabled. As for the `@Transactional` annotation, if not supported by the chosen JPA provider for the chosen database, the usage of these functions has no effect.
+- `TransactionSupport`, comes in handy when fine grained transaction management is required or automatic transaction management is disabled. As for the `@Transactional` annotation, if not supported by the chosen JPA provider for the chosen database, the usage of these functions has no effect.
 
 All these elements are described in more detail below.
 
