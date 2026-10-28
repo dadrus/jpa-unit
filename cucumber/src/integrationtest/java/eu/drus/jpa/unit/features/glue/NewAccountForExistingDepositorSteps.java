@@ -5,9 +5,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;

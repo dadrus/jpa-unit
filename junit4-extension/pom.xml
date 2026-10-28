@@ -21,8 +21,8 @@
     </dependency>
     
     <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.1-api</artifactId>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -39,17 +39,7 @@
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
+      <artifactId>hamcrest</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -75,13 +65,6 @@
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>eclipselink</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jacoco</groupId>
-      <artifactId>org.jacoco.agent</artifactId>
-      <version>${version.jacoco}</version>
-      <classifier>runtime</classifier>
       <scope>test</scope>
     </dependency>
   </dependencies>

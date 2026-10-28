@@ -31,10 +31,10 @@ public class PersistenceUnitDescriptorTest {
     private static final String PASSWORD_VALUE = "test";
     private static final String URL_VALUE = "jdbc:h2:mem:serviceEnablerDB;DB_CLOSE_DELAY=-1";
     private static final String DRIVER_VALUE = "org.h2.Driver";
-    private static final String ATTRIBUTE_PASSWORD = "javax.persistence.jdbc.password";
-    private static final String ATTRIBUTE_USER = "javax.persistence.jdbc.user";
-    private static final String ATTRIBUTE_URL = "javax.persistence.jdbc.url";
-    private static final String ATTRIBUTE_DRIVER = "javax.persistence.jdbc.driver";
+    private static final String ATTRIBUTE_PASSWORD = "jakarta.persistence.jdbc.password";
+    private static final String ATTRIBUTE_USER = "jakarta.persistence.jdbc.user";
+    private static final String ATTRIBUTE_URL = "jakarta.persistence.jdbc.url";
+    private static final String ATTRIBUTE_DRIVER = "jakarta.persistence.jdbc.driver";
     private static final String PERSISTENCE_UNIT_NAME = "pu-name";
     private static final String PROVIDER_CLASS = "some class name";
 

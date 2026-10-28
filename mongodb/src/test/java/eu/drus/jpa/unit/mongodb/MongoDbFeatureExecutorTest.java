@@ -4,8 +4,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -190,7 +190,6 @@ public class MongoDbFeatureExecutorTest {
         final MongoCursor<String> iterator = mock(MongoCursor.class);
         when(expectedDataSets.strict()).thenReturn(Boolean.FALSE);
         when(expectedDataSets.value()).thenReturn(new String[] {});
-        when(expectedDataSets.orderBy()).thenReturn(new String[] {});
         when(expectedDataSets.excludeColumns()).thenReturn(new String[] {});
         when(connection.listCollectionNames()).thenReturn(collectionIterable);
         when(collectionIterable.iterator()).thenReturn(iterator);

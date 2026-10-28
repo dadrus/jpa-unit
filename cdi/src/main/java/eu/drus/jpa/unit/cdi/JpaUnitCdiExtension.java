@@ -1,9 +1,9 @@
 package eu.drus.jpa.unit.cdi;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessProducer;
-import javax.persistence.EntityManager;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.ProcessProducer;
+import jakarta.persistence.EntityManager;
 
 public class JpaUnitCdiExtension implements Extension {
 

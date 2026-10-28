@@ -2,8 +2,8 @@ package eu.drus.jpa.unit.test;
 
 import static org.junit.Assert.assertNotNull;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;

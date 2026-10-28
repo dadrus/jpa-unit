@@ -1,31 +1,28 @@
 package eu.drus.jpa.unit.api;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.notNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.MockitoAnnotations;
 
 import eu.drus.jpa.unit.core.DecoratorRegistrar;
 import eu.drus.jpa.unit.core.JpaUnitContext;
@@ -34,11 +31,6 @@ import eu.drus.jpa.unit.spi.TestClassDecorator;
 import eu.drus.jpa.unit.spi.TestInvocation;
 import eu.drus.jpa.unit.spi.TestMethodDecorator;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore("org.mockito.*")
-@PrepareForTest({
-        DecoratorRegistrar.class, JpaUnitContext.class
-})
 public class JpaUnitTest {
 
     @Mock
@@ -61,14 +53,25 @@ public class JpaUnitTest {
 
     private final Class<?> testClass = getClass();
 
-    @Before
+    private AutoCloseable mockHolder;
+
+    private MockedStatic<DecoratorRegistrar> decoratorRegistrarMock;
+
+    private MockedStatic<JpaUnitContext> jpaUnitContextMock;
+
+    @BeforeEach
     public void prepareMocks() throws Exception {
-        mockStatic(DecoratorRegistrar.class, JpaUnitContext.class);
+        mockHolder = MockitoAnnotations.openMocks(this);
 
-        when(DecoratorRegistrar.getClassDecorators()).thenReturn(Arrays.asList(firstClassDecorator, secondClassDecorator));
-        when(DecoratorRegistrar.getMethodDecorators()).thenReturn(Arrays.asList(firstMethodDecorator, secondMethodDecorator));
+        decoratorRegistrarMock = mockStatic(DecoratorRegistrar.class);
+        jpaUnitContextMock = mockStatic(JpaUnitContext.class);
 
-        when(JpaUnitContext.getInstance(any(Class.class))).thenReturn(jpaUnitContext);
+        decoratorRegistrarMock.when(() -> DecoratorRegistrar.getClassDecorators())
+                .thenReturn(Arrays.asList(firstClassDecorator, secondClassDecorator));
+        decoratorRegistrarMock.when(() -> DecoratorRegistrar.getMethodDecorators())
+                .thenReturn(Arrays.asList(firstMethodDecorator, secondMethodDecorator));
+
+        jpaUnitContextMock.when(() -> JpaUnitContext.getInstance(any(Class.class))).thenReturn(jpaUnitContext);
 
         when(firstClassDecorator.isConfigurationSupported(any(ExecutionContext.class))).thenReturn(Boolean.TRUE);
         when(secondClassDecorator.isConfigurationSupported(any(ExecutionContext.class))).thenReturn(Boolean.TRUE);
@@ -87,6 +90,13 @@ public class JpaUnitTest {
         when(context.getTestInstance()).thenReturn(Optional.of(new Object()));
     }
 
+    @AfterEach
+    public void releaseMocks() throws Exception {
+        jpaUnitContextMock.close();
+        decoratorRegistrarMock.close();
+        mockHolder.close();
+    }
+
     @Test
     public void testBeforeAllTestDecoratorExecutionOrder() throws Exception {
         // GIVEN
@@ -100,12 +110,12 @@ public class JpaUnitTest {
 
         final InOrder order = inOrder(firstClassDecorator, secondClassDecorator);
         order.verify(firstClassDecorator).beforeAll(invocationCaptor.capture());
-        assertThat(invocationCaptor.getValue().getTestClass(), equalTo(testClass));
+        assertEquals(testClass, invocationCaptor.getValue().getTestClass());
 
         order.verify(secondClassDecorator).beforeAll(invocationCaptor.capture());
-        assertThat(invocationCaptor.getValue().getTestClass(), equalTo(testClass));
+        assertEquals(testClass, invocationCaptor.getValue().getTestClass());
 
-        verifyZeroInteractions(firstMethodDecorator, secondMethodDecorator);
+        verifyNoInteractions(firstMethodDecorator, secondMethodDecorator);
     }
 
     @Test
@@ -121,12 +131,12 @@ public class JpaUnitTest {
 
         final InOrder order = inOrder(secondClassDecorator, firstClassDecorator);
         order.verify(secondClassDecorator).afterAll(invocationCaptor.capture());
-        assertThat(invocationCaptor.getValue().getTestClass(), equalTo(testClass));
+        assertEquals(testClass, invocationCaptor.getValue().getTestClass());
 
         order.verify(firstClassDecorator).afterAll(invocationCaptor.capture());
-        assertThat(invocationCaptor.getValue().getTestClass(), equalTo(testClass));
+        assertEquals(testClass, invocationCaptor.getValue().getTestClass());
 
-        verifyZeroInteractions(firstMethodDecorator, secondMethodDecorator);
+        verifyNoInteractions(firstMethodDecorator, secondMethodDecorator);
     }
 
     @Test
@@ -141,7 +151,7 @@ public class JpaUnitTest {
         final InOrder order = inOrder(firstMethodDecorator, secondMethodDecorator);
         order.verify(firstMethodDecorator).beforeTest(notNull(TestInvocation.class));
         order.verify(secondMethodDecorator).beforeTest(notNull(TestInvocation.class));
-        verifyZeroInteractions(firstClassDecorator, secondClassDecorator);
+        verifyNoInteractions(firstClassDecorator, secondClassDecorator);
     }
 
     @Test
@@ -156,13 +166,13 @@ public class JpaUnitTest {
         final InOrder order = inOrder(firstMethodDecorator, secondMethodDecorator);
         order.verify(secondMethodDecorator).afterTest(notNull(TestInvocation.class));
         order.verify(firstMethodDecorator).afterTest(notNull(TestInvocation.class));
-        verifyZeroInteractions(firstClassDecorator, secondClassDecorator);
+        verifyNoInteractions(firstClassDecorator, secondClassDecorator);
     }
 
     @Test
     public void testBeforeEachInvocationArguments() throws Exception {
         // GIVEN
-        when(DecoratorRegistrar.getMethodDecorators()).thenReturn(Arrays.asList(firstMethodDecorator));
+        decoratorRegistrarMock.when(() -> DecoratorRegistrar.getMethodDecorators()).thenReturn(Arrays.asList(firstMethodDecorator));
         final JpaUnit unit = new JpaUnit();
 
         // WHEN
@@ -174,17 +184,17 @@ public class JpaUnitTest {
 
         final TestInvocation invocation = invocationCaptor.getValue();
         assertNotNull(invocation.getContext());
-        assertThat(invocation.getTestMethod().get(), equalTo(getClass().getMethod("prepareMocks")));
-        assertThat(invocation.getTestClass(), equalTo(getClass()));
+        assertEquals(getClass().getMethod("prepareMocks"), invocation.getTestMethod().get());
+        assertEquals(getClass(), invocation.getTestClass());
         assertFalse(invocation.getException().isPresent());
-        assertThat(invocation.getFeatureResolver().shouldCleanupAfter(), equalTo(Boolean.TRUE));
-        assertThat(invocation.getTestInstance(), notNullValue());
+        assertEquals(Boolean.TRUE, invocation.getFeatureResolver().shouldCleanupAfter());
+        assertNotNull(invocation.getTestInstance());
     }
 
     @Test
     public void testAfterEachInvocationArguments() throws Exception {
         // GIVEN
-        when(DecoratorRegistrar.getMethodDecorators()).thenReturn(Arrays.asList(firstMethodDecorator));
+        decoratorRegistrarMock.when(() -> DecoratorRegistrar.getMethodDecorators()).thenReturn(Arrays.asList(firstMethodDecorator));
         final JpaUnit unit = new JpaUnit();
 
         // WHEN
@@ -196,10 +206,10 @@ public class JpaUnitTest {
 
         final TestInvocation invocation = invocationCaptor.getValue();
         assertNotNull(invocation.getContext());
-        assertThat(invocation.getTestMethod().get(), equalTo(getClass().getMethod("prepareMocks")));
-        assertThat(invocation.getTestClass(), equalTo(getClass()));
+        assertEquals(getClass().getMethod("prepareMocks"), invocation.getTestMethod().get());
+        assertEquals(getClass(), invocation.getTestClass());
         assertFalse(invocation.getException().isPresent());
-        assertThat(invocation.getFeatureResolver().shouldCleanupAfter(), equalTo(Boolean.TRUE));
-        assertThat(invocation.getTestInstance(), notNullValue());
+        assertEquals(Boolean.TRUE, invocation.getFeatureResolver().shouldCleanupAfter());
+        assertNotNull(invocation.getTestInstance());
     }
 }

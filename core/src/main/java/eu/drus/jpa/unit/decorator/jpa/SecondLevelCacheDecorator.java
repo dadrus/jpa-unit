@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.decorator.jpa;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;

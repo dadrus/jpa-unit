@@ -10,11 +10,11 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceProperty;
-import javax.persistence.PersistenceUnit;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceProperty;
+import jakarta.persistence.PersistenceUnit;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -387,11 +387,11 @@ public class JpaUnitRuleTest {
         final JAnnotationUse jAnnotation = emField.annotate(PersistenceContext.class);
         jAnnotation.param("unitName", "test-unit-1");
         final JAnnotationArrayMember propArray = jAnnotation.paramArray("properties");
-        propArray.annotate(PersistenceProperty.class).param("name", "javax.persistence.jdbc.url").param("value",
+        propArray.annotate(PersistenceProperty.class).param("name", "jakarta.persistence.jdbc.url").param("value",
                 "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
-        propArray.annotate(PersistenceProperty.class).param("name", "javax.persistence.jdbc.driver").param("value", "org.h2.Driver");
-        propArray.annotate(PersistenceProperty.class).param("name", "javax.persistence.jdbc.password").param("value", "test");
-        propArray.annotate(PersistenceProperty.class).param("name", "javax.persistence.jdbc.user").param("value", "test");
+        propArray.annotate(PersistenceProperty.class).param("name", "jakarta.persistence.jdbc.driver").param("value", "org.h2.Driver");
+        propArray.annotate(PersistenceProperty.class).param("name", "jakarta.persistence.jdbc.password").param("value", "test");
+        propArray.annotate(PersistenceProperty.class).param("name", "jakarta.persistence.jdbc.user").param("value", "test");
         final JMethod jMethod = jClass.method(JMod.PUBLIC, jCodeModel.VOID, "testMethod");
         jMethod.annotate(Test.class);
 

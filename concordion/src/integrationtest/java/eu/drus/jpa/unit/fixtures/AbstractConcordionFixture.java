@@ -1,8 +1,8 @@
 package eu.drus.jpa.unit.fixtures;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
 
 public abstract class AbstractConcordionFixture {
 

@@ -45,7 +45,6 @@ public class YamlDataSetProducer extends DataSetProducer {
                 addImplicitResolver(Tag.MERGE, MERGE, "<");
                 addImplicitResolver(Tag.NULL, NULL, "~nN\0");
                 addImplicitResolver(Tag.NULL, EMPTY, null);
-                addImplicitResolver(Tag.VALUE, VALUE, "=");
                 addImplicitResolver(Tag.YAML, YAML, "!&*");
             }
         });

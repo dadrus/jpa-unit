@@ -1,7 +1,7 @@
 package eu.drus.jpa.unit.test.model;
 
-import javax.persistence.Basic;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Recipient {

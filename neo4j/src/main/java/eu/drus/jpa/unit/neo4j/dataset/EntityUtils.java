@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import com.google.common.base.CaseFormat;
 

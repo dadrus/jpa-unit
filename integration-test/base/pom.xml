@@ -56,15 +56,7 @@
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
+      <artifactId>hamcrest</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -96,9 +88,14 @@
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-runner</artifactId>
+      <artifactId>junit-platform-suite</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-suite-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+<dependency>
       <groupId>info.cukes</groupId>
       <artifactId>cucumber-java</artifactId>
     </dependency>
@@ -112,13 +109,31 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.1-api</artifactId>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-test-control-module-impl</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jpa_2.2_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-all</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>openwebbeans-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>openwebbeans-spi</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.cdictrl</groupId>

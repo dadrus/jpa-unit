@@ -6,7 +6,7 @@
 
 # JPA Unit 
 
-Implements [JUnit 4](http://junit.org/junit4) runner and rule, as well as [JUnit 5](http://junit.org/junit5) extension to enable easy testing of javax.persistence entities with an arbitrary persistence provider. Both JPA 2.0, as well as JPA 2.1 is supported (See [Issues](https://github.com/dadrus/jpa-unit/issues) for limitations).
+Implements [JUnit 4](http://junit.org/junit4) runner and rule, as well as [JUnit 5](http://junit.org/junit5) extension to enable easy testing of jakarta.persistence entities with an arbitrary persistence provider. It targets JPA 3.0 (Jakarta EE 9) and needs Java 11 or later (See [Issues](https://github.com/dadrus/jpa-unit/issues) for limitations).
 
 ## Features
 
@@ -156,7 +156,7 @@ For example:
 @ExtendWith(JpaUnit.class)
 public class MyTest {
 
-    @PersistenceContext(unitName = "my-test-unit", properties = {@PersistenceProperty(name = "javax.persistence.jdbc.url", value = "${test.jdbc.url}")})
+    @PersistenceContext(unitName = "my-test-unit", properties = {@PersistenceProperty(name = "jakarta.persistence.jdbc.url", value = "${test.jdbc.url}")})
     private EntityManager manager;
 	
     @Test
@@ -501,10 +501,10 @@ For all relational databases the `jpa-unit-rdbms` dependency needs to be added:
 ```
 
 Here JPA Unit makes use of the standard 
-- `javax.persistence.jdbc.driver`,
-- `javax.persistence.jdbc.url`,
-- `javax.persistence.jdbc.user` and
-- `javax.persistence.jdbc.password`
+- `jakarta.persistence.jdbc.driver`,
+- `jakarta.persistence.jdbc.url`,
+- `jakarta.persistence.jdbc.user` and
+- `jakarta.persistence.jdbc.password`
 
 The last two are optional (depending on the requirements of the underlying database).
 
@@ -513,11 +513,11 @@ properties to access the database directly.
 Here an example of a `persistence.xml` file which configures [EclipseLink](http://www.eclipse.org/eclipselink) and [H2](http://www.h2database.com/html/main.html) database:
 
 ```xml
-<persistence version="2.1"
-  xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
+<persistence version="3.0"
+  xmlns="https://jakarta.ee/xml/ns/persistence" 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence 
-    http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/persistence/persistence_2_1.xsd">
+  xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence 
+    https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
 	
   <persistence-unit name="my-test-unit" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
@@ -528,11 +528,11 @@ Here an example of a `persistence.xml` file which configures [EclipseLink](http:
       <property name="eclipselink.ddl-generation" value="drop-and-create-tables" />
       <property name="eclipselink.target-database" 
           value="org.eclipse.persistence.platform.database.H2Platform" />
-      <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-      <property name="javax.persistence.jdbc.url" 
+      <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver" />
+      <property name="jakarta.persistence.jdbc.url" 
           value="jdbc:h2:mem:serviceEnablerDB;DB_CLOSE_DELAY=-1" />
-      <property name="javax.persistence.jdbc.user" value="test" />
-      <property name="javax.persistence.jdbc.password" value="test" />
+      <property name="jakarta.persistence.jdbc.user" value="test" />
+      <property name="jakarta.persistence.jdbc.password" value="test" />
     </properties>
   </persistence-unit>
 </persistence>

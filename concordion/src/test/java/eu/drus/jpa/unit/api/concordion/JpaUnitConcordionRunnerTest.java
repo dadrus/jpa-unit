@@ -4,25 +4,24 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
 
 import org.concordion.api.Resource;
 import org.concordion.api.SpecificationLocator;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.model.InitializationError;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.concordion.EnhancedProxy;
 import eu.drus.jpa.unit.core.JpaUnitContext;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(JpaUnitContext.class)
+@RunWith(MockitoJUnitRunner.class)
 public class JpaUnitConcordionRunnerTest {
 
     public static class TestFixture {}
@@ -30,10 +29,17 @@ public class JpaUnitConcordionRunnerTest {
     @Mock
     private JpaUnitContext context;
 
+    private MockedStatic<JpaUnitContext> jpaUnitContextMock;
+
     @Before
     public void prepareTest() throws Throwable {
-        mockStatic(JpaUnitContext.class);
-        when(JpaUnitContext.getInstance(any(Class.class))).thenReturn(context);
+        jpaUnitContextMock = mockStatic(JpaUnitContext.class);
+        jpaUnitContextMock.when(() -> JpaUnitContext.getInstance(any(Class.class))).thenReturn(context);
+    }
+
+    @After
+    public void releaseJpaUnitContext() {
+        jpaUnitContextMock.close();
     }
 
     @Test

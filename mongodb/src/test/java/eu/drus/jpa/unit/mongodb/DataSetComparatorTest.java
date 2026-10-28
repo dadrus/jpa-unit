@@ -4,11 +4,12 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -23,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -101,8 +102,8 @@ public class DataSetComparatorTest {
         final MongoCursor<String> iterator = mock(MongoCursor.class);
         when(mongoDatabase.listCollectionNames()).thenReturn(collectionIterable);
         when(collectionIterable.iterator()).thenReturn(iterator);
-        when(iterator.hasNext()).thenAnswer((final InvocationOnMock invocation) -> collectionNamesIt.hasNext());
-        when(iterator.next()).thenAnswer((final InvocationOnMock invocation) -> collectionNamesIt.next());
+        lenient().when(iterator.hasNext()).thenAnswer((final InvocationOnMock invocation) -> collectionNamesIt.hasNext());
+        lenient().when(iterator.next()).thenAnswer((final InvocationOnMock invocation) -> collectionNamesIt.next());
 
         final MongoCursor<Document> documentIterator = mock(MongoCursor.class);
         when(documentIterator.hasNext()).thenReturn(Boolean.FALSE);
@@ -111,7 +112,7 @@ public class DataSetComparatorTest {
         when(findIterable.iterator()).thenReturn(documentIterator);
 
         final MongoCollection<Document> collection = mock(MongoCollection.class);
-        when(collection.count()).thenReturn(0l);
+        lenient().when(collection.count()).thenReturn(0l);
         when(collection.find(any(Document.class))).thenReturn(findIterable);
         when(collection.find()).thenReturn(findIterable);
         when(mongoDatabase.getCollection(anyString())).thenReturn(collection);
@@ -144,8 +145,8 @@ public class DataSetComparatorTest {
         final List<String> currentCollectionNames = Arrays.asList(COLLECTION_NAME_1);
         final Iterator<String> currentCollectionNamesIt = currentCollectionNames.iterator();
         final MongoCursor<String> currentCollectionNamesCursor = mock(MongoCursor.class);
-        when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
-        when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
+        lenient().when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
+        lenient().when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
         doAnswer((final InvocationOnMock invocation) -> {
             final Consumer<String> c = (Consumer<String>) invocation.getArguments()[0];
             for (final String name : currentCollectionNames) {
@@ -166,7 +167,7 @@ public class DataSetComparatorTest {
         when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
 
         final MongoCollection<Document> collectionWithoutEntries = mock(MongoCollection.class);
-        when(collectionWithoutEntries.count()).thenReturn(0l);
+        lenient().when(collectionWithoutEntries.count()).thenReturn(0l);
         when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
         when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
         when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
@@ -174,17 +175,17 @@ public class DataSetComparatorTest {
         final List<Document> currentDocuments = Arrays.asList(DOCUMENT_1);
         final Iterator<Document> currentDocumentsIt = currentDocuments.iterator();
         final MongoCursor<Document> documentIteratorWithEntries = mock(MongoCursor.class);
-        when(documentIteratorWithEntries.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.hasNext());
-        when(documentIteratorWithEntries.next()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.next());
+        lenient().when(documentIteratorWithEntries.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.hasNext());
+        lenient().when(documentIteratorWithEntries.next()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.next());
 
         final FindIterable<Document> findIterableWithEntries = mock(FindIterable.class);
-        when(findIterableWithEntries.iterator()).thenReturn(documentIteratorWithEntries);
+        lenient().when(findIterableWithEntries.iterator()).thenReturn(documentIteratorWithEntries);
 
         final MongoCollection<Document> collectionWithEntries = mock(MongoCollection.class);
-        when(collectionWithEntries.count()).thenReturn(1l);
-        when(collectionWithEntries.find(any(Document.class))).thenReturn(findIterableWithEntries);
-        when(collectionWithEntries.find()).thenReturn(findIterableWithEntries);
-        when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collectionWithEntries);
+        lenient().when(collectionWithEntries.count()).thenReturn(1l);
+        lenient().when(collectionWithEntries.find(any(Document.class))).thenReturn(findIterableWithEntries);
+        lenient().when(collectionWithEntries.find()).thenReturn(findIterableWithEntries);
+        lenient().when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collectionWithEntries);
 
         final String[] toExclude = new String[] {};
         final List<Document> values2 = Arrays.asList(DOCUMENT_2);
@@ -237,7 +238,7 @@ public class DataSetComparatorTest {
         when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
 
         final MongoCollection<Document> collectionWithoutEntries = mock(MongoCollection.class);
-        when(collectionWithoutEntries.count()).thenReturn(0l);
+        lenient().when(collectionWithoutEntries.count()).thenReturn(0l);
         when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
         when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
         when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
@@ -245,17 +246,17 @@ public class DataSetComparatorTest {
         final List<Document> currentDocuments = Arrays.asList(DOCUMENT_1);
         final Iterator<Document> currentDocumentsIt = currentDocuments.iterator();
         final MongoCursor<Document> documentIteratorWithEntries = mock(MongoCursor.class);
-        when(documentIteratorWithEntries.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.hasNext());
-        when(documentIteratorWithEntries.next()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.next());
+        lenient().when(documentIteratorWithEntries.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.hasNext());
+        lenient().when(documentIteratorWithEntries.next()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.next());
 
         final FindIterable<Document> findIterableWithEntries = mock(FindIterable.class);
-        when(findIterableWithEntries.iterator()).thenReturn(documentIteratorWithEntries);
+        lenient().when(findIterableWithEntries.iterator()).thenReturn(documentIteratorWithEntries);
 
         final MongoCollection<Document> collectionWithEntries = mock(MongoCollection.class);
-        when(collectionWithEntries.count()).thenReturn(1l);
-        when(collectionWithEntries.find(any(Document.class))).thenReturn(findIterableWithEntries);
-        when(collectionWithEntries.find()).thenReturn(findIterableWithEntries);
-        when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collectionWithEntries);
+        lenient().when(collectionWithEntries.count()).thenReturn(1l);
+        lenient().when(collectionWithEntries.find(any(Document.class))).thenReturn(findIterableWithEntries);
+        lenient().when(collectionWithEntries.find()).thenReturn(findIterableWithEntries);
+        lenient().when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collectionWithEntries);
 
         final String[] toExclude = new String[] {};
         final List<Document> values2 = Arrays.asList(DOCUMENT_2);
@@ -287,8 +288,8 @@ public class DataSetComparatorTest {
         final List<String> currentCollectionNames = Arrays.asList(COLLECTION_NAME_1, COLLECTION_NAME_2);
         final Iterator<String> currentCollectionNamesIt = currentCollectionNames.iterator();
         final MongoCursor<String> currentCollectionNamesCursor = mock(MongoCursor.class);
-        when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
-        when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
+        lenient().when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
+        lenient().when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
         doAnswer((final InvocationOnMock invocation) -> {
             final Consumer<String> c = (Consumer<String>) invocation.getArguments()[0];
             for (final String name : currentCollectionNames) {
@@ -309,7 +310,7 @@ public class DataSetComparatorTest {
         when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
 
         final MongoCollection<Document> collectionWithoutEntries = mock(MongoCollection.class);
-        when(collectionWithoutEntries.count()).thenReturn(0l);
+        lenient().when(collectionWithoutEntries.count()).thenReturn(0l);
         when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
         when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
         when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
@@ -317,17 +318,17 @@ public class DataSetComparatorTest {
         final List<Document> currentDocuments = Arrays.asList(DOCUMENT_1, DOCUMENT_2);
         final Iterator<Document> currentDocumentsIt = currentDocuments.iterator();
         final MongoCursor<Document> documentIteratorWithEntries = mock(MongoCursor.class);
-        when(documentIteratorWithEntries.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.hasNext());
-        when(documentIteratorWithEntries.next()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.next());
+        lenient().when(documentIteratorWithEntries.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.hasNext());
+        lenient().when(documentIteratorWithEntries.next()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.next());
 
         final FindIterable<Document> findIterableWithEntries = mock(FindIterable.class);
-        when(findIterableWithEntries.iterator()).thenReturn(documentIteratorWithEntries);
+        lenient().when(findIterableWithEntries.iterator()).thenReturn(documentIteratorWithEntries);
 
         final MongoCollection<Document> collectionWithEntries = mock(MongoCollection.class);
-        when(collectionWithEntries.count()).thenReturn(1l);
-        when(collectionWithEntries.find(any(Document.class))).thenReturn(findIterableWithEntries);
-        when(collectionWithEntries.find()).thenReturn(findIterableWithEntries);
-        when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collectionWithEntries);
+        lenient().when(collectionWithEntries.count()).thenReturn(1l);
+        lenient().when(collectionWithEntries.find(any(Document.class))).thenReturn(findIterableWithEntries);
+        lenient().when(collectionWithEntries.find()).thenReturn(findIterableWithEntries);
+        lenient().when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collectionWithEntries);
 
         final String[] toExclude = new String[] {};
         final Document expectedDataSet = new Document().append(COLLECTION_NAME_2, Arrays.asList(DOCUMENT_2)).append(COLLECTION_NAME_3,
@@ -381,7 +382,7 @@ public class DataSetComparatorTest {
         when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
 
         final MongoCollection<Document> collectionWithoutEntries = mock(MongoCollection.class);
-        when(collectionWithoutEntries.count()).thenReturn(0l);
+        lenient().when(collectionWithoutEntries.count()).thenReturn(0l);
         when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
         when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
         when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
@@ -389,17 +390,17 @@ public class DataSetComparatorTest {
         final List<Document> currentDocuments = Arrays.asList(DOCUMENT_1, DOCUMENT_2);
         final Iterator<Document> currentDocumentsIt = currentDocuments.iterator();
         final MongoCursor<Document> documentIteratorWithEntries = mock(MongoCursor.class);
-        when(documentIteratorWithEntries.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.hasNext());
-        when(documentIteratorWithEntries.next()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.next());
+        lenient().when(documentIteratorWithEntries.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.hasNext());
+        lenient().when(documentIteratorWithEntries.next()).thenAnswer((final InvocationOnMock invocation) -> currentDocumentsIt.next());
 
         final FindIterable<Document> findIterableWithEntries = mock(FindIterable.class);
-        when(findIterableWithEntries.iterator()).thenReturn(documentIteratorWithEntries);
+        lenient().when(findIterableWithEntries.iterator()).thenReturn(documentIteratorWithEntries);
 
         final MongoCollection<Document> collectionWithEntries = mock(MongoCollection.class);
-        when(collectionWithEntries.count()).thenReturn(1l);
-        when(collectionWithEntries.find(any(Document.class))).thenReturn(findIterableWithEntries);
-        when(collectionWithEntries.find()).thenReturn(findIterableWithEntries);
-        when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collectionWithEntries);
+        lenient().when(collectionWithEntries.count()).thenReturn(1l);
+        lenient().when(collectionWithEntries.find(any(Document.class))).thenReturn(findIterableWithEntries);
+        lenient().when(collectionWithEntries.find()).thenReturn(findIterableWithEntries);
+        lenient().when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collectionWithEntries);
 
         final String[] toExclude = new String[] {};
         final Document expectedDataSet = new Document().append(COLLECTION_NAME_2, Arrays.asList(DOCUMENT_2)).append(COLLECTION_NAME_3,
@@ -432,8 +433,8 @@ public class DataSetComparatorTest {
         final List<String> currentCollectionNames = Arrays.asList(COLLECTION_NAME_1);
         final Iterator<String> currentCollectionNamesIt = currentCollectionNames.iterator();
         final MongoCursor<String> currentCollectionNamesCursor = mock(MongoCursor.class);
-        when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
-        when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
+        lenient().when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
+        lenient().when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
         doAnswer((final InvocationOnMock invocation) -> {
             final Consumer<String> c = (Consumer<String>) invocation.getArguments()[0];
             for (final String name : currentCollectionNames) {
@@ -454,7 +455,7 @@ public class DataSetComparatorTest {
         when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
 
         final MongoCollection<Document> collectionWithoutEntries = mock(MongoCollection.class);
-        when(collectionWithoutEntries.count()).thenReturn(0l);
+        lenient().when(collectionWithoutEntries.count()).thenReturn(0l);
         when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
         when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
         when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
@@ -476,7 +477,7 @@ public class DataSetComparatorTest {
         when(findIterableWithEntries.iterator()).thenReturn(documentIteratorWithEntries);
 
         final MongoCollection<Document> collectionWithEntries = mock(MongoCollection.class);
-        when(collectionWithEntries.count()).thenReturn(1l);
+        lenient().when(collectionWithEntries.count()).thenReturn(1l);
         when(collectionWithEntries.find(any(Document.class))).thenReturn(findIterableWithEntries);
         when(collectionWithEntries.find()).thenReturn(findIterableWithEntries);
         when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collectionWithEntries);
@@ -510,8 +511,8 @@ public class DataSetComparatorTest {
         final List<String> currentCollectionNames = Arrays.asList(COLLECTION_NAME_1, COLLECTION_NAME_2);
         final Iterator<String> currentCollectionNamesIt = currentCollectionNames.iterator();
         final MongoCursor<String> currentCollectionNamesCursor = mock(MongoCursor.class);
-        when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
-        when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
+        lenient().when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
+        lenient().when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
         doAnswer((final InvocationOnMock invocation) -> {
             final Consumer<String> c = (Consumer<String>) invocation.getArguments()[0];
             for (final String name : currentCollectionNames) {
@@ -526,23 +527,23 @@ public class DataSetComparatorTest {
         when(mongoDatabase.listCollectionNames()).thenReturn(collectionIterable);
 
         final MongoCursor<Document> documentIteratorWithoutEntries = mock(MongoCursor.class);
-        when(documentIteratorWithoutEntries.hasNext()).thenReturn(Boolean.FALSE);
+        lenient().when(documentIteratorWithoutEntries.hasNext()).thenReturn(Boolean.FALSE);
 
         final FindIterable<Document> findIterableWithoutEntries = mock(FindIterable.class);
-        when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
+        lenient().when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
 
         final MongoCollection<Document> collectionWithoutEntries = mock(MongoCollection.class);
-        when(collectionWithoutEntries.count()).thenReturn(0l);
-        when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
-        when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
-        when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
+        lenient().when(collectionWithoutEntries.count()).thenReturn(0l);
+        lenient().when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
+        lenient().when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
+        lenient().when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
 
         final List<Document> collection1Documents = Arrays.asList(DOCUMENT_1);
         final Iterator<Document> colleciton1DocumentsIt = collection1Documents.iterator();
         final MongoCursor<Document> collection1DocumentIterator = mock(MongoCursor.class);
-        when(collection1DocumentIterator.hasNext()).thenAnswer((final InvocationOnMock invocation) -> colleciton1DocumentsIt.hasNext());
-        when(collection1DocumentIterator.next()).thenAnswer((final InvocationOnMock invocation) -> colleciton1DocumentsIt.next());
-        doAnswer((final InvocationOnMock invocation) -> {
+        lenient().when(collection1DocumentIterator.hasNext()).thenAnswer((final InvocationOnMock invocation) -> colleciton1DocumentsIt.hasNext());
+        lenient().when(collection1DocumentIterator.next()).thenAnswer((final InvocationOnMock invocation) -> colleciton1DocumentsIt.next());
+        lenient().doAnswer((final InvocationOnMock invocation) -> {
             final Consumer<Document> c = (Consumer<Document>) invocation.getArguments()[0];
             for (final Document doc : collection1Documents) {
                 c.accept(doc);
@@ -551,11 +552,11 @@ public class DataSetComparatorTest {
         }).when(collection1DocumentIterator).forEachRemaining(any(Consumer.class));
 
         final FindIterable<Document> collection1Iterable = mock(FindIterable.class);
-        when(collection1Iterable.iterator()).thenReturn(collection1DocumentIterator);
+        lenient().when(collection1Iterable.iterator()).thenReturn(collection1DocumentIterator);
 
         final MongoCollection<Document> collection1 = mock(MongoCollection.class);
         when(collection1.count()).thenReturn(1l);
-        when(collection1.find(any(Document.class))).thenReturn(collection1Iterable);
+        lenient().when(collection1.find(any(Document.class))).thenReturn(collection1Iterable);
         when(collection1.find()).thenReturn(collection1Iterable);
         when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collection1);
 
@@ -576,10 +577,10 @@ public class DataSetComparatorTest {
         when(collection2Iterable.iterator()).thenReturn(collection2DocumentIterator);
 
         final MongoCollection<Document> collection2 = mock(MongoCollection.class);
-        when(collection1.count()).thenReturn(1l);
+        lenient().when(collection1.count()).thenReturn(1l);
         when(collection1.find(any(Document.class))).thenReturn(collection2Iterable);
         when(collection1.find()).thenReturn(collection2Iterable);
-        when(mongoDatabase.getCollection(eq(COLLECTION_NAME_2))).thenReturn(collection2);
+        lenient().when(mongoDatabase.getCollection(eq(COLLECTION_NAME_2))).thenReturn(collection2);
 
         final String[] toExclude = new String[] {};
         final Document expectedDataSet = new Document().append(COLLECTION_NAME_1, Arrays.asList(DOCUMENT_1));
@@ -618,23 +619,23 @@ public class DataSetComparatorTest {
         when(mongoDatabase.listCollectionNames()).thenReturn(collectionIterable);
 
         final MongoCursor<Document> documentIteratorWithoutEntries = mock(MongoCursor.class);
-        when(documentIteratorWithoutEntries.hasNext()).thenReturn(Boolean.FALSE);
+        lenient().when(documentIteratorWithoutEntries.hasNext()).thenReturn(Boolean.FALSE);
 
         final FindIterable<Document> findIterableWithoutEntries = mock(FindIterable.class);
-        when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
+        lenient().when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
 
         final MongoCollection<Document> collectionWithoutEntries = mock(MongoCollection.class);
-        when(collectionWithoutEntries.count()).thenReturn(0l);
-        when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
-        when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
-        when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
+        lenient().when(collectionWithoutEntries.count()).thenReturn(0l);
+        lenient().when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
+        lenient().when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
+        lenient().when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
 
         final List<Document> collection1Documents = Arrays.asList(DOCUMENT_1);
         final Iterator<Document> colleciton1DocumentsIt = collection1Documents.iterator();
         final MongoCursor<Document> collection1DocumentIterator = mock(MongoCursor.class);
-        when(collection1DocumentIterator.hasNext()).thenAnswer((final InvocationOnMock invocation) -> colleciton1DocumentsIt.hasNext());
-        when(collection1DocumentIterator.next()).thenAnswer((final InvocationOnMock invocation) -> colleciton1DocumentsIt.next());
-        doAnswer((final InvocationOnMock invocation) -> {
+        lenient().when(collection1DocumentIterator.hasNext()).thenAnswer((final InvocationOnMock invocation) -> colleciton1DocumentsIt.hasNext());
+        lenient().when(collection1DocumentIterator.next()).thenAnswer((final InvocationOnMock invocation) -> colleciton1DocumentsIt.next());
+        lenient().doAnswer((final InvocationOnMock invocation) -> {
             final Consumer<Document> c = (Consumer<Document>) invocation.getArguments()[0];
             for (final Document doc : collection1Documents) {
                 c.accept(doc);
@@ -643,11 +644,11 @@ public class DataSetComparatorTest {
         }).when(collection1DocumentIterator).forEachRemaining(any(Consumer.class));
 
         final FindIterable<Document> collection1Iterable = mock(FindIterable.class);
-        when(collection1Iterable.iterator()).thenReturn(collection1DocumentIterator);
+        lenient().when(collection1Iterable.iterator()).thenReturn(collection1DocumentIterator);
 
         final MongoCollection<Document> collection1 = mock(MongoCollection.class);
         when(collection1.count()).thenReturn(1l);
-        when(collection1.find(any(Document.class))).thenReturn(collection1Iterable);
+        lenient().when(collection1.find(any(Document.class))).thenReturn(collection1Iterable);
         when(collection1.find()).thenReturn(collection1Iterable);
         when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collection1);
 
@@ -668,10 +669,10 @@ public class DataSetComparatorTest {
         when(collection2Iterable.iterator()).thenReturn(collection2DocumentIterator);
 
         final MongoCollection<Document> collection2 = mock(MongoCollection.class);
-        when(collection1.count()).thenReturn(1l);
+        lenient().when(collection1.count()).thenReturn(1l);
         when(collection1.find(any(Document.class))).thenReturn(collection2Iterable);
         when(collection1.find()).thenReturn(collection2Iterable);
-        when(mongoDatabase.getCollection(eq(COLLECTION_NAME_2))).thenReturn(collection2);
+        lenient().when(mongoDatabase.getCollection(eq(COLLECTION_NAME_2))).thenReturn(collection2);
 
         final String[] toExclude = new String[] {};
         final Document expectedDataSet = new Document().append(COLLECTION_NAME_1, Arrays.asList(DOCUMENT_1));
@@ -700,8 +701,8 @@ public class DataSetComparatorTest {
         final List<String> currentCollectionNames = Arrays.asList(COLLECTION_NAME_1);
         final Iterator<String> currentCollectionNamesIt = currentCollectionNames.iterator();
         final MongoCursor<String> currentCollectionNamesCursor = mock(MongoCursor.class);
-        when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
-        when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
+        lenient().when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
+        lenient().when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
         doAnswer((final InvocationOnMock invocation) -> {
             final Consumer<String> c = (Consumer<String>) invocation.getArguments()[0];
             for (final String name : currentCollectionNames) {
@@ -716,23 +717,23 @@ public class DataSetComparatorTest {
         when(mongoDatabase.listCollectionNames()).thenReturn(collectionIterable);
 
         final MongoCursor<Document> documentIteratorWithoutEntries = mock(MongoCursor.class);
-        when(documentIteratorWithoutEntries.hasNext()).thenReturn(Boolean.FALSE);
+        lenient().when(documentIteratorWithoutEntries.hasNext()).thenReturn(Boolean.FALSE);
 
         final FindIterable<Document> findIterableWithoutEntries = mock(FindIterable.class);
-        when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
+        lenient().when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
 
         final MongoCollection<Document> collectionWithoutEntries = mock(MongoCollection.class);
-        when(collectionWithoutEntries.count()).thenReturn(0l);
-        when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
-        when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
-        when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
+        lenient().when(collectionWithoutEntries.count()).thenReturn(0l);
+        lenient().when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
+        lenient().when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
+        lenient().when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
 
         final List<Document> collection1Documents = Arrays.asList(DOCUMENT_1);
         final Iterator<Document> colleciton1DocumentsIt = collection1Documents.iterator();
         final MongoCursor<Document> collection1DocumentIterator = mock(MongoCursor.class);
         when(collection1DocumentIterator.hasNext()).thenAnswer((final InvocationOnMock invocation) -> colleciton1DocumentsIt.hasNext());
         when(collection1DocumentIterator.next()).thenAnswer((final InvocationOnMock invocation) -> colleciton1DocumentsIt.next());
-        doAnswer((final InvocationOnMock invocation) -> {
+        lenient().doAnswer((final InvocationOnMock invocation) -> {
             final Consumer<Document> c = (Consumer<Document>) invocation.getArguments()[0];
             for (final Document doc : collection1Documents) {
                 c.accept(doc);
@@ -751,8 +752,8 @@ public class DataSetComparatorTest {
         final MongoCollection<Document> collection1 = mock(MongoCollection.class);
         when(collection1.find(any(Document.class))).thenReturn(collection1EmptyIterable);
 
-        when(collection1.count()).thenReturn(1l);
-        when(collection1.find(eq(DOCUMENT_1))).thenReturn(collection1Iterable);
+        lenient().when(collection1.count()).thenReturn(1l);
+        lenient().when(collection1.find(eq(DOCUMENT_1))).thenReturn(collection1Iterable);
         when(collection1.find()).thenReturn(collection1Iterable);
         when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collection1);
 
@@ -784,8 +785,8 @@ public class DataSetComparatorTest {
         final List<String> currentCollectionNames = Arrays.asList(COLLECTION_NAME_1);
         final Iterator<String> currentCollectionNamesIt = currentCollectionNames.iterator();
         final MongoCursor<String> currentCollectionNamesCursor = mock(MongoCursor.class);
-        when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
-        when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
+        lenient().when(currentCollectionNamesCursor.hasNext()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.hasNext());
+        lenient().when(currentCollectionNamesCursor.next()).thenAnswer((final InvocationOnMock invocation) -> currentCollectionNamesIt.next());
         doAnswer((final InvocationOnMock invocation) -> {
             final Consumer<String> c = (Consumer<String>) invocation.getArguments()[0];
             for (final String name : currentCollectionNames) {
@@ -800,16 +801,16 @@ public class DataSetComparatorTest {
         when(mongoDatabase.listCollectionNames()).thenReturn(collectionIterable);
 
         final MongoCursor<Document> documentIteratorWithoutEntries = mock(MongoCursor.class);
-        when(documentIteratorWithoutEntries.hasNext()).thenReturn(Boolean.FALSE);
+        lenient().when(documentIteratorWithoutEntries.hasNext()).thenReturn(Boolean.FALSE);
 
         final FindIterable<Document> findIterableWithoutEntries = mock(FindIterable.class);
-        when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
+        lenient().when(findIterableWithoutEntries.iterator()).thenReturn(documentIteratorWithoutEntries);
 
         final MongoCollection<Document> collectionWithoutEntries = mock(MongoCollection.class);
-        when(collectionWithoutEntries.count()).thenReturn(0l);
-        when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
-        when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
-        when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
+        lenient().when(collectionWithoutEntries.count()).thenReturn(0l);
+        lenient().when(collectionWithoutEntries.find(any(Document.class))).thenReturn(findIterableWithoutEntries);
+        lenient().when(collectionWithoutEntries.find()).thenReturn(findIterableWithoutEntries);
+        lenient().when(mongoDatabase.getCollection(anyString())).thenReturn(collectionWithoutEntries);
 
         final List<Document> collection1Documents = Arrays.asList(DOCUMENT_1);
         final Iterator<Document> colleciton1DocumentsIt = collection1Documents.iterator();
@@ -829,13 +830,13 @@ public class DataSetComparatorTest {
 
         final FindIterable<Document> collection1EmptyIterable = mock(FindIterable.class);
         final MongoCursor<Document> collection1EmptyDocumentIterator = mock(MongoCursor.class);
-        when(collection1EmptyDocumentIterator.hasNext()).thenReturn(Boolean.FALSE);
-        when(collection1EmptyIterable.iterator()).thenReturn(collection1EmptyDocumentIterator);
+        lenient().when(collection1EmptyDocumentIterator.hasNext()).thenReturn(Boolean.FALSE);
+        lenient().when(collection1EmptyIterable.iterator()).thenReturn(collection1EmptyDocumentIterator);
 
         final MongoCollection<Document> collection1 = mock(MongoCollection.class);
-        when(collection1.find(any(Document.class))).thenReturn(collection1EmptyIterable);
+        lenient().when(collection1.find(any(Document.class))).thenReturn(collection1EmptyIterable);
 
-        when(collection1.count()).thenReturn(1l);
+        lenient().when(collection1.count()).thenReturn(1l);
         when(collection1.find(eq(DOCUMENT_1))).thenReturn(collection1Iterable);
         when(collection1.find()).thenReturn(collection1Iterable);
         when(mongoDatabase.getCollection(eq(COLLECTION_NAME_1))).thenReturn(collection1);

@@ -15,10 +15,9 @@
   <inceptionYear>2016</inceptionYear>
 
   <properties>
-    <revision>0.6.0-SNAPSHOT</revision>
+    <revision>1.0.0-SNAPSHOT</revision>
 
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.release>11</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -27,23 +26,23 @@
     <integrationSourceDirectory>src/integrationtest</integrationSourceDirectory>
     <snapshotDependencyAllowed>true</snapshotDependencyAllowed>
 
-    <plugin.version.compiler>3.6.1</plugin.version.compiler>
-    <plugin.version.resources>3.0.2</plugin.version.resources>
-    <plugin.version.source>3.0.1</plugin.version.source>
-    <plugin.version.surefire>2.20</plugin.version.surefire>
-    <plugin.version.failsafe>2.20</plugin.version.failsafe>
-    <plugin.version.jar>3.0.2</plugin.version.jar>
-    <plugin.version.javadoc>2.10.4</plugin.version.javadoc>
-    <plugin.version.jacoco>0.7.9</plugin.version.jacoco>
+    <plugin.version.compiler>3.13.0</plugin.version.compiler>
+    <plugin.version.resources>3.3.1</plugin.version.resources>
+    <plugin.version.source>3.3.1</plugin.version.source>
+    <plugin.version.surefire>3.2.5</plugin.version.surefire>
+    <plugin.version.failsafe>3.2.5</plugin.version.failsafe>
+    <plugin.version.jar>3.4.1</plugin.version.jar>
+    <plugin.version.javadoc>3.6.3</plugin.version.javadoc>
+    <plugin.version.jacoco>0.8.12</plugin.version.jacoco>
     <plugin.version.serviceloader>1.0.7</plugin.version.serviceloader>
-    <plugin.version.enforcer>1.4.1</plugin.version.enforcer>
-    <plugin.version.pgp>1.6</plugin.version.pgp>
-    <plugin.version.nexus-staging>1.6.8</plugin.version.nexus-staging>
-    <plugin.version.release>2.5.3</plugin.version.release>
-    <plugin.verions.deploy>2.8.2</plugin.verions.deploy>
-    <plugin.version.build-helper>3.0.0</plugin.version.build-helper>
-    <plugin.version.scm>1.10.0</plugin.version.scm>
-    <plugin.version.flatten>1.0.1</plugin.version.flatten>
+    <plugin.version.enforcer>3.4.1</plugin.version.enforcer>
+    <plugin.version.pgp>3.1.0</plugin.version.pgp>
+    <plugin.version.nexus-staging>1.6.13</plugin.version.nexus-staging>
+    <plugin.version.release>3.0.1</plugin.version.release>
+    <plugin.verions.deploy>3.1.1</plugin.verions.deploy>
+    <plugin.version.build-helper>3.5.0</plugin.version.build-helper>
+    <plugin.version.scm>2.0.0</plugin.version.scm>
+    <plugin.version.flatten>1.6.0</plugin.version.flatten>
   </properties>
 
   <scm>
@@ -119,6 +118,12 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>${plugin.version.resources}</version>
+          <configuration>
+            <nonFilteredFileExtensions>
+              <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+              <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
+            </nonFilteredFileExtensions>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -126,7 +131,7 @@
           <version>${plugin.version.surefire}</version>
           <configuration>
             <!-- <argLine>${argLine} -Xms256m -Xmx1024m</argLine> -->
-            <aggregate>true</aggregate>
+            <argLine>${argLine} --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED</argLine>
             <skipTests>${skipUnitTests}</skipTests>
             <forkCount>1</forkCount>
             <reuseForks>false</reuseForks>
@@ -153,6 +158,7 @@
           <version>${plugin.version.failsafe}</version>
           <configuration>
             <!-- <argLine>${argLine} -Xms256m -Xmx1024m</argLine> -->
+            <argLine>${argLine} --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED</argLine>
             <skipTests>${skipIntegrationTests}</skipTests>
             <forkCount>1</forkCount>
             <reuseForks>false</reuseForks>
@@ -317,22 +323,14 @@
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>${plugin.version.jacoco}</version>
           <executions>
-            <!-- because of powermock usage we cannot just use the on the fly instrumentation to measure 
-              coverage of unit test -->
             <execution>
-              <id>default-instrument</id>
+              <id>prepare-unit-test-agent</id>
               <goals>
-                <goal>instrument</goal>
+                <goal>prepare-agent</goal>
               </goals>
             </execution>
             <execution>
-              <id>default-restore-instrumented-classes</id>
-              <goals>
-                <goal>restore-instrumented-classes</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>report</id>
+              <id>generate-unit-test-report</id>
               <phase>prepare-package</phase>
               <goals>
                 <goal>report</goal>
@@ -376,15 +374,15 @@
               </configuration>
             </execution>
             <execution>
-              <!-- Make sure Java 1.8 is used -->
-              <id>enforce-java-1.8</id>
+              <!-- Make sure Java 11 is used -->
+              <id>enforce-java-11</id>
               <goals>
                 <goal>enforce</goal>
               </goals>
               <configuration>
                 <rules>
                   <requireJavaVersion>
-                    <version>${maven.compiler.source}</version>
+                    <version>${maven.compiler.release}</version>
                   </requireJavaVersion>
                 </rules>
                 <fail>true</fail>

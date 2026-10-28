@@ -4,10 +4,10 @@ import static eu.drus.jpa.unit.util.ReflectionUtils.injectValue;
 
 import java.lang.reflect.Field;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
 
 import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;

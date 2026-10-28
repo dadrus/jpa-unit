@@ -4,26 +4,22 @@ import java.io.IOException;
 import java.util.Map;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
+import eu.drus.jpa.unit.spi.PersistenceProperties;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
 public class DataNucleusConfiguration extends AbstractConfiguration {
 
     protected static final String DATANUCLEUS_CONNECTION_URL = "datanucleus.ConnectionURL";
-    protected static final String JAVAX_PERSISTENCE_JDBC_URL = "javax.persistence.jdbc.url";
+    private static final String JDBC_URL_SUFFIX = "jdbc.url";
 
     public static class ConfigurationFactoryImpl implements ConfigurationFactory {
 
-        private static Object getProperty(final Map<String, Object> properties, final String name, final String alternativeName) {
-            if (properties.containsKey(name)) {
-                return properties.get(name);
-            } else {
-                return properties.get(alternativeName);
-            }
-        }
-
         @Override
         public boolean isSupported(final PersistenceUnitDescriptor descriptor) {
-            final String url = (String) getProperty(descriptor.getProperties(), JAVAX_PERSISTENCE_JDBC_URL, DATANUCLEUS_CONNECTION_URL);
+            final Map<String, Object> properties = descriptor.getProperties();
+            final String url = PersistenceProperties.containsKey(properties, JDBC_URL_SUFFIX)
+                    ? (String) PersistenceProperties.get(properties, JDBC_URL_SUFFIX)
+                    : (String) properties.get(DATANUCLEUS_CONNECTION_URL);
 
             return url != null ? url.startsWith("neo4j:") : false;
         }

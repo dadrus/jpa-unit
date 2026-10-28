@@ -4,9 +4,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.junit.FixMethodOrder;
 import org.junit.Rule;

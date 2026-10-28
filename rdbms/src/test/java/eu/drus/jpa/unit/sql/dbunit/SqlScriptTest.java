@@ -9,11 +9,11 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.collections.IteratorUtils;
 import org.junit.Test;
 
 import eu.drus.jpa.unit.sql.dbunit.SqlScript;
@@ -44,7 +44,10 @@ public class SqlScriptTest {
         final SqlScript script = new SqlScript(TEST_SCRIPT);
 
         // WHEN
-        final List<String> list = IteratorUtils.toList(script.iterator());
+        final List<String> list = new ArrayList<>();
+        for (final String statement : script) {
+            list.add(statement);
+        }
 
         // THEN
         assertThat(list.size(), equalTo(12));

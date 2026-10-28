@@ -3,8 +3,8 @@ package eu.drus.jpa.unit.rule;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -21,7 +21,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.ExecutionContext;
@@ -54,7 +54,7 @@ public class TestClassStatementTest {
             final String key = (String) invocation.getArguments()[0];
             final Object value = invocation.getArguments()[1];
             return map.put(key, value);
-        }).when(ctx).storeData(anyString(), anyObject());
+        }).when(ctx).storeData(anyString(), any());
 
         statement = new TestClassStatement(ctx, jpaUnit, base, this);
     }

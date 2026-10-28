@@ -3,9 +3,9 @@ package eu.drus.jpa.unit.test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.apache.deltaspike.testcontrol.api.junit.CdiTestRunner;
 import org.junit.Rule;

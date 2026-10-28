@@ -16,10 +16,8 @@
   <modules>
     <module>test-model</module>
     <module>base</module>
-    <module>jpa2.0-eclipselink-test</module>
-    <module>jpa2.1-eclipselink-test</module>
-    <module>jpa2.0-hibernate-test</module>
-    <module>jpa2.1-hibernate-test</module>
+    <module>jpa3.0-eclipselink-test</module>
+    <module>jpa3.0-hibernate-test</module>
   </modules>
 
   <build>

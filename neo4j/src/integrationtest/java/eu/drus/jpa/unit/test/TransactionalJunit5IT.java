@@ -2,13 +2,11 @@ package eu.drus.jpa.unit.test;
 
 import static org.junit.Assert.assertNotNull;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.platform.runner.JUnitPlatform;
-import org.junit.runner.RunWith;
 
 import eu.drus.jpa.unit.api.ExpectedDataSets;
 import eu.drus.jpa.unit.api.InitialDataSets;
@@ -20,7 +18,6 @@ import eu.drus.jpa.unit.util.Neo4jManager;
 
 @ExtendWith(Neo4jManager.class)
 @ExtendWith(JpaUnit.class)
-@RunWith(JUnitPlatform.class)
 public class TransactionalJunit5IT {
 
     @PersistenceContext(unitName = "my-test-unit")

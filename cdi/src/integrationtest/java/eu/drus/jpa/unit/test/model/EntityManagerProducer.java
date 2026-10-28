@@ -1,11 +1,11 @@
 package eu.drus.jpa.unit.test.model;
 
-import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Produces;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceUnit;
+import jakarta.enterprise.inject.Disposes;
+import jakarta.enterprise.inject.Produces;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceUnit;
 
 public class EntityManagerProducer {
 

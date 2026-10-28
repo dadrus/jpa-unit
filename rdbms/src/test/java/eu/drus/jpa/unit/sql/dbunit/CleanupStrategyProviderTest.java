@@ -50,7 +50,7 @@ public class CleanupStrategyProviderTest {
     @Before
     public void setUp() throws Exception {
         initialDataSet = new FlatXmlDataSetBuilder().build(new File("src/test/resources/test-data.xml"));
-        connection = new DatabaseConnection(DriverManager.getConnection(CONNECTION_URL, USER_NAME, PASSWORD));
+        connection = new DatabaseConnection(DriverManager.getConnection(CONNECTION_URL, USER_NAME, PASSWORD), "PUBLIC");
 
         final DatabaseOperation operation = DatabaseOperation.CLEAN_INSERT;
         operation.execute(connection, initialDataSet);

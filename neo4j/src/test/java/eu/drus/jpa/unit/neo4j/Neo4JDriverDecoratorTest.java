@@ -2,19 +2,20 @@ package eu.drus.jpa.unit.neo4j;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedConstruction;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -24,8 +25,7 @@ import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestInvocation;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Neo4JDriverDecorator.class)
+@RunWith(MockitoJUnitRunner.class)
 public class Neo4JDriverDecoratorTest {
 
     @Mock
@@ -41,6 +41,8 @@ public class Neo4JDriverDecoratorTest {
     private Configuration configuration;
 
     @Mock
+    private PersistenceUnitDescriptor descriptor;
+
     private ConfigurationRegistry configRegistry;
 
     private Neo4JDriverDecorator decorator;
@@ -50,16 +52,17 @@ public class Neo4JDriverDecoratorTest {
     })
     @Before
     public void prepareTest() throws Exception {
-        whenNew(ConfigurationRegistry.class).withAnyArguments().thenReturn(configRegistry);
-        whenNew(HikariDataSource.class).withAnyArguments().thenReturn(dataSource);
+        try (final MockedConstruction<ConfigurationRegistry> constructions = mockConstruction(ConfigurationRegistry.class)) {
+            decorator = new Neo4JDriverDecorator();
+            configRegistry = constructions.constructed().get(0);
+        }
 
-        when(configuration.createDataSource()).thenReturn(dataSource);
-        when(invocation.getContext()).thenReturn(ctx);
-        when(invocation.getTestClass()).thenReturn((Class) getClass());
-        when(ctx.getData(eq(Constants.KEY_DATA_SOURCE))).thenReturn(dataSource);
-        when(configRegistry.getConfiguration(any(PersistenceUnitDescriptor.class))).thenReturn(configuration);
-
-        decorator = new Neo4JDriverDecorator();
+        lenient().when(configRegistry.getConfiguration(any(PersistenceUnitDescriptor.class))).thenReturn(configuration);
+        lenient().when(configuration.createDataSource()).thenReturn(dataSource);
+        lenient().when(invocation.getContext()).thenReturn(ctx);
+        lenient().when(ctx.getDescriptor()).thenReturn(descriptor);
+        lenient().when(invocation.getTestClass()).thenReturn((Class) getClass());
+        lenient().when(ctx.getData(eq(Constants.KEY_DATA_SOURCE))).thenReturn(dataSource);
     }
 
     @Test

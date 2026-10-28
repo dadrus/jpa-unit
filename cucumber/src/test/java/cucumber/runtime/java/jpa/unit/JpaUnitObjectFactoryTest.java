@@ -5,18 +5,18 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.notNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,8 +24,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import cucumber.api.java.en.Then;
 import cucumber.api.java.ru.Если;
@@ -33,8 +33,7 @@ import eu.drus.jpa.unit.core.JpaUnitContext;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.TestInvocation;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(JpaUnitContext.class)
+@RunWith(MockitoJUnitRunner.class)
 public class JpaUnitObjectFactoryTest {
 
     @Mock
@@ -46,10 +45,17 @@ public class JpaUnitObjectFactoryTest {
     @InjectMocks
     private JpaUnitObjectFactory factory;
 
+    private MockedStatic<JpaUnitContext> jpaUnitContextMock;
+
     @Before
     public void prepareJpaUnitContext() {
-        mockStatic(JpaUnitContext.class);
-        when(JpaUnitContext.getInstance(any(Class.class))).thenReturn(ctx);
+        jpaUnitContextMock = mockStatic(JpaUnitContext.class);
+        jpaUnitContextMock.when(() -> JpaUnitContext.getInstance(any(Class.class))).thenReturn(ctx);
+    }
+
+    @After
+    public void releaseJpaUnitContext() {
+        jpaUnitContextMock.close();
     }
 
     @Test
@@ -61,7 +67,7 @@ public class JpaUnitObjectFactoryTest {
 
         // THEN
         assertThat(result, equalTo(Boolean.TRUE));
-        verifyZeroInteractions(executor);
+        verifyNoInteractions(executor);
     }
 
     @Test
@@ -72,7 +78,7 @@ public class JpaUnitObjectFactoryTest {
         factory.start();
 
         // THEN
-        verifyZeroInteractions(executor);
+        verifyNoInteractions(executor);
     }
 
     @Test
@@ -83,7 +89,7 @@ public class JpaUnitObjectFactoryTest {
         factory.stop();
 
         // THEN
-        verifyZeroInteractions(executor);
+        verifyNoInteractions(executor);
     }
 
     @Test

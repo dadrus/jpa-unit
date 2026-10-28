@@ -3,8 +3,8 @@ package eu.drus.jpa.unit.core.metadata;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
 
 import org.junit.Test;
 

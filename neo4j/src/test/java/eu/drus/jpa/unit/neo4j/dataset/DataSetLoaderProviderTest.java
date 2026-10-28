@@ -2,9 +2,8 @@ package eu.drus.jpa.unit.neo4j.dataset;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,28 +14,36 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jgrapht.Graph;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.spi.DataSetLoader;
 import eu.drus.jpa.unit.spi.UnsupportedDataSetFormatException;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(EntityUtils.class)
+@RunWith(MockitoJUnitRunner.class)
 public class DataSetLoaderProviderTest {
 
     private static final DataSetLoaderProvider LOADER_PROVIDER = new DataSetLoaderProvider(
             new GraphElementFactory(Collections.emptyList()));
 
+    private MockedStatic<EntityUtils> entityUtils;
+
     @SuppressWarnings("unchecked")
     @Before
-    public void prepareMocks() throws Exception {
-        mockStatic(EntityUtils.class);
-        when(EntityUtils.getEntityClassFromNodeLabels(any(List.class), any(List.class))).thenReturn(DataSetLoaderProviderTest.class);
-        when(EntityUtils.getNamesOfIdProperties(any(Class.class))).thenReturn(Arrays.asList());
+    public void prepareMocks() {
+        entityUtils = mockStatic(EntityUtils.class);
+        entityUtils.when(() -> EntityUtils.getEntityClassFromNodeLabels(any(List.class), any(List.class)))
+                .thenReturn(DataSetLoaderProviderTest.class);
+        entityUtils.when(() -> EntityUtils.getNamesOfIdProperties(any(Class.class))).thenReturn(Arrays.asList());
+    }
+
+    @After
+    public void releaseMocks() {
+        entityUtils.close();
     }
 
     private static File getFile(final String path) throws URISyntaxException {

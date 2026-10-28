@@ -1,28 +1,27 @@
 package eu.drus.jpa.unit.spi;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.util.Arrays;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.core.DecoratorRegistrar;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore("org.mockito.*")
-@PrepareForTest(DecoratorRegistrar.class)
+@RunWith(MockitoJUnitRunner.class)
 public class DecoratorExecutorTest {
 
     @Mock
@@ -43,15 +42,17 @@ public class DecoratorExecutorTest {
     @Mock
     private ExecutionContext jpaUnitContext;
 
+    private MockedStatic<DecoratorRegistrar> decoratorRegistrarMock;
+
     @SuppressWarnings({
             "unchecked", "rawtypes"
     })
     @Before
-    public void prepareMocks() throws Exception {
-        mockStatic(DecoratorRegistrar.class);
+    public void prepareMocks() {
+        decoratorRegistrarMock = mockStatic(DecoratorRegistrar.class);
 
-        when(DecoratorRegistrar.getClassDecorators()).thenReturn(Arrays.asList(firstClassDecorator, secondClassDecorator));
-        when(DecoratorRegistrar.getMethodDecorators()).thenReturn(Arrays.asList(firstMethodDecorator, secondMethodDecorator));
+        decoratorRegistrarMock.when(DecoratorRegistrar::getClassDecorators).thenReturn(Arrays.asList(firstClassDecorator, secondClassDecorator));
+        decoratorRegistrarMock.when(DecoratorRegistrar::getMethodDecorators).thenReturn(Arrays.asList(firstMethodDecorator, secondMethodDecorator));
 
         when(firstClassDecorator.isConfigurationSupported(any(ExecutionContext.class))).thenReturn(Boolean.TRUE);
         when(secondClassDecorator.isConfigurationSupported(any(ExecutionContext.class))).thenReturn(Boolean.TRUE);
@@ -65,7 +66,12 @@ public class DecoratorExecutorTest {
         when(secondMethodDecorator.getPriority()).thenReturn(2);
 
         when(invocation.getContext()).thenReturn(jpaUnitContext);
-        when(invocation.getTestClass()).thenReturn((Class) getClass());
+        lenient().when(invocation.getTestClass()).thenReturn((Class) getClass());
+    }
+
+    @After
+    public void releaseMocks() {
+        decoratorRegistrarMock.close();
     }
 
     @Test
@@ -80,7 +86,7 @@ public class DecoratorExecutorTest {
         final InOrder order = inOrder(firstClassDecorator, secondClassDecorator);
         order.verify(firstClassDecorator).beforeAll(eq(invocation));
         order.verify(secondClassDecorator).beforeAll(eq(invocation));
-        verifyZeroInteractions(firstMethodDecorator, secondMethodDecorator);
+        verifyNoInteractions(firstMethodDecorator, secondMethodDecorator);
     }
 
     @Test
@@ -95,7 +101,7 @@ public class DecoratorExecutorTest {
         final InOrder order = inOrder(secondClassDecorator, firstClassDecorator);
         order.verify(secondClassDecorator).afterAll(eq(invocation));
         order.verify(firstClassDecorator).afterAll(eq(invocation));
-        verifyZeroInteractions(firstMethodDecorator, secondMethodDecorator);
+        verifyNoInteractions(firstMethodDecorator, secondMethodDecorator);
     }
 
     @Test
@@ -110,7 +116,7 @@ public class DecoratorExecutorTest {
         final InOrder order = inOrder(firstMethodDecorator, secondMethodDecorator);
         order.verify(firstMethodDecorator).beforeTest(eq(invocation));
         order.verify(secondMethodDecorator).beforeTest(eq(invocation));
-        verifyZeroInteractions(firstClassDecorator, secondClassDecorator);
+        verifyNoInteractions(firstClassDecorator, secondClassDecorator);
     }
 
     @Test
@@ -125,6 +131,6 @@ public class DecoratorExecutorTest {
         final InOrder order = inOrder(firstMethodDecorator, secondMethodDecorator);
         order.verify(secondMethodDecorator).afterTest(eq(invocation));
         order.verify(firstMethodDecorator).afterTest(eq(invocation));
-        verifyZeroInteractions(firstClassDecorator, secondClassDecorator);
+        verifyNoInteractions(firstClassDecorator, secondClassDecorator);
     }
 }

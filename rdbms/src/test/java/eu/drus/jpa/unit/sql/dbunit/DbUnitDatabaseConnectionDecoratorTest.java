@@ -2,31 +2,29 @@ package eu.drus.jpa.unit.sql.dbunit;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestInvocation;
 import eu.drus.jpa.unit.sql.Constants;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({
-    DatabaseConnectionFactory.class
-})
+@RunWith(MockitoJUnitRunner.class)
 public class DbUnitDatabaseConnectionDecoratorTest {
 
     @Mock
@@ -44,18 +42,25 @@ public class DbUnitDatabaseConnectionDecoratorTest {
     @Mock
     private TestInvocation invocation;
 
+    private MockedStatic<DatabaseConnectionFactory> connectionFactoryMock;
+
     private DbUnitDatabaseConnectionDecorator decorator;
 
     @Before
     public void prepareMocks() throws Throwable {
-        mockStatic(DatabaseConnectionFactory.class);
+        connectionFactoryMock = mockStatic(DatabaseConnectionFactory.class);
+        connectionFactoryMock.when(() -> DatabaseConnectionFactory.openConnection(nullable(BasicDataSource.class))).thenReturn(connection);
 
         when(connection.getConfig()).thenReturn(dbConfig);
-        when(DatabaseConnectionFactory.openConnection(any(BasicDataSource.class))).thenReturn(connection);
         when(ctx.getData(eq(Constants.KEY_CONNECTION))).thenReturn(connection);
         when(invocation.getContext()).thenReturn(ctx);
 
         decorator = new DbUnitDatabaseConnectionDecorator();
+    }
+
+    @After
+    public void releaseMocks() {
+        connectionFactoryMock.close();
     }
 
     @Test

@@ -4,7 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.junit.Test;
 

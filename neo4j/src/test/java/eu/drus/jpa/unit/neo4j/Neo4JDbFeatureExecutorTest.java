@@ -5,15 +5,16 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,14 +28,15 @@ import java.util.List;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.ClassBasedEdgeFactory;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.api.CleanupStrategy;
 import eu.drus.jpa.unit.api.DataSeedStrategy;
@@ -49,8 +51,7 @@ import eu.drus.jpa.unit.spi.DbFeature;
 import eu.drus.jpa.unit.spi.DbFeatureException;
 import eu.drus.jpa.unit.spi.FeatureResolver;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(EntityUtils.class)
+@RunWith(MockitoJUnitRunner.class)
 public class Neo4JDbFeatureExecutorTest {
 
     @Rule
@@ -83,19 +84,27 @@ public class Neo4JDbFeatureExecutorTest {
     @Mock
     private ExpectedDataSets expectedDataSets;
 
+    private MockedStatic<EntityUtils> entityUtils;
+
     private Neo4JDbFeatureExecutor featureExecutor;
 
     @SuppressWarnings("unchecked")
     @Before
     public void setup() throws Exception {
-        when(connection.prepareStatement(anyString())).thenReturn(ps);
-        when(ps.executeQuery()).thenReturn(rs);
+        lenient().when(connection.prepareStatement(anyString())).thenReturn(ps);
+        lenient().when(ps.executeQuery()).thenReturn(rs);
 
-        mockStatic(EntityUtils.class);
-        when(EntityUtils.getEntityClassFromNodeLabels(any(List.class), any(List.class))).thenReturn(Neo4JDbFeatureExecutorTest.class);
-        when(EntityUtils.getNamesOfIdProperties(any(Class.class))).thenReturn(Arrays.asList());
+        entityUtils = mockStatic(EntityUtils.class);
+        entityUtils.when(() -> EntityUtils.getEntityClassFromNodeLabels(any(List.class), any(List.class)))
+                .thenReturn(Neo4JDbFeatureExecutorTest.class);
+        entityUtils.when(() -> EntityUtils.getNamesOfIdProperties(any(Class.class))).thenReturn(Arrays.asList());
 
         featureExecutor = new Neo4JDbFeatureExecutor(featureResolver, Arrays.asList());
+    }
+
+    @After
+    public void release() {
+        entityUtils.close();
     }
 
     @Test
@@ -234,7 +243,6 @@ public class Neo4JDbFeatureExecutorTest {
         // GIVEN
         when(expectedDataSets.strict()).thenReturn(Boolean.FALSE);
         when(expectedDataSets.value()).thenReturn(new String[] {});
-        when(expectedDataSets.orderBy()).thenReturn(new String[] {});
         when(expectedDataSets.excludeColumns()).thenReturn(new String[] {});
 
         // WHEN

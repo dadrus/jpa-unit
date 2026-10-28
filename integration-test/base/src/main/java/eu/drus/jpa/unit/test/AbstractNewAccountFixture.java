@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.test;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.junit.Rule;
 

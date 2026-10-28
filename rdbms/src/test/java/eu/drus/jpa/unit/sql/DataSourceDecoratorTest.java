@@ -4,13 +4,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,25 +18,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.core.PersistenceUnitDescriptorImpl;
-import eu.drus.jpa.unit.core.PersistenceUnitDescriptorLoader;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestInvocation;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(DataSourceDecorator.class)
+@RunWith(MockitoJUnitRunner.class)
 public class DataSourceDecoratorTest {
 
     private static final Map<String, Object> PROPS = createProperties();
 
     @Mock
     private ExecutionContext ctx;
-
-    @Mock
-    private PersistenceUnitDescriptorLoader descriptorLoader;
 
     @Mock
     private PersistenceUnitDescriptorImpl descriptor;
@@ -52,27 +44,23 @@ public class DataSourceDecoratorTest {
     private static Map<String, Object> createProperties() {
         final Map<String, Object> dbConfig = new HashMap<>();
 
-        dbConfig.put("javax.persistence.jdbc.driver", "driver");
-        dbConfig.put("javax.persistence.jdbc.url", "url");
-        dbConfig.put("javax.persistence.jdbc.user", "user");
-        dbConfig.put("javax.persistence.jdbc.password", "password");
+        dbConfig.put("jakarta.persistence.jdbc.driver", "driver");
+        dbConfig.put("jakarta.persistence.jdbc.url", "url");
+        dbConfig.put("jakarta.persistence.jdbc.user", "user");
+        dbConfig.put("jakarta.persistence.jdbc.password", "password");
 
         return dbConfig;
     }
 
     @Before
-    @SuppressWarnings("unchecked")
-    public void prepareMocks() throws Exception {
-        whenNew(PersistenceUnitDescriptorLoader.class).withAnyArguments().thenReturn(descriptorLoader);
-
+    public void prepareMocks() {
         when(ctx.getData(Constants.KEY_DATA_SOURCE)).thenReturn(ds);
         when(ctx.getDescriptor()).thenReturn(descriptor);
-        when(descriptor.getUnitName()).thenReturn("foo");
+        lenient().when(descriptor.getUnitName()).thenReturn("foo");
         when(descriptor.getProperties()).thenReturn(PROPS);
-        when(descriptorLoader.loadPersistenceUnitDescriptors(any(Map.class))).thenReturn(Arrays.asList(descriptor));
 
         when(invocation.getContext()).thenReturn(ctx);
-        when(invocation.getTestClass()).thenReturn((Class) getClass());
+        lenient().when(invocation.getTestClass()).thenReturn((Class) getClass());
     }
 
     @Test
@@ -136,7 +124,7 @@ public class DataSourceDecoratorTest {
     public void testUnsupportedConfiguration() {
         // GIVEN
         final Map<String, Object> props = new HashMap<>();
-        props.put("javax.persistence.jdbc.driver", "driver");
+        props.put("jakarta.persistence.jdbc.driver", "driver");
         when(descriptor.getProperties()).thenReturn(props);
 
         final DataSourceDecorator decorator = new DataSourceDecorator();

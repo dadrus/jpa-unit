@@ -4,8 +4,8 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

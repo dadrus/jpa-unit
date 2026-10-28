@@ -7,9 +7,9 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import javax.sql.DataSource;
 
 import org.flywaydb.core.Flyway;
@@ -31,8 +31,7 @@ public abstract class AbstractFlywayDbTest {
     @Bootstrapping
     public static void prepareDataBase(final DataSource ds) {
         // creates db schema and puts some data
-        final Flyway flyway = new Flyway();
-        flyway.setDataSource(ds);
+        final Flyway flyway = Flyway.configure().dataSource(ds).load();
         flyway.clean();
         flyway.migrate();
     }

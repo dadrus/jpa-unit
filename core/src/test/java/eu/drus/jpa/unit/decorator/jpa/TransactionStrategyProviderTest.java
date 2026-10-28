@@ -2,16 +2,16 @@ package eu.drus.jpa.unit.decorator.jpa;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityTransaction;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.spi.TestInvocation;
 
@@ -126,6 +126,6 @@ public class TransactionStrategyProviderTest {
         executor.commit();
 
         // THEN
-        verifyZeroInteractions(tx);
+        verifyNoInteractions(tx);
     }
 }

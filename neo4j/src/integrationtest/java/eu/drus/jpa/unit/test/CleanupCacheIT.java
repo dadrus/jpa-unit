@@ -5,10 +5,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-import javax.persistence.CacheRetrieveMode;
-import javax.persistence.CacheStoreMode;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.CacheRetrieveMode;
+import jakarta.persistence.CacheStoreMode;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,8 +40,8 @@ public class CleanupCacheIT {
     @Before
     public void configureEntityManager() {
         // These are defaults but put here for documentation purposes
-        manager.setProperty("javax.persistence.cache.storeMode", CacheStoreMode.USE);
-        manager.setProperty("javax.persistence.cache.retrieveMode", CacheRetrieveMode.USE);
+        manager.setProperty("jakarta.persistence.cache.storeMode", CacheStoreMode.USE);
+        manager.setProperty("jakarta.persistence.cache.retrieveMode", CacheRetrieveMode.USE);
     }
 
     @Test

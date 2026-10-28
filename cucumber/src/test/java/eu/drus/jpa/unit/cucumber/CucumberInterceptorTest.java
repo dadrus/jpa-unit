@@ -3,30 +3,30 @@ package eu.drus.jpa.unit.cucumber;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.lang.reflect.Method;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Spy;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.core.JpaUnitContext;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.TestInvocation;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(JpaUnitContext.class)
+@RunWith(MockitoJUnitRunner.class)
 public class CucumberInterceptorTest {
 
 	private static final Integer RESULT = Integer.MIN_VALUE;
@@ -46,12 +46,19 @@ public class CucumberInterceptorTest {
     @Spy
     private TestDelegate delegate = new TestDelegate();
 
+    private MockedStatic<JpaUnitContext> jpaUnitContextMock;
+
     @Before
     public void prepareTest() throws Throwable {
-        mockStatic(JpaUnitContext.class);
-        when(JpaUnitContext.getInstance(any(Class.class))).thenReturn(context);
+        jpaUnitContextMock = mockStatic(JpaUnitContext.class);
+        jpaUnitContextMock.when(() -> JpaUnitContext.getInstance(any(Class.class))).thenReturn(context);
 
         method = delegate.getClass().getDeclaredMethod("testMethod");
+    }
+
+    @After
+    public void releaseJpaUnitContext() {
+        jpaUnitContextMock.close();
     }
 
     @Test

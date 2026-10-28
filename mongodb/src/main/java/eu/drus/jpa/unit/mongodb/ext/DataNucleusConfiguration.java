@@ -13,6 +13,7 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 
+import eu.drus.jpa.unit.spi.PersistenceProperties;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
 public class DataNucleusConfiguration extends AbstractConfiguration {
@@ -21,15 +22,15 @@ public class DataNucleusConfiguration extends AbstractConfiguration {
     private static final String DATANUCLEUS_CONNECTION_URL = "datanucleus.ConnectionURL";
     private static final String DATANUCLEUS_CONNECTION_PASSWORD = "datanucleus.ConnectionPassword";
     private static final String DATANUCLEUS_CONNECTION_USER_NAME = "datanucleus.ConnectionUserName";
-    private static final String JAVAX_PERSISTENCE_JDBC_URL = "javax.persistence.jdbc.url";
-    private static final String JAVAX_PERSISTENCE_JDBC_USER = "javax.persistence.jdbc.user";
-    private static final String JAVAX_PERSISTENCE_JDBC_PASSWORD = "javax.persistence.jdbc.password";
+    private static final String JDBC_URL_SUFFIX = "jdbc.url";
+    private static final String JDBC_USER_SUFFIX = "jdbc.user";
+    private static final String JDBC_PASSWORD_SUFFIX = "jdbc.password";
 
     public static class ConfigurationFactoryImpl implements ConfigurationFactory {
 
         @Override
         public boolean isSupported(final PersistenceUnitDescriptor descriptor) {
-            final String url = (String) getProperty(descriptor.getProperties(), JAVAX_PERSISTENCE_JDBC_URL, DATANUCLEUS_CONNECTION_URL);
+            final String url = (String) getProperty(descriptor.getProperties(), JDBC_URL_SUFFIX, DATANUCLEUS_CONNECTION_URL);
 
             return url != null ? url.startsWith("mongodb:") : false;
         }
@@ -50,7 +51,7 @@ public class DataNucleusConfiguration extends AbstractConfiguration {
     }
 
     private void configureServerAddressesAndDatabaseName(final Map<String, Object> properties) {
-        parseUrl((String) getProperty(properties, JAVAX_PERSISTENCE_JDBC_URL, DATANUCLEUS_CONNECTION_URL));
+        parseUrl((String) getProperty(properties, JDBC_URL_SUFFIX, DATANUCLEUS_CONNECTION_URL));
         checkArgument(databaseName != null, DATANUCLEUS_CONNECTION_URL + " does not contain a database name part");
     }
 
@@ -61,11 +62,11 @@ public class DataNucleusConfiguration extends AbstractConfiguration {
     }
 
     private void configureCredentials(final Map<String, Object> properties) {
-        final String userName = (String) getProperty(properties, JAVAX_PERSISTENCE_JDBC_USER, DATANUCLEUS_CONNECTION_USER_NAME);
-        final String password = (String) getProperty(properties, JAVAX_PERSISTENCE_JDBC_PASSWORD, DATANUCLEUS_CONNECTION_PASSWORD);
+        final String userName = (String) getProperty(properties, JDBC_USER_SUFFIX, DATANUCLEUS_CONNECTION_USER_NAME);
+        final String password = (String) getProperty(properties, JDBC_PASSWORD_SUFFIX, DATANUCLEUS_CONNECTION_PASSWORD);
 
         if (userName != null) {
-            checkArgument(password != null, "neither " + JAVAX_PERSISTENCE_JDBC_PASSWORD + ", nor " + DATANUCLEUS_CONNECTION_PASSWORD
+            checkArgument(password != null, "neither a jdbc password, nor " + DATANUCLEUS_CONNECTION_PASSWORD
                     + " were configured, but required");
             mongoCredentialList = Collections
                     .singletonList(MongoCredential.createPlainCredential(userName, "admin", password.toCharArray()));
@@ -74,12 +75,11 @@ public class DataNucleusConfiguration extends AbstractConfiguration {
         }
     }
 
-    private static Object getProperty(final Map<String, Object> properties, final String name, final String alternativeName) {
-        if (properties.containsKey(name)) {
-            return properties.get(name);
-        } else {
-            return properties.get(alternativeName);
+    private static Object getProperty(final Map<String, Object> properties, final String suffix, final String alternativeName) {
+        if (PersistenceProperties.containsKey(properties, suffix)) {
+            return PersistenceProperties.get(properties, suffix);
         }
+        return properties.get(alternativeName);
     }
 
     private void parseUrl(final String url) {

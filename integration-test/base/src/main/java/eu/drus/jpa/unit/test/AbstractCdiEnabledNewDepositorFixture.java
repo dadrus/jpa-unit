@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import eu.drus.jpa.unit.api.Cleanup;
 import eu.drus.jpa.unit.api.CleanupPhase;

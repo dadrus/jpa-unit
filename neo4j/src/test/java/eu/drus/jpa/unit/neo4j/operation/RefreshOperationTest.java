@@ -2,9 +2,9 @@ package eu.drus.jpa.unit.neo4j.operation;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -73,8 +73,8 @@ public class RefreshOperationTest {
         final ArgumentCaptor<String> queryCaptor = ArgumentCaptor.forClass(String.class);
         verify(operation, times(3)).executeQuery(eq(connection), queryCaptor.capture());
         final List<String> queries = queryCaptor.getAllValues();
-        assertThat(queries.get(0), containsString("MERGE (n1:A {id:1}) SET n1.value=\"A\""));
-        assertThat(queries.get(1), containsString("MERGE (n2:A {id:2})"));
-        assertThat(queries.get(2), containsString("MATCH (n1:A {id:1}),(n2:A {id:2}) MERGE (n1)-[e1:E]->(n2) SET e1.id=3,e1.value=\"C\""));
+        assertThat(queries.get(0), containsString("MERGE (n1:`A` {id: 1}) SET n1.value = 'A'"));
+        assertThat(queries.get(1), containsString("MERGE (n2:`A` {id: 2})"));
+        assertThat(queries.get(2), containsString("MATCH (n1:`A` {id: 1}), (n2:`A` {id: 2}) MERGE (n1)-[e1:`E`]->(n2) SET e1.id = 3, e1.value = 'C'"));
     }
 }

@@ -6,10 +6,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;

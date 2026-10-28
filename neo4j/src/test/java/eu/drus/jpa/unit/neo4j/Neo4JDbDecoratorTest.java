@@ -3,13 +3,14 @@ package eu.drus.jpa.unit.neo4j;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.sql.Connection;
 import java.util.Optional;
@@ -18,8 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedConstruction;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -28,12 +29,8 @@ import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestInvocation;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Neo4JDbDecorator.class)
+@RunWith(MockitoJUnitRunner.class)
 public class Neo4JDbDecoratorTest {
-
-    @Mock
-    private ConfigurationRegistry configRegistry;
 
     @Mock
     private HikariDataSource dataSource;
@@ -48,26 +45,22 @@ public class Neo4JDbDecoratorTest {
     private ExecutionContext ctx;
 
     @Mock
-    private Neo4JDbFeatureExecutor executor;
-
-    @Mock
     private PersistenceUnitDescriptor descriptor;
 
     private Neo4JDbDecorator decorator;
 
     @Before
     public void prepareTest() throws Exception {
-        whenNew(ConfigurationRegistry.class).withAnyArguments().thenReturn(configRegistry);
-        whenNew(Neo4JDbFeatureExecutor.class).withAnyArguments().thenReturn(executor);
+        try (final MockedConstruction<ConfigurationRegistry> constructions = mockConstruction(ConfigurationRegistry.class)) {
+            decorator = new Neo4JDbDecorator();
+        }
 
-        when(invocation.getContext()).thenReturn(ctx);
-        when(invocation.getException()).thenReturn(Optional.empty());
-        when(dataSource.getConnection()).thenReturn(connection);
-        when(ctx.getData(eq(Constants.KEY_DATA_SOURCE))).thenReturn(dataSource);
-        when(ctx.getData(eq(Constants.KEY_CONNECTION))).thenReturn(connection);
-        when(ctx.getDescriptor()).thenReturn(descriptor);
-
-        decorator = new Neo4JDbDecorator();
+        lenient().when(invocation.getContext()).thenReturn(ctx);
+        lenient().when(invocation.getException()).thenReturn(Optional.empty());
+        lenient().when(dataSource.getConnection()).thenReturn(connection);
+        lenient().when(ctx.getData(eq(Constants.KEY_DATA_SOURCE))).thenReturn(dataSource);
+        lenient().when(ctx.getData(eq(Constants.KEY_CONNECTION))).thenReturn(connection);
+        lenient().when(ctx.getDescriptor()).thenReturn(descriptor);
     }
 
     @Test
@@ -86,12 +79,15 @@ public class Neo4JDbDecoratorTest {
         // GIVEN
 
         // WHEN
-        decorator.beforeTest(invocation);
+        try (final MockedConstruction<Neo4JDbFeatureExecutor> constructions = mockConstruction(Neo4JDbFeatureExecutor.class)) {
+            decorator.beforeTest(invocation);
 
-        // THEN
-        verify(connection).setAutoCommit(eq(Boolean.FALSE));
-        verify(executor).executeBeforeTest(eq(connection));
-        verify(ctx).storeData(eq(Constants.KEY_CONNECTION), eq(connection));
+            // THEN
+            final Neo4JDbFeatureExecutor dbFeatureExecutor = constructions.constructed().get(0);
+            verify(connection).setAutoCommit(eq(Boolean.FALSE));
+            verify(dbFeatureExecutor).executeBeforeTest(eq(connection));
+            verify(ctx).storeData(eq(Constants.KEY_CONNECTION), eq(connection));
+        }
     }
 
     @Test
@@ -99,31 +95,36 @@ public class Neo4JDbDecoratorTest {
         // GIVEN
 
         // WHEN
-        decorator.afterTest(invocation);
+        try (final MockedConstruction<Neo4JDbFeatureExecutor> constructions = mockConstruction(Neo4JDbFeatureExecutor.class)) {
+            decorator.afterTest(invocation);
 
-        // THEN
-        verify(connection).close();
-        verify(executor).executeAfterTest(eq(connection), eq(Boolean.FALSE));
-        verify(ctx).storeData(eq(Constants.KEY_CONNECTION), isNull());
-        verifyZeroInteractions(dataSource);
+            // THEN
+            final Neo4JDbFeatureExecutor dbFeatureExecutor = constructions.constructed().get(0);
+            verify(connection).close();
+            verify(dbFeatureExecutor).executeAfterTest(eq(connection), eq(Boolean.FALSE));
+            verify(ctx).storeData(eq(Constants.KEY_CONNECTION), isNull());
+            verifyNoInteractions(dataSource);
+        }
     }
 
     @Test
     public void testAfterTestExecutesWithErrors() throws Exception {
         // GIVEN
-        doThrow(RuntimeException.class).when(executor).executeAfterTest(eq(connection), eq(Boolean.FALSE));
+        try (final MockedConstruction<Neo4JDbFeatureExecutor> constructions = mockConstruction(Neo4JDbFeatureExecutor.class,
+                (mock, context) -> doThrow(RuntimeException.class).when(mock).executeAfterTest(eq(connection), eq(Boolean.FALSE)))) {
 
-        // WHEN
-        try {
-            decorator.afterTest(invocation);
-            fail("Exception expected");
-        } catch (final RuntimeException e) {
-            // expected
+            // WHEN
+            try {
+                decorator.afterTest(invocation);
+                fail("Exception expected");
+            } catch (final RuntimeException e) {
+                // expected
+            }
+
+            // THEN
+            verify(connection).close();
+            verify(ctx).storeData(eq(Constants.KEY_CONNECTION), isNull());
+            verifyNoInteractions(dataSource);
         }
-
-        // THEN
-        verify(connection).close();
-        verify(ctx).storeData(eq(Constants.KEY_CONNECTION), isNull());
-        verifyZeroInteractions(dataSource);
     }
 }

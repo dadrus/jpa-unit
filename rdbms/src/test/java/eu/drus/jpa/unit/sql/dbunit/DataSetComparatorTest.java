@@ -4,8 +4,9 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -27,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.spi.AssertionErrorCollector;
@@ -129,12 +130,12 @@ public class DataSetComparatorTest {
         });
 
         when(table3.getRowCount()).thenReturn(TABLE_3_ENTRIES);
-        when(table3.getTableMetaData()).thenReturn(table3MetaData);
-        when(table3MetaData.getTableName()).thenReturn(TABLE_3_NAME);
-        when(table3MetaData.getColumns()).thenReturn(new Column[] {
+        lenient().when(table3.getTableMetaData()).thenReturn(table3MetaData);
+        lenient().when(table3MetaData.getTableName()).thenReturn(TABLE_3_NAME);
+        lenient().when(table3MetaData.getColumns()).thenReturn(new Column[] {
                 TABLE_3_COLUMN_1, TABLE_3_COLUMN_2, TABLE_3_COLUMN_3, TABLE_3_COLUMN_4
         });
-        when(table3MetaData.getColumnIndex(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
+        lenient().when(table3MetaData.getColumnIndex(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
             final String colName = (String) invocation.getArguments()[0];
             if (colName == TABLE_3_COLUMN_1.getColumnName()) {
                 return 0;
@@ -188,7 +189,7 @@ public class DataSetComparatorTest {
         });
 
         when(expectedDataSet.getTableNames()).thenReturn(new String[] {});
-        when(expectedDataSet.getTable(any(String.class))).thenThrow(new NoSuchTableException());
+        lenient().when(expectedDataSet.getTable(any(String.class))).thenThrow(new NoSuchTableException());
 
         // WHEN
         comparator.compare(currentDataSet, expectedDataSet, errorCollector);
@@ -214,7 +215,7 @@ public class DataSetComparatorTest {
         final Set<Class<? extends IColumnFilter>> columnFilters = Collections.emptySet();
         final DataSetComparator comparator = new DataSetComparator(orderBy, toExclude, false, columnFilters);
 
-        when(currentDataSet.getTableNames()).thenReturn(new String[] {});
+        lenient().when(currentDataSet.getTableNames()).thenReturn(new String[] {});
         when(currentDataSet.getTable(any(String.class))).thenThrow(new NoSuchTableException());
 
         when(expectedDataSet.getTableNames()).thenReturn(new String[] {
@@ -265,7 +266,7 @@ public class DataSetComparatorTest {
             }
         });
 
-        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+        lenient().when(currentDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_2_NAME
         });
         when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
@@ -361,7 +362,7 @@ public class DataSetComparatorTest {
             }
         });
 
-        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+        lenient().when(currentDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_2_NAME, TABLE_3_NAME
         });
         when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
@@ -467,7 +468,7 @@ public class DataSetComparatorTest {
             }
         });
 
-        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+        lenient().when(currentDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_2_NAME
         });
         when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
@@ -515,7 +516,7 @@ public class DataSetComparatorTest {
             }
         });
 
-        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+        lenient().when(currentDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME, TABLE_2_NAME
         });
         when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
@@ -612,7 +613,7 @@ public class DataSetComparatorTest {
         when(table1.getValue(eq(0), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value1");
         when(table1.getValue(eq(1), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value2");
 
-        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+        lenient().when(currentDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME
         });
         when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
@@ -668,7 +669,7 @@ public class DataSetComparatorTest {
         when(table1.getValue(eq(0), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value1");
         when(table1.getValue(eq(1), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value2");
 
-        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+        lenient().when(currentDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME
         });
         when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
@@ -717,7 +718,7 @@ public class DataSetComparatorTest {
         when(table1.getValue(eq(0), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value1");
         when(table1.getValue(eq(1), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value2");
 
-        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+        lenient().when(currentDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME
         });
         when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
@@ -730,8 +731,8 @@ public class DataSetComparatorTest {
         });
         when(table4.getRowCount()).thenReturn(TABLE_1_ENTRIES);
         when(table4.getTableMetaData()).thenReturn(table1MetaData);
-        when(table4.getValue(eq(0), eq(TABLE_1_COLUMN_1.getColumnName()))).thenReturn("col1_value1");
-        when(table4.getValue(eq(1), eq(TABLE_1_COLUMN_1.getColumnName()))).thenReturn("col1_value2");
+        lenient().when(table4.getValue(eq(0), eq(TABLE_1_COLUMN_1.getColumnName()))).thenReturn("col1_value1");
+        lenient().when(table4.getValue(eq(1), eq(TABLE_1_COLUMN_1.getColumnName()))).thenReturn("col1_value2");
         when(table4.getValue(eq(0), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value1");
         when(table4.getValue(eq(1), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value2");
 
@@ -763,10 +764,10 @@ public class DataSetComparatorTest {
                 throw new NoSuchTableException(tableName);
             }
         });
-        when(table1.getValue(eq(0), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value1");
-        when(table1.getValue(eq(1), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value2");
+        lenient().when(table1.getValue(eq(0), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value1");
+        lenient().when(table1.getValue(eq(1), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value2");
 
-        when(currentDataSet.getTableNames()).thenReturn(new String[] {
+        lenient().when(currentDataSet.getTableNames()).thenReturn(new String[] {
                 TABLE_1_NAME
         });
         when(currentDataSet.getTable(any(String.class))).thenAnswer((final InvocationOnMock invocation) -> {
@@ -777,12 +778,12 @@ public class DataSetComparatorTest {
                 throw new NoSuchTableException(tableName);
             }
         });
-        when(table4.getRowCount()).thenReturn(TABLE_1_ENTRIES);
+        lenient().when(table4.getRowCount()).thenReturn(TABLE_1_ENTRIES);
         when(table4.getTableMetaData()).thenReturn(table1MetaData);
-        when(table4.getValue(eq(0), eq(TABLE_1_COLUMN_1.getColumnName()))).thenReturn("col1_value1");
-        when(table4.getValue(eq(1), eq(TABLE_1_COLUMN_1.getColumnName()))).thenReturn("col1_value2");
-        when(table4.getValue(eq(0), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value1");
-        when(table4.getValue(eq(1), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value2");
+        lenient().when(table4.getValue(eq(0), eq(TABLE_1_COLUMN_1.getColumnName()))).thenReturn("col1_value1");
+        lenient().when(table4.getValue(eq(1), eq(TABLE_1_COLUMN_1.getColumnName()))).thenReturn("col1_value2");
+        lenient().when(table4.getValue(eq(0), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value1");
+        lenient().when(table4.getValue(eq(1), eq(TABLE_1_COLUMN_2.getColumnName()))).thenReturn("col2_value2");
 
         // WHEN
         try {

@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.fixtures;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.junit.runner.RunWith;
 

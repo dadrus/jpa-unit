@@ -7,9 +7,9 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

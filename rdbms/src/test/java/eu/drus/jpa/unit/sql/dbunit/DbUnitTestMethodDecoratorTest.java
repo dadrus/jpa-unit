@@ -2,13 +2,13 @@ package eu.drus.jpa.unit.sql.dbunit;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.Optional;
 
@@ -18,18 +18,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedConstruction;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.spi.ExecutionContext;
-import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.TestInvocation;
 import eu.drus.jpa.unit.sql.Constants;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({
-        DbUnitTestMethodDecorator.class, DbUnitTestMethodDecoratorTest.class
-})
+@RunWith(MockitoJUnitRunner.class)
 public class DbUnitTestMethodDecoratorTest {
 
     @Mock
@@ -48,9 +44,6 @@ public class DbUnitTestMethodDecoratorTest {
 
     @Before
     public void prepareMocks() throws Throwable {
-        whenNew(FeatureResolver.class).withAnyArguments().thenReturn(null);
-        whenNew(SqlDbFeatureExecutor.class).withAnyArguments().thenReturn(executor);
-
         when(invocation.getContext()).thenReturn(ctx);
         when(ctx.getData(eq(Constants.KEY_CONNECTION))).thenReturn(connection);
         when(ctx.getData(eq(Constants.KEY_FEATURE_EXECUTOR))).thenReturn(executor);
@@ -61,13 +54,14 @@ public class DbUnitTestMethodDecoratorTest {
     @Test
     public void testBeforeTest() throws Throwable {
         // GIVEN
+        try (MockedConstruction<SqlDbFeatureExecutor> executorConstruction = mockConstruction(SqlDbFeatureExecutor.class)) {
+            // WHEN
+            decorator.beforeTest(invocation);
 
-        // WHEN
-        decorator.beforeTest(invocation);
-
-        // THEN
-        verify(executor).executeBeforeTest(eq(connection));
-        verify(ctx, times(0)).storeData(eq(Constants.KEY_CONNECTION), any(IDatabaseConnection.class));
+            // THEN
+            verify(executorConstruction.constructed().get(0)).executeBeforeTest(eq(connection));
+            verify(ctx, times(0)).storeData(eq(Constants.KEY_CONNECTION), any(IDatabaseConnection.class));
+        }
     }
 
     @Test
@@ -81,7 +75,7 @@ public class DbUnitTestMethodDecoratorTest {
         // THEN
         verify(executor).executeAfterTest(eq(connection), eq(Boolean.FALSE));
         verify(ctx, times(0)).storeData(eq(Constants.KEY_CONNECTION), any(IDatabaseConnection.class));
-        verifyZeroInteractions(connection);
+        verifyNoInteractions(connection);
     }
 
     @Test

@@ -3,6 +3,12 @@ package eu.drus.jpa.unit.neo4j.dataset;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.neo4j.cypherdsl.core.Cypher;
+import org.neo4j.cypherdsl.core.MapExpression;
+import org.neo4j.cypherdsl.core.Operation;
+import org.neo4j.cypherdsl.core.PropertyContainer;
 
 public abstract class GraphElement {
 
@@ -19,6 +25,17 @@ public abstract class GraphElement {
     public static String toType(final List<String> labels) {
         final List<String> tmp = labels.stream().sorted((a, b) -> a.compareTo(b)).collect(Collectors.toList());
         return String.join(":", tmp);
+    }
+
+    public static MapExpression mapExpression(final List<Attribute> attributes) {
+        final Object[] keyValues = attributes.stream().flatMap(a -> Stream.of((Object) a.getName(), Cypher.literalOf(a.getValue())))
+                .toArray();
+        return Cypher.mapOf(keyValues);
+    }
+
+    public static Operation[] setOperations(final PropertyContainer container, final List<Attribute> attributes) {
+        return attributes.stream().map(a -> container.property(a.getName()).to(Cypher.literalOf(a.getValue())))
+                .toArray(Operation[]::new);
     }
 
     public List<String> getLabels() {

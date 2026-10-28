@@ -3,7 +3,7 @@ package eu.drus.jpa.unit.rule;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 
@@ -14,7 +14,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.ExecutionContext;

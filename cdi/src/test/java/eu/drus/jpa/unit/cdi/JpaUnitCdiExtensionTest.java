@@ -7,16 +7,16 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import javax.enterprise.inject.spi.ProcessProducer;
-import javax.enterprise.inject.spi.Producer;
-import javax.persistence.EntityManager;
+import jakarta.enterprise.inject.spi.ProcessProducer;
+import jakarta.enterprise.inject.spi.Producer;
+import jakarta.persistence.EntityManager;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JpaUnitCdiExtensionTest {

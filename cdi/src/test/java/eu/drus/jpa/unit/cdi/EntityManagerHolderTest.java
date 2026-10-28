@@ -8,12 +8,12 @@ import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.CyclicBarrier;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EntityManagerHolderTest {

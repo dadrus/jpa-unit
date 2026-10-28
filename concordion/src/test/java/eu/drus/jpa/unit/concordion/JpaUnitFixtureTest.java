@@ -6,27 +6,26 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.core.JpaUnitContext;
 import eu.drus.jpa.unit.spi.DecoratorExecutor;
 import eu.drus.jpa.unit.spi.TestInvocation;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(JpaUnitContext.class)
+@RunWith(MockitoJUnitRunner.class)
 public class JpaUnitFixtureTest {
 
     public static class TestClass {}
@@ -41,14 +40,21 @@ public class JpaUnitFixtureTest {
 
     private JpaUnitFixture fixture;
 
+    private MockedStatic<JpaUnitContext> jpaUnitContextMock;
+
     @Before
     public void setUp() throws Exception {
-        mockStatic(JpaUnitContext.class);
-        when(JpaUnitContext.getInstance(any(Class.class))).thenReturn(ctx);
+        jpaUnitContextMock = mockStatic(JpaUnitContext.class);
+        jpaUnitContextMock.when(() -> JpaUnitContext.getInstance(any(Class.class))).thenReturn(ctx);
 
         originalFixture = new TestClass();
 
         fixture = new JpaUnitFixture(executor, EnhancedProxy.create(originalFixture, executor));
+    }
+
+    @After
+    public void releaseJpaUnitContext() {
+        jpaUnitContextMock.close();
     }
 
     @Test

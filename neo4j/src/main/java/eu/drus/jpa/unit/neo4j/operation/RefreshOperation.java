@@ -1,21 +1,18 @@
 package eu.drus.jpa.unit.neo4j.operation;
 
-import static java.util.stream.Collectors.toList;
-import static org.neo4j.cypherdsl.CypherQuery.identifier;
-import static org.neo4j.cypherdsl.CypherQuery.literal;
-import static org.neo4j.cypherdsl.CypherQuery.match;
-import static org.neo4j.cypherdsl.CypherQuery.merge;
-import static org.neo4j.cypherdsl.CypherQuery.property;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jgrapht.Graph;
-import org.neo4j.cypherdsl.expression.SetExpression;
-import org.neo4j.cypherdsl.grammar.UpdateNext;
+import org.neo4j.cypherdsl.core.Cypher;
+import org.neo4j.cypherdsl.core.Operation;
+import org.neo4j.cypherdsl.core.Relationship;
 
+import eu.drus.jpa.unit.neo4j.dataset.Attribute;
 import eu.drus.jpa.unit.neo4j.dataset.Edge;
+import eu.drus.jpa.unit.neo4j.dataset.GraphElement;
 import eu.drus.jpa.unit.neo4j.dataset.Node;
 
 public class RefreshOperation extends AbstractNeo4JOperation {
@@ -23,26 +20,28 @@ public class RefreshOperation extends AbstractNeo4JOperation {
     @Override
     public void execute(final Connection connection, final Graph<Node, Edge> graph) throws SQLException {
         for (final Node node : graph.vertexSet()) {
+            final org.neo4j.cypherdsl.core.Node pattern = node.toPath().withIdAttributes().build();
+            final List<Attribute> attributes = node.getAttributes().stream().filter(a -> !a.isId()).collect(Collectors.toList());
 
-            final List<SetExpression> attributes = node.getAttributes().stream().filter(a -> !a.isId())
-                    .map(a -> property(identifier(node.getId()).property(a.getName()), literal(a.getValue()))).collect(toList());
-
-            final UpdateNext query = merge(node.toPath().withIdAttributes().build()).set(attributes);
-
-            executeQuery(connection, query.toString());
+            if (attributes.isEmpty()) {
+                executeQuery(connection, Cypher.merge(pattern).build().getCypher());
+            } else {
+                executeQuery(connection,
+                        Cypher.merge(pattern).set(GraphElement.setOperations(pattern, attributes)).build().getCypher());
+            }
         }
 
         for (final Edge edge : graph.edgeSet()) {
-            final Node sourceNode = edge.getSourceNode();
-            final Node targetNode = edge.getTargetNode();
+            final Relationship relationship = edge.toPath().build();
+            final org.neo4j.cypherdsl.core.Node source = edge.getSourceNode().toPath().withIdAttributes().build();
+            final org.neo4j.cypherdsl.core.Node target = edge.getTargetNode().toPath().withIdAttributes().build();
+            final Operation[] operations = GraphElement.setOperations(relationship, edge.getAttributes());
 
-            final List<SetExpression> attributes = edge.getAttributes().stream()
-                    .map(a -> property(identifier(edge.getId()).property(a.getName()), literal(a.getValue()))).collect(toList());
-
-            final UpdateNext query = match(sourceNode.toPath().withIdAttributes().build(), targetNode.toPath().withIdAttributes().build())
-                    .merge(edge.toPath().build()).set(attributes);
-
-            executeQuery(connection, query.toString());
+            if (operations.length > 0) {
+                executeQuery(connection, Cypher.match(source, target).merge(relationship).set(operations).build().getCypher());
+            } else {
+                executeQuery(connection, Cypher.match(source, target).merge(relationship).build().getCypher());
+            }
         }
     }
 }

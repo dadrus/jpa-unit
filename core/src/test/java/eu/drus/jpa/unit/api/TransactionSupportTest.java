@@ -8,14 +8,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TransactionSupportTest {

@@ -4,13 +4,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Basic;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Version;
+import jakarta.persistence.Basic;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 

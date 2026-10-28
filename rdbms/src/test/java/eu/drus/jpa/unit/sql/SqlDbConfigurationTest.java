@@ -11,7 +11,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -27,8 +27,8 @@ public class SqlDbConfigurationTest {
 	public void testPersistenceUnitDescriptorIsSupported() {
 		// GIVEN
 		when(descriptor.getProperties()).thenReturn(ImmutableMap.<String, Object>builder()
-				.put("javax.persistence.jdbc.driver", "some.Driver")
-				.put("javax.persistence.jdbc.url", "some://url")
+				.put("jakarta.persistence.jdbc.driver", "some.Driver")
+				.put("jakarta.persistence.jdbc.url", "some://url")
 				.build());
 
 		// WHEN
@@ -42,7 +42,7 @@ public class SqlDbConfigurationTest {
 	public void testPersistenceUnitDescriptorIsNotSupportedIfDriverPropertyIsMissing() {
 		// GIVEN
 		when(descriptor.getProperties()).thenReturn(
-				ImmutableMap.<String, Object>builder().put("javax.persistence.jdbc.url", "some://url").build());
+				ImmutableMap.<String, Object>builder().put("jakarta.persistence.jdbc.url", "some://url").build());
 
 		// WHEN
 		boolean isSupported = SqlDbConfiguration.isSupported(descriptor);
@@ -55,7 +55,7 @@ public class SqlDbConfigurationTest {
 	public void testPersistenceUnitDescriptorIsNotSupportedIfUrlPropertyIsMissing() {
 		// GIVEN
 		when(descriptor.getProperties()).thenReturn(
-				ImmutableMap.<String, Object>builder().put("javax.persistence.jdbc.driver", "some.Driver").build());
+				ImmutableMap.<String, Object>builder().put("jakarta.persistence.jdbc.driver", "some.Driver").build());
 
 		// WHEN
 		boolean isSupported = SqlDbConfiguration.isSupported(descriptor);
@@ -68,10 +68,10 @@ public class SqlDbConfigurationTest {
 	public void testCreateDataSource() {
 		// GIVEN
 		when(descriptor.getProperties()).thenReturn(ImmutableMap.<String, Object>builder()
-			.put("javax.persistence.jdbc.driver", "some.Driver")
-			.put("javax.persistence.jdbc.url", "some://url")
-			.put("javax.persistence.jdbc.user", "someUser")
-			.put("javax.persistence.jdbc.password", "somePassword")
+			.put("jakarta.persistence.jdbc.driver", "some.Driver")
+			.put("jakarta.persistence.jdbc.url", "some://url")
+			.put("jakarta.persistence.jdbc.user", "someUser")
+			.put("jakarta.persistence.jdbc.password", "somePassword")
 			.build());
 
 		SqlDbConfiguration config = new SqlDbConfiguration(descriptor);

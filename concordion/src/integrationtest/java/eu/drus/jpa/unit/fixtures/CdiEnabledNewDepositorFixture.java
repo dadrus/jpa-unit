@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.fixtures;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;

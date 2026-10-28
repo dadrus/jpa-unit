@@ -5,10 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -17,32 +17,24 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedConstruction;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.zaxxer.hikari.HikariDataSource;
 
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(HibernateOgmConfiguration.class)
+@RunWith(MockitoJUnitRunner.class)
 public class HibernateOgmConfigurationTest {
 
     @Mock
     private PersistenceUnitDescriptor descriptor;
 
-    @Mock
     private HikariDataSource dataSource;
-
-    @Before
-    public void prepareJpaUnitContext() throws Exception {
-        whenNew(HikariDataSource.class).withAnyArguments().thenReturn(dataSource);
-    }
 
     @Test
     public void testNeo4JBoltProtocolSupport() {
@@ -133,22 +125,26 @@ public class HibernateOgmConfigurationTest {
         final Configuration configuration = factory.createConfiguration(descriptor);
 
         // WHEN
-        final DataSource ds = configuration.createDataSource();
+        final DataSource ds;
+        try (final MockedConstruction<HikariDataSource> dataSources = mockConstruction(HikariDataSource.class)) {
+            ds = configuration.createDataSource();
+            dataSource = dataSources.constructed().get(0);
 
-        // THEN
-        assertNotNull(ds);
+            // THEN
+            assertNotNull(ds);
 
-        final ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<String> passCaptor = ArgumentCaptor.forClass(String.class);
-        verify(dataSource).setDriverClassName(eq("org.neo4j.jdbc.Driver"));
-        verify(dataSource).setUsername(userCaptor.capture());
-        verify(dataSource).setPassword(passCaptor.capture());
-        verify(dataSource).setJdbcUrl(urlCaptor.capture());
+            final ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
+            final ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
+            final ArgumentCaptor<String> passCaptor = ArgumentCaptor.forClass(String.class);
+            verify(dataSource).setDriverClassName(eq("org.neo4j.jdbc.Driver"));
+            verify(dataSource).setUsername(userCaptor.capture());
+            verify(dataSource).setPassword(passCaptor.capture());
+            verify(dataSource).setJdbcUrl(urlCaptor.capture());
 
-        assertThat(urlCaptor.getValue(), equalTo("jdbc:neo4j:http://localhost:7474"));
-        assertThat(userCaptor.getValue(), equalTo("neo4j"));
-        assertThat(passCaptor.getValue(), equalTo("test"));
+            assertThat(urlCaptor.getValue(), equalTo("jdbc:neo4j:http://localhost:7474"));
+            assertThat(userCaptor.getValue(), equalTo("neo4j"));
+            assertThat(passCaptor.getValue(), equalTo("test"));
+        }
     }
 
     @Test
@@ -165,22 +161,26 @@ public class HibernateOgmConfigurationTest {
         final Configuration configuration = factory.createConfiguration(descriptor);
 
         // WHEN
-        final DataSource ds = configuration.createDataSource();
+        final DataSource ds;
+        try (final MockedConstruction<HikariDataSource> dataSources = mockConstruction(HikariDataSource.class)) {
+            ds = configuration.createDataSource();
+            dataSource = dataSources.constructed().get(0);
 
-        // THEN
-        assertNotNull(ds);
+            // THEN
+            assertNotNull(ds);
 
-        final ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<String> passCaptor = ArgumentCaptor.forClass(String.class);
-        verify(dataSource).setDriverClassName(eq("org.neo4j.jdbc.Driver"));
-        verify(dataSource).setUsername(userCaptor.capture());
-        verify(dataSource).setPassword(passCaptor.capture());
-        verify(dataSource).setJdbcUrl(urlCaptor.capture());
+            final ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
+            final ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
+            final ArgumentCaptor<String> passCaptor = ArgumentCaptor.forClass(String.class);
+            verify(dataSource).setDriverClassName(eq("org.neo4j.jdbc.Driver"));
+            verify(dataSource).setUsername(userCaptor.capture());
+            verify(dataSource).setPassword(passCaptor.capture());
+            verify(dataSource).setJdbcUrl(urlCaptor.capture());
 
-        assertThat(urlCaptor.getValue(), equalTo("jdbc:neo4j:bolt://localhost:7687"));
-        assertThat(userCaptor.getValue(), equalTo("neo4j"));
-        assertThat(passCaptor.getValue(), equalTo("test"));
+            assertThat(urlCaptor.getValue(), equalTo("jdbc:neo4j:bolt://localhost:7687"));
+            assertThat(userCaptor.getValue(), equalTo("neo4j"));
+            assertThat(passCaptor.getValue(), equalTo("test"));
+        }
     }
 
     @Test
@@ -196,22 +196,26 @@ public class HibernateOgmConfigurationTest {
         final Configuration configuration = factory.createConfiguration(descriptor);
 
         // WHEN
-        final DataSource ds = configuration.createDataSource();
+        final DataSource ds;
+        try (final MockedConstruction<HikariDataSource> dataSources = mockConstruction(HikariDataSource.class)) {
+            ds = configuration.createDataSource();
+            dataSource = dataSources.constructed().get(0);
 
-        // THEN
-        assertNotNull(ds);
+            // THEN
+            assertNotNull(ds);
 
-        final ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<String> passCaptor = ArgumentCaptor.forClass(String.class);
-        verify(dataSource).setDriverClassName(eq("org.neo4j.jdbc.Driver"));
-        verify(dataSource).setUsername(userCaptor.capture());
-        verify(dataSource).setPassword(passCaptor.capture());
-        verify(dataSource).setJdbcUrl(urlCaptor.capture());
+            final ArgumentCaptor<String> urlCaptor = ArgumentCaptor.forClass(String.class);
+            final ArgumentCaptor<String> userCaptor = ArgumentCaptor.forClass(String.class);
+            final ArgumentCaptor<String> passCaptor = ArgumentCaptor.forClass(String.class);
+            verify(dataSource).setDriverClassName(eq("org.neo4j.jdbc.Driver"));
+            verify(dataSource).setUsername(userCaptor.capture());
+            verify(dataSource).setPassword(passCaptor.capture());
+            verify(dataSource).setJdbcUrl(urlCaptor.capture());
 
-        assertThat(urlCaptor.getValue(), equalTo("jdbc:neo4j:bolt://localhost:7687"));
-        assertThat(userCaptor.getValue(), equalTo("neo4j"));
-        assertThat(passCaptor.getValue(), equalTo("test"));
+            assertThat(urlCaptor.getValue(), equalTo("jdbc:neo4j:bolt://localhost:7687"));
+            assertThat(userCaptor.getValue(), equalTo("neo4j"));
+            assertThat(passCaptor.getValue(), equalTo("test"));
+        }
     }
 
 }

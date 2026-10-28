@@ -4,10 +4,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -18,16 +19,16 @@ import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.ext.oracle.Oracle10DataTypeFactory;
 import org.dbunit.util.SQLHelper;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(SQLHelper.class)
+@RunWith(MockitoJUnitRunner.class)
 public class Oracle10ConnectionFactoryTest {
 
     private static final DbUnitConnectionFactory FACTORY = new Oracle10ConnectionFactory();
@@ -38,16 +39,23 @@ public class Oracle10ConnectionFactoryTest {
     @Mock
     private DatabaseMetaData metaData;
 
+    private MockedStatic<SQLHelper> sqlHelperMock;
+
     @Before
     public void repareMocks() throws SQLException {
-        mockStatic(SQLHelper.class);
-        when(SQLHelper.correctCase(anyString(), any(Connection.class))).then(invocation -> {
+        sqlHelperMock = mockStatic(SQLHelper.class);
+        sqlHelperMock.when(() -> SQLHelper.correctCase(anyString(), any(Connection.class))).then(invocation -> {
             return invocation.getArguments()[0];
         });
-        when(SQLHelper.schemaExists(any(Connection.class), anyString())).thenReturn(Boolean.TRUE);
+        sqlHelperMock.when(() -> SQLHelper.schemaExists(any(Connection.class), anyString())).thenReturn(Boolean.TRUE);
 
-        when(connection.getMetaData()).thenReturn(metaData);
-        when(metaData.getIdentifierQuoteString()).thenReturn(" ");
+        lenient().when(connection.getMetaData()).thenReturn(metaData);
+        lenient().when(metaData.getIdentifierQuoteString()).thenReturn(" ");
+    }
+
+    @After
+    public void releaseMocks() {
+        sqlHelperMock.close();
     }
 
     @Test

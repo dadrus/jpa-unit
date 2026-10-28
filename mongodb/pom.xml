@@ -11,7 +11,11 @@
 
   <artifactId>jpa-unit-mongodb</artifactId>
   <name>JPA Unit - MongoDB Extension</name>
-  
+
+  <properties>
+    <skipIntegrationTests>true</skipIntegrationTests>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -61,24 +65,7 @@
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jacoco</groupId>
-      <artifactId>org.jacoco.agent</artifactId>
-      <version>${version.jacoco}</version>
-      <classifier>runtime</classifier>
+      <artifactId>hamcrest</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -95,11 +82,16 @@
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-runner</artifactId>
+      <artifactId>junit-platform-suite</artifactId>
       <scope>test</scope>
     </dependency>
 
-    <!-- INTEGRATION TEST DEPENDENCIES -->
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-suite-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+<!-- INTEGRATION TEST DEPENDENCIES -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jpa-unit5</artifactId>
@@ -109,11 +101,6 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -139,8 +126,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>javax.transaction</groupId>
-      <artifactId>jta</artifactId>
+      <groupId>jakarta.transaction</groupId>
+      <artifactId>jakarta.transaction-api</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

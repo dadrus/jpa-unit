@@ -3,11 +3,11 @@ package eu.drus.jpa.unit.neo4j.dataset;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,13 +18,14 @@ import java.util.List;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.ClassBasedEdgeFactory;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedConstruction;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -32,13 +33,13 @@ import eu.drus.jpa.unit.neo4j.test.entities.A;
 import eu.drus.jpa.unit.neo4j.test.entities.B;
 import eu.drus.jpa.unit.spi.AssertionErrorCollector;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(GraphComparator.class)
+@RunWith(MockitoJUnitRunner.class)
 public class GraphComparatorTest {
 
     private GraphElementFactory graphElementFactory;
 
-    @Mock
+    private MockedConstruction<DatabaseReader> dbReaderConstruction;
+
     private DatabaseReader dbReader;
 
     @Mock
@@ -55,10 +56,15 @@ public class GraphComparatorTest {
     }
 
     @Before
-    public void prepareTest() throws Exception {
-        whenNew(DatabaseReader.class).withAnyArguments().thenReturn(dbReader);
+    public void prepareTest() {
+        dbReaderConstruction = mockConstruction(DatabaseReader.class, (mock, context) -> dbReader = mock);
 
         graphElementFactory = new GraphElementFactory(Arrays.asList(A.class, B.class));
+    }
+
+    @After
+    public void releaseTest() {
+        dbReaderConstruction.close();
     }
 
     @Test
@@ -74,7 +80,7 @@ public class GraphComparatorTest {
         comparator.compare(connection, expectedGraph, errorCollector);
 
         // THEN
-        verifyZeroInteractions(errorCollector);
+        verifyNoInteractions(errorCollector);
     }
 
     @SuppressWarnings("unchecked")

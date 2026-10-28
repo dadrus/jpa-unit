@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.cdi;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import eu.drus.jpa.unit.spi.Constants;
 import eu.drus.jpa.unit.spi.ExecutionContext;

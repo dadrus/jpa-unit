@@ -2,19 +2,20 @@ package eu.drus.jpa.unit.mongodb;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedConstruction;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.mongodb.MongoClient;
 
@@ -24,10 +25,7 @@ import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestInvocation;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({
-        MongoClientDecorator.class, MongoClientDecoratorTest.class
-})
+@RunWith(MockitoJUnitRunner.class)
 public class MongoClientDecoratorTest {
 
     @Mock
@@ -40,7 +38,7 @@ public class MongoClientDecoratorTest {
     private Configuration configuration;
 
     @Mock
-    private ConfigurationRegistry configRegistry;
+    private PersistenceUnitDescriptor descriptor;
 
     @Mock
     private TestInvocation invocation;
@@ -48,15 +46,15 @@ public class MongoClientDecoratorTest {
     private MongoClientDecorator decorator;
 
     @Before
-    public void prepareTest() throws Exception {
-        whenNew(ConfigurationRegistry.class).withAnyArguments().thenReturn(configRegistry);
-        whenNew(MongoClient.class).withAnyArguments().thenReturn(mongoClient);
+    public void prepareTest() {
+        try (final MockedConstruction<ConfigurationRegistry> registries = mockConstruction(ConfigurationRegistry.class,
+                (mock, context) -> lenient().when(mock.getConfiguration(any(PersistenceUnitDescriptor.class))).thenReturn(configuration))) {
+            decorator = new MongoClientDecorator();
+        }
 
-        when(ctx.getData(eq(Constants.KEY_MONGO_CLIENT))).thenReturn(mongoClient);
-        when(configRegistry.getConfiguration(any(PersistenceUnitDescriptor.class))).thenReturn(configuration);
-        when(invocation.getContext()).thenReturn(ctx);
-
-        decorator = new MongoClientDecorator();
+        lenient().when(ctx.getData(eq(Constants.KEY_MONGO_CLIENT))).thenReturn(mongoClient);
+        lenient().when(invocation.getContext()).thenReturn(ctx);
+        lenient().when(ctx.getDescriptor()).thenReturn(descriptor);
     }
 
     @Test
@@ -75,10 +73,13 @@ public class MongoClientDecoratorTest {
         // GIVEN
 
         // WHEN
-        decorator.beforeAll(invocation);
+        try (final MockedConstruction<MongoClient> clients = mockConstruction(MongoClient.class)) {
+            decorator.beforeAll(invocation);
 
-        // THEN
-        verify(ctx).storeData(eq(Constants.KEY_MONGO_CLIENT), eq(mongoClient));
+            // THEN
+            final MongoClient client = clients.constructed().get(0);
+            verify(ctx).storeData(eq(Constants.KEY_MONGO_CLIENT), eq(client));
+        }
     }
 
     @Test

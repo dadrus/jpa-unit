@@ -1,17 +1,11 @@
 package eu.drus.jpa.unit.neo4j.dataset;
 
-import static java.util.stream.Collectors.toList;
-import static org.neo4j.cypherdsl.CypherQuery.node;
-import static org.neo4j.cypherdsl.CypherQuery.value;
-
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.neo4j.cypherdsl.CypherQuery;
-import org.neo4j.cypherdsl.Identifier;
-import org.neo4j.cypherdsl.Path;
-import org.neo4j.cypherdsl.PathRelationship;
+import org.neo4j.cypherdsl.core.Cypher;
+import org.neo4j.cypherdsl.core.Relationship;
 
 public class Edge extends GraphElement {
 
@@ -76,18 +70,17 @@ public class Edge extends GraphElement {
             return this;
         }
 
-        public Path build() {
-            final List<Identifier> relationShips = getLabels().stream().map(CypherQuery::identifier).collect(toList());
-            final Path fromPath = includeNodeIdAttributes ? from.toPath().withIdAttributes().build() : node(from.getId());
-            final Path toPath = includeNodeIdAttributes ? to.toPath().withIdAttributes().build() : node(to.getId());
-            PathRelationship path = fromPath.out(relationShips.toArray(new Identifier[relationShips.size()])).as(getId());
-            if (includeAllAttributes) {
-                path = path.values(getAttributes().stream().map(a -> value(a.getName(), a.getValue())).collect(toList()));
-            }
+        public Relationship build() {
+            final org.neo4j.cypherdsl.core.Node source = includeNodeIdAttributes
+                    ? from.nodePattern(from.getId(), from.idAttributes())
+                    : Cypher.anyNode(from.getId());
+            final org.neo4j.cypherdsl.core.Node target = includeNodeIdAttributes
+                    ? to.nodePattern(to.getId(), to.idAttributes())
+                    : Cypher.anyNode(to.getId());
 
-            final String nodeAsString = toPath.toString();
-            // need to remove () around the expression. they are added again by the node() call
-            return path.node(nodeAsString.substring(1, nodeAsString.length() - 1));
+            final Relationship relationship = source.relationshipTo(target, getLabels().toArray(new String[0])).named(getId());
+
+            return includeAllAttributes ? relationship.withProperties(mapExpression(getAttributes())) : relationship;
         }
     }
 }

@@ -3,16 +3,17 @@ package eu.drus.jpa.unit.mongodb;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.Optional;
 
@@ -20,8 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedConstruction;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -29,14 +30,10 @@ import com.mongodb.client.MongoDatabase;
 import eu.drus.jpa.unit.mongodb.ext.Configuration;
 import eu.drus.jpa.unit.mongodb.ext.ConfigurationRegistry;
 import eu.drus.jpa.unit.spi.ExecutionContext;
-import eu.drus.jpa.unit.spi.FeatureResolver;
 import eu.drus.jpa.unit.spi.PersistenceUnitDescriptor;
 import eu.drus.jpa.unit.spi.TestInvocation;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({
-        MongoDbDecorator.class, MongoDbDecoratorTest.class
-})
+@RunWith(MockitoJUnitRunner.class)
 public class MongoDbDecoratorTest {
 
     @Mock
@@ -58,37 +55,40 @@ public class MongoDbDecoratorTest {
     private Configuration configuration;
 
     @Mock
-    private ConfigurationRegistry configRegistry;
+    private PersistenceUnitDescriptor descriptor;
 
     private MongoDbDecorator decorator;
 
     @Before
-    public void prepareTest() throws Exception {
-        whenNew(FeatureResolver.class).withAnyArguments().thenReturn(null);
-        whenNew(MongoDbFeatureExecutor.class).withAnyArguments().thenReturn(executor);
-        whenNew(ConfigurationRegistry.class).withAnyArguments().thenReturn(configRegistry);
+    public void prepareTest() {
+        try (final MockedConstruction<ConfigurationRegistry> registries = mockConstruction(ConfigurationRegistry.class,
+                (mock, context) -> lenient().when(mock.getConfiguration(any(PersistenceUnitDescriptor.class))).thenReturn(configuration))) {
+            decorator = new MongoDbDecorator();
+        }
 
-        when(invocation.getContext()).thenReturn(ctx);
-        when(ctx.getData(eq(Constants.KEY_MONGO_CLIENT))).thenReturn(mongoClient);
-        when(ctx.getData(eq(Constants.KEY_MONGO_DB))).thenReturn(mongoDataBase);
-        when(ctx.getData(eq(Constants.KEY_FEATURE_EXECUTOR))).thenReturn(executor);
-        when(mongoClient.getDatabase(anyString())).thenReturn(mongoDataBase);
-        when(configRegistry.getConfiguration(any(PersistenceUnitDescriptor.class))).thenReturn(configuration);
-
-        decorator = new MongoDbDecorator();
+        lenient().when(invocation.getContext()).thenReturn(ctx);
+        lenient().when(ctx.getDescriptor()).thenReturn(descriptor);
+        lenient().when(ctx.getData(eq(Constants.KEY_MONGO_CLIENT))).thenReturn(mongoClient);
+        lenient().when(ctx.getData(eq(Constants.KEY_MONGO_DB))).thenReturn(mongoDataBase);
+        lenient().when(ctx.getData(eq(Constants.KEY_FEATURE_EXECUTOR))).thenReturn(executor);
     }
 
     @Test
     public void testBeforeTest() throws Throwable {
         // GIVEN
+        when(configuration.getDatabaseName()).thenReturn("test-db");
+        when(mongoClient.getDatabase(anyString())).thenReturn(mongoDataBase);
 
         // WHEN
-        decorator.beforeTest(invocation);
+        try (final MockedConstruction<MongoDbFeatureExecutor> executors = mockConstruction(MongoDbFeatureExecutor.class)) {
+            decorator.beforeTest(invocation);
 
-        // THEN
-        verify(executor).executeBeforeTest(eq(mongoDataBase));
-        verify(ctx).storeData(eq(Constants.KEY_MONGO_DB), eq(mongoDataBase));
-        verify(ctx).storeData(eq(Constants.KEY_FEATURE_EXECUTOR), eq(executor));
+            // THEN
+            final MongoDbFeatureExecutor dbFeatureExecutor = executors.constructed().get(0);
+            verify(dbFeatureExecutor).executeBeforeTest(eq(mongoDataBase));
+            verify(ctx).storeData(eq(Constants.KEY_MONGO_DB), eq(mongoDataBase));
+            verify(ctx).storeData(eq(Constants.KEY_FEATURE_EXECUTOR), eq(dbFeatureExecutor));
+        }
     }
 
     @Test
@@ -120,7 +120,7 @@ public class MongoDbDecoratorTest {
         }
 
         // THEN
-        verifyZeroInteractions(mongoClient);
+        verifyNoInteractions(mongoClient);
     }
 
     @Test

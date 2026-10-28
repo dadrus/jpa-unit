@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContext;
 
 import org.junit.BeforeClass;
 import org.junit.ClassRule;

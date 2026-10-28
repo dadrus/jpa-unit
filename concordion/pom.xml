@@ -35,8 +35,8 @@
 
     <!-- TEST DEPENDENCIES -->
     <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.1-api</artifactId>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -46,33 +46,13 @@
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jacoco</groupId>
-      <artifactId>org.jacoco.agent</artifactId>
-      <version>${version.jacoco}</version>
-      <classifier>runtime</classifier>
+      <artifactId>hamcrest</artifactId>
       <scope>test</scope>
     </dependency>
 
-    <!-- put here because of different javassist versions used by powermock and concordion -->
     <dependency>
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
-      <version>3.22.0-GA</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.concordion</groupId>
@@ -107,6 +87,24 @@
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-test-control-module-impl</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jpa_2.2_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-all</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>openwebbeans-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.openwebbeans</groupId>
+          <artifactId>openwebbeans-spi</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.cdictrl</groupId>
@@ -126,7 +124,16 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
-      <version>${version.hibernate5}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-jcache</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -135,8 +142,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -157,6 +164,20 @@
             <phase>deploy</phase>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>${argLine} --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED</argLine>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <argLine>${argLine} --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.parsers=ALL-UNNAMED --add-opens java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED</argLine>
+        </configuration>
       </plugin>
     </plugins>
   </build>

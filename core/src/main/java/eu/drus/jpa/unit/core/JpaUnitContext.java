@@ -12,11 +12,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceProperty;
-import javax.persistence.PersistenceUnit;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceProperty;
+import jakarta.persistence.PersistenceUnit;
 
 import eu.drus.jpa.unit.api.JpaUnitException;
 import eu.drus.jpa.unit.core.metadata.AnnotationInspector;

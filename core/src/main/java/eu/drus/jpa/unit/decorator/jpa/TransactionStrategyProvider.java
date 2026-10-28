@@ -1,6 +1,6 @@
 package eu.drus.jpa.unit.decorator.jpa;
 
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityTransaction;
 
 import eu.drus.jpa.unit.api.TransactionMode.StrategyProvider;
 

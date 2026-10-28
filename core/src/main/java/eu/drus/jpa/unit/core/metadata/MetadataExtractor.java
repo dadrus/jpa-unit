@@ -4,8 +4,8 @@ import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
 
 import eu.drus.jpa.unit.api.ApplyScriptsAfter;
 import eu.drus.jpa.unit.api.ApplyScriptsBefore;

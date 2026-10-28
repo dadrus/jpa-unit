@@ -2,24 +2,27 @@ package eu.drus.jpa.unit.neo4j;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import javax.sql.DataSource;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.drus.jpa.unit.api.Bootstrapping;
 import eu.drus.jpa.unit.core.metadata.AnnotationInspector;
@@ -27,10 +30,7 @@ import eu.drus.jpa.unit.core.metadata.MetadataExtractor;
 import eu.drus.jpa.unit.spi.ExecutionContext;
 import eu.drus.jpa.unit.spi.TestInvocation;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({
-        BootstrappingDecorator.class, BootstrappingDecoratorTest.class
-})
+@RunWith(MockitoJUnitRunner.class)
 public class BootstrappingDecoratorTest {
 
     @Mock
@@ -43,10 +43,9 @@ public class BootstrappingDecoratorTest {
     private DataSource ds;
 
     @Mock
-    private MetadataExtractor extractor;
-
-    @Mock
     private AnnotationInspector<Bootstrapping> bootstrappingInpector;
+
+    private MockedConstruction<MetadataExtractor> extractorConstruction;
 
     public static void bootstrappingMethodOne(final DataSource ds) {}
 
@@ -58,13 +57,18 @@ public class BootstrappingDecoratorTest {
             "unchecked", "rawtypes"
     })
     @Before
-    public void prepareMocks() throws Exception {
-        whenNew(MetadataExtractor.class).withAnyArguments().thenReturn(extractor);
+    public void prepareMocks() {
+        extractorConstruction = mockConstruction(MetadataExtractor.class,
+                (mock, context) -> lenient().when(mock.bootstrapping()).thenReturn(bootstrappingInpector));
 
-        when(ctx.getData("ds")).thenReturn(ds);
-        when(invocation.getContext()).thenReturn(ctx);
-        when(invocation.getTestClass()).thenReturn((Class) getClass());
-        when(extractor.bootstrapping()).thenReturn(bootstrappingInpector);
+        lenient().when(ctx.getData(eq(Constants.KEY_DATA_SOURCE))).thenReturn(ds);
+        lenient().when(invocation.getContext()).thenReturn(ctx);
+        lenient().when(invocation.getTestClass()).thenReturn((Class) getClass());
+    }
+
+    @After
+    public void releaseMocks() {
+        extractorConstruction.close();
     }
 
     @Test
@@ -120,11 +124,12 @@ public class BootstrappingDecoratorTest {
         final BootstrappingDecorator decorator = new BootstrappingDecorator();
 
         // WHEN
-        decorator.beforeAll(invocation);
+        try (final MockedStatic<BootstrappingDecoratorTest> testClass = mockStatic(BootstrappingDecoratorTest.class)) {
+            decorator.beforeAll(invocation);
 
-        // THEN
-        verifyStatic(BootstrappingDecoratorTest.class, times(1));
-        BootstrappingDecoratorTest.bootstrappingMethodOne(eq(ds));
+            // THEN
+            testClass.verify(() -> BootstrappingDecoratorTest.bootstrappingMethodOne(eq(ds)), times(1));
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -150,6 +155,6 @@ public class BootstrappingDecoratorTest {
         decorator.afterAll(invocation);
 
         // THEN
-        verifyZeroInteractions(invocation);
+        verifyNoInteractions(invocation);
     }
 }

@@ -1,7 +1,7 @@
 package eu.drus.jpa.unit.features.glue;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
